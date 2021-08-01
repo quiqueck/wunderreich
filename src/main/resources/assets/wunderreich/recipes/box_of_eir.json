@@ -1,0 +1,22 @@
+{
+    "type": "minecraft:crafting_shaped",
+    "pattern": [
+        "###",
+        "#N#",
+        "LLL"
+    ],
+    "key": {
+        "#": {
+            "item": "minecraft:quartz_bricks"
+        },
+        "N": {
+            "item": "minecraft:netherite_ingot"
+        },
+        "L": {
+            "item": "minecraft:lapis_block"
+        }
+    },
+    "result": {
+        "item": "wunderreich:box_of_eir"
+    }
+}

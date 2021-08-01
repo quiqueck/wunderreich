@@ -1,0 +1,32 @@
+{
+    "parent": "minecraft:recipes/root",
+    "rewards": {
+        "recipes": [
+            "wunderreich:box_of_eir"
+        ]
+    },
+    "criteria": {
+        "has_netherite_ingot": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [{
+                    "items": [
+                        "minecraft:netherite_ingot"
+                    ]
+                }]
+            }
+        },
+        "has_the_recipe": {
+            "trigger": "minecraft:recipe_unlocked",
+            "conditions": {
+                "recipe": "wunderreich:box_of_eir"
+            }
+        }
+    },
+    "requirements": [
+        [
+            "has_netherite_ingot",
+            "has_the_recipe"
+        ]
+    ]
+}
