@@ -65,6 +65,8 @@ public class Wunderreich implements ModInitializer {
 			FabricBlockEntityTypeBuilder.create(BoxOfEirBlockEntity::new, Wunderreich.BOX_OF_EIR).build(null)
 		);
 		
+
+		
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();
 	}
