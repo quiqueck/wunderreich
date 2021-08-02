@@ -9,7 +9,8 @@
 	 "MerchantScreenMixin",
      "MerchantMenuMixin",
      "SheetsMixin",
-     "BlockEntityWithoutLevelRendererMixin"
+     "BlockEntityWithoutLevelRendererMixin",
+      "MinecraftMixin"
   ],
   "injectors": {
     "defaultRequire": 1

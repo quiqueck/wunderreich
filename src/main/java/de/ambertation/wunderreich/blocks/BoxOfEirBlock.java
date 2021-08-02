@@ -2,13 +2,16 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -128,9 +131,13 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	
 	@Override
 	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-		BoxOfEirContainer boxOfEirContainer = BoxOfEirContainer.getInstance();
+		BoxOfEirContainer boxOfEirContainer = null;
+		if (level.getServer() instanceof BoxOfEirContainerProvider) {
+			BoxOfEirContainerProvider serve = (BoxOfEirContainerProvider) (((ServerLevel) level).getServer());
+			boxOfEirContainer = serve.getBoxOfEirContainer();
+		}
 		BlockEntity blockEntity = level.getBlockEntity(blockPos);
-		if (boxOfEirContainer != null && blockEntity instanceof BoxOfEirBlockEntity) {
+		if (boxOfEirContainer!=null && blockEntity instanceof BoxOfEirBlockEntity) {
 			BlockPos blockPos2 = blockPos.above();
 			if (level.getBlockState(blockPos2)
 					 .isRedstoneConductor(level, blockPos2)) {
@@ -142,15 +149,15 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 			else {
 				BoxOfEirBlockEntity boxOfEirBlockEntity = (BoxOfEirBlockEntity) blockEntity;
 				boxOfEirContainer.setActiveChest(boxOfEirBlockEntity);
+				final BoxOfEirContainer _boxOfEirContainer = boxOfEirContainer;
 				player.openMenu(new SimpleMenuProvider((i, inventory, playerx) -> {
-					return ChestMenu.threeRows(i, inventory, boxOfEirContainer);
+					return ChestMenu.threeRows(i, inventory, _boxOfEirContainer);
 				}, CONTAINER_TITLE));
 				//player.awardStat(Stats.OPEN_ENDERCHEST);
 				PiglinAi.angerNearbyPiglins(player, true);
 				return InteractionResult.CONSUME;
 			}
-		}
-		else {
+		} else {
 			return InteractionResult.sidedSuccess(level.isClientSide);
 		}
 	}
@@ -179,8 +186,12 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	
 	@Override
 	public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-		BoxOfEirContainer boxOfEirContainer = BoxOfEirContainer.getInstance();
-		return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
+		
+		if (level.getServer() instanceof BoxOfEirContainerProvider) {
+			BoxOfEirContainer boxOfEirContainer = ((BoxOfEirContainerProvider)level.getServer()).getBoxOfEirContainer();
+			return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
+		}
+		return 0;
 	}
 	
 	@Override

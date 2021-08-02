@@ -1,20 +1,110 @@
 package de.ambertation.wunderreich.inventory;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.toasts.SystemToast;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
+import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.function.Function;
+
 public class BoxOfEirContainer extends SimpleContainer {
-	private static BoxOfEirContainer INSTANCE;
-	public static BoxOfEirContainer getInstance(){
-		if (INSTANCE == null){
-			INSTANCE = new BoxOfEirContainer();
+	//this will be replaced with BCLibs WorldDataAPI once a stable release (of BCLib) is reached
+	public static class LevelData {
+		private static boolean wrapCall(LevelStorageSource levelSource, String levelID, Function<LevelStorageAccess, Boolean> runWithLevel) {
+			LevelStorageSource.LevelStorageAccess levelStorageAccess;
+			try {
+				levelStorageAccess = levelSource.createAccess(levelID);
+			} catch (IOException e) {
+				System.err.println("Unable to load level " + levelID);
+				SystemToast.onWorldAccessFailure(Minecraft.getInstance(), levelID);
+				Minecraft.getInstance().setScreen((Screen)null);
+				return true;
+			}
+			
+			boolean returnValue = runWithLevel.apply(levelStorageAccess);
+			
+			try {
+				levelStorageAccess.close();
+			} catch (IOException e) {
+				System.err.println("Failed to get Lock on level " + levelID);
+			}
+			
+			return returnValue;
 		}
-		return INSTANCE;
+		
+		public static void init(LevelStorageSource levelSource, String levelID) {
+			wrapCall(levelSource, levelID, (levelStorageAccess) -> {
+				init(levelStorageAccess);
+				return true;
+			});
+		}
+		
+		public static void init(LevelStorageSource.LevelStorageAccess session){
+			init(new File(session.getLevelPath(LevelResource.ROOT).toFile(), "data/" + Wunderreich.MOD_ID + ".nbt"));
+		}
+		
+		private static CompoundTag root;
+		private static File dataFile;
+		
+		protected static void init(File dataFile){
+			LevelData.dataFile = dataFile;
+			if (dataFile.exists()) {
+				try {
+					root = NbtIo.readCompressed(dataFile);
+				}
+				catch (IOException e) {
+					System.err.println("Failed to load inventory for Boxes of Eir:" + e);
+				}
+			} else {
+				root = new CompoundTag();
+				root.putString("version", Wunderreich.VERSION);
+				save();
+			}
+		}
+		
+		public static void save(){
+			try {
+				if (!dataFile.getParentFile().exists()){
+					dataFile.getParentFile().mkdirs();
+				}
+				NbtIo.writeCompressed(root, dataFile);
+			}
+			catch (IOException e) {
+				System.err.println("Failed to save inventory for Boxes of Eir:" + e);
+			}
+		}
+		
+		public static CompoundTag getCompoundTag(String path) {
+			String[] parts = path.split("\\.");
+			CompoundTag tag = root;
+			for (String part : parts) {
+				if (tag.contains(part)) {
+					tag = tag.getCompound(part);
+				}
+				else {
+					CompoundTag t = new CompoundTag();
+					tag.put(part, t);
+					tag = t;
+				}
+			}
+			return tag;
+		}
 	}
 	
 	@Nullable
@@ -30,6 +120,24 @@ public class BoxOfEirContainer extends SimpleContainer {
 	
 	public boolean isActiveChest(BoxOfEirBlockEntity boxOfEirBlockEntity) {
 		return this.activeChest == boxOfEirBlockEntity;
+	}
+	
+	public void load(){
+		CompoundTag global = LevelData.getCompoundTag("global");
+		ListTag items;
+		if (!global.contains("items")){
+			items = new ListTag();
+			global.put("items", items);
+		} else {
+			items = global.getList("items", 10);
+		}
+		fromTag(items);
+	}
+	
+	public void save() {
+		CompoundTag global = LevelData.getCompoundTag("global");
+		global.put("items", createTag());
+		LevelData.save();
 	}
 	
 	public void fromTag(ListTag listTag) {

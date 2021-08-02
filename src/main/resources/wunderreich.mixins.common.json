@@ -1,0 +1,16 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "de.ambertation.wunderreich.mixin",
+	"compatibilityLevel": "JAVA_16",
+	"mixins": [
+		"MainMixin",
+		"ServerLevelMixin",
+		"MinecraftServerMixin"
+	],
+	"client": [
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

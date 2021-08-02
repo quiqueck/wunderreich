@@ -28,7 +28,8 @@
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+	  "wunderreich.mixins.client.json",
+      "wunderreich.mixins.common.json"
   ],
 
   "depends": {

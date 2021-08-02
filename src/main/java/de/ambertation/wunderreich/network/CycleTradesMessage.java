@@ -2,20 +2,14 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
-import io.netty.buffer.ByteBuf;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.commands.arguments.MessageArgument.Message;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.inventory.MerchantMenu;
-import net.minecraft.world.item.trading.MerchantOffer;
 
 public class CycleTradesMessage {
 	public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "cycle_trades");

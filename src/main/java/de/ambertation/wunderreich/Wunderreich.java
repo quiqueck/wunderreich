@@ -7,6 +7,8 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
@@ -19,8 +21,11 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
 
+import java.util.Optional;
+
 public class Wunderreich implements ModInitializer {
 	public static final String MOD_ID = "wunderreich";
+	public static String VERSION = "0.0.0";
 	
 	public static final Block BOX_OF_EIR = new BoxOfEirBlock(
 		BlockBehaviour.Properties
@@ -33,10 +38,15 @@ public class Wunderreich implements ModInitializer {
 	);
 	
 	public static BlockEntityType<BoxOfEirBlockEntity> BLOCK_ENTITY_BOX_OF_EIR;
-	public static net.minecraft.client.resources.model.Material BOX_OF_EIR_LOCATION = chestMaterial("box_of_eir");
 	
 	@Override
 	public void onInitialize() {
+		Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
+		if (optional.isPresent()) {
+			ModContainer modContainer = optional.get();
+			VERSION = modContainer.getMetadata().getVersion().toString();
+		}
+		
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
@@ -61,7 +71,5 @@ public class Wunderreich implements ModInitializer {
 		CycleTradesMessage.register();
 	}
 	
-	private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
-		return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET, new ResourceLocation(Wunderreich.MOD_ID, "entity/chest/" + string));
-	}
+	
 }
