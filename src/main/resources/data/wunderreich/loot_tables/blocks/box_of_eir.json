@@ -24,14 +24,14 @@
                     "type": "minecraft:item",
                     "functions": [{
                             "function": "minecraft:set_count",
-                            "count": 8.0,
+                            "count": 4.0,
                             "add": false
                         },
                         {
                             "function": "minecraft:explosion_decay"
                         }
                     ],
-                    "name": "minecraft:netherite_ingot"
+                    "name": "minecraft:netherite_scrap"
                 }
             ]
         }]

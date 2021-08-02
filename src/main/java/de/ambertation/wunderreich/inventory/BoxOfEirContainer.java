@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.function.Function;
 
 public class BoxOfEirContainer extends SimpleContainer implements WorldlyContainer {
-	//this will be replaced with BCLibs WorldDataAPI once a stable release (of BCLib) is reached
+	//TODO: this will be replaced with BCLibs WorldDataAPI once a stable release (of BCLib) is reached
 	public static class LevelData {
 		private static boolean wrapCall(LevelStorageSource levelSource, String levelID, Function<LevelStorageAccess, Boolean> runWithLevel) {
 			LevelStorageSource.LevelStorageAccess levelStorageAccess;

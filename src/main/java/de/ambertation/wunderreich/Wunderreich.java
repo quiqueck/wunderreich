@@ -6,7 +6,9 @@ import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.core.Registry;
@@ -25,8 +27,10 @@ public class Wunderreich implements ModInitializer {
 	public static String VERSION = "0.0.0";
 	
 	public static final Block BOX_OF_EIR = new BoxOfEirBlock(
-		BlockBehaviour.Properties
+		FabricBlockSettings
 			.of(Material.STONE)
+			//TODO: This needs to change to the TagAPI from BCLib!
+			.breakByTool(FabricToolTags.PICKAXES)
 			.requiresCorrectToolForDrops()
 			.strength(12.5F, 800.0F)
 			.lightLevel((blockState) -> {
