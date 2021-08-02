@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
+import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -48,6 +49,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
 import java.util.Random;
 
 public class BoxOfEirBlock extends AbstractChestBlock {
@@ -125,17 +127,8 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	}
 	
 	@Override
-	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-		return new BoxOfEirBlockEntity(blockPos, blockState);
-	}
-	
-	@Override
 	public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
-		BoxOfEirContainer boxOfEirContainer = null;
-		if (level.getServer() instanceof BoxOfEirContainerProvider) {
-			BoxOfEirContainerProvider serve = (BoxOfEirContainerProvider) (((ServerLevel) level).getServer());
-			boxOfEirContainer = serve.getBoxOfEirContainer();
-		}
+		final BoxOfEirContainer boxOfEirContainer = getContainer(level);
 		BlockEntity blockEntity = level.getBlockEntity(blockPos);
 		if (boxOfEirContainer!=null && blockEntity instanceof BoxOfEirBlockEntity) {
 			BlockPos blockPos2 = blockPos.above();
@@ -149,9 +142,8 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 			else {
 				BoxOfEirBlockEntity boxOfEirBlockEntity = (BoxOfEirBlockEntity) blockEntity;
 				boxOfEirContainer.setActiveChest(boxOfEirBlockEntity);
-				final BoxOfEirContainer _boxOfEirContainer = boxOfEirContainer;
 				player.openMenu(new SimpleMenuProvider((i, inventory, playerx) -> {
-					return ChestMenu.threeRows(i, inventory, _boxOfEirContainer);
+					return ChestMenu.threeRows(i, inventory, boxOfEirContainer);
 				}, CONTAINER_TITLE));
 				//player.awardStat(Stats.OPEN_ENDERCHEST);
 				PiglinAi.angerNearbyPiglins(player, true);
@@ -179,6 +171,53 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	}
 	
 	//custom code
+	public static HashSet<BlockPos> liveBlocks = new HashSet<>();
+	private static boolean hasAnyOpenInstance = false;
+	public static void updateAllBoxes(Level level){
+		BoxOfEirContainer container = getContainer(level);
+		boolean[] anyOpen = {false};
+		if (container!=null){
+			//check if any box was opened
+			liveBlocks.forEach((pos) -> {
+				BlockEntity be = level.getBlockEntity(pos);
+				if (be instanceof BoxOfEirBlockEntity){
+					BoxOfEirBlockEntity entity = (BoxOfEirBlockEntity)be;
+					anyOpen[0] |= entity.isOpen();
+				}
+			});
+			hasAnyOpenInstance = anyOpen[0];
+			
+			//calculate the fill rate of the box
+			liveBlocks.forEach((pos) -> {
+				BlockState state = level.getBlockState(pos);
+				if (state!=null) {
+					Block block = state.getBlock();
+					if (block instanceof  BoxOfEirBlock){
+						BoxOfEirBlock box = (BoxOfEirBlock)block;
+						level.updateNeighbourForOutputSignal(pos, box);
+						level.updateNeighborsAt(pos, box);
+						Direction facing = (Direction)state.getValue(FACING);
+						level.updateNeighborsAt(pos.relative(facing), box);
+					}
+				}
+			});
+		}
+		
+	}
+	
+	@Override
+	public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+		//liveBlocks.add(blockPos);
+		AddRemoveBoxOfEirMessage.send(true, blockPos);
+		return new BoxOfEirBlockEntity(blockPos, blockState);
+	}
+	
+	public static BoxOfEirContainer getContainer(Level level){
+		if (level!=null && level.getServer() instanceof BoxOfEirContainerProvider) {
+			return ((BoxOfEirContainerProvider)level.getServer()).getBoxOfEirContainer();
+		}
+		return null;
+	}
 	@Override
 	public boolean hasAnalogOutputSignal(BlockState blockState) {
 		return true;
@@ -186,10 +225,9 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	
 	@Override
 	public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-		
-		if (level.getServer() instanceof BoxOfEirContainerProvider) {
-			BoxOfEirContainer boxOfEirContainer = ((BoxOfEirContainerProvider)level.getServer()).getBoxOfEirContainer();
-			return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
+		BoxOfEirContainer boxOfEirContainer = getContainer(level);
+		if (boxOfEirContainer!=null) {
+			 return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
 		}
 		return 0;
 	}
@@ -201,12 +239,29 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	
 	@Override
 	public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-		return Mth.clamp((int) ChestBlockEntity.getOpenCount(blockGetter, blockPos), (int) 0, (int) 15);
+		Direction facing = (Direction)blockState.getValue(FACING);
+		return /*direction==facing &&*/ hasAnyOpenInstance ? 15 : 0;
 	}
 	
-	@Override
-	public int getDirectSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-		return direction == Direction.UP ? blockState.getSignal(blockGetter, blockPos, direction) : 0;
+//	@Override
+//	public int getDirectSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+//		Direction facing = (Direction)blockState.getValue(FACING);
+//		return direction==facing?(hasAnyOpenInstance?15:5):0; //direction == Direction.UP ? 15/*blockState.getSignal(blockGetter, blockPos, direction)*/: 5;
+//	}
+	
+	@Deprecated
+	public void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+		super.onPlace(blockState, level, blockPos, blockState2, bl);
+	}
+	
+	@Deprecated
+	public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+		super.onRemove(blockState, level, blockPos, blockState2, bl);
+		
+		if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
+			//liveBlocks.remove(blockPos);
+			AddRemoveBoxOfEirMessage.send(false, blockPos);
+		}
 	}
 	
 	static {

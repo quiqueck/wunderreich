@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.blockentities;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import net.minecraft.core.BlockPos;
@@ -9,6 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestLidController;
@@ -25,12 +27,13 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 		protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
 			System.out.println("Open");
 			level.playSound((Player)null, (double)blockPos.getX() + 0.5D, (double)blockPos.getY() + 0.5D, (double)blockPos.getZ() + 0.5D, SoundEvents.ENDER_CHEST_OPEN, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+			BoxOfEirBlock.updateAllBoxes(level);
 		}
 		
 		protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
 			System.out.println("Close");
 			level.playSound((Player)null, (double)blockPos.getX() + 0.5D, (double)blockPos.getY() + 0.5D, (double)blockPos.getZ() + 0.5D, SoundEvents.ENDER_CHEST_CLOSE, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-			level.updateNeighbourForOutputSignal(blockPos, blockState.getBlock());
+			BoxOfEirBlock.updateAllBoxes(level);
 		}
 		
 		protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
@@ -38,12 +41,12 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 		}
 		
 		protected boolean isOwnContainer(Player player) {
-			MinecraftServer s = player.getServer();
+			final MinecraftServer s = player.getServer();
 			if (player instanceof  ServerPlayer) {
-				ServerPlayer pp = (ServerPlayer) player;
+				final ServerPlayer pp = (ServerPlayer) player;
 				
-				if (pp.getLevel()!=null && pp.getLevel().getServer() instanceof BoxOfEirContainerProvider) {
-					BoxOfEirContainer container = ((BoxOfEirContainerProvider)pp.getLevel().getServer()).getBoxOfEirContainer();
+				BoxOfEirContainer container = BoxOfEirBlock.getContainer(pp.getLevel());
+				if (container!=null) {
 					return container.isActiveChest(BoxOfEirBlockEntity.this);
 				}
 			}
@@ -94,7 +97,10 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 		if (!this.remove) {
 			this.openersCounter.recheckOpeners(this.getLevel(), this.getBlockPos(), this.getBlockState());
 		}
-		
+	}
+	
+	public boolean isOpen(){
+		return this.openersCounter.getOpenerCount() > 0;
 	}
 	
 	public float getOpenNess(float f) {

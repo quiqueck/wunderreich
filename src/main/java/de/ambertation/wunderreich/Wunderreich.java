@@ -2,6 +2,7 @@ package de.ambertation.wunderreich;
 
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
@@ -69,6 +70,7 @@ public class Wunderreich implements ModInitializer {
 		);
 		
 		CycleTradesMessage.register();
+		AddRemoveBoxOfEirMessage.register();
 	}
 	
 	
