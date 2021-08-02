@@ -7,10 +7,12 @@ import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
@@ -23,7 +25,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class BoxOfEirContainer extends SimpleContainer {
+public class BoxOfEirContainer extends SimpleContainer implements WorldlyContainer {
 	//this will be replaced with BCLibs WorldDataAPI once a stable release (of BCLib) is reached
 	public static class LevelData {
 		private static boolean wrapCall(LevelStorageSource levelSource, String levelID, Function<LevelStorageAccess, Boolean> runWithLevel) {
@@ -111,7 +113,7 @@ public class BoxOfEirContainer extends SimpleContainer {
 	private BoxOfEirBlockEntity activeChest;
 	
 	public BoxOfEirContainer() {
-		super(27);
+		super(slots.length);
 	}
 	
 	public void setActiveChest(BoxOfEirBlockEntity boxOfEirBlockEntity) {
@@ -191,5 +193,21 @@ public class BoxOfEirContainer extends SimpleContainer {
 		
 		super.stopOpen(player);
 		this.activeChest = null;
+	}
+	
+	private static final int[] slots =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+	@Override
+	public int[] getSlotsForFace(Direction direction) {
+		return slots;
+	}
+	
+	@Override
+	public boolean canPlaceItemThroughFace(int i, ItemStack itemStack, @Nullable Direction direction) {
+		return direction != Direction.DOWN;
+	}
+	
+	@Override
+	public boolean canTakeItemThroughFace(int i, ItemStack itemStack, Direction direction) {
+		return direction == Direction.DOWN;
 	}
 }

@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.mixin;
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.datafixers.DataFixer;
+import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import net.minecraft.core.RegistryAccess.RegistryHolder;
@@ -32,6 +33,9 @@ public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider 
 	public void wunderreich_init(Thread thread, RegistryHolder registryHolder, LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci){
 		boxOfEirContainer = new BoxOfEirContainer();
 		boxOfEirContainer.load();
+		boxOfEirContainer.addListener((container)->{
+			BoxOfEirBlock.updateAllBoxes((MinecraftServer)(Object)this, false, true);
+		});
 	}
 
 }

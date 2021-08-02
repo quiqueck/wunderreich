@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blocks.BoxOfEirBlock.LiveBlock;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -42,12 +43,16 @@ public class AddRemoveBoxOfEirMessage {
 	}
 	
 	private static void addedBox(ServerLevel level, BlockPos pos){
-		BoxOfEirBlock.liveBlocks.add(pos);
+		final LiveBlock lb = new LiveBlock(pos, level);
+		System.out.println("Adding " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
+		BoxOfEirBlock.liveBlocks.add(lb);
 		BoxOfEirBlock.updateNeighbours(level, pos);
 	}
 	
 	private static void removedBox(ServerLevel level, BlockPos pos){
-		BoxOfEirBlock.liveBlocks.remove(pos);
+		final LiveBlock lb = new LiveBlock(pos, level);
+		System.out.println("Removing " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
+		BoxOfEirBlock.liveBlocks.remove(lb);
 		BoxOfEirBlock.updateNeighbours(level, pos);
 	}
 }

@@ -6,15 +6,18 @@ import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
+import io.netty.util.internal.ConcurrentSet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -47,10 +50,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
 import java.util.Random;
 
-public class BoxOfEirBlock extends AbstractChestBlock {
+public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder {
 	public static final DirectionProperty FACING;
 	public static final BooleanProperty WATERLOGGED;
 	protected static final VoxelShape SHAPE;
@@ -172,24 +174,53 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	}
 	
 	//custom code
-	public static HashSet<BlockPos> liveBlocks = new HashSet<>();
+	public static class LiveBlock {
+		public final BlockPos pos;
+		public final Level level;
+		
+		public LiveBlock(BlockPos pos, Level level) {
+			this.pos = pos;
+			this.level = level;
+		}
+		
+		
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o == null || getClass() != o.getClass()) return false;
+			LiveBlock liveBlock = (LiveBlock) o;
+			return pos.equals(liveBlock.pos) && level.dimension().equals(liveBlock.level.dimension());
+		}
+		
+		@Override
+		public int hashCode() {
+			return pos.hashCode();
+		}
+	}
+	public static ConcurrentSet<LiveBlock> liveBlocks = new ConcurrentSet<>();
 	private static boolean hasAnyOpenInstance = false;
-	public static void updateAllBoxes(Level level){
-		BoxOfEirContainer container = getContainer(level);
+	public static void updateAllBoxes(MinecraftServer server, boolean withOpenState, boolean withFillrate) {
+		BoxOfEirContainer container = getContainer(server);
+		BoxOfEirBlock.updateAllBoxes(container, withOpenState, withFillrate);
+	}
+	
+	private static void updateAllBoxes(BoxOfEirContainer container,  boolean withOpenState, boolean withFillrate) {
 		boolean[] anyOpen = {false};
 		if (container!=null){
 			//check if any box was opened
-			liveBlocks.forEach((pos) -> {
-				BlockEntity be = level.getBlockEntity(pos);
-				if (be instanceof BoxOfEirBlockEntity){
-					BoxOfEirBlockEntity entity = (BoxOfEirBlockEntity)be;
-					anyOpen[0] |= entity.isOpen();
-				}
-			});
-			hasAnyOpenInstance = anyOpen[0];
+			if (withOpenState) {
+				liveBlocks.forEach((liveBlock) -> {
+					BlockEntity be = liveBlock.level.getBlockEntity(liveBlock.pos);
+					if (be instanceof BoxOfEirBlockEntity) {
+						BoxOfEirBlockEntity entity = (BoxOfEirBlockEntity) be;
+						anyOpen[0] |= entity.isOpen();
+					}
+				});
+				hasAnyOpenInstance = anyOpen[0];
+			}
 			
-			//calculate the fill rate of the box
-			liveBlocks.forEach((pos) -> updateNeighbours(level, pos));
+			//send update message
+			liveBlocks.forEach((liveBlock) -> updateNeighbours(liveBlock.level, liveBlock.pos));
 		}
 		
 	}
@@ -219,11 +250,16 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	}
 	
 	public static BoxOfEirContainer getContainer(Level level){
-		if (level!=null && level.getServer() instanceof BoxOfEirContainerProvider) {
-			return ((BoxOfEirContainerProvider)level.getServer()).getBoxOfEirContainer();
+		return level!=null ? getContainer(level.getServer()) : null;
+	}
+	
+	public static BoxOfEirContainer getContainer(MinecraftServer server){
+		if (server!=null && server instanceof BoxOfEirContainerProvider) {
+			return ((BoxOfEirContainerProvider)server).getBoxOfEirContainer();
 		}
 		return null;
 	}
+	
 	@Override
 	public boolean hasAnalogOutputSignal(BlockState blockState) {
 		return true;
@@ -268,6 +304,11 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 			//liveBlocks.remove(blockPos);
 			AddRemoveBoxOfEirMessage.send(false, blockPos);
 		}
+	}
+	
+	@Override
+	public WorldlyContainer getContainer(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos) {
+		return getContainer(levelAccessor.getServer());
 	}
 	
 	static {
