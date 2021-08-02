@@ -2,18 +2,15 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -165,7 +162,7 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 			double g = random.nextFloat() * (float) j;
 			double h = ((double) random.nextFloat() - 0.5D) * 0.125D;
 			double l = random.nextFloat() * (float) k;
-			level.addParticle(ParticleTypes.SNOWFLAKE, d, e, f, g, h, l);
+			level.addParticle(WunderreichClient.EIR_PARTICLES, d, e, f, g, h, l);
 		}
 		
 	}
