@@ -20,6 +20,11 @@
   "entrypoints": {
     "main": [
       "de.ambertation.wunderreich.Wunderreich"
+    ],
+    "client": [
+      {
+        "value": "de.ambertation.wunderreich.client.WunderreichClient"
+      }
     ]
   },
   "mixins": [

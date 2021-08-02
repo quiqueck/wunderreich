@@ -15,6 +15,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -178,9 +179,8 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	
 	@Override
 	public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-		//return Container.calculateComparatorOutput(level.getBlockEntity(pos));
-		//return AbstractContainerMenu.getRedstoneSignalFromContainer(ChestBlock.getContainer(this, blockState, level, blockPos, false));
-		return 0;
+		BoxOfEirContainer boxOfEirContainer = BoxOfEirContainer.getInstance();
+		return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
 	}
 	
 	@Override

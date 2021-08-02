@@ -31,6 +31,7 @@ public class Wunderreich implements ModInitializer {
 				return 7;
 			})
 	);
+	
 	public static BlockEntityType<BoxOfEirBlockEntity> BLOCK_ENTITY_BOX_OF_EIR;
 	public static net.minecraft.client.resources.model.Material BOX_OF_EIR_LOCATION = chestMaterial("box_of_eir");
 	
@@ -39,13 +40,25 @@ public class Wunderreich implements ModInitializer {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
-		Registry.register(Registry.BLOCK, new ResourceLocation(MOD_ID, "box_of_eir"), BOX_OF_EIR);
-		Registry.register(Registry.ITEM, new ResourceLocation(MOD_ID, "box_of_eir"), new BlockItem(BOX_OF_EIR, new FabricItemSettings().group(CreativeModeTab.TAB_DECORATIONS)));
+		Registry.register(
+			Registry.BLOCK,
+			new ResourceLocation(MOD_ID, "box_of_eir"),
+			BOX_OF_EIR
+		);
+		
+		Registry.register(
+			Registry.ITEM,
+			new ResourceLocation(MOD_ID, "box_of_eir"),
+			new BlockItem(BOX_OF_EIR, new FabricItemSettings().group(CreativeModeTab.TAB_DECORATIONS))
+		);
+		
+		BLOCK_ENTITY_BOX_OF_EIR = Registry.register(
+			Registry.BLOCK_ENTITY_TYPE,
+			new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir_block_entity"),
+			FabricBlockEntityTypeBuilder.create(BoxOfEirBlockEntity::new, Wunderreich.BOX_OF_EIR).build(null)
+		);
+		
 		CycleTradesMessage.register();
-		
-		BLOCK_ENTITY_BOX_OF_EIR = Registry.register(Registry.BLOCK_ENTITY_TYPE, new ResourceLocation(MOD_ID, "box_of_eir_block_entity"), FabricBlockEntityTypeBuilder.create(BoxOfEirBlockEntity::new, BOX_OF_EIR).build(null));
-		
-		BlockEntityRendererRegistry.INSTANCE.register(BLOCK_ENTITY_BOX_OF_EIR, ChestRenderer::new);
 	}
 	
 	private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
