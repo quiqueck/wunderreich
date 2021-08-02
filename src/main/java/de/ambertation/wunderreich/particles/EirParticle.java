@@ -16,23 +16,28 @@ public class EirParticle extends TextureSheetParticle {
 	private final double yStart;
 	private final double zStart;
 	
-	protected EirParticle(ClientLevel clientLevel, double d, double e, double f, double g, double h, double i) {
-		super(clientLevel, d, e, f);
-		this.xd = g;
-		this.yd = h;
-		this.zd = i;
-		this.x = d;
-		this.y = e;
-		this.z = f;
+	protected EirParticle(ClientLevel clientLevel, double x, double y, double z, double deltaX, double deltaY, double deltaZ) {
+		super(clientLevel, x, y, z);
+		this.xd = deltaX;
+		this.yd = deltaY;
+		this.zd = deltaZ;
+		
+		this.x = x;
+		this.y = y;
+		this.z = z;
+		
 		this.xStart = this.x;
 		this.yStart = this.y;
 		this.zStart = this.z;
-		this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.5F);
-		float j = this.random.nextFloat() * 0.4F + 0.6F;
-		this.rCol = j * 0.92F;
-		this.gCol = j * 0.9F;
-		this.bCol = j;
-		this.lifetime = (int)(Math.random() * 10.0D) + 40;
+		
+		this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.3F);
+		
+		float intensity = this.random.nextFloat() * 0.4F + 0.6F;
+		this.rCol = intensity * 0.92F;
+		this.gCol = intensity * 0.9F;
+		this.bCol = intensity;
+		
+		this.lifetime = (int) (Math.random() * 30.0D) + 40;
 	}
 	
 	public ParticleRenderType getRenderType() {
@@ -40,12 +45,13 @@ public class EirParticle extends TextureSheetParticle {
 	}
 	
 	public void move(double d, double e, double f) {
-		this.setBoundingBox(this.getBoundingBox().move(d, e, f));
+		this.setBoundingBox(this.getBoundingBox()
+								.move(d, e, f));
 		this.setLocationFromBoundingbox();
 	}
 	
 	public float getQuadSize(float f) {
-		float g = ((float)this.age + f) / (float)this.lifetime;
+		float g = ((float) this.age + f) / (float) this.lifetime;
 		g = 1.0F - g;
 		g *= g;
 		g = 1.0F - g;
@@ -53,18 +59,18 @@ public class EirParticle extends TextureSheetParticle {
 	}
 	
 	public int getLightColor(float f) {
-		int i = super.getLightColor(f);
-		float g = (float)this.age / (float)this.lifetime;
-		g *= g;
-		g *= g;
-		int j = i & 255;
-		int k = i >> 16 & 255;
-		k += (int)(g * 15.0F * 16.0F);
-		if (k > 240) {
-			k = 240;
+		final int light = super.getLightColor(f);
+		float alpha = (float) this.age / (float) this.lifetime;
+		alpha *= alpha;
+		alpha *= alpha;
+		final int b = light & 255;
+		int r = light >> 16 & 255;
+		r += (int) (alpha * 15.0F * 16.0F);
+		if (r > 240) {
+			r = 240;
 		}
 		
-		return j | k << 16;
+		return b | r << 16;
 	}
 	
 	public void tick() {
@@ -73,14 +79,15 @@ public class EirParticle extends TextureSheetParticle {
 		this.zo = this.z;
 		if (this.age++ >= this.lifetime) {
 			this.remove();
-		} else {
-			float f = (float)this.age / (float)this.lifetime;
+		}
+		else {
+			float f = (float) this.age / (float) this.lifetime;
 			float g = f;
 			f = -f + f * f * 2.0F;
 			f = 1.0F - f;
-			this.x = this.xStart + this.xd * (double)f;
-			this.y = this.yStart + this.yd * (double)f + (double)(1.0F - g);
-			this.z = this.zStart + this.zd * (double)f;
+			this.x = this.xStart + this.xd * (double) f;
+			this.y = this.yStart + this.yd * (double) f + (double) (1.0F - g);
+			this.z = this.zStart + this.zd * (double) f;
 		}
 	}
 	
@@ -92,8 +99,8 @@ public class EirParticle extends TextureSheetParticle {
 			this.sprite = spriteSet;
 		}
 		
-		public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientLevel, double d, double e, double f, double g, double h, double i) {
-			EirParticle portalParticle = new EirParticle(clientLevel, d, e, f, g, h, i);
+		public Particle createParticle(SimpleParticleType simpleParticleType, ClientLevel clientLevel, double x, double y, double z, double deltaX, double deltaY, double deltaZ) {
+			EirParticle portalParticle = new EirParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
 			portalParticle.pickSprite(this.sprite);
 			return portalParticle;
 		}

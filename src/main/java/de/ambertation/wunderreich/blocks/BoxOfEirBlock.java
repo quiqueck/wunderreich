@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerLevel;
@@ -154,15 +155,18 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 	@Override
 	public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
 		for (int i = 0; i < 3; ++i) {
-			int j = random.nextInt(2) * 2 - 1;
-			int k = random.nextInt(2) * 2 - 1;
-			double d = (double) blockPos.getX() + 0.5D + 0.25D * (double) j;
-			double e = (float) blockPos.getY() + random.nextFloat();
-			double f = (double) blockPos.getZ() + 0.5D + 0.25D * (double) k;
-			double g = random.nextFloat() * (float) j;
-			double h = ((double) random.nextFloat() - 0.5D) * 0.125D;
-			double l = random.nextFloat() * (float) k;
-			level.addParticle(WunderreichClient.EIR_PARTICLES, d, e, f, g, h, l);
+			int xFactor = random.nextInt(2) * 2 - 1;
+			int zFactor = random.nextInt(2) * 2 - 1;
+			
+			double x0 =  blockPos.getX() + 0.5D + 0.25D * xFactor;
+			double y0 =  blockPos.getY() + random.nextFloat();
+			double z0 =  blockPos.getZ() + 0.5 + 0.25 *  zFactor;
+			
+			double xd = random.nextFloat() *  xFactor;
+			double yd = ( random.nextFloat() - 0.5) * 0.125;
+			double zd = random.nextFloat() * zFactor;
+			
+			level.addParticle(WunderreichClient.EIR_PARTICLES, x0, y0, z0, xd, yd, zd);
 		}
 		
 	}
