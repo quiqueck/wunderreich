@@ -10,6 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.inventory.MerchantMenu;
@@ -21,8 +22,10 @@ public class AddRemoveBoxOfEirMessage {
 			ServerPlayNetworking.registerReceiver(handler,CHANNEL, (_server, _player, _handler, _buf, _responseSender) -> {
 				boolean didAdd = _buf.readBoolean();
 				BlockPos pos = _buf.readBlockPos();
-				if (didAdd) addedBox(pos);
-				else removedBox(pos);
+				ServerLevel level = _player.getLevel();
+				
+				if (didAdd) addedBox(level, pos);
+				else removedBox(level, pos);
 			});
 		});
 		
@@ -38,11 +41,13 @@ public class AddRemoveBoxOfEirMessage {
 		ClientPlayNetworking.send(CHANNEL, buf);
 	}
 	
-	private static void addedBox(BlockPos pos){
+	private static void addedBox(ServerLevel level, BlockPos pos){
 		BoxOfEirBlock.liveBlocks.add(pos);
+		BoxOfEirBlock.updateNeighbours(level, pos);
 	}
 	
-	private static void removedBox(BlockPos pos){
+	private static void removedBox(ServerLevel level, BlockPos pos){
 		BoxOfEirBlock.liveBlocks.remove(pos);
+		BoxOfEirBlock.updateNeighbours(level, pos);
 	}
 }

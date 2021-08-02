@@ -189,21 +189,26 @@ public class BoxOfEirBlock extends AbstractChestBlock {
 			hasAnyOpenInstance = anyOpen[0];
 			
 			//calculate the fill rate of the box
-			liveBlocks.forEach((pos) -> {
-				BlockState state = level.getBlockState(pos);
-				if (state!=null) {
-					Block block = state.getBlock();
-					if (block instanceof  BoxOfEirBlock){
-						BoxOfEirBlock box = (BoxOfEirBlock)block;
-						level.updateNeighbourForOutputSignal(pos, box);
-						level.updateNeighborsAt(pos, box);
-						Direction facing = (Direction)state.getValue(FACING);
-						level.updateNeighborsAt(pos.relative(facing), box);
-					}
-				}
-			});
+			liveBlocks.forEach((pos) -> updateNeighbours(level, pos));
 		}
 		
+	}
+	
+	public static void updateNeighbours(Level level, BlockPos pos) {
+		BlockState state = level.getBlockState(pos);
+		if (state!=null) {
+			Block block = state.getBlock();
+			if (block instanceof  BoxOfEirBlock){
+				updateNeighbours(level, pos, state, block);
+			}
+		}
+	}
+	
+	public static void updateNeighbours(Level level, BlockPos pos, BlockState state, Block box) {
+		Direction facing = (Direction) state.getValue(FACING);
+		level.updateNeighbourForOutputSignal(pos, box);
+		level.updateNeighborsAt(pos, box);
+		level.updateNeighborsAt(pos.relative(facing), box);
 	}
 	
 	@Override
