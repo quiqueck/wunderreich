@@ -20,7 +20,7 @@ public class AddRemoveBoxOfEirMessage {
 	public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir");
 	public static void register(){
 		ServerPlayConnectionEvents.INIT.register((handler, server)->{
-			ServerPlayNetworking.registerReceiver(handler,CHANNEL, (_server, _player, _handler, _buf, _responseSender) -> {
+			ServerPlayNetworking.registerReceiver(handler, CHANNEL, (_server, _player, _handler, _buf, _responseSender) -> {
 				boolean didAdd = _buf.readBoolean();
 				BlockPos pos = _buf.readBlockPos();
 				ServerLevel level = _player.getLevel();

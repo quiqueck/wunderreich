@@ -31,6 +31,8 @@ public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider 
 	
 	@Inject(method="<init>", at=@At("TAIL"))
 	public void wunderreich_init(Thread thread, RegistryHolder registryHolder, LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci){
+		//we start a new world, so clear any old block
+		BoxOfEirBlock.liveBlocks.clear();
 		boxOfEirContainer = new BoxOfEirContainer();
 		boxOfEirContainer.load();
 		boxOfEirContainer.addListener((container)->{
