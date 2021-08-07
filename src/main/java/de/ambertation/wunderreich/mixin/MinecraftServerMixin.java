@@ -28,6 +28,13 @@ public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider 
 	public BoxOfEirContainer getBoxOfEirContainer(){
 		return boxOfEirContainer;
 	}
+
+	@Inject(method="stopServer", at=@At("HEAD"))
+	public void wunderreich_stop(CallbackInfo ci){
+		System.out.println("Unloading Cache for Box of Eir");
+		//Make sure the levels can unload when the server closes
+		BoxOfEirBlock.liveBlocks.clear();
+	}
 	
 	@Inject(method="<init>", at=@At("TAIL"))
 	public void wunderreich_init(Thread thread, RegistryHolder registryHolder, LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci){
