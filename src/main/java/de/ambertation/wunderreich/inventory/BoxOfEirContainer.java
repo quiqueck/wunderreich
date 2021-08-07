@@ -2,8 +2,7 @@ package de.ambertation.wunderreich.inventory;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
+import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.client.gui.screens.Screen;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.function.Function;
 
 public class BoxOfEirContainer extends SimpleContainer implements WorldlyContainer {
@@ -109,21 +107,10 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
 		}
 	}
 	
-	@Nullable
-	private BoxOfEirBlockEntity activeChest;
-	
 	public BoxOfEirContainer() {
 		super(slots.length);
 	}
-	
-	public void setActiveChest(BoxOfEirBlockEntity boxOfEirBlockEntity) {
-		this.activeChest = boxOfEirBlockEntity;
-	}
-	
-	public boolean isActiveChest(BoxOfEirBlockEntity boxOfEirBlockEntity) {
-		return this.activeChest == boxOfEirBlockEntity;
-	}
-	
+
 	public void load(){
 		CompoundTag global = LevelData.getCompoundTag("global");
 		ListTag items;
@@ -175,24 +162,28 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
 	}
 	
 	public boolean stillValid(Player player) {
-		return this.activeChest != null && !this.activeChest.stillValid(player) ? false : super.stillValid(player);
+		final BoxOfEirBlockEntity chest = ((ActiveChestStorage)player).getActiveBoxOfEir();
+		return chest != null && !chest.stillValid(player) ? false : super.stillValid(player);
 	}
 	
 	public void startOpen(Player player) {
-		if (this.activeChest != null) {
-			this.activeChest.startOpen(player);
+		final BoxOfEirBlockEntity chest = ((ActiveChestStorage)player).getActiveBoxOfEir();
+		if (chest != null) {
+			chest.startOpen(player);
 		}
 		
 		super.startOpen(player);
 	}
 	
 	public void stopOpen(Player player) {
-		if (this.activeChest != null) {
-			this.activeChest.stopOpen(player);
+		final ActiveChestStorage cPlayer = (ActiveChestStorage)player;
+		final BoxOfEirBlockEntity chest = cPlayer.getActiveBoxOfEir();
+		if (chest != null) {
+			chest.stopOpen(player);
 		}
 		
 		super.stopOpen(player);
-		this.activeChest = null;
+		cPlayer.setActiveBoxOfEir(null);
 	}
 	
 	private static final int[] slots =  {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};

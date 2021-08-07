@@ -2,10 +2,8 @@ package de.ambertation.wunderreich.blockentities;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
-import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
+import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -22,30 +20,22 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 	private final ChestLidController chestLidController = new ChestLidController();
 	private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 		protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
+			//System.out.println("Open " + blockPos.getZ());
 			level.playSound((Player)null, (double)blockPos.getX() + 0.5D, (double)blockPos.getY() + 0.5D, (double)blockPos.getZ() + 0.5D, SoundEvents.ENDER_CHEST_OPEN, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-			BoxOfEirBlock.updateAllBoxes(level.getServer(), true, false);
 		}
 		
 		protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
+			//System.out.println("Close " + blockPos.getZ());
 			level.playSound((Player)null, (double)blockPos.getX() + 0.5D, (double)blockPos.getY() + 0.5D, (double)blockPos.getZ() + 0.5D, SoundEvents.ENDER_CHEST_CLOSE, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-			BoxOfEirBlock.updateAllBoxes(level.getServer(), true, false);
 		}
 		
 		protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
 			level.blockEvent(BoxOfEirBlockEntity.this.worldPosition, Wunderreich.BOX_OF_EIR, 1, j);
+			BoxOfEirBlock.updateAllBoxes(level.getServer(), true, false);
 		}
 		
 		protected boolean isOwnContainer(Player player) {
-			final MinecraftServer s = player.getServer();
-			if (player instanceof  ServerPlayer) {
-				final ServerPlayer pp = (ServerPlayer) player;
-				
-				BoxOfEirContainer container = BoxOfEirBlock.getContainer(pp.getLevel());
-				if (container!=null) {
-					return container.isActiveChest(BoxOfEirBlockEntity.this);
-				}
-			}
-			return false;
+			return ((ActiveChestStorage)player).isActiveBoxOfEir(BoxOfEirBlockEntity.this);			
 		}
 	};
 	

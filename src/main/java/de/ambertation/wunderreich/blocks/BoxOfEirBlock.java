@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.blocks;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
@@ -29,6 +30,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.AbstractChestBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.DoubleBlockCombiner;
+import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.HorizontalDirectionalBlock;
 import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.RenderShape;
@@ -57,6 +59,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 	public static final BooleanProperty WATERLOGGED;
 	protected static final VoxelShape SHAPE;
 	private static final Component CONTAINER_TITLE;
+	EnderChestBlock chestBlock;
 	
 	public BoxOfEirBlock(Properties properties) {
 		super(properties, () -> {
@@ -141,7 +144,9 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 			}
 			else {
 				BoxOfEirBlockEntity boxOfEirBlockEntity = (BoxOfEirBlockEntity) blockEntity;
-				boxOfEirContainer.setActiveChest(boxOfEirBlockEntity);
+
+				((ActiveChestStorage)player).setActiveBoxOfEir(boxOfEirBlockEntity);
+
 				player.openMenu(new SimpleMenuProvider((i, inventory, playerx) -> {
 					return ChestMenu.threeRows(i, inventory, boxOfEirContainer);
 				}, CONTAINER_TITLE));
