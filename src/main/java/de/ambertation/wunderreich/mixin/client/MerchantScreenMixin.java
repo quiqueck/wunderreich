@@ -1,6 +1,8 @@
 package de.ambertation.wunderreich.mixin.client;
 
 
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.gui.CycleTradesButton;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
@@ -27,6 +29,8 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
 	
 	@Inject(method="init", at=@At("TAIL"))
 	public void wunderreich_onInit(CallbackInfo ci){
+		if (!Configs.MAIN.get(MainConfig.ALLOW_TRADES_CYCLING)) return;
+
 		MerchantScreen merchantScreen = (MerchantScreen)(Object)this;
 		final int left = (this.width - this.imageWidth) / 2;
 		final int top = (this.height - this.imageHeight) / 2;

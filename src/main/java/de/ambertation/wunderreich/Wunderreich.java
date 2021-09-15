@@ -2,6 +2,7 @@ package de.ambertation.wunderreich;
 
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import net.fabricmc.api.ModInitializer;
@@ -19,11 +20,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import ru.bclib.api.WorldDataAPI;
+import ru.bclib.api.dataexchange.DataExchangeAPI;
+import ru.bclib.util.Logger;
 
 import java.util.Optional;
 
 public class Wunderreich implements ModInitializer {
 	public static final String MOD_ID = "wunderreich";
+	public static final Logger LOGGER = new Logger(MOD_ID);
 	public static String VERSION = "0.0.0";
 	
 	public static final Block BOX_OF_EIR = new BoxOfEirBlock(
@@ -68,11 +73,13 @@ public class Wunderreich implements ModInitializer {
 			new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir_block_entity"),
 			FabricBlockEntityTypeBuilder.create(BoxOfEirBlockEntity::new, Wunderreich.BOX_OF_EIR).build(null)
 		);
-		
 
-		
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();
+
+		WorldDataAPI.registerModCache(MOD_ID);
+		DataExchangeAPI.registerMod(MOD_ID);
+		Configs.saveConfigs();
 	}
 	
 	
