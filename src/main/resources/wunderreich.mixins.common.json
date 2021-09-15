@@ -4,7 +4,6 @@
 	"package": "de.ambertation.wunderreich.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"mixins": [
-		"MainMixin",
 		"ServerLevelMixin",
 		"MinecraftServerMixin",
 		"MonsterMixin",
