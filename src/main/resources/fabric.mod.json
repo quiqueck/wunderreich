@@ -25,7 +25,8 @@
       {
         "value": "de.ambertation.wunderreich.client.WunderreichClient"
       }
-    ]
+    ],
+    "modmenu": [ "de.ambertation.wunderreich.gui.modmenu.EntryPoint::entrypointObject" ]
   },
   "mixins": [
 	  "wunderreich.mixins.client.json",
