@@ -7,6 +7,9 @@
 		"ServerLevelMixin",
 		"MinecraftServerMixin",
 		"MonsterMixin",
+		"GhastMixin",
+		"PhantomMixin",
+		"SlimeMixin",
 		"PlayerMixin"
 	],
 	"client": [
