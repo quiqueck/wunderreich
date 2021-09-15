@@ -36,7 +36,8 @@
     "fabricloader": ">=0.11.3",
     "fabric": "*",
     "minecraft": "1.17.x",
-    "java": ">=16"
+    "java": ">=16",
+    "bclib": ">=0.4.1"
   },
   "suggests": {
   }
