@@ -17,6 +17,9 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+	flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
@@ -33,7 +36,7 @@ dependencies {
 	println "Using local BCLib: ${local_bclib}"
     if (local_bclib){
 		compileOnly(project(":BCLib"))
-        modRuntimeMapped(project(":BCLib"))
+        api project(":BCLib")
     } else {
         modApi "com.github.paulevsGitch:BCLib:${project.bclib_version}"
     }
