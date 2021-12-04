@@ -4,3 +4,7 @@ build/
 run/
 target/
 .vscode/
+.settings/org.eclipse.buildship.core.prefs
+bin/
+.classpath
+.project
