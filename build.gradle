@@ -38,7 +38,7 @@ dependencies {
 		compileOnly(project(":BCLib"))
         modApi project(":BCLib")
     } else {
-        modApi "com.github.paulevsGitch:BCLib:${project.bclib_version}"
+        modImplementation "com.github.paulevsGitch:BCLib:${project.bclib_version}"
     }
 }
 
