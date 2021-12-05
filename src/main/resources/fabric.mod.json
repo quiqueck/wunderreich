@@ -34,11 +34,11 @@
   ],
 
   "depends": {
-    "fabricloader": ">=0.11.3",
+    "fabricloader": ">=0.12.8",
     "fabric": "*",
-    "minecraft": ">=1.17",
-    "java": ">=16",
-    "bclib": ">=0.4.1"
+    "minecraft": ">=1.18",
+    "java": ">=17",
+    "bclib": ">=1.0.1"
   },
   "suggests": {
   }

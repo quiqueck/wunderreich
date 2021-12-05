@@ -35,8 +35,7 @@ dependencies {
 	// You may need to force-disable transitiveness on them.
 	println "Using local BCLib: ${local_bclib}"
     if (local_bclib){
-		compileOnly(project(":BCLib"))
-        modApi project(":BCLib")
+		implementation project(path:":BCLib", configuration:'dev')
     } else {
         modImplementation "com.github.paulevsGitch:BCLib:${project.bclib_version}"
     }

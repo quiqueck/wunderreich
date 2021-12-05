@@ -14,19 +14,24 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.Material;
+import ru.bclib.api.TagAPI;
 import ru.bclib.api.WorldDataAPI;
 import ru.bclib.api.dataexchange.DataExchangeAPI;
+import ru.bclib.interfaces.TagProvider;
 import ru.bclib.util.Logger;
 
+import java.util.List;
 import java.util.Optional;
 
-public class Wunderreich implements ModInitializer {
+public class Wunderreich implements ModInitializer, TagProvider {
 	public static final String MOD_ID = "wunderreich";
 	public static final Logger LOGGER = new Logger(MOD_ID);
 	public static String VERSION = "0.0.0";
@@ -81,9 +86,10 @@ public class Wunderreich implements ModInitializer {
 		DataExchangeAPI.registerMod(MOD_ID);
 		Configs.saveConfigs();
 	}
-	
-	
-	
-	
-	
+
+
+	@Override
+	public void addTags(List<Tag.Named<Block>> blockTags, List<Tag.Named<Item>> itemTags) {
+		blockTags.add(TagAPI.MINEABLE_AXE);
+	}
 }

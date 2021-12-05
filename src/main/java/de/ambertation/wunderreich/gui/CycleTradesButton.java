@@ -41,7 +41,7 @@ public class CycleTradesButton extends Button {
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
 		RenderSystem.setShaderTexture(0, BookViewScreen.BOOK_LOCATION);
-		if (isHovered()) {
+		if (isHovered) {
 			blit(matrixStack, x, y, 26, 207, WIDTH, HEIGHT, 256, 256);
 			screen.renderTooltip(matrixStack, Collections.singletonList(new TranslatableComponent("tooltip.wunderreich.cycle_trades").getVisualOrderText()), mouseX, mouseY);
 		} else {
