@@ -3,6 +3,8 @@ package de.ambertation.wunderreich.blockentities;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -30,7 +32,7 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 		}
 		
 		protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
-			level.blockEvent(BoxOfEirBlockEntity.this.worldPosition, Wunderreich.BOX_OF_EIR, 1, j);
+			level.blockEvent(BoxOfEirBlockEntity.this.worldPosition, WunderreichBlocks.BOX_OF_EIR, 1, j);
 			BoxOfEirBlock.updateAllBoxes(level.getServer(), true, false);
 		}
 		
@@ -40,7 +42,7 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
 	};
 	
 	public BoxOfEirBlockEntity(BlockPos blockPos, BlockState blockState) {
-		super(Wunderreich.BLOCK_ENTITY_BOX_OF_EIR, blockPos, blockState);
+		super(WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, blockPos, blockState);
 	}
 	
 	public static void lidAnimateTick(Level level, BlockPos blockPos, BlockState blockState, BoxOfEirBlockEntity boxOfEirBlockEntity) {

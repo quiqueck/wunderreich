@@ -7,13 +7,17 @@ import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
+import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import io.netty.util.internal.ConcurrentSet;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.SimpleMenuProvider;
@@ -23,6 +27,7 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -46,24 +51,36 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import ru.bclib.api.TagAPI;
+import ru.bclib.interfaces.TagProvider;
 
+import java.util.List;
 import java.util.Random;
 
-public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder {
+public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, TagProvider {
 	public static final DirectionProperty FACING;
 	public static final BooleanProperty WATERLOGGED;
 	protected static final VoxelShape SHAPE;
 	private static final Component CONTAINER_TITLE;
 	EnderChestBlock chestBlock;
 	
-	public BoxOfEirBlock(Properties properties) {
-		super(properties, () -> {
-			return Wunderreich.BLOCK_ENTITY_BOX_OF_EIR;
+	public BoxOfEirBlock() {
+		super(FabricBlockSettings
+				.of(Material.STONE)
+				//TODO: This needs to change to the TagAPI from BCLib!
+				.breakByTool(FabricToolTags.PICKAXES)
+				.requiresCorrectToolForDrops()
+				.strength(12.5F, 800.0F)
+				.lightLevel((blockState) -> {
+					return 7;
+				}), () -> {
+			return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
 		});
 		this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(WATERLOGGED, false));
 	}
@@ -125,7 +142,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 	
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-		return level.isClientSide ? createTickerHelper(blockEntityType, Wunderreich.BLOCK_ENTITY_BOX_OF_EIR, BoxOfEirBlockEntity::lidAnimateTick) : null;
+		return level.isClientSide ? createTickerHelper(blockEntityType, WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, BoxOfEirBlockEntity::lidAnimateTick) : null;
 	}
 	
 	@Override
@@ -176,7 +193,12 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 		}
 		
 	}
-	
+
+	@Override
+	public void addTags(List<Tag.Named<Block>> blockTags, List<Tag.Named<Item>> itemTags) {
+		blockTags.add(TagAPI.MINEABLE_PICKAXE);
+	}
+
 	//custom code
 	public static class LiveBlock {
 		public final BlockPos pos;

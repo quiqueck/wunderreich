@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -36,7 +37,7 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
 			Block block = ((BlockItem) item).getBlock();
 			if (block instanceof BoxOfEirBlock){
 				if (boxOfEir == null){
-					boxOfEir = new BoxOfEirBlockEntity(BlockPos.ZERO, Wunderreich.BOX_OF_EIR.defaultBlockState());
+					boxOfEir = new BoxOfEirBlockEntity(BlockPos.ZERO, WunderreichBlocks.BOX_OF_EIR.defaultBlockState());
 				}
 				this.blockEntityRenderDispatcher.renderItem(boxOfEir, poseStack, multiBufferSource, i, j);
 				ci.cancel();
