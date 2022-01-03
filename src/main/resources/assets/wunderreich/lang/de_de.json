@@ -2,7 +2,9 @@
 	"tooltip.wunderreich.cycle_trades": "Angebot neu aushandeln",
 	"container.wunderreich.box_of_eir": "Truhe der Eir",
 	"block.wunderreich.box_of_eir": "Truhe der Eir",
+	"item.wunderreich.whisperer": "Flüsterer",
 	"title.wunderreich.modmenu.main": "Wunderreich - Einstellungen",
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Benannte Monster in friedlich erhalten",
-	"title.config.wunderreich.main.features.allowTradesCycling": "Button \"Handel neu auswürfeln\" für Dörfler ohne XP"
+	"title.config.wunderreich.main.features.allowTradesCycling": "Button \"Handel neu auswürfeln\" für Dörfler ohne XP",
+	"title.config.wunderreich.main.features.allowLibrarianSelection": "Den ersten Handel von Bibliothekaren beeinflussen"
 }

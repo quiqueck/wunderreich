@@ -2,7 +2,9 @@
 	"tooltip.wunderreich.cycle_trades": "Re-Roll Trades",
 	"container.wunderreich.box_of_eir": "Box of Eir",
 	"block.wunderreich.box_of_eir": "Box of Eir",
+	"item.wunderreich.whisperer": "Whisperer",
 	"title.wunderreich.modmenu.main": "Wunderreich - Config",
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Keep Name-Tagged Monsters alive in Peacefull",
-	"title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP"
+	"title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP",
+	"title.config.wunderreich.main.features.allowLibrarianSelection": "Influence the first trade of librarians"
 }

@@ -11,8 +11,9 @@ public class MainConfig extends NamedPathConfig {
 
     public static final ConfigToken<Boolean> DO_NOT_DESPANW_WITH_NAMETAG = ConfigToken.Boolean(true, "doNotDespawnWithNametag", FEATURE_CATEGORY);
     public static final ConfigToken<Boolean> ALLOW_TRADES_CYCLING = ConfigToken.Boolean(true, "allowTradesCycling", FEATURE_CATEGORY);
+    public static final ConfigToken<Boolean> ALLOW_LIBRARIAN_SELECTION = ConfigToken.Boolean(true, "allowLibrarianSelection", FEATURE_CATEGORY);
 
     public MainConfig() {
-        super(Wunderreich.MOD_ID, "main", false);
+        super(Wunderreich.MOD_ID, "main", true);
     }
 }

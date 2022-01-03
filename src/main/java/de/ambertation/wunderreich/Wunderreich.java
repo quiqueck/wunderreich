@@ -41,7 +41,7 @@ public class Wunderreich implements ModInitializer {
 		// Proceed with mild caution.
 		WunderreichBlockEntities.register();
 		WunderreichBlocks.register();
-		
+		WunderreichItems.register();
 
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();
