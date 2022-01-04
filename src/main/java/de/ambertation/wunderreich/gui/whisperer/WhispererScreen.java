@@ -231,7 +231,7 @@ public class WhispererScreen
                 int decorateY = top + BORDER_WIDTH;
                 poseStack.pushPose();
                 poseStack.scale(0.5f, 1, 0.5f);
-                renderAndDecorateItemScaled(rule.type, left-2, decorateY+3, 0.5f);
+                renderAndDecorateItemScaled(rule.type, left-2, decorateY+7, 0.5f);
                 poseStack.popPose();
                 this.renderAndDecorateCostA(poseStack, costA, left+12, decorateY);
                 if (!costB.isEmpty()) {
