@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichReceipes;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -43,6 +44,7 @@ public class Wunderreich implements ModInitializer {
 		WunderreichBlockEntities.register();
 		WunderreichBlocks.register();
 		WunderreichItems.register();
+		WunderreichReceipes.register();
 
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();

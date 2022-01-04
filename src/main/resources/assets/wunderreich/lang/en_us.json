@@ -6,7 +6,7 @@
 	"block.wunderreich.box_of_eir": "Box of Eir",
 	"block.wunderreich.whsiper_enchanter": "Whisper Imprinter",
 	"item.wunderreich.whisperer": "Imprinted Whisperer",
-	"item.wunderreich.whisperer_blank": "Whisperer",
+	"item.wunderreich.whisperer_blank": "Blank Whisperer",
 	"title.wunderreich.modmenu.main": "Wunderreich - Config",
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Keep Name-Tagged Monsters alive in Peacefull",
 	"title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP",
@@ -25,6 +25,12 @@
 	"enchantment.type.CROSSBOW": "Crossbow Enchantment",
 	"enchantment.type.VANISHABLE": "Vanishable Enchantment",
 	"enchantment.type.TRIDENT": "Trident Enchantment",
-	"enchantment.type.Other": "Other Enchantment"
+	"enchantment.type.Other": "Other Enchantment",
+	"advancements.wunderreich.root.title": "A Whisper in the Wind",
+	"advancements.wunderreich.root.decription": "Build an Imprinter to whisper Tradesecrets to your new Librarians.",
+	"advancements.wunderreich.whisperer_blank.title": "Silent Whisper",
+	"advancements.wunderreich.whisperer_blank.description": "Build an empty shell to imprint your whisper.",
+	"advancements.wunderreich.whisperer.title": "A screaming Whisper",
+	"advancements.wunderreich.whisperer.description": "Imprint your enchantment secrets on a blank whisper."
 
 }

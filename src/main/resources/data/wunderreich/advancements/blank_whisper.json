@@ -1,0 +1,37 @@
+{
+    "parent": "wunderreich:root",
+    "display": {
+      "icon": {
+        "item": "wunderreich:whisperer_blank"
+      },
+      "title": {
+        "translate": "advancements.wunderreich.whisperer_blank.title"
+      },
+      "description": {
+        "translate": "advancements.wunderreich.whisperer_blank.description"
+      },
+      "frame": "task",
+      "show_toast": true,
+      "announce_to_chat": true,
+      "hidden": false
+    },
+    "criteria": {
+      "blank_whisper": {
+        "trigger": "minecraft:inventory_changed",
+        "conditions": {
+          "items": [
+            {
+              "items": [
+                "wunderreich:whisperer_blank"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "requirements": [
+      [
+        "blank_whisper"
+      ]
+    ]
+  }

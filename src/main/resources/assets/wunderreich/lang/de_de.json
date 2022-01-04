@@ -25,5 +25,11 @@
 	"enchantment.type.CROSSBOW": "Armbrust",
 	"enchantment.type.VANISHABLE": "Verschwindendes",
 	"enchantment.type.TRIDENT": "Dreizacke",
-	"enchantment.type.Other": "Andere Verzeubaerungen"
+	"enchantment.type.Other": "Andere Verzeubaerungen",
+	"advancements.wunderreich.root.title": "Ein flüstern im Wind",
+	"advancements.wunderreich.root.decription": "Baue einen Flüsterpräger neuen Bibliothekaren Handelsgeheimnisse zuzuflüstern.",
+	"advancements.wunderreich.whisperer_blank.title": "Stilles flüstern",
+	"advancements.wunderreich.whisperer_blank.description": "Baue eine leere Hülle um dein Geflüster zu prägen.",
+	"advancements.wunderreich.whisperer.title": "Prägendes geflüster",
+	"advancements.wunderreich.whisperer.description": "Präge deine Verzauberungsgeheimnisse auf einen leeres Flüstern."
 }

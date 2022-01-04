@@ -1,0 +1,37 @@
+{
+    "display": {
+        "icon": {
+            "item": "wunderreich:whsiper_enchanter"
+        },
+        "title": {
+            "translate": "advancements.wunderreich.root.title"
+        },
+        "description": {
+            "translate": "advancements.wunderreich.root.decription"
+        },
+        "frame": "task",
+        "show_toast": false,
+        "announce_to_chat": false,
+        "hidden": false,
+        "background": "minecraft:textures/gui/advancements/backgrounds/nether.png"
+    },
+    "criteria": {
+        "whisper_enchant": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+              "items": [
+                {
+                  "items": [
+                    "wunderreich:whsiper_enchanter"
+                  ]
+                }
+              ]
+            }
+          }
+    },
+    "requirements": [
+        [
+            "whisper_enchant"
+        ]
+    ]
+}
