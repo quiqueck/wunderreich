@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;

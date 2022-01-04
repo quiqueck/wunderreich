@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.particles.EirParticle;
 import de.ambertation.wunderreich.particles.SimpleParticleType;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichScreens;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,6 +26,8 @@ public class WunderreichClient implements ClientModInitializer {
 		ParticleFactoryRegistry.getInstance().register(EIR_PARTICLES, EirParticle.Provider::new);
 		
 		BlockEntityRendererRegistry.INSTANCE.register(WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, ChestRenderer::new);
+
+		WunderreichScreens.registerScreens();
 	}
 	
 	private static net.minecraft.client.resources.model.Material chestMaterial(String string) {

@@ -2,11 +2,12 @@ package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blocks.WhisperEnchanter;
 import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.config.MainConfig;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.material.Material;
 import org.jetbrains.annotations.NotNull;
 import ru.bclib.registry.BlockRegistry;
 
@@ -16,6 +17,7 @@ public class WunderreichBlocks {
     private static final BlockRegistry REGISTRY = new BlockRegistry(CreativeTabs.TAB_BLOCKS, Configs.BLOCK_CONFIG);
 
     public static final Block BOX_OF_EIR = registerBlock("box_of_eir", new BoxOfEirBlock());
+    public static final Block WHISPER_ENCHANTER = registerBlock("whsiper_enchanter", new WhisperEnchanter());
 
     @NotNull
     public static BlockRegistry getBlockRegistry() {
@@ -56,8 +58,8 @@ public class WunderreichBlocks {
         return getBlockRegistry().registerBlockOnly(Wunderreich.makeID(name), block);
     }
 
-    public static FabricItemSettings makeBlockItemSettings() {
-        return getBlockRegistry().makeItemSettings();
+    public static FabricBlockSettings makeStoneBlockSettings() {
+        return FabricBlockSettings.of(Material.STONE);
     }
 
     public static void register(){

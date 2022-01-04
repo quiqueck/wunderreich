@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.modmenu.MainScreen;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
+import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -51,5 +52,7 @@ public class Wunderreich implements ModInitializer {
 		Configs.saveConfigs();
 
 		ModMenu.addModMenuScreen(MOD_ID, MainScreen::new);
+
+		DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
 	}
 }

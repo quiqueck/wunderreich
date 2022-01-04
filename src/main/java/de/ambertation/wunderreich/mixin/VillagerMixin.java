@@ -1,7 +1,5 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.interfaces.AbstractVillagerAccessor;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;

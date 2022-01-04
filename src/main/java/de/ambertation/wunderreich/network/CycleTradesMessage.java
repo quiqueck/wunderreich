@@ -4,19 +4,14 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
+import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -26,12 +21,12 @@ import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MerchantMenu;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-import ru.bclib.api.dataexchange.DataExchangeAPI;
 import ru.bclib.util.Triple;
 
 public class CycleTradesMessage {
@@ -107,13 +102,20 @@ public class CycleTradesMessage {
 
         for (MerchantOffer offer : offers) {
             if (offer.getResult().is(Items.ENCHANTED_BOOK)) {
-                offer.getResult().getTagElement("StoredEnchantments");
-                CompoundTag tag = (CompoundTag) offer.getResult().getTag().getList("StoredEnchantments", Tag.TAG_COMPOUND).get(0);
-                //int level = tag.getShort("lvl");
-                String type = tag.getString("id");
+                var enchantments = EnchantedBookItem.getEnchantments(offer.getResult());
+                if (!enchantments.isEmpty()) {
+                    ResourceLocation type = EnchantmentHelper.getEnchantmentId(enchantments.getCompound(0));
 
-                if (type.equals(whisperer.getEnchantmentID())) {
-                    whispererStack.first.hurtAndBreak(1, whispererStack.second, player->player.broadcastBreakEvent(whispererStack.third));
+                    if (whisperer instanceof TrainedVillagerWhisperer trained) {
+                        if (type.equals(trained.getEnchantmentID(whispererStack.first))) {
+                            whispererStack.first.hurtAndBreak(2, whispererStack.second, player -> player.broadcastBreakEvent(whispererStack.third));
+                            return true;
+                        }
+                    } else {
+                        whispererStack.first.hurtAndBreak(2, whispererStack.second, player -> player.broadcastBreakEvent(whispererStack.third));
+                        return true;
+                    }
+                } else {
                     return true;
                 }
             }

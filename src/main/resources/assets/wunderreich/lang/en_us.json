@@ -1,10 +1,30 @@
 {
 	"tooltip.wunderreich.cycle_trades": "Re-Roll Trades",
+	"tooltip.fragment.max": "max",
+	"title.whisperer.enchant": "Whispers",
 	"container.wunderreich.box_of_eir": "Box of Eir",
 	"block.wunderreich.box_of_eir": "Box of Eir",
-	"item.wunderreich.whisperer": "Whisperer",
+	"block.wunderreich.whsiper_enchanter": "Whisper Imprinter",
+	"item.wunderreich.whisperer": "Imprinted Whisperer",
+	"item.wunderreich.whisperer_blank": "Whisperer",
 	"title.wunderreich.modmenu.main": "Wunderreich - Config",
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Keep Name-Tagged Monsters alive in Peacefull",
 	"title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP",
-	"title.config.wunderreich.main.features.allowLibrarianSelection": "Influence the first trade of librarians"
+	"title.config.wunderreich.main.features.allowLibrarianSelection": "Influence the first trade of librarians",
+	"enchantment.type.ARMOR": "Armor Enchantment",
+	"enchantment.type.ARMOR_FEET": "Foot-Armor Enchantment",
+	"enchantment.type.ARMOR_LEGS": "Leg-Armor Enchantment",
+	"enchantment.type.ARMOR_CHEST": "Chest-Armor Enchantment",
+	"enchantment.type.ARMOR_HEAD": "Head-Armor Enchantment",
+	"enchantment.type.WEAPON": "Weapon Enchantment",
+	"enchantment.type.DIGGER": "Digger Enchantment",
+	"enchantment.type.FISHING_ROD": "Fishing Rod Enchantment",
+	"enchantment.type.BREAKABLE": "Breakable Enchantment",
+	"enchantment.type.BOW": "Bow Enchantment",
+	"enchantment.type.WEARABLE": "Wearable Enchantment",
+	"enchantment.type.CROSSBOW": "Crossbow Enchantment",
+	"enchantment.type.VANISHABLE": "Vanishable Enchantment",
+	"enchantment.type.TRIDENT": "Trident Enchantment",
+	"enchantment.type.Other": "Other Enchantment"
+
 }

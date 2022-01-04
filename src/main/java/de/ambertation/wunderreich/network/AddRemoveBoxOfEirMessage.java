@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.network;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock.LiveBlock;
-import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
@@ -12,9 +11,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.npc.Villager;
-import net.minecraft.world.inventory.MerchantMenu;
 
 public class AddRemoveBoxOfEirMessage {
 	public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir");

@@ -4,9 +4,6 @@ package de.ambertation.wunderreich.mixin.client;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.gui.CycleTradesButton;
-import de.ambertation.wunderreich.interfaces.IMerchantMenu;
-import de.ambertation.wunderreich.network.CycleTradesMessage;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.network.chat.Component;
@@ -32,13 +29,10 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
 		if (!Configs.MAIN.get(MainConfig.ALLOW_TRADES_CYCLING)) return;
 
 		MerchantScreen merchantScreen = (MerchantScreen)(Object)this;
-		final int left = (this.width - this.imageWidth) / 2;
-		final int top = (this.height - this.imageHeight) / 2;
-		
-		CycleTradesButton button = new CycleTradesButton(left + MERCHANT_MENU_PART_X + 8, top + 8, b -> {
-			CycleTradesMessage.send();
-		}, merchantScreen);
-		
+		CycleTradesButton button = CycleTradesButton.getCycleTradesButton(this, this.imageWidth, this.imageHeight, merchantScreen, this.menu);
+
 		this.addRenderableWidget(button);
 	}
+
+
 }
