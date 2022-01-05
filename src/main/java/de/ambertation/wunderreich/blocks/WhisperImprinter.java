@@ -21,7 +21,10 @@ public class WhisperImprinter extends Block {
      * Creates a new Block
      */
     public WhisperImprinter() {
-        super(WunderreichBlocks.makeStoneBlockSettings());
+        super(WunderreichBlocks.makeStoneBlockSettings()
+                               .strength(12.5F, 800.0F)
+                               .luminance(8)
+        );
     }
 
     @Override

@@ -1,5 +1,5 @@
 {
-    "parent": "wunderreich:block/whsiper_imprinter",
+    "parent": "wunderreich:block/whisper_imprinter",
     "textures": {
         "particle": "wunderreich:item/whisperer_blank"
     }

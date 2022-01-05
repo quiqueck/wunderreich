@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import io.netty.util.internal.ConcurrentSet;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
@@ -70,15 +71,13 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 	EnderChestBlock chestBlock;
 	
 	public BoxOfEirBlock() {
-		super(FabricBlockSettings
-				.of(Material.STONE)
-				//TODO: This needs to change to the TagAPI from BCLib!
-				.breakByTool(FabricToolTags.PICKAXES)
-				.requiresCorrectToolForDrops()
-				.strength(12.5F, 800.0F)
-				.lightLevel((blockState) -> {
-					return 7;
-				}), () -> {
+		super(WunderreichBlocks.makeStoneBlockSettings()
+							   .luminance(7)
+							   //TODO: This needs to change to the TagAPI from BCLib!
+							   .breakByTool(FabricToolTags.PICKAXES)
+							   .requiresCorrectToolForDrops()
+							   .strength(12.5F, 800.0F)
+							   , () -> {
 			return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
 		});
 		this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(WATERLOGGED, false));

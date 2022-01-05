@@ -1,10 +1,10 @@
 {
 	"credit": "Made with Blockbench",
-	"parent": "block",
+	"parent": "block/block",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "wunderreich:block/whsiper_imprinter",
-		"particle": "wunderreich:block/whsiper_imprinter"
+		"0": "wunderreich:block/whisper_imprinter",
+		"particle": "wunderreich:block/whisper_imprinter"
 	},
 	"elements": [
 		{

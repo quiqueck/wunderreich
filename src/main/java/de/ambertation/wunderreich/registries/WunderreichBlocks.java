@@ -17,7 +17,7 @@ public class WunderreichBlocks {
     private static final BlockRegistry REGISTRY = new BlockRegistry(CreativeTabs.TAB_BLOCKS, Configs.BLOCK_CONFIG);
 
     public static final Block BOX_OF_EIR = registerBlock("box_of_eir", new BoxOfEirBlock());
-    public static final Block WHISPER_IMPRINTER = registerBlock("whsiper_imprinter", new WhisperImprinter());
+    public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
 
     @NotNull
     public static BlockRegistry getBlockRegistry() {
