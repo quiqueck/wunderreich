@@ -14,6 +14,7 @@ import net.minecraft.ReportedException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.HalfTransparentBlock;
@@ -119,18 +121,20 @@ public class WhispererScreen
 
         blit(poseStack, paddingX, paddingY, this.getBlitOffset(), 0.0f, 0.0f, this.imageWidth, this.imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
+    
+
 
     private void renderScroller(PoseStack poseStack, int x, int y, List<WhisperRule> enchants) {
-        int invisibleCount = enchants.size() + 1 - NUMBER_OF_OFFER_BUTTONS;
-        if (invisibleCount > 1) {
-            int l = SCROLL_BAR_HEIGHT - (SCROLLER_HEIGHT + (invisibleCount - 1) * SCROLL_BAR_HEIGHT / invisibleCount);
-            int m = 1 + l / invisibleCount + SCROLL_BAR_HEIGHT / invisibleCount;
-            final int n = 113;
-            int o = Math.min(n, this.scrollOff * m);
-            if (this.scrollOff == invisibleCount - 1) {
-                o = n;
+        final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
+        if (pageCount > 0) {
+            final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;
+            final float STEP_PER_PAGE = (float)SCROLLER_MAX_Y  / pageCount;
+            
+            int scrollerOffset = Math.min(SCROLLER_MAX_Y,(int)(this.scrollOff * STEP_PER_PAGE));
+            if (this.scrollOff == pageCount ) {
+                scrollerOffset = SCROLLER_MAX_Y;
             }
-            WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y + o, this.getBlitOffset(), 0.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+            WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y + scrollerOffset, this.getBlitOffset(), 0.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         } else {
             WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y, this.getBlitOffset(), 6.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         }
