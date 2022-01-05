@@ -17,7 +17,7 @@ public class WunderreichReceipes {
                 .addMaterial('A', Items.AMETHYST_SHARD)
                 .build();
 
-        GridRecipe.make(Wunderreich.makeID("whsiper_enchanter"), WunderreichBlocks.WHISPER_ENCHANTER)
+        GridRecipe.make(Wunderreich.makeID("whsiper_imprinter"), WunderreichBlocks.WHISPER_IMPRINTER)
                 .checkConfig(Configs.RECIPE_CONFIG)
                 .setShape("ABA", "DCD", "DDD")
                 .addMaterial('C', new ItemStack(Blocks.OXIDIZED_COPPER, 2))

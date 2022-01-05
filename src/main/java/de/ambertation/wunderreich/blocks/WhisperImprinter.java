@@ -11,16 +11,16 @@ import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import ru.bclib.blocks.BaseBlock;
 
-public class WhisperEnchanter extends BaseBlock {
+public class WhisperImprinter extends Block {
     /**
      * Creates a new Block
      */
-    public WhisperEnchanter() {
+    public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings());
     }
 

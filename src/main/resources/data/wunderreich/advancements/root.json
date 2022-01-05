@@ -1,7 +1,7 @@
 {
     "display": {
         "icon": {
-            "item": "wunderreich:whsiper_enchanter"
+            "item": "wunderreich:whsiper_imprinter"
         },
         "title": {
             "translate": "advancements.wunderreich.root.title"
@@ -22,7 +22,7 @@
               "items": [
                 {
                   "items": [
-                    "wunderreich:whsiper_enchanter"
+                    "wunderreich:whsiper_imprinter"
                   ]
                 }
               ]
