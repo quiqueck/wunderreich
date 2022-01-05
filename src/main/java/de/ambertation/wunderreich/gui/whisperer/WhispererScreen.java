@@ -139,8 +139,12 @@ public class WhispererScreen
             WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y, this.getBlitOffset(), 6.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         }
     }
-
-
+    
+    
+    /*
+     * BEGIN: From ItemRenderer by Mojang
+     * --------------------------------
+     */
     public void renderAndDecorateItemScaled(ItemStack itemStack, int i, int j, float scale) {
         this.tryRenderGuiItemScaled(Minecraft.getInstance().player, itemStack, i, j, 0, 0, scale);
     }
@@ -204,9 +208,13 @@ public class WhispererScreen
         poseStack.popPose();
         RenderSystem.applyModelViewMatrix();
     }
-
-
-
+    /*
+     * END: From ItemRenderer by Mojang
+     * --------------------------------
+     */
+    
+    
+    
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
