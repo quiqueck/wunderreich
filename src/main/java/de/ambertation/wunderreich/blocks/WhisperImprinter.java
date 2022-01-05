@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,8 +23,10 @@ public class WhisperImprinter extends Block {
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                               .strength(12.5F, 800.0F)
+                               .mapColor(MaterialColor.LAPIS)
+                               .strength(5.0f, 1200.0f)
                                .luminance(8)
+                               .requiresTool()
         );
     }
 
