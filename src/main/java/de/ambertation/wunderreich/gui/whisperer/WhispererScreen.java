@@ -203,7 +203,6 @@ public class WhispererScreen
      */
     
     
-    
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);

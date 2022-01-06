@@ -47,7 +47,7 @@ public class CycleTradesButton extends Button {
 		final int left = (merchantScreenMixin.width - imageWidth) / 2;
 		final int top = (merchantScreenMixin.height - imageHeight) / 2;
 
-		CycleTradesButton button = new CycleTradesButton( left - CycleTradesButton.WIDTH - 1, top + 2, b -> {
+		CycleTradesButton button = new CycleTradesButton( left - CycleTradesButton.WIDTH - 2, top + 2, b -> {
 			CycleTradesMessage.send();
 		}, merchantScreen, menu);
 
@@ -73,10 +73,10 @@ public class CycleTradesButton extends Button {
 		RenderSystem.setShaderTexture(0, BookViewScreen.BOOK_LOCATION);
 		final int u = isHovered?26:3;
 
-		blit(matrixStack, x, y+HALF_HEIGHT, u, 207, WIDTH, HALF_HEIGHT, 256, 256);
+		blit(matrixStack, x, y+HALF_HEIGHT-5, u, 204, WIDTH, HALF_HEIGHT, 256, 256);
 		matrixStack.pushPose();
 		matrixStack.scale(1, -1, 1);
-		blit(matrixStack, x, -y, u, 207, WIDTH, -HALF_HEIGHT, 256, 256);
+		blit(matrixStack, x, -y, u, 204, WIDTH, -HALF_HEIGHT, 256, 256);
 		matrixStack.popPose();
 
 		if (isHovered) {
