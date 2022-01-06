@@ -2,8 +2,10 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichParticles;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -18,6 +20,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
@@ -27,6 +30,7 @@ import ru.bclib.api.TagAPI;
 import ru.bclib.interfaces.TagProvider;
 
 import java.util.List;
+import java.util.Random;
 
 public class WhisperImprinter extends Block implements TagProvider {
     /**
@@ -72,6 +76,28 @@ public class WhisperImprinter extends Block implements TagProvider {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
             level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
+        }
+    }
+    
+    @Override
+    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
+        super.animateTick(blockState, level, blockPos, random);
+        for (int i = -1; i <= 1; ++i) {
+            for (int j = -1; j <= 1; ++j) {
+                if (i==0 && j==0) continue;
+                if (random.nextInt(20) != 0) continue;
+                for (int k = 1; k <= 4; ++k) {
+                    level.addParticle(
+                        WunderreichParticles.IMPRINT_PARTICLES,
+                        blockPos.getX() + 0.5,
+                        blockPos.getY() + 2,
+                        blockPos.getZ() + 0.5,
+                        i + random.nextFloat() - 0.5,
+                        k - random.nextFloat() - 1.0f,
+                        j + random.nextFloat() - 0.5
+                    );
+                }
+            }
         }
     }
 }
