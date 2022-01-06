@@ -1,13 +1,13 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
-import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichParticles;
 import io.netty.util.internal.ConcurrentSet;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.core.BlockPos;
@@ -185,7 +185,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 			double yd = ( random.nextFloat() - 0.5) * 0.125;
 			double zd = random.nextFloat() * zFactor;
 			
-			level.addParticle(WunderreichClient.EIR_PARTICLES, x0, y0, z0, xd, yd, zd);
+			level.addParticle(WunderreichParticles.EIR_PARTICLES, x0, y0, z0, xd, yd, zd);
 		}
 		
 	}
