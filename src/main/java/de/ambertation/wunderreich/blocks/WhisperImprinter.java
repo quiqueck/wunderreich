@@ -5,16 +5,20 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.Tag.Named;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleMenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
@@ -35,6 +39,7 @@ public class WhisperImprinter extends Block implements TagProvider {
                                .luminance(8)
                                .breakByTool(FabricToolTags.PICKAXES)
                                .requiresTool()
+                               .sound(SoundType.AMETHYST)
         );
     }
 
@@ -59,5 +64,14 @@ public class WhisperImprinter extends Block implements TagProvider {
     @Override
     public void addTags(List<Named<Block>> blockTags, List<Named<Item>> itemTags) {
         blockTags.add(TagAPI.MINEABLE_PICKAXE);
+    }
+    
+    @Override
+    public void onProjectileHit(Level level, BlockState blockState, BlockHitResult blockHitResult, Projectile projectile) {
+        if (!level.isClientSide) {
+            BlockPos blockPos = blockHitResult.getBlockPos();
+            level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
+            level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
+        }
     }
 }
