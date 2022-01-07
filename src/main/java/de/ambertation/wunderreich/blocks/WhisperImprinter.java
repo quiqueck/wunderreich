@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.TextComponent;
@@ -45,6 +46,7 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
                                .luminance(8)
                                .breakByTool(FabricToolTags.PICKAXES)
                                .requiresTool()
+                               .nonOpaque()
                                .sound(SoundType.AMETHYST)
         );
     }
@@ -84,6 +86,21 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
     @Override
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
         super.animateTick(blockState, level, blockPos, random);
+
+        if (random.nextInt(8) != 0) {
+
+            Player player = Minecraft.getInstance().player;
+            level.addParticle(
+                    WunderreichParticles.IMPRINT_PARTICLES,
+                    blockPos.getX() + 0.5,
+                    blockPos.getY() + 2,
+                    blockPos.getZ() + 0.5,
+                    player.getX() + random.nextFloat() - 0.5,
+                    player.getY(),
+                    player.getZ()+ random.nextFloat() - 0.5
+            );
+        }
+
         for (int i = -1; i <= 1; ++i) {
             for (int j = -1; j <= 1; ++j) {
                 if (i==0 && j==0) continue;
