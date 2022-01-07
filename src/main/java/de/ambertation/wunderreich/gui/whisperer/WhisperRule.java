@@ -20,6 +20,7 @@ public class WhisperRule {
     public final ItemStack costB = new ItemStack(WunderreichItems.BLANK_WHISPERER);
     public final ItemStack result;
     public final ItemStack type;
+    public final int baseXP;
 
     WhisperRule(Enchantment enchantment) {
         this.enchantment = enchantment;
@@ -36,6 +37,7 @@ public class WhisperRule {
             mul = 1;
         }
 
+        int rarityMultiplicator = 1;
         if (enchantment.category == EnchantmentCategory.ARMOR) {
             cost = new ItemStack(Blocks.IRON_BLOCK.asItem(), 2 * mul);
             type = new ItemStack(Items.ARMOR_STAND);
@@ -45,9 +47,11 @@ public class WhisperRule {
         } else if (enchantment.category == EnchantmentCategory.ARMOR_CHEST) {
             cost = new ItemStack(Blocks.OXIDIZED_COPPER.asItem(), 1 * mul);
             type = new ItemStack(Items.LEATHER_CHESTPLATE);
+            rarityMultiplicator = 2;
         } else if (enchantment.category == EnchantmentCategory.ARMOR_LEGS) {
             cost = new ItemStack(Blocks.EXPOSED_COPPER.asItem(), 1 * mul);
             type = new ItemStack(Items.LEATHER_LEGGINGS);
+            rarityMultiplicator = 2;
         } else if (enchantment.category == EnchantmentCategory.ARMOR_FEET) {
             cost = new ItemStack(Blocks.RAW_COPPER_BLOCK.asItem(), 1 * mul);
             type = new ItemStack(Items.LEATHER_BOOTS);
@@ -57,15 +61,17 @@ public class WhisperRule {
         } else if (enchantment.category == EnchantmentCategory.WEAPON) {
             cost = new ItemStack(Items.LAPIS_BLOCK, 4 * mul);
             type = new ItemStack(Items.WOODEN_SWORD);
+            rarityMultiplicator = 2;
         } else if (enchantment.category == EnchantmentCategory.DIGGER) {
-            cost = new ItemStack(Blocks.SMOOTH_STONE.asItem(), 4 * mul);
+            cost = new ItemStack(Blocks.SMOOTH_STONE.asItem(), 5 * mul);
             type = new ItemStack(Items.WOODEN_PICKAXE);
         } else if (enchantment.category == EnchantmentCategory.FISHING_ROD) {
-            cost = new ItemStack(Blocks.GRAVEL.asItem(), 32 * mul);
+            cost = new ItemStack(Blocks.GRAVEL.asItem(), Math.min(64, 32 * mul));
             type = new ItemStack(Items.FISHING_ROD);
         } else if (enchantment.category == EnchantmentCategory.TRIDENT) {
             cost = new ItemStack(Blocks.SEA_LANTERN.asItem(), 4 * mul);
             type = new ItemStack(Items.TRIDENT);
+            rarityMultiplicator = 3;
         } else if (enchantment.category == EnchantmentCategory.CROSSBOW) {
             cost = new ItemStack(Blocks.DARK_OAK_LOG.asItem(), 4 * mul);
             type = new ItemStack(Items.CROSSBOW);
@@ -75,6 +81,7 @@ public class WhisperRule {
         } else if (enchantment.category == EnchantmentCategory.BREAKABLE) {
             cost = new ItemStack(Blocks.EMERALD_BLOCK.asItem(), 1 * mul);
             type = new ItemStack(Items.SMITHING_TABLE);
+            rarityMultiplicator = 2;
         } else if (enchantment.category == EnchantmentCategory.WEARABLE) {
             cost = new ItemStack(Blocks.PINK_WOOL.asItem(), 4 * mul);
             type = new ItemStack(Items.CARVED_PUMPKIN);
@@ -83,6 +90,7 @@ public class WhisperRule {
             type = ItemStack.EMPTY;
         }
 
+        baseXP = 2 * mul * rarityMultiplicator;
         result = TrainedVillagerWhisperer.createForEnchantment(enchantment);
     }
 

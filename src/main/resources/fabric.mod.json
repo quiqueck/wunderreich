@@ -27,6 +27,7 @@
       }
     ]
   },
+  "accessWidener" : "wunderreich.accesswidener",
   "mixins": [
 	  "wunderreich.mixins.client.json",
       "wunderreich.mixins.common.json"
@@ -40,5 +41,6 @@
     "bclib": ">=1.2.2"
   },
   "suggests": {
+    "modmenu": "*"
   }
 }

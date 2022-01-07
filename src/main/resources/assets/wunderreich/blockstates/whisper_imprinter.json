@@ -1,0 +1,7 @@
+{
+    "variants": {
+      "": {
+        "model": "wunderreich:block/whisper_imprinter"
+      }
+    }
+  }

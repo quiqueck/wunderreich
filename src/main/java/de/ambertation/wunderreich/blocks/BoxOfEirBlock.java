@@ -1,14 +1,14 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
-import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichParticles;
 import io.netty.util.internal.ConcurrentSet;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -50,7 +50,6 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -70,15 +69,13 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 	EnderChestBlock chestBlock;
 	
 	public BoxOfEirBlock() {
-		super(FabricBlockSettings
-				.of(Material.STONE)
-				//TODO: This needs to change to the TagAPI from BCLib!
-				.breakByTool(FabricToolTags.PICKAXES)
-				.requiresCorrectToolForDrops()
-				.strength(12.5F, 800.0F)
-				.lightLevel((blockState) -> {
-					return 7;
-				}), () -> {
+		super(WunderreichBlocks.makeStoneBlockSettings()
+							   .luminance(7)
+							   //TODO: This needs to change to the TagAPI from BCLib!
+							   .breakByTool(FabricToolTags.PICKAXES)
+							   .requiresCorrectToolForDrops()
+							   .strength(12.5F, 800.0F)
+							   , () -> {
 			return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
 		});
 		this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(WATERLOGGED, false));
@@ -188,7 +185,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 			double yd = ( random.nextFloat() - 0.5) * 0.125;
 			double zd = random.nextFloat() * zFactor;
 			
-			level.addParticle(WunderreichClient.EIR_PARTICLES, x0, y0, z0, xd, yd, zd);
+			level.addParticle(WunderreichParticles.EIR_PARTICLES, x0, y0, z0, xd, yd, zd);
 		}
 		
 	}
