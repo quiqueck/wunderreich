@@ -12,9 +12,8 @@ group = project.maven_group
 def local_bclib = findProject(':BCLib') != null
 
 repositories {
-	flatDir {
-        dirs 'libs'
-    }
+	maven { url "https://maven.shedaniel.me" }
+	flatDir { dirs 'libs'}
 }
 
 loom {
@@ -26,6 +25,9 @@ dependencies {
 	mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
 
 	println "Using local BCLib: ${local_bclib}"
     if (local_bclib){

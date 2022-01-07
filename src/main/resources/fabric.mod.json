@@ -25,6 +25,10 @@
       {
         "value": "de.ambertation.wunderreich.client.WunderreichClient"
       }
+    ],
+    "rei": [
+      "de.ambertation.wunderreich.rei.ServerPlugin",
+      "de.ambertation.wunderreich.rei.ClientPlugin"
     ]
   },
   "accessWidener" : "wunderreich.accesswidener",

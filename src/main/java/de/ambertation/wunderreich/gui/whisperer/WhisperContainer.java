@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-class WhisperContainer implements Container {
+public class WhisperContainer implements Container {
     private final NonNullList<ItemStack> itemStacks;
     private int lastSelectedRule;
     @Nullable

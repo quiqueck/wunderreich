@@ -9,6 +9,7 @@ import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichReceipes;
+import de.ambertation.wunderreich.rei.ImprinterReceip;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -45,6 +46,8 @@ public class Wunderreich implements ModInitializer {
 		WunderreichBlocks.register();
 		WunderreichItems.register();
 		WunderreichReceipes.register();
+
+		ImprinterReceip.register();
 
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();
