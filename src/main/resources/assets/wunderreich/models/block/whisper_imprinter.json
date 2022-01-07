@@ -89,8 +89,9 @@
 		},
 		{
 			"name": "Amethist - North",
-			"from": [0, 0, 0.5],
-			"to": [16, 16, 0.51],
+			"from": [0.5, 1, 0.5],
+			"to": [15.5, 16, 0.51],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 0]},
 			"faces": {
 				"north": {"uv": [10.66667, 10.66667, 16, 5.33333], "rotation": 180, "texture": "#0"},
 				"east": {"uv": [0, 0, 5, 0.005], "rotation": 270, "texture": "#0"},
@@ -102,8 +103,9 @@
 		},
 		{
 			"name": "Amethist - East",
-			"from": [0.5, 0, 0],
-			"to": [0.51, 16, 16],
+			"from": [0.5, 1, 0.5],
+			"to": [0.51, 16, 15.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0.505, 8, 8]},
 			"faces": {
 				"north": {"uv": [0, 0, 5, 0.005], "rotation": 270, "texture": "#0"},
 				"east": {"uv": [16, 0, 10.66667, 5.33333], "texture": "#0"},
@@ -115,8 +117,9 @@
 		},
 		{
 			"name": "Amethist - South",
-			"from": [0, 0, 15.5],
-			"to": [16, 16, 15.51],
+			"from": [0.5, 1, 15.5],
+			"to": [15.5, 16, 15.51],
+			"rotation": {"angle": 0, "axis": "y", "origin": [8, 8, 15.505]},
 			"faces": {
 				"north": {"uv": [10.66667, 10.66667, 16, 5.33333], "rotation": 180, "texture": "#0"},
 				"east": {"uv": [0, 0, 5, 0.005], "rotation": 270, "texture": "#0"},
@@ -128,8 +131,9 @@
 		},
 		{
 			"name": "Amethist - West",
-			"from": [15.5, 0, 0],
-			"to": [15.51, 16, 16],
+			"from": [15.5, 1, 0.5],
+			"to": [15.51, 16, 15.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [15.505, 8, 8]},
 			"faces": {
 				"north": {"uv": [0, 0, 5, 0.005], "rotation": 270, "texture": "#0"},
 				"east": {"uv": [16, 0, 10.66667, 5.33333], "texture": "#0"},
