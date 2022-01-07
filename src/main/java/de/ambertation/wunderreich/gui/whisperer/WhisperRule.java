@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import net.minecraft.ChatFormatting;
@@ -8,19 +7,11 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import ru.bclib.interfaces.UnknownReceipBookCategory;
-import ru.bclib.recipes.BCLRecipeManager;
 
 public class WhisperRule {
 

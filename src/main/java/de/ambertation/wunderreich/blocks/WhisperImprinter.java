@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.blocks;
 
-import com.mojang.math.Vector3f;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -22,7 +21,6 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;

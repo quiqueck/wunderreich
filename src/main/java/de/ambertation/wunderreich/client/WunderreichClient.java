@@ -1,19 +1,15 @@
 package de.ambertation.wunderreich.client;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.particles.EirParticle;
-import de.ambertation.wunderreich.particles.SimpleParticleType;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegistry;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)

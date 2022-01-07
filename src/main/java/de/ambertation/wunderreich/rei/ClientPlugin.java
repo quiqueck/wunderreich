@@ -21,6 +21,6 @@ public class ClientPlugin implements REIClientPlugin, iREI {
 
     @Override
     public void registerDisplays(DisplayRegistry registry) {
-        registry.registerRecipeFiller(ImprinterReceip.class, ImprinterReceip.TYPE, ImprinterDisplay::of);
+        registry.registerRecipeFiller(ImprinterReceip.class, ImprinterReceip.Type.INSTANCE, ImprinterDisplay::of);
     }
 }

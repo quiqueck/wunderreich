@@ -9,8 +9,6 @@ import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry.PendingParticleFactory;
 import net.minecraft.core.Registry;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.resources.ResourceLocation;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichParticles {
