@@ -1,11 +1,11 @@
 {
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
-	"texture_size": [48, 48],
+	"texture_size": [32, 32],
 	"textures": {
-		"0": "wunderreich:block/whsiper_imprinter",
-		"1": "wunderreich:block/whsiper_imprinter_top",
-		"particle": "wunderreich:block/whsiper_imprinter"
+		"0": "wunderreich:block/whisper_imprinter",
+		"1": "wunderreich:block/whisper_imprinter_top",
+		"particle": "wunderreich:block/whisper_imprinter"
 	},
 	"elements": [
 		{
@@ -50,5 +50,6 @@
 				"down": {"uv": [5.33333, 0, 10.66667, 5.33333], "texture": "#0"}
 			}
 		}
-	]
+	],
+	"display": {}
 }

@@ -27,12 +27,14 @@ import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 import ru.bclib.api.TagAPI;
+import ru.bclib.client.render.BCLRenderLayer;
+import ru.bclib.interfaces.RenderLayerProvider;
 import ru.bclib.interfaces.TagProvider;
 
 import java.util.List;
 import java.util.Random;
 
-public class WhisperImprinter extends Block implements TagProvider {
+public class WhisperImprinter extends Block implements TagProvider, RenderLayerProvider {
     /**
      * Creates a new Block
      */
@@ -99,5 +101,10 @@ public class WhisperImprinter extends Block implements TagProvider {
                 }
             }
         }
+    }
+
+    @Override
+    public BCLRenderLayer getRenderLayer() {
+        return BCLRenderLayer.CUTOUT;
     }
 }
