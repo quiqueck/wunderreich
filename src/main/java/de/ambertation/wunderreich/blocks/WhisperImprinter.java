@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import com.mojang.math.Vector3f;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -26,6 +27,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 import ru.bclib.api.TagAPI;
 import ru.bclib.client.render.BCLRenderLayer;
@@ -87,25 +89,31 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
         super.animateTick(blockState, level, blockPos, random);
 
-//        if (random.nextInt(8) != 0) {
-//
-//            Player player = Minecraft.getInstance().player;
-//            level.addParticle(
-//                    WunderreichParticles.IMPRINT_PARTICLES,
-//                    blockPos.getX() + 0.5,
-//                    blockPos.getY() + 2,
-//                    blockPos.getZ() + 0.5,
-//                    player.getX() + random.nextFloat() - 0.5,
-//                    player.getY(),
-//                    player.getZ()+ random.nextFloat() - 0.5
-//            );
-//        }
+        if (random.nextInt(4) == 0) {
+            Player player = Minecraft.getInstance().player;
+            final Vec3 bp = new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+            Vec3 v = bp.subtract((float)player.getX(), (float)player.getY(), (float)player.getZ());
+            float len = Math.max(0, (float)v.length() - 0.707f);
+            if (len>0 && len<4) {
+                v = v.normalize().multiply(len, len, len);
+
+                level.addParticle(
+                        ParticleTypes.PORTAL,
+                        blockPos.getX() + 0.5,
+                        blockPos.getY() + 1,
+                        blockPos.getZ() + 0.5,
+                        -v.x + (random.nextFloat()-0.5)*0.5,
+                        -v.y - random.nextFloat()-0.5,
+                        -v.z + (random.nextFloat()-0.5)*0.5
+                );
+            }
+        }
 
         for (int i = -1; i <= 1; ++i) {
             for (int j = -1; j <= 1; ++j) {
                 if (i==0 && j==0) continue;
-                if (random.nextInt(20) != 0) continue;
-                for (int k = 1; k <= 4; ++k) {
+                if (random.nextInt(40) != 0) continue;
+                for (int k = 2; k <= 5; ++k) {
                     level.addParticle(
                         WunderreichParticles.IMPRINT_PARTICLES,
                         blockPos.getX() + 0.5,
