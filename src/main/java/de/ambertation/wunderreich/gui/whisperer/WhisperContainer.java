@@ -102,7 +102,7 @@ public class WhisperContainer implements Container {
         if (costA.isEmpty()) {
             this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
         } else {
-            var enchantments = ImprinterRecipe.getReceips();
+            var enchantments = ImprinterRecipe.getRecipes();
             if (!enchantments.isEmpty()) {
                 WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
                 if (rule == null) {
@@ -122,7 +122,7 @@ public class WhisperContainer implements Container {
 
     @Nullable
     public WhisperRule getIngredientsFor(ItemStack slotA, ItemStack slotB, int preferedIndex) {
-        var all = ImprinterRecipe.getReceips();
+        var all = ImprinterRecipe.getRecipes();
         WhisperRule rule;
         if (preferedIndex > 0 && preferedIndex < all.size()) {
             rule = all.get(preferedIndex);

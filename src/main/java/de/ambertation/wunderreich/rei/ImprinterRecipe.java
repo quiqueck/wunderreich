@@ -32,7 +32,7 @@ import java.util.Objects;
 public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContainer> {
     static final int COST_A_SLOT = 0;
     static final int COST_B_SLOT = 1;
-    private static final List<ImprinterRecipe> RECEIPS = new LinkedList<>();
+    private static final List<ImprinterRecipe> RECIPES = new LinkedList<>();
     private final ResourceLocation id;
 
     private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
@@ -51,15 +51,15 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         this.id = Wunderreich.makeID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
     }
 
-    public static List<ImprinterRecipe> getReceips() {
-        return RECEIPS;
+    public static List<ImprinterRecipe> getRecipes() {
+        return RECIPES;
     }
 
     public static void register() {
         Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
         Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
 
-        RECEIPS.clear();
+        RECIPES.clear();
         List<Enchantment> enchants = new LinkedList<>();
         Registry.ENCHANTMENT.forEach(e -> {
             enchants.add(e);
@@ -68,7 +68,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
         enchants.forEach(e -> {
             ImprinterRecipe r = new ImprinterRecipe(e);
-            RECEIPS.add(r);
+            RECIPES.add(r);
             BCLRecipeManager.addRecipe(Type.INSTANCE, r);
         });
     }
@@ -213,8 +213,8 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
             ImprinterRecipe r = new ImprinterRecipe(id, enchantment.get(), inputA, inputB, recipeJson.xp);
 
-            RECEIPS.remove(r);
-            RECEIPS.add(r);
+            RECIPES.remove(r);
+            RECIPES.add(r);
 
             return r;
         }

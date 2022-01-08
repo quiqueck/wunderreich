@@ -197,7 +197,7 @@ public class WhispererMenu
     }
 
     public List<ImprinterRecipe> getEnchants() {
-        return ImprinterRecipe.getReceips();
+        return ImprinterRecipe.getRecipes();
     }
 }
 
