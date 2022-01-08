@@ -1,17 +1,12 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
+import de.ambertation.wunderreich.rei.ImprinterReceip;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.Registry;
-import net.minecraft.locale.Language;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
 
 public class WhisperContainer implements Container {
     private final NonNullList<ItemStack> itemStacks;
@@ -107,7 +102,7 @@ public class WhisperContainer implements Container {
         if (costA.isEmpty()) {
             this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
         } else {
-                var enchantments = getAllEnchants();
+                var enchantments = ImprinterReceip.getReceips();
                 if (!enchantments.isEmpty()) {
                     WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
                     if (rule == null) {
@@ -127,7 +122,7 @@ public class WhisperContainer implements Container {
 
     @Nullable
     public WhisperRule getIngredientsFor(ItemStack slotA, ItemStack slotB, int preferedIndex) {
-        var all = getAllEnchants();
+        var all = ImprinterReceip.getReceips();
         WhisperRule rule;
         if (preferedIndex > 0 && preferedIndex < all.size()) {
             rule = all.get(preferedIndex);
@@ -162,24 +157,5 @@ public class WhisperContainer implements Container {
     public void setLastSelectedRule(int i) {
         this.lastSelectedRule = i;
         this.updateResultItem();
-    }
-
-    private static List<WhisperRule> whisperRules = null;
-    private static Language lastLanguage;
-
-    public static List<WhisperRule> getAllEnchants() {
-        Language language = Language.getInstance();
-        if (whisperRules == null || !lastLanguage.equals(language)) {
-            lastLanguage = language;
-            whisperRules = new ArrayList<>(32);
-
-            Registry.ENCHANTMENT.forEach(e -> {
-                WhisperRule wi = new WhisperRule(e);
-                whisperRules.add(wi);
-            });
-
-            whisperRules.sort(Comparator.comparing(a -> a.enchantment.category.name() + ":" + a.name ));
-        }
-        return whisperRules;
     }
 }

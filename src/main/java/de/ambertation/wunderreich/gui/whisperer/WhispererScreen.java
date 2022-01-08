@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
+import de.ambertation.wunderreich.rei.ImprinterReceip;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.CrashReport;
@@ -113,7 +114,7 @@ public class WhispererScreen
     
 
 
-    private void renderScroller(PoseStack poseStack, int x, int y, List<WhisperRule> enchants) {
+    private void renderScroller(PoseStack poseStack, int x, int y, List<ImprinterReceip> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
         if (pageCount > 0) {
             final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;
@@ -223,9 +224,9 @@ public class WhispererScreen
                     continue;
                 }
 
-                ItemStack costA = rule.cost;
-                ItemStack costB = rule.costB;
-                ItemStack result = rule.result;
+                ItemStack costA = rule.getInputA();
+                ItemStack costB = rule.getInputB();
+                ItemStack result = rule.output;
                 this.itemRenderer.blitOffset = 100.0f;
 
                 int decorateY = top + BORDER_WIDTH;
@@ -329,15 +330,15 @@ public class WhispererScreen
         public void renderToolTip(PoseStack poseStack, int i, int j) {
             if (this.isHovered && WhispererScreen.this.menu.getEnchants().size() > this.index + WhispererScreen.this.scrollOff) {
                 if (i < this.x + TRADE_BUTTON_HEIGHT) {
-                    var typeName = new TranslatableComponent("enchantment.type." + WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).enchantment.category.name());
+                    var typeName = new TranslatableComponent("enchantment.type." + WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).getCategory());
                     WhispererScreen.this.renderTooltip(poseStack, typeName, i, j);
                 } else if (i < this.x + 50 && i > this.x + 30) {
-                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).cost;
+                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).getInputA();
                     if (!itemStack.isEmpty()) {
                         WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
                     }
                 } else if (i > this.x + 65) {
-                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).result;
+                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).output;
                     WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
                 }
             }

@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.registries.WunderreichScreens;
+import de.ambertation.wunderreich.rei.ImprinterReceip;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -163,9 +164,9 @@ public class WhispererMenu
 
             if (this.container.getItem(INGREDIENT_SLOT_A).isEmpty() && this.container.getItem(INGREDIENT_SLOT_B).isEmpty()) {
                 final WhisperRule rule = this.getEnchants().get(ruleIndex);
-                ItemStack costA = rule.cost;
+                ItemStack costA = rule.getInputA();
                 this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_A, costA);
-                ItemStack costB = rule.costB;
+                ItemStack costB = rule.getInputB();
                 this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_B, costB);
             }
 
@@ -195,8 +196,8 @@ public class WhispererMenu
         }
     }
 
-    public List<WhisperRule> getEnchants() {
-        return WhisperContainer.getAllEnchants();
+    public List<ImprinterReceip> getEnchants() {
+        return ImprinterReceip.getReceips();
     }
 }
 
