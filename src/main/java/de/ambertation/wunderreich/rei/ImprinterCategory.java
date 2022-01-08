@@ -42,11 +42,11 @@ public class ImprinterCategory implements DisplayCategory<ImprinterDisplay> {
 
         //Inputs
         widgets.add(Widgets.createSlot(new Point(startPoint.x + 4, startPoint.y + 5))
-                .entries(display.getInputEntries().get(ImprinterReceip.COST_A_SLOT))
+                .entries(display.getInputEntries().get(ImprinterRecipe.COST_A_SLOT))
                 .markInput());
 
         widgets.add(Widgets.createSlot(new Point(startPoint.x + 27, startPoint.y + 5))
-                .entries(display.getInputEntries().get(ImprinterReceip.COST_B_SLOT))
+                .entries(display.getInputEntries().get(ImprinterRecipe.COST_B_SLOT))
                 .markInput());
 
         //Arrow

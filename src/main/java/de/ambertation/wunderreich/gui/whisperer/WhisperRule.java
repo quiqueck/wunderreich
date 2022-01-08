@@ -1,20 +1,14 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.rei.ImprinterReceip;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentCategory;
-import net.minecraft.world.level.block.Blocks;
 
 
 public class WhisperRule {

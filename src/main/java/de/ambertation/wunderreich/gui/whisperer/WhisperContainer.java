@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import de.ambertation.wunderreich.rei.ImprinterReceip;
+import de.ambertation.wunderreich.rei.ImprinterRecipe;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -102,7 +102,7 @@ public class WhisperContainer implements Container {
         if (costA.isEmpty()) {
             this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
         } else {
-                var enchantments = ImprinterReceip.getReceips();
+                var enchantments = ImprinterRecipe.getReceips();
                 if (!enchantments.isEmpty()) {
                     WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
                     if (rule == null) {
@@ -122,7 +122,7 @@ public class WhisperContainer implements Container {
 
     @Nullable
     public WhisperRule getIngredientsFor(ItemStack slotA, ItemStack slotB, int preferedIndex) {
-        var all = ImprinterReceip.getReceips();
+        var all = ImprinterRecipe.getReceips();
         WhisperRule rule;
         if (preferedIndex > 0 && preferedIndex < all.size()) {
             rule = all.get(preferedIndex);

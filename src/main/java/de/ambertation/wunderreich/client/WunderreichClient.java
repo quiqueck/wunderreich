@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.client;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.gui.modmenu.MainScreen;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
@@ -11,6 +12,7 @@ import net.fabricmc.fabric.api.client.rendereregistry.v1.BlockEntityRendererRegi
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.resources.ResourceLocation;
+import ru.bclib.integration.modmenu.ModMenu;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
@@ -22,6 +24,7 @@ public class WunderreichClient implements ClientModInitializer {
 		BlockEntityRendererRegistry.INSTANCE.register(WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, ChestRenderer::new);
 
 		WunderreichScreens.registerScreens();
+		ModMenu.addModMenuScreen(Wunderreich.MOD_ID, MainScreen::new);
 	}
 	
 	private static net.minecraft.client.resources.model.Material chestMaterial(String string) {

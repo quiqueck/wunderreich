@@ -6,19 +6,18 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.EnchantmentInfo;
+import de.ambertation.wunderreich.gui.whisperer.WhisperContainer;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipesProvider;
-import net.minecraft.client.Minecraft;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.Container;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -31,29 +30,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
+public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContainer> {
     static final int COST_A_SLOT = 0;
     static final int COST_B_SLOT = 1;
 
     private final ResourceLocation id;
 
-    private ImprinterReceip(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP){
+    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP){
         super(enchantment, inputA, inputB, baseXP);
         this.id = id;
     }
 
-    private ImprinterReceip(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type){
+    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type){
         super(enchantment, inputA, inputB, output, baseXP, type);
         this.id = id;
     }
 
-    private ImprinterReceip(Enchantment e){
+    private ImprinterRecipe(Enchantment e){
         super(e);
 
-        this.id =  Wunderreich.makeID(ImprinterReceip.Type.ID + "/" + enchantment.getDescriptionId());
+        this.id =  Wunderreich.makeID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
     }
 
-    public static List<ImprinterReceip> getReceips() {
+    public static List<ImprinterRecipe> getReceips() {
         return RECEIPS;
     }
 
@@ -63,18 +62,20 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
     }
 
     @Override
-    public boolean matches(Container inv, Level level) {
+    public boolean matches(WhisperContainer inv, Level level) {
+        if (inv.getContainerSize()<2) return false;
         return this.inputA.test(inv.getItem(COST_A_SLOT)) && this.inputB.test(inv.getItem(COST_B_SLOT)) ||
                 this.inputA.test(inv.getItem(COST_B_SLOT)) && this.inputB.test(inv.getItem(COST_A_SLOT));
     }
 
     @Override
-    public ItemStack assemble(Container container) {
+    public ItemStack assemble(WhisperContainer container) {
         return this.output.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int i, int j) {
+    @Environment(EnvType.CLIENT)
+    public boolean canCraftInDimensions(int width, int height) {
         return true;
     }
 
@@ -98,8 +99,11 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
         return Type.INSTANCE;
     }
 
-    private static final List<ImprinterReceip> RECEIPS = new LinkedList<>();
+    private static final List<ImprinterRecipe> RECEIPS = new LinkedList<>();
     public static void register() {
+        Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
+        Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
+
         RECEIPS.clear();
         List<Enchantment> enchants = new LinkedList<>();
         Registry.ENCHANTMENT.forEach(e -> {
@@ -108,28 +112,29 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
         enchants.sort(Comparator.comparing(a -> a.category + ":" + WhisperRule.getFullname(a).getString()));
 
         enchants.forEach(e -> {
-            ImprinterReceip r = new ImprinterReceip(e);
+            ImprinterRecipe r = new ImprinterRecipe(e);
             RECEIPS.add(r);
             BCLRecipeManager.addRecipe(Type.INSTANCE, r);
         });
     }
 
-    public static class Type implements RecipeType<ImprinterReceip> {
+    public static class Type implements RecipeType<ImprinterRecipe> {
         public static final String ID = "imprinter";
-        public static final RecipeType<ImprinterReceip> INSTANCE = Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), new Type());
+        public static final RecipeType<ImprinterRecipe> INSTANCE = new Type(); //Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(ID+"_recipe"), new Type());
 
         Type(){ }
 
         @Override
         public String toString() {
-            return "Imprinter Recipe";
+            return ID;
         }
     }
 
 
 
-    private static class Serializer implements RecipeSerializer<ImprinterReceip> {
-        public final static Serializer INSTANCE = Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
+    private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
+        public final static ResourceLocation ID = Wunderreich.makeID(Type.ID);
+        public final static Serializer INSTANCE = new Serializer(); //Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
 
         static class ImprinterRecipeJsonFormat {
             JsonObject inputA;
@@ -139,7 +144,7 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
         }
 
         @Override
-        public ImprinterReceip fromNetwork(ResourceLocation id, FriendlyByteBuf packetBuffer) {
+        public ImprinterRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf packetBuffer) {
             Ingredient costA = Ingredient.fromNetwork(packetBuffer);
             Ingredient costB = Ingredient.fromNetwork(packetBuffer);
             ItemStack output = packetBuffer.readItem();
@@ -150,7 +155,7 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
             ResourceLocation eID = packetBuffer.readResourceLocation();
             var enchantment = Registry.ENCHANTMENT.getOptional(eID);
 
-            return new ImprinterReceip(
+            return new ImprinterRecipe(
                     id,
                     enchantment.orElseThrow(() -> new RuntimeException("Unknown Enchantment " + eID)),
                     costA,
@@ -162,7 +167,7 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
         }
 
         @Override
-        public void toNetwork(FriendlyByteBuf buf, ImprinterReceip recipe) {
+        public void toNetwork(FriendlyByteBuf buf, ImprinterRecipe recipe) {
             recipe.inputA.toNetwork(buf);
             recipe.inputB.toNetwork(buf);
             buf.writeItem(recipe.output);
@@ -173,7 +178,7 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
         }
 
         @Override
-        public ImprinterReceip fromJson(ResourceLocation id, JsonObject json) {
+        public ImprinterRecipe fromJson(ResourceLocation id, JsonObject json) {
             ImprinterRecipeJsonFormat recipeJson = new Gson().fromJson(json, ImprinterRecipeJsonFormat.class);
 
             if (recipeJson.inputA == null) {
@@ -202,7 +207,7 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
             }
 
 
-            ImprinterReceip r = new ImprinterReceip(id, enchantment.get(), inputA, inputB, recipeJson.xp);
+            ImprinterRecipe r = new ImprinterRecipe(id, enchantment.get(), inputA, inputB, recipeJson.xp);
 
             RECEIPS.remove(r);
             RECEIPS.add(r);
@@ -214,8 +219,8 @@ public class ImprinterReceip extends WhisperRule implements Recipe<Container> {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof ImprinterReceip)) return false;
-        ImprinterReceip that = (ImprinterReceip) o;
+        if (!(o instanceof ImprinterRecipe)) return false;
+        ImprinterRecipe that = (ImprinterRecipe) o;
         return Objects.equals(id, that.id);
     }
 

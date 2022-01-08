@@ -5,7 +5,7 @@ import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
-import de.ambertation.wunderreich.rei.ImprinterReceip;
+import de.ambertation.wunderreich.rei.ImprinterRecipe;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.CrashReport;
@@ -114,7 +114,7 @@ public class WhispererScreen
     
 
 
-    private void renderScroller(PoseStack poseStack, int x, int y, List<ImprinterReceip> enchants) {
+    private void renderScroller(PoseStack poseStack, int x, int y, List<ImprinterRecipe> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
         if (pageCount > 0) {
             final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;

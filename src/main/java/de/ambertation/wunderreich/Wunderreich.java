@@ -1,7 +1,6 @@
 package de.ambertation.wunderreich;
 
 import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.gui.modmenu.MainScreen;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
@@ -9,14 +8,13 @@ import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichReceipes;
-import de.ambertation.wunderreich.rei.ImprinterReceip;
+import de.ambertation.wunderreich.rei.ImprinterRecipe;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.resources.ResourceLocation;
 import ru.bclib.api.WorldDataAPI;
 import ru.bclib.api.dataexchange.DataExchangeAPI;
-import ru.bclib.integration.modmenu.ModMenu;
 import ru.bclib.util.Logger;
 
 import java.util.List;
@@ -47,7 +45,7 @@ public class Wunderreich implements ModInitializer {
 		WunderreichItems.register();
 		WunderreichReceipes.register();
 
-		ImprinterReceip.register();
+		ImprinterRecipe.register();
 
 		CycleTradesMessage.register();
 		AddRemoveBoxOfEirMessage.register();
@@ -55,8 +53,6 @@ public class Wunderreich implements ModInitializer {
 		WorldDataAPI.registerModCache(MOD_ID);
 		DataExchangeAPI.registerMod(MOD_ID);
 		Configs.saveConfigs();
-
-		ModMenu.addModMenuScreen(MOD_ID, MainScreen::new);
 
 		DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
 	}

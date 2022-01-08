@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.registries.WunderreichScreens;
-import de.ambertation.wunderreich.rei.ImprinterReceip;
+import de.ambertation.wunderreich.rei.ImprinterRecipe;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -196,8 +196,8 @@ public class WhispererMenu
         }
     }
 
-    public List<ImprinterReceip> getEnchants() {
-        return ImprinterReceip.getReceips();
+    public List<ImprinterRecipe> getEnchants() {
+        return ImprinterRecipe.getReceips();
     }
 }
 
