@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.gui.whisperer;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -78,7 +79,7 @@ public class WhisperRule {
             }
 
 
-            return itemStack2.test(itemStack3) /*&& (!itemStack2.hasTag() || itemStack3.hasTag() && NbtUtils.compareNbt(itemStack2.getTag(), itemStack3.getTag(), false))*/;
+            return itemStack2.test(itemStack3)  /*&& (!itemStack2.gethasTag() || itemStack3.hasTag() && NbtUtils.compareNbt(itemStack2.getTag(), itemStack3.getTag(), false))*/;
         }
     }
 

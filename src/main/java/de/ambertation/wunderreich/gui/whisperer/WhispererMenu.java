@@ -198,12 +198,8 @@ public class WhispererMenu
         }
     }
 
-    private List<ImprinterRecipe> sortedEnchants = null;
     public List<ImprinterRecipe> getEnchants() {
-        if (sortedEnchants == null){
-            sortedEnchants = ImprinterRecipe.getRecipes().stream().sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName())).collect(Collectors.toList());
-        }
-        return sortedEnchants;
+        return ImprinterRecipe.getUISortedRecipes();
     }
 }
 

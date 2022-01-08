@@ -29,11 +29,13 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContainer> {
     static final int COST_A_SLOT = 0;
     static final int COST_B_SLOT = 1;
     private static final List<ImprinterRecipe> RECIPES = new LinkedList<>();
+    private static List<ImprinterRecipe> RECIPES_UI_SORTED = new LinkedList<>();
     private final ResourceLocation id;
 
     private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
@@ -56,6 +58,14 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         return RECIPES;
     }
 
+    public static List<ImprinterRecipe> getUISortedRecipes() {
+        return RECIPES_UI_SORTED;
+    }
+
+    private static void resortRecipes(){
+        RECIPES_UI_SORTED = RECIPES.stream().sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName())).collect(Collectors.toList());
+    }
+
     public static void register() {
         Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
         Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
@@ -72,6 +82,8 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             RECIPES.add(r);
             BCLRecipeManager.addRecipe(Type.INSTANCE, r);
         });
+
+        resortRecipes();
     }
 
     @Override
@@ -221,6 +233,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
             RECIPES.remove(r);
             RECIPES.add(r);
+            resortRecipes();
 
             return r;
         }
