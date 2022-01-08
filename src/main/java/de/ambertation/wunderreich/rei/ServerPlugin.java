@@ -26,7 +26,7 @@ public class ServerPlugin implements REIServerPlugin {
             if (tag.contains(TrainedVillagerWhisperer.TAG_NAME, NbtType.COMPOUND)) {
                 return tag.getCompound(TrainedVillagerWhisperer.TAG_NAME);
             }
-            return null;
+            return new CompoundTag();
         };
 
         registry.register((context, stack) -> nbtHasher.hash(context, enchantmentTag.apply(stack)), WunderreichItems.WHISPERER);

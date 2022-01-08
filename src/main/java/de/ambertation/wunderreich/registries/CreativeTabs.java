@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
@@ -23,10 +24,14 @@ public class CreativeTabs {
         TAB_ITEMS = FabricItemGroupBuilder
                 .create(Wunderreich.makeID("items"))
                 .icon(() -> new ItemStack(WunderreichItems.WHISPERER))
-                .appendItems(stacks -> stacks.addAll(WunderreichItems.getModItems()
-                        .stream()
-                        .map(ItemStack::new)
-                        .collect(Collectors.toList())))
+                .appendItems(stacks -> {
+                    stacks.addAll(WunderreichItems.getModItems()
+                            .stream()
+                            .filter(item -> item != WunderreichItems.WHISPERER)
+                            .map(ItemStack::new)
+                            .collect(Collectors.toList()));
+                    TrainedVillagerWhisperer.addAllVariants(stacks);
+                })
                 .build();
     }
 }

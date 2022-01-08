@@ -16,7 +16,6 @@ import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -36,11 +35,6 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     static final int COST_B_SLOT = 1;
     private static final List<ImprinterRecipe> RECIPES = new LinkedList<>();
     private final ResourceLocation id;
-
-    @Override
-    public ItemStack getToastSymbol() {
-        return new ItemStack(WunderreichBlocks.WHISPER_IMPRINTER);
-    }
 
     private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
         super(enchantment, inputA, inputB, baseXP);
@@ -78,6 +72,11 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             RECIPES.add(r);
             BCLRecipeManager.addRecipe(Type.INSTANCE, r);
         });
+    }
+
+    @Override
+    public ItemStack getToastSymbol() {
+        return new ItemStack(WunderreichBlocks.WHISPER_IMPRINTER);
     }
 
     @Override
