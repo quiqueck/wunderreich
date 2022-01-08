@@ -25,7 +25,7 @@ public class WhisperContainer implements Container {
 
     @Override
     public boolean isEmpty() {
-        return this.itemStacks.stream().allMatch(stack->stack.isEmpty());
+        return this.itemStacks.stream().allMatch(stack -> stack.isEmpty());
 
 //        Iterator var1 = this.itemStacks.iterator();
 //
@@ -102,21 +102,21 @@ public class WhisperContainer implements Container {
         if (costA.isEmpty()) {
             this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
         } else {
-                var enchantments = ImprinterRecipe.getReceips();
-                if (!enchantments.isEmpty()) {
-                    WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
-                    if (rule == null) {
-                        this.activeRule = rule;
-                        rule = getIngredientsFor(costB, costA, this.lastSelectedRule);
-                    }
-
-                    if (rule != null ) {
-                        this.activeRule = rule;
-                        this.setItem(WhispererMenu.RESULT_SLOT, rule.assemble());
-                    } else {
-                        this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
-                    }
+            var enchantments = ImprinterRecipe.getReceips();
+            if (!enchantments.isEmpty()) {
+                WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
+                if (rule == null) {
+                    this.activeRule = rule;
+                    rule = getIngredientsFor(costB, costA, this.lastSelectedRule);
                 }
+
+                if (rule != null) {
+                    this.activeRule = rule;
+                    this.setItem(WhispererMenu.RESULT_SLOT, rule.assemble());
+                } else {
+                    this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
+                }
+            }
         }
     }
 
@@ -128,7 +128,7 @@ public class WhisperContainer implements Container {
             rule = all.get(preferedIndex);
             return rule.satisfiedBy(slotA, slotB) ? rule : null;
         } else {
-            for(int ruleIndex = 0; ruleIndex < all.size(); ++ruleIndex) {
+            for (int ruleIndex = 0; ruleIndex < all.size(); ++ruleIndex) {
                 rule = all.get(ruleIndex);
                 if (rule.satisfiedBy(slotA, slotB)) {
                     return rule;

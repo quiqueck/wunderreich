@@ -11,15 +11,15 @@ public abstract class PlayerMixin implements ActiveChestStorage {
     @Nullable
     private BoxOfEirBlockEntity activeChest;
 
-    public void setActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity) {
-        this.activeChest = boxOfEirBlockEntity;
-    }
-
     public boolean isActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity) {
         return this.activeChest == boxOfEirBlockEntity;
     }
 
     public BoxOfEirBlockEntity getActiveBoxOfEir() {
         return this.activeChest;
+    }
+
+    public void setActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity) {
+        this.activeChest = boxOfEirBlockEntity;
     }
 }

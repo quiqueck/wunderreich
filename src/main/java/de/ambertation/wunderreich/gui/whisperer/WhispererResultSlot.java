@@ -10,8 +10,8 @@ import net.minecraft.world.item.ItemStack;
 public class WhispererResultSlot extends Slot {
     private final WhisperContainer slots;
     private final Player player;
-    private int removeCount;
     private final WhispererMenu owner;
+    private int removeCount;
 
     public WhispererResultSlot(WhispererMenu owner, Player player, WhisperContainer container, int slotIndex, int x, int y) {
         super(container, slotIndex, x, y);
@@ -20,11 +20,11 @@ public class WhispererResultSlot extends Slot {
         this.slots = container;
         this.owner = owner;
     }
-    
-    
+
+
     void createExperience(ServerLevel level, int maxXP) {
         if (this.player instanceof ServerPlayer) {
-            final int xp =(int)( maxXP * (Math.random()*0.25 + 0.75));
+            final int xp = (int) (maxXP * (Math.random() * 0.25 + 0.75));
             ExperienceOrb.award(level, player.position(), xp);
         }
     }
@@ -53,14 +53,14 @@ public class WhispererResultSlot extends Slot {
     protected void checkTakeAchievements(ItemStack itemStack) {
         itemStack.onCraftedBy(this.player.level, this.player, this.removeCount);
         owner.playImprintSound();
-    
-        if(player.level instanceof ServerLevel serverLevel) {
+
+        if (player.level instanceof ServerLevel serverLevel) {
             WhisperRule rules = this.slots.getActiveRule();
-           
-            if (rules!=null)
+
+            if (rules != null)
                 createExperience(serverLevel, rules.baseXP);
         }
-        
+
         this.removeCount = 0;
     }
 

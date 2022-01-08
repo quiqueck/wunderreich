@@ -16,10 +16,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class TrainedVillagerWhisperer extends VillagerWhisperer{
+public class TrainedVillagerWhisperer extends VillagerWhisperer {
     private final static String TAG_NAME = "WhisperedEnchantment";
 
-    public static Enchantment findEnchantment(CompoundTag tag){
+    public static Enchantment findEnchantment(CompoundTag tag) {
         var oEnchantment = Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag));
         if (oEnchantment.isPresent()) {
             return oEnchantment.get();
@@ -30,24 +30,10 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer{
     public static String findEnchantmentID(ItemStack itemStack) {
         CompoundTag tag = getEnchantment(itemStack);
         Enchantment e = findEnchantment(tag);
-        if (e!=null) {
+        if (e != null) {
             return e.getDescriptionId();
         }
         return Items.AIR.getDescriptionId();
-    }
-
-    public ResourceLocation getEnchantmentID(ItemStack itemStack) {
-        CompoundTag tag = getEnchantment(itemStack);
-        return EnchantmentHelper.getEnchantmentId(tag);
-    }
-
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
-        super.appendHoverText(itemStack, level, list, tooltipFlag);
-        var tag = getEnchantment(itemStack);
-
-        Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag)).ifPresent((enchantment) -> {
-            list.add(WhisperRule.getFullname(enchantment));
-        });
     }
 
     public static ItemStack createForEnchantment(Enchantment enchantment) {
@@ -65,5 +51,19 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer{
         ResourceLocation resourceLocation = EnchantmentHelper.getEnchantmentId(enchantment);
         CompoundTag tag = EnchantmentHelper.storeEnchantment(resourceLocation, enchantment.getMaxLevel());
         itemStack.getOrCreateTag().put(TAG_NAME, tag);
+    }
+
+    public ResourceLocation getEnchantmentID(ItemStack itemStack) {
+        CompoundTag tag = getEnchantment(itemStack);
+        return EnchantmentHelper.getEnchantmentId(tag);
+    }
+
+    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, level, list, tooltipFlag);
+        var tag = getEnchantment(itemStack);
+
+        Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag)).ifPresent((enchantment) -> {
+            list.add(WhisperRule.getFullname(enchantment));
+        });
     }
 }

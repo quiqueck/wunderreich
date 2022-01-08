@@ -75,6 +75,7 @@ public class CycleTradesMessage {
 
         return null;
     }
+
     public static boolean canSelectTrades(Villager villager) {
         return canSelectTrades(villager, true);
     }
@@ -97,7 +98,7 @@ public class CycleTradesMessage {
         if (offers == null) return true;
         if (!canSelectTrades(villager, false)) return true;
         Triple<ItemStack, Player, EquipmentSlot> whispererStack = getClosestWhisperer(villager, false);
-        if (whispererStack==null) return true;
+        if (whispererStack == null) return true;
         VillagerWhisperer whisperer = (VillagerWhisperer) whispererStack.first.getItem();
 
         for (MerchantOffer offer : offers) {

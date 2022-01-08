@@ -14,7 +14,7 @@ public class ImprinterDisplay extends BasicDisplay {
         super(inputs, outputs);
     }
 
-    public static ImprinterDisplay of(Recipe<?> recipe){
+    public static ImprinterDisplay of(Recipe<?> recipe) {
         return new ImprinterDisplay(
                 EntryIngredients.ofIngredients(recipe.getIngredients()),
                 Collections.singletonList(EntryIngredients.of(recipe.getResultItem()))

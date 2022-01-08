@@ -43,7 +43,7 @@ public class WunderreichItems {
         return item;
     }
 
-    public static void register(){
+    public static void register() {
 
     }
 }

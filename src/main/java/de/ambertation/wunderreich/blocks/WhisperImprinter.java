@@ -40,13 +40,13 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                               .mapColor(MaterialColor.LAPIS)
-                               .strength(5.0f, 1200.0f)
-                               .luminance(8)
-                               .breakByTool(FabricToolTags.PICKAXES)
-                               .requiresTool()
-                               .nonOpaque()
-                               .sound(SoundType.AMETHYST)
+                .mapColor(MaterialColor.LAPIS)
+                .strength(5.0f, 1200.0f)
+                .luminance(8)
+                .breakByTool(FabricToolTags.PICKAXES)
+                .requiresTool()
+                .nonOpaque()
+                .sound(SoundType.AMETHYST)
         );
     }
 
@@ -67,12 +67,12 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)), new TextComponent("Hello"));
     }
-    
+
     @Override
     public void addTags(List<Named<Block>> blockTags, List<Named<Item>> itemTags) {
         blockTags.add(TagAPI.MINEABLE_PICKAXE);
     }
-    
+
     @Override
     public void onProjectileHit(Level level, BlockState blockState, BlockHitResult blockHitResult, Projectile projectile) {
         if (!level.isClientSide) {
@@ -81,7 +81,7 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
             level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
         }
     }
-    
+
     @Override
     @Environment(EnvType.CLIENT)
     public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
@@ -110,17 +110,17 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
 
         for (int i = -1; i <= 1; ++i) {
             for (int j = -1; j <= 1; ++j) {
-                if (i==0 && j==0) continue;
+                if (i == 0 && j == 0) continue;
                 if (random.nextInt(40) != 0) continue;
                 for (int k = 2; k <= 5; ++k) {
                     level.addParticle(
-                        WunderreichParticles.IMPRINT_PARTICLES,
-                        blockPos.getX() + 0.5,
-                        blockPos.getY() + 2,
-                        blockPos.getZ() + 0.5,
-                        i + random.nextFloat() - 0.5,
-                        k - random.nextFloat() - 1.0f,
-                        j + random.nextFloat() - 0.5
+                            WunderreichParticles.IMPRINT_PARTICLES,
+                            blockPos.getX() + 0.5,
+                            blockPos.getY() + 2,
+                            blockPos.getZ() + 0.5,
+                            i + random.nextFloat() - 0.5,
+                            k - random.nextFloat() - 1.0f,
+                            j + random.nextFloat() - 0.5
                     );
                 }
             }

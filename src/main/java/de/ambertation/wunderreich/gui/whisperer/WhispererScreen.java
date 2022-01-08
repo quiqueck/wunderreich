@@ -57,9 +57,9 @@ public class WhispererScreen
     private static final int TOP_MARGIN = 16;
     private static final int BORDER_WIDTH = 2;
     private static final Component ENCHANTS_LABEL = new TranslatableComponent("title.whisperer.enchant");
-    private int shopItem;
     private final WhispersButton[] enchantButtons = new WhispersButton[7];
     int scrollOff;
+    private int shopItem;
     private boolean isDragging;
 
     public WhispererScreen(WhispererMenu merchantMenu, Inventory inventory, Component component) {
@@ -111,17 +111,16 @@ public class WhispererScreen
 
         blit(poseStack, paddingX, paddingY, this.getBlitOffset(), 0.0f, 0.0f, this.imageWidth, this.imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
     }
-    
 
 
     private void renderScroller(PoseStack poseStack, int x, int y, List<ImprinterRecipe> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
         if (pageCount > 0) {
             final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;
-            final float STEP_PER_PAGE = (float)SCROLLER_MAX_Y  / pageCount;
-            
-            int scrollerOffset = Math.min(SCROLLER_MAX_Y,(int)(this.scrollOff * STEP_PER_PAGE));
-            if (this.scrollOff == pageCount ) {
+            final float STEP_PER_PAGE = (float) SCROLLER_MAX_Y / pageCount;
+
+            int scrollerOffset = Math.min(SCROLLER_MAX_Y, (int) (this.scrollOff * STEP_PER_PAGE));
+            if (this.scrollOff == pageCount) {
                 scrollerOffset = SCROLLER_MAX_Y;
             }
             WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y + scrollerOffset, this.getBlitOffset(), 0.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
@@ -129,8 +128,8 @@ public class WhispererScreen
             WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y, this.getBlitOffset(), 6.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
         }
     }
-    
-    
+
+
     /*
      * BEGIN: From ItemRenderer by Mojang
      * --------------------------------
@@ -141,8 +140,8 @@ public class WhispererScreen
 
     private void tryRenderGuiItemScaled(@Nullable LivingEntity livingEntity, ItemStack itemStack, int i, int j, int k, int l, float scale) {
         if (!itemStack.isEmpty()) {
-            BakedModel bakedModel = this.itemRenderer.getModel(itemStack, (Level)null, livingEntity, k);
-            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset + 50.0F + (float)l : this.itemRenderer.blitOffset + 50.0F;
+            BakedModel bakedModel = this.itemRenderer.getModel(itemStack, (Level) null, livingEntity, k);
+            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset + 50.0F + (float) l : this.itemRenderer.blitOffset + 50.0F;
 
             try {
                 this.renderGuiItem(itemStack, i, j, bakedModel, scale);
@@ -164,7 +163,7 @@ public class WhispererScreen
                 throw new ReportedException(crashReport);
             }
 
-            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset - 50.0F - (float)l : this.itemRenderer.blitOffset - 50.0F;
+            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset - 50.0F - (float) l : this.itemRenderer.blitOffset - 50.0F;
         }
     }
 
@@ -176,10 +175,10 @@ public class WhispererScreen
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         PoseStack poseStack = RenderSystem.getModelViewStack();
         poseStack.pushPose();
-        poseStack.translate((double)i, (double)j, (double)(100.0F + this.itemRenderer.blitOffset));
-        poseStack.translate(8.0D * scale, 8.0D* scale, 0.0D);
+        poseStack.translate((double) i, (double) j, (double) (100.0F + this.itemRenderer.blitOffset));
+        poseStack.translate(8.0D * scale, 8.0D * scale, 0.0D);
         poseStack.scale(1.0F, -1.0F, 1.0F);
-        poseStack.scale(16.0F * scale, 16.0F*scale, 16.0F*scale);
+        poseStack.scale(16.0F * scale, 16.0F * scale, 16.0F * scale);
         RenderSystem.applyModelViewMatrix();
         PoseStack poseStack2 = new PoseStack();
         MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
@@ -202,8 +201,8 @@ public class WhispererScreen
      * END: From ItemRenderer by Mojang
      * --------------------------------
      */
-    
-    
+
+
     @Override
     public void render(PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
@@ -232,9 +231,9 @@ public class WhispererScreen
                 int decorateY = top + BORDER_WIDTH;
                 poseStack.pushPose();
                 poseStack.scale(0.5f, 1, 0.5f);
-                renderAndDecorateItemScaled(rule.type, left-2, decorateY+7, 0.5f);
+                renderAndDecorateItemScaled(rule.type, left - 2, decorateY + 7, 0.5f);
                 poseStack.popPose();
-                this.renderAndDecorateCostA(poseStack, costA, left+12, decorateY);
+                this.renderAndDecorateCostA(poseStack, costA, left + 12, decorateY);
                 if (!costB.isEmpty()) {
                     this.itemRenderer.renderAndDecorateFakeItem(costB, paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X, decorateY);
                     this.itemRenderer.renderGuiItemDecorations(this.font, costB, paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X, decorateY);
@@ -266,8 +265,8 @@ public class WhispererScreen
     }
 
     private void renderAndDecorateCostA(PoseStack poseStack, ItemStack costA, int x, int y) {
-       this.itemRenderer.renderAndDecorateFakeItem(costA, x, y);
-       this.itemRenderer.renderGuiItemDecorations(this.font, costA, x, y);
+        this.itemRenderer.renderAndDecorateFakeItem(costA, x, y);
+        this.itemRenderer.renderGuiItemDecorations(this.font, costA, x, y);
     }
 
     private boolean canScroll(int i) {
@@ -305,7 +304,7 @@ public class WhispererScreen
         this.isDragging = false;
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
-        if (this.canScroll(this.menu.getEnchants().size()) && mx > (paddingX + SCROLL_BAR_START_X) && mx < (paddingX + SCROLL_BAR_START_X + 6) && my > (paddingY + SCROLL_BAR_TOP_POS_Y) && my <=(paddingY + SCROLL_BAR_TOP_POS_Y + SCROLL_BAR_HEIGHT + 1)) {
+        if (this.canScroll(this.menu.getEnchants().size()) && mx > (paddingX + SCROLL_BAR_START_X) && mx < (paddingX + SCROLL_BAR_START_X + 6) && my > (paddingY + SCROLL_BAR_TOP_POS_Y) && my <= (paddingY + SCROLL_BAR_TOP_POS_Y + SCROLL_BAR_HEIGHT + 1)) {
             this.isDragging = true;
         }
         return super.mouseClicked(mx, my, i);

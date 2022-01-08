@@ -21,39 +21,39 @@ import java.util.List;
 import java.util.Optional;
 
 public class Wunderreich implements ModInitializer {
-	public static final String MOD_ID = "wunderreich";
-	public static final Logger LOGGER = new Logger(MOD_ID);
-	public static String VERSION = "0.0.0";
+    public static final String MOD_ID = "wunderreich";
+    public static final Logger LOGGER = new Logger(MOD_ID);
+    public static String VERSION = "0.0.0";
 
-	public static ResourceLocation makeID(String path) {
-		return new ResourceLocation(MOD_ID, path);
-	}
-	
-	@Override
-	public void onInitialize() {
-		Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
-		if (optional.isPresent()) {
-			ModContainer modContainer = optional.get();
-			VERSION = modContainer.getMetadata().getVersion().toString();
-		}
-		
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-		WunderreichBlockEntities.register();
-		WunderreichBlocks.register();
-		WunderreichItems.register();
-		WunderreichReceipes.register();
+    public static ResourceLocation makeID(String path) {
+        return new ResourceLocation(MOD_ID, path);
+    }
 
-		ImprinterRecipe.register();
+    @Override
+    public void onInitialize() {
+        Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
+        if (optional.isPresent()) {
+            ModContainer modContainer = optional.get();
+            VERSION = modContainer.getMetadata().getVersion().toString();
+        }
 
-		CycleTradesMessage.register();
-		AddRemoveBoxOfEirMessage.register();
+        // This code runs as soon as Minecraft is in a mod-load-ready state.
+        // However, some things (like resources) may still be uninitialized.
+        // Proceed with mild caution.
+        WunderreichBlockEntities.register();
+        WunderreichBlocks.register();
+        WunderreichItems.register();
+        WunderreichReceipes.register();
 
-		WorldDataAPI.registerModCache(MOD_ID);
-		DataExchangeAPI.registerMod(MOD_ID);
-		Configs.saveConfigs();
+        ImprinterRecipe.register();
 
-		DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
-	}
+        CycleTradesMessage.register();
+        AddRemoveBoxOfEirMessage.register();
+
+        WorldDataAPI.registerModCache(MOD_ID);
+        DataExchangeAPI.registerMod(MOD_ID);
+        Configs.saveConfigs();
+
+        DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
+    }
 }

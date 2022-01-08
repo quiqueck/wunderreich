@@ -62,7 +62,7 @@ public class WunderreichBlocks {
         return FabricBlockSettings.of(Material.STONE);
     }
 
-    public static void register(){
+    public static void register() {
 
     }
 

@@ -10,13 +10,15 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(MerchantMenu.class)
 public abstract class MerchantMenuMixin implements IMerchantMenu {
-	@Shadow @Final private Merchant trader;
-	
-	public Villager getVillager(){
-		if (!(trader instanceof Villager)) {
-			return null;
-		}
-		
-		return (Villager) trader;
-	}
+    @Shadow
+    @Final
+    private Merchant trader;
+
+    public Villager getVillager() {
+        if (!(trader instanceof Villager)) {
+            return null;
+        }
+
+        return (Villager) trader;
+    }
 }

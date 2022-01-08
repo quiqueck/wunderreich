@@ -44,51 +44,6 @@ public class WhisperRule {
         this(enchantment, new EnchantmentInfo(enchantment));
     }
 
-    private boolean isRequiredItem(ItemStack itemStack, Ingredient itemStack2) {
-        if (itemStack2.isEmpty() && itemStack.isEmpty()) {
-            return true;
-        } else {
-            ItemStack itemStack3 = itemStack.copy();
-            if (itemStack3.getItem().canBeDepleted()) {
-                itemStack3.setDamageValue(itemStack3.getDamageValue());
-            }
-
-
-            return itemStack2.test(itemStack3) /*&& (!itemStack2.hasTag() || itemStack3.hasTag() && NbtUtils.compareNbt(itemStack2.getTag(), itemStack3.getTag(), false))*/;
-        }
-    }
-
-    public boolean satisfiedBy(ItemStack itemStack, ItemStack itemStack2) {
-        return this.isRequiredItem(itemStack, this.inputA) && itemStack.getCount() >= this.getInputA().getCount() && this.isRequiredItem(itemStack2, this.inputB) && itemStack2.getCount() >= this.getInputB().getCount();
-    }
-
-    public ItemStack assemble() {
-        return this.output.copy();
-    }
-
-    public ItemStack getInputA(){
-        return inputA.getItems()[0];
-    }
-    public ItemStack getInputB(){
-        return inputB.getItems()[0];
-    }
-
-
-    public boolean take(ItemStack itemStack, ItemStack itemStack2) {
-        if (!this.satisfiedBy(itemStack, itemStack2)) {
-            return false;
-        } else {
-            itemStack.shrink(this.getInputA().getCount());
-            itemStack2.shrink(this.getInputB().getCount());
-
-            return true;
-        }
-    }
-
-    public Component getNameComponent(){
-        return getFullname(enchantment);
-    }
-
     public static Component getFullname(Enchantment e) {
         return getFullname(e, e.getMaxLevel());
     }
@@ -111,6 +66,51 @@ public class WhisperRule {
         }
 
         return mutableComponent;
+    }
+
+    private boolean isRequiredItem(ItemStack itemStack, Ingredient itemStack2) {
+        if (itemStack2.isEmpty() && itemStack.isEmpty()) {
+            return true;
+        } else {
+            ItemStack itemStack3 = itemStack.copy();
+            if (itemStack3.getItem().canBeDepleted()) {
+                itemStack3.setDamageValue(itemStack3.getDamageValue());
+            }
+
+
+            return itemStack2.test(itemStack3) /*&& (!itemStack2.hasTag() || itemStack3.hasTag() && NbtUtils.compareNbt(itemStack2.getTag(), itemStack3.getTag(), false))*/;
+        }
+    }
+
+    public boolean satisfiedBy(ItemStack itemStack, ItemStack itemStack2) {
+        return this.isRequiredItem(itemStack, this.inputA) && itemStack.getCount() >= this.getInputA().getCount() && this.isRequiredItem(itemStack2, this.inputB) && itemStack2.getCount() >= this.getInputB().getCount();
+    }
+
+    public ItemStack assemble() {
+        return this.output.copy();
+    }
+
+    public ItemStack getInputA() {
+        return inputA.getItems()[0];
+    }
+
+    public ItemStack getInputB() {
+        return inputB.getItems()[0];
+    }
+
+    public boolean take(ItemStack itemStack, ItemStack itemStack2) {
+        if (!this.satisfiedBy(itemStack, itemStack2)) {
+            return false;
+        } else {
+            itemStack.shrink(this.getInputA().getCount());
+            itemStack2.shrink(this.getInputB().getCount());
+
+            return true;
+        }
+    }
+
+    public Component getNameComponent() {
+        return getFullname(enchantment);
     }
 
     public String getName() {

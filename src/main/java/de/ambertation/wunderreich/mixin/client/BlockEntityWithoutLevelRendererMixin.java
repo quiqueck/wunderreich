@@ -23,22 +23,27 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 public abstract class BlockEntityWithoutLevelRendererMixin {
-	@Shadow @Final private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
-	@Shadow @Final private EnderChestBlockEntity enderChest;
-	
-	private BoxOfEirBlockEntity boxOfEir;
-	@Inject(method="renderByItem", at=@At("HEAD"), cancellable = true)
-	public void wunderreich_render(ItemStack itemStack, TransformType transformType, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, CallbackInfo ci){
-		Item item = itemStack.getItem();
-		if (item instanceof BlockItem) {
-			Block block = ((BlockItem) item).getBlock();
-			if (block instanceof BoxOfEirBlock){
-				if (boxOfEir == null){
-					boxOfEir = new BoxOfEirBlockEntity(BlockPos.ZERO, WunderreichBlocks.BOX_OF_EIR.defaultBlockState());
-				}
-				this.blockEntityRenderDispatcher.renderItem(boxOfEir, poseStack, multiBufferSource, i, j);
-				ci.cancel();
-			}
-		}
-	}
+    @Shadow
+    @Final
+    private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
+    @Shadow
+    @Final
+    private EnderChestBlockEntity enderChest;
+
+    private BoxOfEirBlockEntity boxOfEir;
+
+    @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
+    public void wunderreich_render(ItemStack itemStack, TransformType transformType, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, CallbackInfo ci) {
+        Item item = itemStack.getItem();
+        if (item instanceof BlockItem) {
+            Block block = ((BlockItem) item).getBlock();
+            if (block instanceof BoxOfEirBlock) {
+                if (boxOfEir == null) {
+                    boxOfEir = new BoxOfEirBlockEntity(BlockPos.ZERO, WunderreichBlocks.BOX_OF_EIR.defaultBlockState());
+                }
+                this.blockEntityRenderDispatcher.renderItem(boxOfEir, poseStack, multiBufferSource, i, j);
+                ci.cancel();
+            }
+        }
+    }
 }

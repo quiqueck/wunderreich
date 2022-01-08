@@ -23,28 +23,28 @@ import java.net.Proxy;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider {
-	private BoxOfEirContainer boxOfEirContainer;
-	
-	public BoxOfEirContainer getBoxOfEirContainer(){
-		return boxOfEirContainer;
-	}
+    private BoxOfEirContainer boxOfEirContainer;
 
-	@Inject(method="stopServer", at=@At("HEAD"))
-	public void wunderreich_stop(CallbackInfo ci){
-		System.out.println("Unloading Cache for Box of Eir");
-		//Make sure the levels can unload when the server closes
-		BoxOfEirBlock.liveBlocks.clear();
-	}
-	
-	@Inject(method="<init>", at=@At("TAIL"))
-	public void wunderreich_init(Thread thread, RegistryHolder registryHolder, LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci){
-		//we start a new world, so clear any old block
-		BoxOfEirBlock.liveBlocks.clear();
-		boxOfEirContainer = new BoxOfEirContainer();
-		boxOfEirContainer.load();
-		boxOfEirContainer.addListener((container)->{
-			BoxOfEirBlock.updateAllBoxes((MinecraftServer)(Object)this, false, true);
-		});
-	}
+    public BoxOfEirContainer getBoxOfEirContainer() {
+        return boxOfEirContainer;
+    }
+
+    @Inject(method = "stopServer", at = @At("HEAD"))
+    public void wunderreich_stop(CallbackInfo ci) {
+        System.out.println("Unloading Cache for Box of Eir");
+        //Make sure the levels can unload when the server closes
+        BoxOfEirBlock.liveBlocks.clear();
+    }
+
+    @Inject(method = "<init>", at = @At("TAIL"))
+    public void wunderreich_init(Thread thread, RegistryHolder registryHolder, LevelStorageAccess levelStorageAccess, WorldData worldData, PackRepository packRepository, Proxy proxy, DataFixer dataFixer, ServerResources serverResources, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci) {
+        //we start a new world, so clear any old block
+        BoxOfEirBlock.liveBlocks.clear();
+        boxOfEirContainer = new BoxOfEirContainer();
+        boxOfEirContainer.load();
+        boxOfEirContainer.addListener((container) -> {
+            BoxOfEirBlock.updateAllBoxes((MinecraftServer) (Object) this, false, true);
+        });
+    }
 
 }

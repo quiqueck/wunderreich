@@ -37,7 +37,7 @@ public class SelectWhisperMessage extends DataHandler.FromClient {
 
     @Override
     protected void runOnServerGameThread(MinecraftServer server, Player player) {
-        int itemIndex =getItemIndex();
+        int itemIndex = getItemIndex();
         AbstractContainerMenu abstractContainerMenu = player.containerMenu;
         if (abstractContainerMenu instanceof WhispererMenu menu) {
             menu.setSelectionHint(itemIndex);

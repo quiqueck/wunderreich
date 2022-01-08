@@ -38,7 +38,7 @@ public class WhispererMenu
     public WhispererMenu(int containerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
         super(WunderreichScreens.WHISPERER, containerId);
         container = new WhisperContainer();
-        access= containerLevelAccess;
+        access = containerLevelAccess;
 
 
         this.addSlot(new Slot(this.container, INGREDIENT_SLOT_A, INGREDIENT_SLOT_A_X, ROW_Y));
@@ -76,7 +76,7 @@ public class WhispererMenu
         return false;
     }
 
-    void playImprintSound(){
+    void playImprintSound() {
         this.access.execute((level, blockPos) -> {
             level.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, level.random.nextFloat() * 0.1f + 0.9f);
         });

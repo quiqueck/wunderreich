@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Monster.class)
 public class MonsterMixin {
-    @Inject(method = "shouldDespawnInPeaceful", at=@At("HEAD"), cancellable = true)
+    @Inject(method = "shouldDespawnInPeaceful", at = @At("HEAD"), cancellable = true)
     protected void wunder_shouldDespawnInPeaceful(CallbackInfoReturnable<Boolean> cir) {
         if (Configs.MAIN.get(MainConfig.DO_NOT_DESPANW_WITH_NAMETAG)) {
             Monster m = (Monster) (Object) this;

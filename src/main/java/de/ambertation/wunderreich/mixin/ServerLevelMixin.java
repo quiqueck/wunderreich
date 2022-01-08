@@ -13,15 +13,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ServerLevel.class)
 public abstract class ServerLevelMixin {
-	@Shadow @NotNull public abstract MinecraftServer getServer();
-	
-	@Inject(method="saveLevelData", at=@At("TAIL"))
-	public void wunderreich_save(CallbackInfo ci){
-		if (getServer() instanceof BoxOfEirContainerProvider) {
-			BoxOfEirContainer boxOfEirContainer = ((BoxOfEirContainerProvider) getServer()).getBoxOfEirContainer();
-			if (boxOfEirContainer != null) {
-				boxOfEirContainer.save();
-			}
-		}
-	}
+    @Shadow
+    @NotNull
+    public abstract MinecraftServer getServer();
+
+    @Inject(method = "saveLevelData", at = @At("TAIL"))
+    public void wunderreich_save(CallbackInfo ci) {
+        if (getServer() instanceof BoxOfEirContainerProvider) {
+            BoxOfEirContainer boxOfEirContainer = ((BoxOfEirContainerProvider) getServer()).getBoxOfEirContainer();
+            if (boxOfEirContainer != null) {
+                boxOfEirContainer.save();
+            }
+        }
+    }
 }

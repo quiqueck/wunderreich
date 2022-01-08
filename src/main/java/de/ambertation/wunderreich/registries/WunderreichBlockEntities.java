@@ -17,7 +17,7 @@ public class WunderreichBlockEntities {
         return Registry.register(Registry.BLOCK_ENTITY_TYPE, Wunderreich.makeID(id), builder.build(null));
     }
 
-    public static void register(){
+    public static void register() {
 
     }
 }

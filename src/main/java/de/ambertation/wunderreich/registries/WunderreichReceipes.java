@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import ru.bclib.recipes.GridRecipe;
 
 public class WunderreichReceipes {
-    public static void register(){
+    public static void register() {
         GridRecipe.make(Wunderreich.makeID("whisperer_blank"), WunderreichItems.BLANK_WHISPERER)
                 .checkConfig(Configs.RECIPE_CONFIG)
                 .setShape("GAG", "ABA", "GAG")

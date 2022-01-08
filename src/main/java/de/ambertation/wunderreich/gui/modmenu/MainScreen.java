@@ -19,46 +19,47 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
-public class MainScreen extends GridScreen{
+public class MainScreen extends GridScreen {
+
+    Map<GridWidgetWithEnabledState, Supplier<Boolean>> dependentWidgets = new HashMap<>();
 
     public MainScreen(@Nullable Screen parent) {
         super(parent, new TranslatableComponent("title.wunderreich.modmenu.main"));
     }
 
-    protected <T> TranslatableComponent getComponent(NamedPathConfig config, ConfigTokenDescription<T> option, String type){
-        return new TranslatableComponent(type + ".config." + config.configID + option.getPath() );
+    protected <T> TranslatableComponent getComponent(NamedPathConfig config, ConfigTokenDescription<T> option, String type) {
+        return new TranslatableComponent(type + ".config." + config.configID + option.getPath());
     }
 
-    Map<GridWidgetWithEnabledState, Supplier<Boolean>> dependentWidgets = new HashMap<>();
-    protected void updateEnabledState(){
-        dependentWidgets.forEach((cb, supl)->cb.setEnabled(supl.get()));
+    protected void updateEnabledState() {
+        dependentWidgets.forEach((cb, supl) -> cb.setEnabled(supl.get()));
     }
 
     @SuppressWarnings("unchecked")
-    protected <T>void addRow(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<T> option){
+    protected <T> void addRow(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<T> option) {
         if (BooleanEntry.class.isAssignableFrom(option.token.type)) {
-            addCheckbox(grid, config, (ConfigTokenDescription<Boolean>)option);
+            addCheckbox(grid, config, (ConfigTokenDescription<Boolean>) option);
         }
 
         grid.addSpacerRow(2);
     }
 
 
-    protected void addCheckbox(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<Boolean> option){
-        if (option.topPadding>0){
+    protected void addCheckbox(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<Boolean> option) {
+        if (option.topPadding > 0) {
             grid.addSpacerRow(option.topPadding);
         }
         GridRow row = grid.addRow();
-        if (option.leftPadding>0){
+        if (option.leftPadding > 0) {
             row.addSpacer(option.leftPadding);
         }
-        GridCheckboxCell cb = row.addCheckbox(getComponent(config, option, "title"), config.getRaw(option.token), font, (state)-> {
+        GridCheckboxCell cb = row.addCheckbox(getComponent(config, option, "title"), config.getRaw(option.token), font, (state) -> {
             config.set(option.token, state);
             updateEnabledState();
         });
 
         if (option.token instanceof DependendConfigToken) {
-            dependentWidgets.put(cb, ()->option.token.dependenciesTrue(config));
+            dependentWidgets.put(cb, () -> option.token.dependenciesTrue(config));
             cb.setEnabled(option.token.dependenciesTrue(config));
         }
     }
@@ -77,7 +78,7 @@ public class MainScreen extends GridScreen{
         grid.addSpacerRow(15);
         GridRow row = grid.addRow();
         row.addFiller();
-        row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button)->{
+        row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button) -> {
             Configs.MAIN.saveChanges();
             onClose();
         });

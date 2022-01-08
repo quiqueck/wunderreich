@@ -32,27 +32,45 @@ import java.util.Objects;
 public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContainer> {
     static final int COST_A_SLOT = 0;
     static final int COST_B_SLOT = 1;
-
+    private static final List<ImprinterRecipe> RECEIPS = new LinkedList<>();
     private final ResourceLocation id;
 
-    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP){
+    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
         super(enchantment, inputA, inputB, baseXP);
         this.id = id;
     }
 
-    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type){
+    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type) {
         super(enchantment, inputA, inputB, output, baseXP, type);
         this.id = id;
     }
 
-    private ImprinterRecipe(Enchantment e){
+    private ImprinterRecipe(Enchantment e) {
         super(e);
 
-        this.id =  Wunderreich.makeID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
+        this.id = Wunderreich.makeID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
     }
 
     public static List<ImprinterRecipe> getReceips() {
         return RECEIPS;
+    }
+
+    public static void register() {
+        Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
+        Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
+
+        RECEIPS.clear();
+        List<Enchantment> enchants = new LinkedList<>();
+        Registry.ENCHANTMENT.forEach(e -> {
+            enchants.add(e);
+        });
+        enchants.sort(Comparator.comparing(a -> a.category + ":" + WhisperRule.getFullname(a).getString()));
+
+        enchants.forEach(e -> {
+            ImprinterRecipe r = new ImprinterRecipe(e);
+            RECEIPS.add(r);
+            BCLRecipeManager.addRecipe(Type.INSTANCE, r);
+        });
     }
 
     @Override
@@ -62,7 +80,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
     @Override
     public boolean matches(WhisperContainer inv, Level level) {
-        if (inv.getContainerSize()<2) return false;
+        if (inv.getContainerSize() < 2) return false;
         return this.inputA.test(inv.getItem(COST_A_SLOT)) && this.inputB.test(inv.getItem(COST_B_SLOT)) ||
                 this.inputA.test(inv.getItem(COST_B_SLOT)) && this.inputB.test(inv.getItem(COST_A_SLOT));
     }
@@ -98,30 +116,25 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         return Type.INSTANCE;
     }
 
-    private static final List<ImprinterRecipe> RECEIPS = new LinkedList<>();
-    public static void register() {
-        Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
-        Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ImprinterRecipe)) return false;
+        ImprinterRecipe that = (ImprinterRecipe) o;
+        return Objects.equals(id, that.id);
+    }
 
-        RECEIPS.clear();
-        List<Enchantment> enchants = new LinkedList<>();
-        Registry.ENCHANTMENT.forEach(e -> {
-            enchants.add(e);
-        });
-        enchants.sort(Comparator.comparing(a -> a.category + ":" + WhisperRule.getFullname(a).getString()));
-
-        enchants.forEach(e -> {
-            ImprinterRecipe r = new ImprinterRecipe(e);
-            RECEIPS.add(r);
-            BCLRecipeManager.addRecipe(Type.INSTANCE, r);
-        });
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 
     public static class Type implements RecipeType<ImprinterRecipe> {
         public static final String ID = "imprinter";
         public static final RecipeType<ImprinterRecipe> INSTANCE = new Type(); //Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(ID+"_recipe"), new Type());
 
-        Type(){ }
+        Type() {
+        }
 
         @Override
         public String toString() {
@@ -129,25 +142,17 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         }
     }
 
-
-
     private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
         public final static ResourceLocation ID = Wunderreich.makeID(Type.ID);
         public final static Serializer INSTANCE = new Serializer(); //Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
-
-        static class ImprinterRecipeJsonFormat {
-            JsonObject inputA;
-            JsonObject inputB;
-            int xp;
-            String enchantment;
-        }
 
         @Override
         public ImprinterRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf packetBuffer) {
             Ingredient costA = Ingredient.fromNetwork(packetBuffer);
             Ingredient costB = Ingredient.fromNetwork(packetBuffer);
             ItemStack output = packetBuffer.readItem();
-            /*byte packetType = */packetBuffer.readByte(); //this is a type we currently do not use
+            /*byte packetType = */
+            packetBuffer.readByte(); //this is a type we currently do not use
             ItemStack type = packetBuffer.readItem();
             int baseXP = packetBuffer.readVarInt();
 
@@ -192,7 +197,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
             ResourceLocation eID = new ResourceLocation(recipeJson.enchantment);
             var enchantment = Registry.ENCHANTMENT.getOptional(eID);
-            if (!enchantment.isPresent()){
+            if (!enchantment.isPresent()) {
                 throw new JsonParseException("Unknown Enchantment " + eID);
             }
 
@@ -213,18 +218,12 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
             return r;
         }
-    }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ImprinterRecipe)) return false;
-        ImprinterRecipe that = (ImprinterRecipe) o;
-        return Objects.equals(id, that.id);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+        static class ImprinterRecipeJsonFormat {
+            JsonObject inputA;
+            JsonObject inputB;
+            int xp;
+            String enchantment;
+        }
     }
 }
