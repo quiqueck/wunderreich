@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
-    private final static String TAG_NAME = "WhisperedEnchantment";
+    public final static String TAG_NAME = "WhisperedEnchantment";
 
     public static Enchantment findEnchantment(CompoundTag tag) {
         var oEnchantment = Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag));
