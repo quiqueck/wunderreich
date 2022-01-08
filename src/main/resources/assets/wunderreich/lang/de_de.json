@@ -7,6 +7,8 @@
 	"block.wunderreich.whisper_imprinter": "Flüsterpräger",
 	"item.wunderreich.whisperer": "Gerägter Flüsterer",
 	"item.wunderreich.whisperer_blank": "Flüsterer",
+	"itemGroup.wunderreich.items": "Wunderreich",
+	"itemGroup.wunderreich.blocks": "Wunderreich",
 	"title.wunderreich.modmenu.main": "Wunderreich - Einstellungen",
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Benannte Monster in friedlich erhalten",
 	"title.config.wunderreich.main.features.allowTradesCycling": "Button \"Handel neu auswürfeln\" für Dörfler ohne XP",

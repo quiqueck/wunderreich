@@ -5,6 +5,8 @@
 	"container.wunderreich.box_of_eir": "Box of Eir",
 	"block.wunderreich.box_of_eir": "Box of Eir",
 	"block.wunderreich.whisper_imprinter": "Whisper Imprinter",
+	"itemGroup.wunderreich.items": "Wunderreich (Items)",
+	"itemGroup.wunderreich.blocks": "Wunderreich (Blocks)",
 	"item.wunderreich.whisperer": "Imprinted Whisperer",
 	"item.wunderreich.whisperer_blank": "Blank Whisperer",
 	"title.wunderreich.modmenu.main": "Wunderreich - Config",
