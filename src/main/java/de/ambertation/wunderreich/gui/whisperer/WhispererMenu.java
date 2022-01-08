@@ -13,7 +13,9 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class WhispererMenu
         extends AbstractContainerMenu {
@@ -196,8 +198,12 @@ public class WhispererMenu
         }
     }
 
+    private List<ImprinterRecipe> sortedEnchants = null;
     public List<ImprinterRecipe> getEnchants() {
-        return ImprinterRecipe.getRecipes();
+        if (sortedEnchants == null){
+            sortedEnchants = ImprinterRecipe.getRecipes().stream().sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName())).collect(Collectors.toList());
+        }
+        return sortedEnchants;
     }
 }
 

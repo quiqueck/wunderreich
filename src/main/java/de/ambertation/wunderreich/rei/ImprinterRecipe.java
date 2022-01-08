@@ -65,7 +65,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         Registry.ENCHANTMENT.forEach(e -> {
             enchants.add(e);
         });
-        enchants.sort(Comparator.comparing(a -> a.category + ":" + WhisperRule.getFullname(a).getString()));
+        enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a).getString()));
 
         enchants.forEach(e -> {
             ImprinterRecipe r = new ImprinterRecipe(e);
