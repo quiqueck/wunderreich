@@ -29,4 +29,8 @@ public class MainConfig extends NamedPathConfig {
     public boolean allowBuilderTools(){
         return this.get(ALLOW_BUILDER_TOOLS);
     }
+    
+    public boolean cyclingNeedsWhisperer(){
+        return this.get(CYCLING_NEEDS_WHISPERER);
+    }
 }

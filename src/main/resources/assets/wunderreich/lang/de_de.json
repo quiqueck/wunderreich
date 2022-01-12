@@ -14,6 +14,7 @@
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Benannte Monster in friedlich erhalten",
 	"title.config.wunderreich.main.features.allowTradesCycling": "Button \"Handel neu auswürfeln\" für Dörfler ohne XP",
 	"title.config.wunderreich.main.features.allowLibrarianSelection": "Den ersten Handel von Bibliothekaren beeinflussen",
+	"title.config.wunderreich.main.features.cyclingNeedsWhisperer": "\"Handel neu auswürfeln\" nur mit Flüsterer",
 	"enchantment.type.ARMOR": "Rüstungen",
 	"enchantment.type.ARMOR_FEET": "Fußrüstungen",
 	"enchantment.type.ARMOR_LEGS": "Beinrüstungen",

@@ -8,12 +8,15 @@ import net.minecraft.world.item.Rarity;
 ;
 
 public class VillagerWhisperer extends Item {
-
+    
     public VillagerWhisperer() {
+        this(20);
+    }
+    public VillagerWhisperer(int durability) {
         super(WunderreichItems
                 .makeItemSettings()
                 .rarity(Rarity.RARE)
-                .durability(40)
+                .durability(durability)
             );
     }
 

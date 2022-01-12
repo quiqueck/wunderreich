@@ -14,6 +14,7 @@
 	"title.config.wunderreich.main.features.doNotDespawnWithNametag": "Keep Name-Tagged Monsters alive in Peacefull",
 	"title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP",
 	"title.config.wunderreich.main.features.allowLibrarianSelection": "Influence the first trade of librarians",
+	"title.config.wunderreich.main.features.cyclingNeedsWhisperer": "Trade-ReRoll requires Whisperer",
 	"enchantment.type.ARMOR": "Armor Enchantment",
 	"enchantment.type.ARMOR_FEET": "Foot-Armor Enchantment",
 	"enchantment.type.ARMOR_LEGS": "Leg-Armor Enchantment",

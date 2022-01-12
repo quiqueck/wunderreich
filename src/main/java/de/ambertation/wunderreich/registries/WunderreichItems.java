@@ -17,7 +17,8 @@ public class WunderreichItems {
     private static final ItemRegistry REGISTRY = new ItemRegistry(CreativeTabs.TAB_ITEMS, WunderreichConfigs.ITEM_CONFIG);
 
     public static Item WHISPERER = registerItem("whisperer", new TrainedVillagerWhisperer(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION));
-    public static Item BLANK_WHISPERER = registerItem("whisperer_blank", new VillagerWhisperer(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION));
+    public static Item BLANK_WHISPERER = registerItem("whisperer_blank", new VillagerWhisperer(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION) || WunderreichConfigs.MAIN.get(MainConfig.CYCLING_NEEDS_WHISPERER));
+    
     public static Item BUILDERS_TROWEL = registerItem("builders_trowel", new BuildersTrowel(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_BUILDER_TOOLS));
 
     @NotNull

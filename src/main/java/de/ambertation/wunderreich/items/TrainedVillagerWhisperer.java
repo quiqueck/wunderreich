@@ -22,6 +22,10 @@ import java.util.List;
 
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public final static String TAG_NAME = "WhisperedEnchantment";
+    
+    public TrainedVillagerWhisperer(){
+        super(40);
+    }
 
     public static Enchantment findEnchantment(CompoundTag tag) {
         var oEnchantment = Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag));

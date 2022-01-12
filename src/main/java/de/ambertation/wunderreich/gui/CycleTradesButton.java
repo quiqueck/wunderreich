@@ -6,8 +6,11 @@ package de.ambertation.wunderreich.gui;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
@@ -17,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Items;
@@ -39,6 +43,7 @@ public class CycleTradesButton extends Button {
 
     private MerchantScreen screen;
     private MerchantMenu menu;
+    private boolean canUse;
 
     public CycleTradesButton(int x, int y, OnPress pressable, MerchantScreen screen, MerchantMenu menu) {
         super(x, y, WIDTH, HEIGHT, TextComponent.EMPTY, pressable);
@@ -54,13 +59,21 @@ public class CycleTradesButton extends Button {
         CycleTradesButton button = new CycleTradesButton(left - CycleTradesButton.WIDTH - 2, top + 2, b -> {
             CycleTradesMessage.send();
         }, merchantScreen, menu);
-
+    
+        if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer()) {
+            button.canUse = CycleTradesMessage.containsWhisperer(Minecraft.getInstance().player)!=null;
+            button.active = button.canUse;
+            button.visible = button.canUse;
+        } else {
+            button.canUse = true;
+        }
+        
         return button;
     }
 
     @Override
     public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        visible = screen.getMenu().showProgressBar() && screen.getMenu().getTraderXp() <= 0;
+        visible = canUse && screen.getMenu().showProgressBar() && screen.getMenu().getTraderXp() <= 0;
         super.render(matrixStack, mouseX, mouseY, partialTicks);
     }
 
