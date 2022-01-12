@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.registries;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.config.MainConfig;
+import de.ambertation.wunderreich.items.BuildersTrowel;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
@@ -17,6 +18,7 @@ public class WunderreichItems {
 
     public static Item WHISPERER = registerItem("whisperer", new TrainedVillagerWhisperer(), Configs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION));
     public static Item BLANK_WHISPERER = registerItem("whisperer_blank", new VillagerWhisperer(), Configs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION));
+    public static Item BUILDERS_TROWEL = registerItem("builders_trowel", new BuildersTrowel(), Configs.MAIN.get(MainConfig.ALLOW_BUILDER_TOOLS));
 
     @NotNull
     public static ItemRegistry getItemRegistry() {

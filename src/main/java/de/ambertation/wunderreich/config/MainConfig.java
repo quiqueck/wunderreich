@@ -16,6 +16,8 @@ public class MainConfig extends NamedPathConfig {
     @ConfigUI(leftPadding = 12)
     public static final ConfigToken<Boolean> CYCLING_NEEDS_WHISPERER = DependendConfigToken.Boolean(true, "cyclingNeedsWhisperer", FEATURE_CATEGORY, cfg -> cfg.get(ALLOW_TRADES_CYCLING));
 
+    public static final ConfigToken<Boolean> ALLOW_BUILDER_TOOLS = ConfigToken.Boolean(true, "allowBuilderTools", FEATURE_CATEGORY);
+
     public MainConfig() {
         super(Wunderreich.MOD_ID, "main", true);
     }
