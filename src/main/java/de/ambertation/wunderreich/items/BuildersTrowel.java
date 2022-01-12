@@ -4,19 +4,32 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.RandomList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
+import ru.bclib.api.TagAPI;
 
-public class BuildersTrowel extends Item {
+public class BuildersTrowel extends DiggerItem {
+    public static final Tag.Named<Block> MINEABLE_TROWEL = TagAPI.makeCommonBlockTag("mineable/trowel");
+    
     public BuildersTrowel() {
-        super(WunderreichItems
+        super(
+            -2.5f, //attack DamageBase
+            -0.5f, //attack Speed
+            Tiers.IRON,
+            MINEABLE_TROWEL,
+            WunderreichItems
                 .makeItemSettings()
                 .rarity(Rarity.UNCOMMON)
         );
@@ -50,13 +63,13 @@ public class BuildersTrowel extends Item {
         if (item!=null) {
             bctx = new BlockPlaceContext(ctx.getPlayer(), ctx.getHand(),item, new BlockHitResult(ctx.getClickLocation(), ctx.getClickedFace(), ctx.getClickedPos(), ctx.isInside()));
             BlockItem bi = (BlockItem)item.getItem();
-            System.out.println(list + " - " + bi);
 
             InteractionResult result = bi.place(bctx);
-            if (result==InteractionResult.CONSUME) {
+            if (result==InteractionResult.CONSUME && !p.getAbilities().instabuild) {
                 item.shrink(1);
             }
-            System.out.println(list + " - " + bi);
+            ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
+            
             return result;
         }
         return InteractionResult.FAIL;
