@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.inventory;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -21,7 +22,7 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
     }
 
     public void load() {
-        CompoundTag global = LevelData.getCompoundTag("global");
+        CompoundTag global = LevelData.getInstance().getGlobalInventory();
         ListTag items;
         if (!global.contains("items")) {
             items = new ListTag();
@@ -33,9 +34,9 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
     }
 
     public void save() {
-        CompoundTag global = LevelData.getCompoundTag("global");
+        CompoundTag global = LevelData.getInstance().getGlobalInventory();
         global.put("items", createTag());
-        LevelData.save();
+        LevelData.getInstance().saveLevelConfig();
     }
 
     public void fromTag(ListTag listTag) {
@@ -109,16 +110,5 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
     @Override
     public boolean canTakeItemThroughFace(int i, ItemStack itemStack, Direction direction) {
         return direction == Direction.DOWN;
-    }
-
-    //convenience wrapper for WorldDataAPI
-    public static class LevelData {
-        public static CompoundTag getCompoundTag(String path) {
-            return WorldDataAPI.getCompoundTag(Wunderreich.MOD_ID, path);
-        }
-
-        public static void save() {
-            WorldDataAPI.saveFile(Wunderreich.MOD_ID);
-        }
     }
 }

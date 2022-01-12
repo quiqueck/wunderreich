@@ -50,7 +50,6 @@ public class Wunderreich implements ModInitializer {
         CycleTradesMessage.register();
         AddRemoveBoxOfEirMessage.register();
 
-        WorldDataAPI.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
         WunderreichConfigs.saveConfigs();
 
