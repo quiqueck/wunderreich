@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.EnchantmentInfo;
 import de.ambertation.wunderreich.gui.whisperer.WhisperContainer;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
@@ -71,17 +72,21 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
 
         RECIPES.clear();
-        List<Enchantment> enchants = new LinkedList<>();
-        Registry.ENCHANTMENT.forEach(e -> {
-            enchants.add(e);
-        });
-        enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a).getString()));
-
-        enchants.forEach(e -> {
-            ImprinterRecipe r = new ImprinterRecipe(e);
-            RECIPES.add(r);
-            BCLRecipeManager.addRecipe(Type.INSTANCE, r);
-        });
+        
+        if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
+            List<Enchantment> enchants = new LinkedList<>();
+            Registry.ENCHANTMENT.forEach(e -> {
+                enchants.add(e);
+            });
+            enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
+                                                               .getString()));
+    
+            enchants.forEach(e -> {
+                ImprinterRecipe r = new ImprinterRecipe(e);
+                RECIPES.add(r);
+                BCLRecipeManager.addRecipe(Type.INSTANCE, r);
+            });
+        }
 
         resortRecipes();
     }

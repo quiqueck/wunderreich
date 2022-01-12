@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich;
 
-import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
@@ -52,7 +52,7 @@ public class Wunderreich implements ModInitializer {
 
         WorldDataAPI.registerModCache(MOD_ID);
         DataExchangeAPI.registerMod(MOD_ID);
-        Configs.saveConfigs();
+        WunderreichConfigs.saveConfigs();
 
         DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
     }

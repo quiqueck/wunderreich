@@ -13,7 +13,8 @@ public class VillagerWhisperer extends Item {
         super(WunderreichItems
                 .makeItemSettings()
                 .rarity(Rarity.RARE)
-                .durability(40));
+                .durability(40)
+            );
     }
 
     @Override

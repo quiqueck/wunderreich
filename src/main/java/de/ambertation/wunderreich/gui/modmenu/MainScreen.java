@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
-import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.config.WunderreichConfigs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -73,13 +73,13 @@ public class MainScreen extends GridScreen {
     protected void initLayout() {
         final int BUTTON_HEIGHT = 20;
 
-        Configs.MAIN.getAllOptions().stream().filter(o -> !o.hidden).forEach(o -> addRow(grid, Configs.MAIN, o));
+        WunderreichConfigs.MAIN.getAllOptions().stream().filter(o -> !o.hidden).forEach(o -> addRow(grid, WunderreichConfigs.MAIN, o));
 
         grid.addSpacerRow(15);
         GridRow row = grid.addRow();
         row.addFiller();
         row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button) -> {
-            Configs.MAIN.saveChanges();
+            WunderreichConfigs.MAIN.saveChanges();
             onClose();
         });
     }

@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -56,10 +57,12 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
             return InteractionResult.SUCCESS;
         }
 
-        player.openMenu(blockState.getMenuProvider(level, blockPos));
-
-
-        return InteractionResult.CONSUME;
+        if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
+            player.openMenu(blockState.getMenuProvider(level, blockPos));
+            return InteractionResult.CONSUME;
+        }
+        
+        return InteractionResult.FAIL;
     }
 
     @Override

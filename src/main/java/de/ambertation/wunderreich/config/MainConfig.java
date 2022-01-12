@@ -21,4 +21,12 @@ public class MainConfig extends NamedPathConfig {
     public MainConfig() {
         super(Wunderreich.MOD_ID, "main", true);
     }
+    
+    public boolean allowLibrarianSelection(){
+        return this.get(ALLOW_LIBRARIAN_SELECTION) && WunderreichConfigs.ITEM_CONFIG.get(ItemConfig.WHISPERER_BLANK) && WunderreichConfigs.ITEM_CONFIG.get(ItemConfig.WHISPERER);
+    }
+    
+    public boolean allowBuilderTools(){
+        return this.get(ALLOW_BUILDER_TOOLS);
+    }
 }

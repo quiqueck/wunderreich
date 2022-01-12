@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
@@ -81,7 +81,7 @@ public class CycleTradesMessage {
     }
 
     public static boolean canSelectTrades(Villager villager, boolean doLog) {
-        if (!Configs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION)) return false;
+        if (!WunderreichConfigs.MAIN.allowLibrarianSelection()) return false;
         if (villager == null || villager.getVillagerXp() > 0) return false;
 
         VillagerData villagerData = villager.getVillagerData();
@@ -131,7 +131,7 @@ public class CycleTradesMessage {
         if (!(player.containerMenu instanceof MerchantMenu)) {
             return;
         }
-        if (!Configs.MAIN.get(MainConfig.ALLOW_TRADES_CYCLING)) return;
+        if (!WunderreichConfigs.MAIN.get(MainConfig.ALLOW_TRADES_CYCLING)) return;
         MerchantMenu menu = (MerchantMenu) player.containerMenu;
 
         Villager villager = ((IMerchantMenu) menu).getVillager();
