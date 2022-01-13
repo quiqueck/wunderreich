@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 
@@ -52,6 +53,8 @@ public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider 
                                  GameProfileCache gameProfileCache,
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
+        LevelData.getInstance().loadNewLevel(levelStorageAccess);
+        
         //we start a new world, so clear any old block
         BoxOfEirBlock.liveBlocks.clear();
         boxOfEirContainer = new BoxOfEirContainer();

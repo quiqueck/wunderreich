@@ -7,7 +7,9 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -26,33 +28,57 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 import ru.bclib.util.Triple;
 
-public class CycleTradesMessage {
-    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "cycle_trades");
+public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
+    public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
+            new CycleTradesMessage());
 
-    public static void register() {
-        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
-            ServerPlayNetworking.registerReceiver(handler,
-                    CHANNEL,
-                    (_server, _player, _handler, _buf, _responseSender) -> {
-                        cycleTrades(_player);
-                    });
-        });
-
-        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-            ServerPlayNetworking.unregisterReceiver(handler, CHANNEL);
-        });
+    protected CycleTradesMessage() {
     }
 
-    public static void send() {
-        ClientPlayNetworking.send(CHANNEL, PacketByteBufs.create());
+    protected static record Content() {
     }
+
+    public void send() {
+        sendToServer(null);
+    }
+
+    @Override
+    protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
+
+    }
+
+    @Override
+    protected Content deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender) {
+        return null;
+    }
+
+    @Override
+    protected void processOnGameThread(MinecraftServer server, ServerPlayer player, Content content) {
+        cycleTrades(player);
+    }
+
+//    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "cycle_trades");
+//    public static void register() {
+//        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
+//            ServerPlayNetworking.registerReceiver(handler,
+//                    CHANNEL,
+//                    (_server, _player, _handler, _buf, _responseSender) -> {
+//                        cycleTrades(_player);
+//                    });
+//        });
+//
+//        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+//            ServerPlayNetworking.unregisterReceiver(handler, CHANNEL);
+//        });
+//    }
+//
+//    public static void send() {
+//        ClientPlayNetworking.send(CHANNEL, PacketByteBufs.create());
+//    }
 
     public static ItemStack holds(Player player, Item item) {
         if (player.getMainHandItem().is(item)) return player.getMainHandItem();

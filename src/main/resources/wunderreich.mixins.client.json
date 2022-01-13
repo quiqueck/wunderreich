@@ -6,11 +6,10 @@
   "mixins": [
   ],
   "client": [
-    "MerchantScreenMixin",
-    "MerchantMenuMixin",
-    "SheetsMixin",
     "BlockEntityWithoutLevelRendererMixin",
-    "MinecraftMixin"
+    "MerchantMenuMixin",
+    "MerchantScreenMixin",
+    "SheetsMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -62,7 +62,7 @@ public class CycleTradesButton extends Button {
         final int top = (merchantScreenMixin.height - imageHeight) / 2;
 
         CycleTradesButton button = new CycleTradesButton(left - CycleTradesButton.WIDTH - 2, top + 2, b -> {
-            CycleTradesMessage.send();
+            CycleTradesMessage.INSTANCE.send();
         }, merchantScreen, menu);
 
         if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get()) {

@@ -1,55 +1,47 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
-import ru.bclib.api.dataexchange.DataHandler;
-import ru.bclib.api.dataexchange.DataHandlerDescriptor;
+public class SelectWhisperMessage extends ServerBoundPacketHandler<SelectWhisperMessage.Content> {
+    public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register("select_whisper",
+            new SelectWhisperMessage());
 
-public class SelectWhisperMessage extends DataHandler.FromClient {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(Wunderreich.MOD_ID,
-            "select_whisper"), SelectWhisperMessage::new, false, false);
-
-    protected int itemIndex = 0;
-
-    public SelectWhisperMessage() {
-        this(0);
+    protected SelectWhisperMessage() {
     }
 
-    public SelectWhisperMessage(int idx) {
-        super(DESCRIPTOR.IDENTIFIER);
-        this.itemIndex = idx;
+    protected static record Content(int itemIndex) {
+    }
+
+    public void send(int itemIndex) {
+        this.sendToServer(new Content(itemIndex));
     }
 
     @Override
-    protected void serializeDataOnClient(FriendlyByteBuf buf) {
-        buf.writeVarInt(itemIndex);
+    protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
+        buf.writeVarInt(content.itemIndex);
     }
 
     @Override
-    protected void deserializeIncomingDataOnServer(FriendlyByteBuf buf, Player player, PacketSender responseSender) {
-        this.itemIndex = buf.readVarInt();
+    protected Content deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender) {
+        int itemIndex = buf.readVarInt();
+        return new Content(itemIndex);
     }
 
     @Override
-    protected void runOnServerGameThread(MinecraftServer server, Player player) {
-        int itemIndex = getItemIndex();
+    protected void processOnGameThread(MinecraftServer server, ServerPlayer player, Content content) {
+        int itemIndex = content.itemIndex;
         AbstractContainerMenu abstractContainerMenu = player.containerMenu;
+
         if (abstractContainerMenu instanceof WhispererMenu menu) {
             menu.setSelectionHint(itemIndex);
             menu.tryMoveItems(itemIndex);
         }
-    }
-
-    public int getItemIndex() {
-        return this.itemIndex;
     }
 }

@@ -4,16 +4,15 @@
   "package": "de.ambertation.wunderreich.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "ServerLevelMixin",
+    "AbstractVillagerMixin",
+    "GhastMixin",
     "MinecraftServerMixin",
     "MonsterMixin",
-    "GhastMixin",
     "PhantomMixin",
-    "SlimeMixin",
     "PlayerMixin",
-    "VillagerMixin",
-    "AbstractVillagerMixin",
-    "DedicatedServerMixin"
+    "ServerLevelMixin",
+    "SlimeMixin",
+    "VillagerMixin"
   ],
   "client": [
   ],

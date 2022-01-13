@@ -279,7 +279,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         //liveBlocks.add(blockPos);
-        AddRemoveBoxOfEirMessage.send(true, blockPos);
+        AddRemoveBoxOfEirMessage.INSTANCE.send(true, blockPos);
         return new BoxOfEirBlockEntity(blockPos, blockState);
     }
 
@@ -325,7 +325,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
         if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
             //liveBlocks.remove(blockPos);
-            AddRemoveBoxOfEirMessage.send(false, blockPos);
+            AddRemoveBoxOfEirMessage.INSTANCE.send(false, blockPos);
         }
     }
 

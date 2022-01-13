@@ -1,9 +1,7 @@
 package de.ambertation.wunderreich;
 
 import de.ambertation.wunderreich.config.WunderreichConfigs;
-import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
-import de.ambertation.wunderreich.network.CycleTradesMessage;
-import de.ambertation.wunderreich.network.SelectWhisperMessage;
+import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -19,7 +17,6 @@ import net.fabricmc.loader.api.ModContainer;
 import ru.bclib.api.dataexchange.DataExchangeAPI;
 import ru.bclib.util.Logger;
 
-import java.util.List;
 import java.util.Optional;
 
 public class Wunderreich implements ModInitializer {
@@ -48,13 +45,9 @@ public class Wunderreich implements ModInitializer {
         WunderreichReceipes.register();
 
         ImprinterRecipe.register();
-
-        CycleTradesMessage.register();
-        AddRemoveBoxOfEirMessage.register();
+        ServerBoundPacketHandler.register();
 
         DataExchangeAPI.registerMod(MOD_ID);
         WunderreichConfigs.saveConfigs();
-
-        DataExchangeAPI.registerDescriptors(List.of(SelectWhisperMessage.DESCRIPTOR));
     }
 }

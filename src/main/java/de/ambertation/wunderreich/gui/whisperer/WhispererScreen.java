@@ -32,7 +32,6 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import ru.bclib.api.dataexchange.DataExchangeAPI;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
@@ -75,7 +74,7 @@ public class WhispererScreen
     private void postButtonClick() {
         this.menu.setSelectionHint(this.shopItem);
         this.menu.tryMoveItems(this.shopItem);
-        DataExchangeAPI.send(new SelectWhisperMessage(this.shopItem));
+        SelectWhisperMessage.INSTANCE.send(this.shopItem);
     }
 
     @Override

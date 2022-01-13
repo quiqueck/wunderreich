@@ -65,27 +65,32 @@ public class LevelData {
     }
 
     private void loadLevelConfig() {
+        CompoundTag loadedRoot = null;
         File dataFile = getDataFile("");
 
         //reload existing file
         if (dataFile.exists()) {
             try {
-                root = NbtIo.readCompressed(dataFile);
+                loadedRoot = NbtIo.readCompressed(dataFile);
             } catch (IOException e) {
                 Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
                         dataFile.toString(),
                         e);
                 dataFile = getDataFile("_old");
                 try {
-                    root = NbtIo.readCompressed(dataFile);
+                    loadedRoot = NbtIo.readCompressed(dataFile);
                 } catch (IOException ee) {
                     Wunderreich.LOGGER.error("Failed to access level config from '{}'", dataFile.toString(), ee);
-                    root = new CompoundTag();
                 }
             }
-        } else {
-            root.putString("create_version", Wunderreich.VERSION);
         }
+
+        if (loadedRoot == null) {
+            loadedRoot = new CompoundTag();
+            loadedRoot.putString("create_version", Wunderreich.VERSION);
+        }
+
+        this.root = loadedRoot;
     }
 
     public void saveLevelConfig() {
@@ -112,6 +117,12 @@ public class LevelData {
     }
 
     public CompoundTag getGlobalInventory() {
+        //TODO: remove!!!
+        if (root == null) {
+            Wunderreich.LOGGER.error("Accessed global Inventory before level load.");
+            return new CompoundTag();
+        }
+
         if (root.contains("global", Tag.TAG_COMPOUND)) {
             return root.getCompound("global");
         } else {
