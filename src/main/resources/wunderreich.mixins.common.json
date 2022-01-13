@@ -12,6 +12,7 @@
     "MonsterMixin",
     "PhantomMixin",
     "PlayerMixin",
+    "RecipeManagerMixin",
     "ServerLevelMixin",
     "SlimeMixin",
     "VillagerMixin"
