@@ -7,7 +7,6 @@
   ],
   "client": [
     "BlockEntityWithoutLevelRendererMixin",
-    "MerchantMenuMixin",
     "MerchantScreenMixin",
     "SheetsMixin"
   ],

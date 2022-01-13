@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.network;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock.LiveBlock;
 
@@ -49,14 +50,14 @@ public class AddRemoveBoxOfEirMessage extends ServerBoundPacketHandler<AddRemove
 
     private static void addedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        System.out.println("Adding " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
+        Wunderreich.LOGGER.info("Adding BoxOfEir at " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
         BoxOfEirBlock.liveBlocks.add(lb);
         BoxOfEirBlock.updateNeighbours(level, pos);
     }
 
     private static void removedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        System.out.println("Removing " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
+        Wunderreich.LOGGER.info("Removing  BoxOfEir at " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
         BoxOfEirBlock.liveBlocks.remove(lb);
         BoxOfEirBlock.updateNeighbours(level, pos);
     }

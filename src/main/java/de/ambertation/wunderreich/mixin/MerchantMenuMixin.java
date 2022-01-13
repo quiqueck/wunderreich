@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.mixin.client;
+package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 

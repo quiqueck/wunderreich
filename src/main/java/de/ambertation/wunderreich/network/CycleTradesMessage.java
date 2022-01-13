@@ -192,22 +192,23 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         if (!WunderreichConfigs.MAIN.allowTradesCycling.get()) return;
         MerchantMenu menu = (MerchantMenu) player.containerMenu;
 
-        Villager villager = ((IMerchantMenu) menu).getVillager();
-        if (villager == null || villager.getVillagerXp() > 0) {
-            return;
-        }
+        if (menu instanceof IMerchantMenu mmenu) {
+            Villager villager = mmenu.getVillager();
+            if (villager == null || villager.getVillagerXp() > 0) {
+                return;
+            }
 
-        if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get()) {
-            ItemStack whisp = containsWhisperer(player);
-            if (whisp == null) return;
-            whisp.hurtAndBreak(1,
-                    player,
-                    pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
-                            ? InteractionHand.MAIN_HAND
-                            : InteractionHand.OFF_HAND));
-        }
+            if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get()) {
+                ItemStack whisp = containsWhisperer(player);
+                if (whisp == null) return;
+                whisp.hurtAndBreak(1,
+                        player,
+                        pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
+                                ? InteractionHand.MAIN_HAND
+                                : InteractionHand.OFF_HAND));
+            }
 
-        villager.setOffers(null);
+            villager.setOffers(null);
 
 
 //		for (MerchantOffer merchantoffer : villager.getOffers()) {
@@ -221,11 +222,12 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 //			}
 //		}
 
-        player.sendMerchantOffers(menu.containerId,
-                villager.getOffers(),
-                villager.getVillagerData().getLevel(),
-                villager.getVillagerXp(),
-                villager.showProgressBar(),
-                villager.canRestock());
+            player.sendMerchantOffers(menu.containerId,
+                    villager.getOffers(),
+                    villager.getVillagerData().getLevel(),
+                    villager.getVillagerXp(),
+                    villager.showProgressBar(),
+                    villager.canRestock());
+        }
     }
 }
