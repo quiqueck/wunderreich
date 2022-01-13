@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.items;
 
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.rei.ImprinterRecipe;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;

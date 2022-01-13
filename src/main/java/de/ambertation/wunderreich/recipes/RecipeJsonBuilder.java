@@ -1,7 +1,8 @@
-package de.ambertation.wunderreich.utils;
+package de.ambertation.wunderreich.recipes;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -18,18 +19,8 @@ import com.google.gson.JsonObject;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class RecipeJsonBuilder {
-    private static Map<ResourceLocation, RecipeJsonBuilder> BUILDERS = new HashMap<>();
-
-    public static Map<ResourceLocation, JsonElement> validRecipes() {
-        return BUILDERS.entrySet().stream().filter(e -> e.getValue().canBuild()).collect(Collectors.toMap(
-                e -> e.getKey(),
-                e -> e.getValue().build()
-        ));
-    }
-
     private final ResourceLocation ID;
     private boolean canBuild;
 
@@ -60,7 +51,6 @@ public class RecipeJsonBuilder {
     public static RecipeJsonBuilder create(String name) {
         ResourceLocation id = Wunderreich.ID(name);
         RecipeJsonBuilder b = new RecipeJsonBuilder(id);
-        BUILDERS.put(id, b);
         return b;
     }
 
@@ -111,6 +101,14 @@ public class RecipeJsonBuilder {
 
     public boolean canBuild() {
         return canBuild;
+    }
+
+    public JsonElement register() {
+        if (!canBuild) return null;
+
+        JsonElement res = build();
+        WunderreichRecipes.RECIPES.put(ID, res);
+        return res;
     }
 
 

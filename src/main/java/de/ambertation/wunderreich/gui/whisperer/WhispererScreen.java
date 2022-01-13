@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
-import de.ambertation.wunderreich.rei.ImprinterRecipe;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;

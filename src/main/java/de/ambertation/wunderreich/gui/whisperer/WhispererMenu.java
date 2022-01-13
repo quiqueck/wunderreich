@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
-import de.ambertation.wunderreich.rei.ImprinterRecipe;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;

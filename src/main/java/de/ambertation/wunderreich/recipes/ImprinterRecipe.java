@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.rei;
+package de.ambertation.wunderreich.recipes;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.gui.whisperer.EnchantmentInfo;
 import de.ambertation.wunderreich.gui.whisperer.WhisperContainer;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -23,23 +24,20 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import ru.bclib.recipes.BCLRecipeManager;
+import com.google.gson.*;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 
 public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContainer> {
-    static final int COST_A_SLOT = 0;
-    static final int COST_B_SLOT = 1;
+    public static final int COST_A_SLOT = 0;
+    public static final int COST_B_SLOT = 1;
     private static final List<ImprinterRecipe> RECIPES = new LinkedList<>();
-    private static List<ImprinterRecipe> RECIPES_UI_SORTED = new LinkedList<>();
+    //    private static List<ImprinterRecipe> RECIPES_UI_SORTED = new LinkedList<>();
     private final ResourceLocation id;
 
     private ImprinterRecipe(ResourceLocation id,
@@ -65,7 +63,12 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     private ImprinterRecipe(Enchantment e) {
         super(e);
 
-        this.id = Wunderreich.ID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
+        this.id = makeID(e);
+    }
+
+    @NotNull
+    private static ResourceLocation makeID(Enchantment e) {
+        return Wunderreich.ID(Type.ID + "/" + e.getDescriptionId());
     }
 
     public static List<ImprinterRecipe> getRecipes() {
@@ -73,14 +76,17 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     public static List<ImprinterRecipe> getUISortedRecipes() {
-        return RECIPES_UI_SORTED;
-    }
-
-    private static void resortRecipes() {
-        RECIPES_UI_SORTED = RECIPES
+        return RECIPES
                 .stream()
                 .sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName()))
                 .collect(Collectors.toList());
+    }
+
+    private static void resortRecipes() {
+//        RECIPES_UI_SORTED = RECIPES
+//                .stream()
+//                .sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName()))
+//                .collect(Collectors.toList());
     }
 
     public static void register() {
@@ -92,7 +98,9 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
             List<Enchantment> enchants = new LinkedList<>();
             Registry.ENCHANTMENT.forEach(e -> {
-                enchants.add(e);
+                ResourceLocation ID = makeID(e);
+                if (WunderreichConfigs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
+                    enchants.add(e);
             });
             enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
                                                                .getString()));
@@ -100,7 +108,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             enchants.forEach(e -> {
                 ImprinterRecipe r = new ImprinterRecipe(e);
                 RECIPES.add(r);
-                BCLRecipeManager.addRecipe(Type.INSTANCE, r);
+                WunderreichRecipes.RECIPES.put(r.id, Serializer.INSTANCE.toJson(r));
             });
         }
 
@@ -220,6 +228,24 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             buf.writeResourceLocation(EnchantmentHelper.getEnchantmentId(recipe.enchantment));
         }
 
+        public JsonElement toJson(ImprinterRecipe r) {
+            ImprinterRecipeJsonFormat recipeJson = new ImprinterRecipeJsonFormat();
+            recipeJson.enchantment = Registry.ENCHANTMENT.getKey(r.enchantment).toString();
+            recipeJson.xp = r.baseXP;
+            recipeJson.inputA = r.inputA.toJson();
+            recipeJson.inputB = r.inputB.toJson();
+            recipeJson.type = Serializer.ID.toString();
+
+            JsonObject root = new JsonObject();
+            root.add("type", new JsonPrimitive(recipeJson.type));
+            root.add("enchantment", new JsonPrimitive(recipeJson.enchantment));
+            root.add("xp", new JsonPrimitive(recipeJson.xp));
+            root.add("inputA", recipeJson.inputA);
+            root.add("inputB", recipeJson.inputB);
+
+            return root;
+        }
+
         @Override
         public ImprinterRecipe fromJson(ResourceLocation id, JsonObject json) {
             ImprinterRecipeJsonFormat recipeJson = new Gson().fromJson(json, ImprinterRecipeJsonFormat.class);
@@ -260,8 +286,9 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         }
 
         static class ImprinterRecipeJsonFormat {
-            JsonObject inputA;
-            JsonObject inputB;
+            String type;
+            JsonElement inputA;
+            JsonElement inputB;
             int xp;
             String enchantment;
         }

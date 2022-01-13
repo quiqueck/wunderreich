@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.rei;
 
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import net.minecraft.network.chat.Component;

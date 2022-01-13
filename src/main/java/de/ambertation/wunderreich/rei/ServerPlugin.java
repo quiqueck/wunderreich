@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.rei;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import net.minecraft.nbt.CompoundTag;

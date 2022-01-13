@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import de.ambertation.wunderreich.rei.ImprinterRecipe;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.Container;
