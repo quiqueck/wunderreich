@@ -54,10 +54,15 @@ public class WunderreichItems {
             if (item != Items.AIR) {
                 Registry.register(Registry.ITEM, id, item);
                 ITEMS.add(item);
+                processItem(id, item);
             }
         }
 
         return item;
+    }
+
+    public static void processItem(ResourceLocation id, Item itm) {
+        WunderreichTags.supplyForItem(itm);
     }
 
     public static void register() {

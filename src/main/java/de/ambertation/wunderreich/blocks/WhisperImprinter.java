@@ -4,12 +4,14 @@ import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.utils.TagRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.Tag.Named;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -27,18 +29,15 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 
-import ru.bclib.api.TagAPI;
 import ru.bclib.client.render.BCLRenderLayer;
 import ru.bclib.interfaces.RenderLayerProvider;
-import ru.bclib.interfaces.TagProvider;
 
-import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class WhisperImprinter extends Block implements TagProvider, RenderLayerProvider {
+public class WhisperImprinter extends Block implements TagRegistry.BlockTagSupplier, RenderLayerProvider {
     /**
      * Creates a new Block
      */
@@ -47,7 +46,6 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
                                .mapColor(MaterialColor.LAPIS)
                                .strength(5.0f, 1200.0f)
                                .luminance(8)
-                               .breakByTool(FabricToolTags.PICKAXES)
                                .requiresTool()
                                .nonOpaque()
                                .sound(SoundType.AMETHYST)
@@ -79,11 +77,6 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
                 inventory,
                 ContainerLevelAccess.create(level, blockPos)), new TextComponent("Hello"));
-    }
-
-    @Override
-    public void addTags(List<Named<Block>> blockTags, List<Named<Item>> itemTags) {
-        blockTags.add(TagAPI.MINEABLE_PICKAXE);
     }
 
     @Override
@@ -156,5 +149,11 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
     @Override
     public BCLRenderLayer getRenderLayer() {
         return BCLRenderLayer.CUTOUT;
+    }
+
+    @Override
+    public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+        blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
+        blockTags.accept(BlockTags.NEEDS_STONE_TOOL);
     }
 }

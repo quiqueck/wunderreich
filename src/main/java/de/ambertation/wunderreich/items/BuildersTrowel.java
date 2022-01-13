@@ -1,30 +1,26 @@
 package de.ambertation.wunderreich.items;
 
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichTags;
 import de.ambertation.wunderreich.utils.RandomList;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.phys.BlockHitResult;
 
-import ru.bclib.api.TagAPI;
-
 public class BuildersTrowel extends DiggerItem {
-    public static final Tag.Named<Block> MINEABLE_TROWEL = TagAPI.makeCommonBlockTag("mineable/trowel");
 
     public BuildersTrowel() {
         super(
                 -2.5f, //attack DamageBase
                 -0.5f, //attack Speed
                 Tiers.IRON,
-                MINEABLE_TROWEL,
+                WunderreichTags.MINEABLE_TROWEL,
                 WunderreichItems
                         .makeItemSettings()
                         .rarity(Rarity.UNCOMMON)

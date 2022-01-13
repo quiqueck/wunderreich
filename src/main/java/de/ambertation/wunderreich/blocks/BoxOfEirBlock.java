@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.utils.TagRegistry;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
@@ -43,17 +45,13 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
-
 import io.netty.util.internal.ConcurrentSet;
-import ru.bclib.api.TagAPI;
-import ru.bclib.interfaces.TagProvider;
 
-import java.util.List;
 import java.util.Random;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, TagProvider {
+public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, TagRegistry.BlockTagSupplier {
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
@@ -73,9 +71,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     public BoxOfEirBlock() {
         super(WunderreichBlocks.makeStoneBlockSettings()
                                .luminance(7)
-                               //TODO: This needs to change to the TagAPI from BCLib!
-                               .breakByTool(FabricToolTags.PICKAXES)
-                               .requiresCorrectToolForDrops()
+                               .requiresTool()
                                .strength(12.5F, 800.0F)
                 , () -> {
                     return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
@@ -272,11 +268,6 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     }
 
     @Override
-    public void addTags(List<Tag.Named<Block>> blockTags, List<Tag.Named<Item>> itemTags) {
-        blockTags.add(TagAPI.MINEABLE_PICKAXE);
-    }
-
-    @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         //liveBlocks.add(blockPos);
         AddRemoveBoxOfEirMessage.INSTANCE.send(true, blockPos);
@@ -332,6 +323,11 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     @Override
     public WorldlyContainer getContainer(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos) {
         return getContainer(levelAccessor.getServer());
+    }
+
+    @Override
+    public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+        blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 
     //custom code

@@ -53,10 +53,16 @@ public class WunderreichBlocks {
             BlockItem item = new BlockItem(block, WunderreichItems.makeItemSettings());
             if (item != Items.AIR) {
                 Registry.register(Registry.ITEM, id, item);
+                WunderreichItems.processItem(id, item);
             }
 
+            processBlock(id, block);
         }
         return block;
+    }
+
+    public static void processBlock(ResourceLocation id, Block bl) {
+        WunderreichTags.supplyForBlock(bl);
     }
 
     public static FabricBlockSettings makeStoneBlockSettings() {
