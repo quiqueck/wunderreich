@@ -30,7 +30,32 @@ import net.minecraft.world.item.trading.MerchantOffers;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
-import ru.bclib.util.Triple;
+import java.util.Objects;
+
+record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ClosestWhisperer)) return false;
+        ClosestWhisperer that = (ClosestWhisperer) o;
+        return Objects.equals(stack, that.stack) && Objects.equals(player,
+                that.player) && slot == that.slot;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(stack, player, slot);
+    }
+
+    @Override
+    public String toString() {
+        return "ClosestWhisperer{" +
+                "stack=" + stack +
+                ", player=" + player +
+                ", slot=" + slot +
+                '}';
+    }
+}
 
 public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
     public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
@@ -101,7 +126,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         return res;
     }
 
-    public static Triple<ItemStack, Player, EquipmentSlot> getClosestWhisperer(Villager villager, boolean doLog) {
+    public static ClosestWhisperer getClosestWhisperer(Villager villager, boolean doLog) {
         if (villager.level instanceof ServerLevel server) {
             Player p = server.getNearestPlayer(villager, 6);
             if (p == null) return null;
@@ -123,7 +148,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
             if (doLog) {
                 Wunderreich.LOGGER.info("Player " + p.getName() + " uses Whisperer on Librarian");
             }
-            return new Triple<>(whisperer, p, slot);
+            return new ClosestWhisperer(whisperer, p, slot);
         }
 
         return null;
@@ -141,7 +166,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         VillagerProfession profession = villagerData.getProfession();
         if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
 
-        Triple<ItemStack, Player, EquipmentSlot> whispererStack = getClosestWhisperer(villager, doLog);
+        ClosestWhisperer whispererStack = getClosestWhisperer(villager, doLog);
         if (whispererStack == null) return false;
 
         return true;
@@ -150,9 +175,9 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
     public static boolean hasSelectedTrades(Villager villager, MerchantOffers offers) {
         if (offers == null) return true;
         if (!canSelectTrades(villager, false)) return true;
-        Triple<ItemStack, Player, EquipmentSlot> whispererStack = getClosestWhisperer(villager, false);
+        ClosestWhisperer whispererStack = getClosestWhisperer(villager, false);
         if (whispererStack == null) return true;
-        VillagerWhisperer whisperer = (VillagerWhisperer) whispererStack.first.getItem();
+        VillagerWhisperer whisperer = (VillagerWhisperer) whispererStack.stack().getItem();
 
         for (MerchantOffer offer : offers) {
             if (offer.getResult().is(Items.ENCHANTED_BOOK)) {
@@ -162,16 +187,16 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 
                     final int duraCost = WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get() ? 1 : 2;
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
-                        if (type.equals(trained.getEnchantmentID(whispererStack.first))) {
-                            whispererStack.first.hurtAndBreak(duraCost,
-                                    whispererStack.second,
-                                    player -> player.broadcastBreakEvent(whispererStack.third));
+                        if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
+                            whispererStack.stack().hurtAndBreak(duraCost,
+                                    whispererStack.player(),
+                                    player -> player.broadcastBreakEvent(whispererStack.slot()));
                             return true;
                         }
                     } else {
-                        whispererStack.first.hurtAndBreak(duraCost,
-                                whispererStack.second,
-                                player -> player.broadcastBreakEvent(whispererStack.third));
+                        whispererStack.stack().hurtAndBreak(duraCost,
+                                whispererStack.player(),
+                                player -> player.broadcastBreakEvent(whispererStack.slot()));
                         return true;
                     }
                 } else {
