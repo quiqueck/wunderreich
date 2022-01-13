@@ -1,19 +1,37 @@
 {
     "parent": "minecraft:recipes/root",
     "rewards": {
-        "recipes": [
-            "wunderreich:box_of_eir"
-        ]
+        "recipes": ["wunderreich:box_of_eir"]
     },
     "criteria": {
+        "has_lapis": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:lapis_ore"]
+                    }
+                ]
+            }
+        },
+        "has_quartz": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:quartz"]
+                    }
+                ]
+            }
+        },
         "has_netherite_ingot": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
-                "items": [{
-                    "items": [
-                        "minecraft:netherite_ingot"
-                    ]
-                }]
+                "items": [
+                    {
+                        "items": ["minecraft:ancient_debris"]
+                    }
+                ]
             }
         },
         "has_the_recipe": {
@@ -23,10 +41,5 @@
             }
         }
     },
-    "requirements": [
-        [
-            "has_netherite_ingot",
-            "has_the_recipe"
-        ]
-    ]
+    "requirements": [["has_netherite_ingot", "has_quartz", "has_lapis", "has_the_recipe"]]
 }

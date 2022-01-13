@@ -18,7 +18,7 @@ public class WunderreichRecipes {
     public static void register() {
         RecipeJsonBuilder
                 .create("box_of_eir")
-                .result(WunderreichItems.BLANK_WHISPERER)
+                .result(WunderreichBlocks.BOX_OF_EIR)
                 .pattern(
                         "LLL",
                         "#N#",

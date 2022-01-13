@@ -1,19 +1,47 @@
 {
     "parent": "minecraft:recipes/root",
     "rewards": {
-        "recipes": [
-            "wunderreich:whisper_imprinter"
-        ]
+        "recipes": ["wunderreich:whisper_imprinter"]
     },
     "criteria": {
+        "has_copper": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:oxidized_copper"]
+                    }
+                ]
+            }
+        },
         "has_amethist_block": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
-                "items": [{
-                    "items": [
-                        "minecraft:amethyst_block"
-                    ]
-                }]
+                "items": [
+                    {
+                        "items": ["minecraft:amethyst_block"]
+                    }
+                ]
+            }
+        },
+        "has_lapis": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:lapis_ore"]
+                    }
+                ]
+            }
+        },
+        "has_deepslate": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:cobbled_deepslate"]
+                    }
+                ]
             }
         },
         "has_the_recipe": {
@@ -23,10 +51,5 @@
             }
         }
     },
-    "requirements": [
-        [
-            "has_amethist_block",
-            "has_the_recipe"
-        ]
-    ]
+    "requirements": [["has_copper", "has_amethist_block", "has_lapis", "has_deepslate", "has_the_recipe"]]
 }

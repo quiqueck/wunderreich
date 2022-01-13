@@ -1,34 +1,45 @@
 {
     "parent": "minecraft:recipes/root",
     "rewards": {
-      "recipes": [
-        "wunderreich:whisperer_blank"
-      ]
+        "recipes": ["wunderreich:whisperer_blank"]
     },
     "criteria": {
-      "has_copper": {
-        "trigger": "minecraft:inventory_changed",
-        "conditions": {
-          "items": [
-            {
-              "items": [
-                "minecraft:oxidized_copper"
-              ]
+        "has_lapis": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:lapis_ore"]
+                    }
+                ]
             }
-          ]
+        },
+        "has_glass": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:glass"]
+                    }
+                ]
+            }
+        },
+        "has_amethyst": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "items": ["minecraft:amethyst_shard"]
+                    }
+                ]
+            }
+        },
+        "has_the_recipe": {
+            "trigger": "minecraft:recipe_unlocked",
+            "conditions": {
+                "recipe": "wunderreich:whisperer_blank"
+            }
         }
-      },
-      "has_the_recipe": {
-        "trigger": "minecraft:recipe_unlocked",
-        "conditions": {
-          "recipe": "wunderreich:whisperer_blank"
-        }
-      }
     },
-    "requirements": [
-      [
-        "has_copper",
-        "has_the_recipe"
-      ]
-    ]
-  }
+    "requirements": [["has_lapis", "has_the_recipe", "has_glass", "has_amethyst"]]
+}
