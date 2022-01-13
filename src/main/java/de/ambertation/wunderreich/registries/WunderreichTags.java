@@ -1,5 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.interfaces.ItemTagSupplier;
+import de.ambertation.wunderreich.utils.BlockTagSupplier;
 import de.ambertation.wunderreich.utils.TagRegistry;
 
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +20,7 @@ public class WunderreichTags {
 
 
     static void supplyForBlock(Block bl) {
-        if (bl instanceof TagRegistry.BlockTagSupplier supl) {
+        if (bl instanceof BlockTagSupplier supl) {
             Item itm = bl.asItem();
             supl.supplyTags(
                     (tag) -> BLOCK.add(tag, bl),
@@ -28,7 +30,7 @@ public class WunderreichTags {
     }
 
     static void supplyForItem(Item itm) {
-        if (itm instanceof TagRegistry.ItemTagSupplier supl) {
+        if (itm instanceof ItemTagSupplier supl) {
             supl.supplyTags(
                     (tag) -> ITEM.add(tag, itm)
             );

@@ -9,7 +9,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.SetTag;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagCollection;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.Sets;
@@ -17,20 +16,10 @@ import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 
 public class TagRegistry<T> {
-    @FunctionalInterface
-    public interface BlockTagSupplier {
-        void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags);
-    }
-
-    @FunctionalInterface
-    public interface ItemTagSupplier {
-        void supplyTags(Consumer<Tag<Item>> itemTags);
-    }
 
 
     public TagRegistry() {

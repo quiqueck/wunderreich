@@ -2,14 +2,17 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
 import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
 import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import de.ambertation.wunderreich.utils.TagRegistry;
+import de.ambertation.wunderreich.utils.BlockTagSupplier;
 
+import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -45,13 +48,16 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import io.netty.util.internal.ConcurrentSet;
 
 import java.util.Random;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, TagRegistry.BlockTagSupplier {
+public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<BoxOfEirBlockEntity> {
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
@@ -328,6 +334,17 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     @Override
     public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
+    }
+
+    @Override
+    public BlockEntityType getBlockEntityType() {
+        return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public BlockEntityRendererProvider getBlockEntityRenderProvider() {
+        return ChestRenderer::new;
     }
 
     //custom code

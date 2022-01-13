@@ -2,10 +2,12 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
+import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import de.ambertation.wunderreich.utils.TagRegistry;
+import de.ambertation.wunderreich.utils.BlockTagSupplier;
 
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
@@ -30,14 +32,11 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import ru.bclib.client.render.BCLRenderLayer;
-import ru.bclib.interfaces.RenderLayerProvider;
-
 import java.util.Random;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class WhisperImprinter extends Block implements TagRegistry.BlockTagSupplier, RenderLayerProvider {
+public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeRenderLayer {
     /**
      * Creates a new Block
      */
@@ -147,13 +146,14 @@ public class WhisperImprinter extends Block implements TagRegistry.BlockTagSuppl
     }
 
     @Override
-    public BCLRenderLayer getRenderLayer() {
-        return BCLRenderLayer.CUTOUT;
-    }
-
-    @Override
     public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
         blockTags.accept(BlockTags.NEEDS_STONE_TOOL);
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
+    public RenderType getRenderType() {
+        return RenderType.cutout();
     }
 }
