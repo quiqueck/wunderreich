@@ -2,24 +2,33 @@ package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
-import de.ambertation.wunderreich.config.MainConfig;
 import de.ambertation.wunderreich.items.BuildersTrowel;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+
 import net.minecraft.world.item.Item;
-import org.jetbrains.annotations.NotNull;
+
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+
 import ru.bclib.registry.ItemRegistry;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
 
 public class WunderreichItems {
-    private static final ItemRegistry REGISTRY = new ItemRegistry(CreativeTabs.TAB_ITEMS, WunderreichConfigs.ITEM_CONFIG);
+    private static final ItemRegistry REGISTRY = new ItemRegistry(CreativeTabs.TAB_ITEMS,
+            WunderreichConfigs.ITEM_CONFIG);
 
-    public static Item WHISPERER = registerItem("whisperer", new TrainedVillagerWhisperer(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION));
-    public static Item BLANK_WHISPERER = registerItem("whisperer_blank", new VillagerWhisperer(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_LIBRARIAN_SELECTION) || WunderreichConfigs.MAIN.get(MainConfig.CYCLING_NEEDS_WHISPERER));
-    
-    public static Item BUILDERS_TROWEL = registerItem("builders_trowel", new BuildersTrowel(), WunderreichConfigs.MAIN.get(MainConfig.ALLOW_BUILDER_TOOLS));
+    public static Item WHISPERER = registerItem("whisperer",
+            new TrainedVillagerWhisperer(),
+            WunderreichConfigs.MAIN.allowLibrarianSelection.get());
+    public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
+            new VillagerWhisperer(),
+            WunderreichConfigs.MAIN.allowLibrarianSelection.get() || WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get());
+
+    public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
+            new BuildersTrowel(),
+            WunderreichConfigs.MAIN.allowBuilderTools.get());
 
     @NotNull
     public static ItemRegistry getItemRegistry() {

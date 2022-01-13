@@ -1,23 +1,18 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
+import de.ambertation.wunderreich.config.ConfigFile;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
+
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.TranslatableComponent;
-import org.jetbrains.annotations.Nullable;
-import ru.bclib.config.ConfigKeeper.BooleanEntry;
-import ru.bclib.config.NamedPathConfig;
-import ru.bclib.config.NamedPathConfig.ConfigTokenDescription;
-import ru.bclib.config.NamedPathConfig.DependendConfigToken;
-import ru.bclib.gui.gridlayout.GridCheckboxCell;
-import ru.bclib.gui.gridlayout.GridColumn;
-import ru.bclib.gui.gridlayout.GridRow;
-import ru.bclib.gui.gridlayout.GridScreen;
-import ru.bclib.gui.gridlayout.GridWidgetWithEnabledState;
+
+import ru.bclib.gui.gridlayout.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class MainScreen extends GridScreen {
 
@@ -27,8 +22,10 @@ public class MainScreen extends GridScreen {
         super(parent, new TranslatableComponent("title.wunderreich.modmenu.main"));
     }
 
-    protected <T> TranslatableComponent getComponent(NamedPathConfig config, ConfigTokenDescription<T> option, String type) {
-        return new TranslatableComponent(type + ".config." + config.configID + option.getPath());
+    protected <T> TranslatableComponent getComponent(ConfigFile config,
+                                                     ConfigFile.Value<T> option,
+                                                     String type) {
+        return new TranslatableComponent(type + ".config." + config.category + "." + option.token.path() + "." + option.token.key());
     }
 
     protected void updateEnabledState() {
@@ -36,31 +33,39 @@ public class MainScreen extends GridScreen {
     }
 
     @SuppressWarnings("unchecked")
-    protected <T> void addRow(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<T> option) {
-        if (BooleanEntry.class.isAssignableFrom(option.token.type)) {
-            addCheckbox(grid, config, (ConfigTokenDescription<Boolean>) option);
+    protected <T> void addRow(GridColumn grid, ConfigFile config, ConfigFile.Value<T> option) {
+        if (option instanceof ConfigFile.BooleanValue bool) {
+            addCheckbox(grid, config, bool);
         }
 
         grid.addSpacerRow(2);
     }
 
 
-    protected void addCheckbox(GridColumn grid, NamedPathConfig config, ConfigTokenDescription<Boolean> option) {
-        if (option.topPadding > 0) {
-            grid.addSpacerRow(option.topPadding);
-        }
+    protected void addCheckbox(GridColumn grid, ConfigFile config, ConfigFile.BooleanValue option) {
+        //TODO: Margins
+//        if (option.topPadding > 0) {
+//            grid.addSpacerRow(option.topPadding);
+//        }
         GridRow row = grid.addRow();
-        if (option.leftPadding > 0) {
-            row.addSpacer(option.leftPadding);
+        if (option.getIsValidSupplier() != null) {
+            row.addSpacer(12);
         }
-        GridCheckboxCell cb = row.addCheckbox(getComponent(config, option, "title"), config.getRaw(option.token), font, (state) -> {
-            config.set(option.token, state);
-            updateEnabledState();
-        });
+//        if (option.leftPadding > 0) {
+//            row.addSpacer(option.leftPadding);
+//        }
+        GridCheckboxCell cb = row.addCheckbox(getComponent(config, option, "title"),
+                option.getRaw(),
+                font,
+                (state) -> {
+                    option.set(state);
+                    updateEnabledState();
+                });
 
-        if (option.token instanceof DependendConfigToken) {
-            dependentWidgets.put(cb, () -> option.token.dependenciesTrue(config));
-            cb.setEnabled(option.token.dependenciesTrue(config));
+
+        if (option.getIsValidSupplier() != null) {
+            dependentWidgets.put(cb, option.getIsValidSupplier());
+            cb.setEnabled(option.getIsValidSupplier().get());
         }
     }
 
@@ -73,13 +78,17 @@ public class MainScreen extends GridScreen {
     protected void initLayout() {
         final int BUTTON_HEIGHT = 20;
 
-        WunderreichConfigs.MAIN.getAllOptions().stream().filter(o -> !o.hidden).forEach(o -> addRow(grid, WunderreichConfigs.MAIN, o));
+        WunderreichConfigs.MAIN
+                .getAllValues()
+                .stream()
+                .filter(o -> !o.isHiddenInUI())
+                .forEach(o -> addRow(grid, WunderreichConfigs.MAIN, o));
 
         grid.addSpacerRow(15);
         GridRow row = grid.addRow();
         row.addFiller();
         row.addButton(CommonComponents.GUI_DONE, BUTTON_HEIGHT, font, (button) -> {
-            WunderreichConfigs.MAIN.saveChanges();
+            WunderreichConfigs.MAIN.save();
             onClose();
         });
     }
