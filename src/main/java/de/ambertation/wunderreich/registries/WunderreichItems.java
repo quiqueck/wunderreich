@@ -6,18 +6,20 @@ import de.ambertation.wunderreich.items.BuildersTrowel;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 
-import ru.bclib.registry.ItemRegistry;
-
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public class WunderreichItems {
-    private static final ItemRegistry REGISTRY = new ItemRegistry(CreativeTabs.TAB_ITEMS,
-            WunderreichConfigs.ITEM_CONFIG);
+    private static final List<Item> ITEMS = new ArrayList<>(3);
 
     public static Item WHISPERER = registerItem("whisperer",
             new TrainedVillagerWhisperer(),
@@ -31,25 +33,28 @@ public class WunderreichItems {
             WunderreichConfigs.MAIN.allowBuilderTools.get());
 
     @NotNull
-    public static ItemRegistry getItemRegistry() {
-        return REGISTRY;
-    }
-
     public static FabricItemSettings makeItemSettings() {
-        return getItemRegistry().makeItemSettings();
+        return (FabricItemSettings) new FabricItemSettings().tab(CreativeTabs.TAB_ITEMS);
     }
 
-    public static List<Item> getModItems() {
-        return REGISTRY.getModItems(Wunderreich.MOD_ID);
+    public static Collection<Item> getAllItems() {
+        return WunderreichConfigs.ITEM_CONFIG.getAllObjects();
     }
 
     public static Item registerItem(String name, Item item) {
-        return getItemRegistry().register(Wunderreich.makeID(name), item);
+        return registerItem(name, item, true);
     }
 
     public static Item registerItem(String name, Item item, boolean register) {
-        if (register) {
-            registerItem(name, item);
+        //this ensures that the dynamic config contains a valid entry for this Item.
+        boolean enabled = WunderreichConfigs.ITEM_CONFIG.newBooleanFor(name, item).get();
+
+        if (enabled && register) {
+            final ResourceLocation id = Wunderreich.makeID(name);
+            if (item != Items.AIR) {
+                Registry.register(Registry.ITEM, id, item);
+                ITEMS.add(item);
+            }
         }
 
         return item;

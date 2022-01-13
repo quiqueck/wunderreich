@@ -4,32 +4,30 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
-import net.minecraft.world.item.Item;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.Material;
-import org.jetbrains.annotations.NotNull;
-import ru.bclib.registry.BlockRegistry;
 
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
+
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public class WunderreichBlocks {
-    private static final BlockRegistry REGISTRY = new BlockRegistry(CreativeTabs.TAB_BLOCKS, WunderreichConfigs.BLOCK_CONFIG);
+    private static final List<Block> BLOCKS = new ArrayList<>(2);
 
     public static final Block BOX_OF_EIR = registerBlock("box_of_eir", new BoxOfEirBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
 
-    @NotNull
-    public static BlockRegistry getBlockRegistry() {
-        return REGISTRY;
-    }
 
-    public static List<Block> getModBlocks() {
-        return BlockRegistry.getModBlocks(Wunderreich.MOD_ID);
-    }
-
-    public static List<Item> getModBlockItems() {
-        return BlockRegistry.getModBlockItems(Wunderreich.MOD_ID);
+    public static Collection<Block> getAllBlocks() {
+        return WunderreichConfigs.BLOCK_CONFIG.getAllObjects();
     }
 
     public static Block registerBlock(String name, Block block, boolean register) {
@@ -40,22 +38,26 @@ public class WunderreichBlocks {
     }
 
     public static Block registerBlock(String name, Block block) {
-        if (!WunderreichConfigs.BLOCK_CONFIG.getBooleanRoot(name, true)) {
-            return block;
-        }
-        getBlockRegistry().register(Wunderreich.makeID(name), block);
-        return block;
-    }
+        if (WunderreichConfigs.BLOCK_CONFIG.newBooleanFor(name, block).get()) {
+            BLOCKS.add(block);
 
-    public static Block registerBlockOnly(String name, Block block, boolean register) {
-        if (register) {
-            return registerBlockOnly(name, block);
+            ResourceLocation id = Wunderreich.makeID(name);
+
+            if (block.defaultBlockState().getMaterial().isFlammable() && FlammableBlockRegistry
+                    .getDefaultInstance().get(block).getBurnChance() == 0) {
+                FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
+            }
+
+            Registry.register(Registry.BLOCK, id, block);
+
+
+            BlockItem item = new BlockItem(block, WunderreichItems.makeItemSettings());
+            if (item != Items.AIR) {
+                Registry.register(Registry.ITEM, id, item);
+            }
+
         }
         return block;
-    }
-
-    public static Block registerBlockOnly(String name, Block block) {
-        return getBlockRegistry().registerBlockOnly(Wunderreich.makeID(name), block);
     }
 
     public static FabricBlockSettings makeStoneBlockSettings() {

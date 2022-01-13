@@ -1,5 +1,7 @@
 package de.ambertation.wunderreich.config;
 
+import de.ambertation.wunderreich.registries.WunderreichItems;
+
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
 
@@ -32,7 +34,7 @@ public class MainConfig extends ConfigFile {
 
     public boolean allowLibrarianSelection() {
         return allowLibrarianSelection.get()
-                && WunderreichConfigs.ITEM_CONFIG.get(ItemConfig.WHISPERER_BLANK)
-                && WunderreichConfigs.ITEM_CONFIG.get(ItemConfig.WHISPERER);
+                && WunderreichConfigs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER).get()
+                && WunderreichConfigs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER).get();
     }
 }

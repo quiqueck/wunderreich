@@ -20,7 +20,7 @@ public class CreativeTabs {
     public static final CreativeModeTab TAB_ITEMS;
 
     public static Block getBlockIcon() {
-        return WunderreichBlocks.getModBlocks()
+        return WunderreichBlocks.getAllBlocks()
                                 .stream()
                                 .filter(WunderreichConfigs.BLOCK_CONFIG::isEnabled)
                                 .findFirst()
@@ -35,7 +35,7 @@ public class CreativeTabs {
         if (WunderreichConfigs.MAIN.allowBuilderTools.get() && WunderreichConfigs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
             return WunderreichItems.BUILDERS_TROWEL;
 
-        return WunderreichItems.getModItems()
+        return WunderreichItems.getAllItems()
                                .stream()
                                .filter(WunderreichConfigs.ITEM_CONFIG::isEnabled)
                                .findFirst()
@@ -45,7 +45,7 @@ public class CreativeTabs {
     static {
         TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.makeID("blocks"))
                                            .icon(() -> new ItemStack(getBlockIcon()))
-                                           .appendItems(stacks -> stacks.addAll(WunderreichBlocks.getModBlockItems()
+                                           .appendItems(stacks -> stacks.addAll(WunderreichBlocks.getAllBlocks()
                                                                                                  .stream()
                                                                                                  .map(ItemStack::new)
                                                                                                  .collect(Collectors.toList())))
@@ -55,7 +55,7 @@ public class CreativeTabs {
         TAB_ITEMS = FabricItemGroupBuilder.create(Wunderreich.makeID("items"))
                                           .icon(() -> new ItemStack(getItemIcon()))
                                           .appendItems(stacks -> {
-                                              stacks.addAll(WunderreichItems.getModItems()
+                                              stacks.addAll(WunderreichItems.getAllItems()
                                                                             .stream()
                                                                             .filter(item -> item != WunderreichItems.WHISPERER)
                                                                             .map(ItemStack::new)

@@ -23,8 +23,8 @@ public class WunderreichConfigs {
 
     public static void saveConfigs() {
         MAIN.save();
-        BLOCK_CONFIG.saveChanges();
-        ITEM_CONFIG.saveChanges();
+        BLOCK_CONFIG.save();
+        ITEM_CONFIG.save();
         RECIPE_CONFIG.saveChanges();
         TEST.save();
     }
