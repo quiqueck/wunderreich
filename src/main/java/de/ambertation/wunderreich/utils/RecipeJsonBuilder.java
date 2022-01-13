@@ -35,7 +35,7 @@ public class RecipeJsonBuilder {
 
     private RecipeJsonBuilder(ResourceLocation ID) {
         this.ID = ID;
-        canBuild = WunderreichConfigs.RECIPE_CONFIG.getBoolean("grid", ID.getPath(), true);
+        canBuild = WunderreichConfigs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
     }
 
     private static boolean isEnabled(ItemLike item) {
