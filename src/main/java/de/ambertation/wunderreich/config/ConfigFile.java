@@ -239,8 +239,13 @@ public class ConfigFile {
     }
 
     private JsonObject getPathElement(String path) {
+        if (path == null || path.trim().equals("")) {
+            return root;
+        }
+        
         String[] names = path.split("\\.");
         JsonObject obj = root;
+
         for (int i = 0; i < names.length; i++) {
             final String p = names[i];
             if (obj.has(p)) {

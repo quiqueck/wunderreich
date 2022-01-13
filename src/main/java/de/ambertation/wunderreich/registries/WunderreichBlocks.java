@@ -25,7 +25,6 @@ public class WunderreichBlocks {
     public static final Block BOX_OF_EIR = registerBlock("box_of_eir", new BoxOfEirBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
 
-
     public static Collection<Block> getAllBlocks() {
         return WunderreichConfigs.BLOCK_CONFIG.getAllObjects();
     }
