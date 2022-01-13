@@ -22,7 +22,7 @@ public class Wunderreich implements ModInitializer {
     public static final Logger LOGGER = new Logger();
     public static String VERSION = "0.0.0";
 
-    public static ResourceLocation loc(String path) {
+    public static ResourceLocation ID(String path) {
         return new ResourceLocation(MOD_ID, path);
     }
 

@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.ItemTagSupplier;
-import de.ambertation.wunderreich.utils.BlockTagSupplier;
 import de.ambertation.wunderreich.utils.TagRegistry;
 
 import net.minecraft.resources.ResourceLocation;

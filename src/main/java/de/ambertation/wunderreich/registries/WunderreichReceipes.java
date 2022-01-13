@@ -11,7 +11,7 @@ import ru.bclib.recipes.GridRecipe;
 
 public class WunderreichReceipes {
     public static void register() {
-        GridRecipe.make(Wunderreich.loc("whisperer_blank"), WunderreichItems.BLANK_WHISPERER)
+        GridRecipe.make(Wunderreich.ID("whisperer_blank"), WunderreichItems.BLANK_WHISPERER)
                   .checkConfig(WunderreichConfigs.RECIPE_CONFIG)
                   .setShape(
                           "GAG",
@@ -23,7 +23,7 @@ public class WunderreichReceipes {
                   .addMaterial('A', Items.AMETHYST_SHARD)
                   .build();
 
-        GridRecipe.make(Wunderreich.loc("whisper_imprinter"), WunderreichBlocks.WHISPER_IMPRINTER)
+        GridRecipe.make(Wunderreich.ID("whisper_imprinter"), WunderreichBlocks.WHISPER_IMPRINTER)
                   .checkConfig(WunderreichConfigs.RECIPE_CONFIG)
                   .setShape(
                           "ABA",
@@ -36,7 +36,7 @@ public class WunderreichReceipes {
                   .addMaterial('D', new ItemStack(Blocks.COBBLED_DEEPSLATE, 1))
                   .build();
 
-        GridRecipe.make(Wunderreich.loc("builders_trowel"), WunderreichItems.BUILDERS_TROWEL)
+        GridRecipe.make(Wunderreich.ID("builders_trowel"), WunderreichItems.BUILDERS_TROWEL)
                   .checkConfig(WunderreichConfigs.RECIPE_CONFIG)
                   .setShape(
                           "***",

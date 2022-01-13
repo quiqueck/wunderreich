@@ -65,7 +65,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     private ImprinterRecipe(Enchantment e) {
         super(e);
 
-        this.id = Wunderreich.loc(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
+        this.id = Wunderreich.ID(ImprinterRecipe.Type.ID + "/" + enchantment.getDescriptionId());
     }
 
     public static List<ImprinterRecipe> getRecipes() {
@@ -85,7 +85,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
     public static void register() {
         Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
-        Registry.register(Registry.RECIPE_TYPE, Wunderreich.loc(Type.ID), Type.INSTANCE);
+        Registry.register(Registry.RECIPE_TYPE, Wunderreich.ID(Type.ID), Type.INSTANCE);
 
         RECIPES.clear();
 
@@ -182,7 +182,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
-        public final static ResourceLocation ID = Wunderreich.loc(Type.ID);
+        public final static ResourceLocation ID = Wunderreich.ID(Type.ID);
         public final static Serializer INSTANCE = new Serializer(); //Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
 
         @Override

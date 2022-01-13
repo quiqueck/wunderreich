@@ -40,7 +40,7 @@ public class WunderreichBlocks {
         if (WunderreichConfigs.BLOCK_CONFIG.newBooleanFor(name, block).get()) {
             BLOCKS.add(block);
 
-            ResourceLocation id = Wunderreich.loc(name);
+            ResourceLocation id = Wunderreich.ID(name);
 
             if (block.defaultBlockState().getMaterial().isFlammable() && FlammableBlockRegistry
                     .getDefaultInstance().get(block).getBurnChance() == 0) {

@@ -43,7 +43,7 @@ public class CreativeTabs {
     }
 
     static {
-        TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.loc("blocks"))
+        TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.ID("blocks"))
                                            .icon(() -> new ItemStack(getBlockIcon()))
                                            .appendItems(stacks -> stacks.addAll(WunderreichBlocks.getAllBlocks()
                                                                                                  .stream()
@@ -52,7 +52,7 @@ public class CreativeTabs {
                                            .build();
 
 
-        TAB_ITEMS = FabricItemGroupBuilder.create(Wunderreich.loc("items"))
+        TAB_ITEMS = FabricItemGroupBuilder.create(Wunderreich.ID("items"))
                                           .icon(() -> new ItemStack(getItemIcon()))
                                           .appendItems(stacks -> {
                                               stacks.addAll(WunderreichItems.getAllItems()

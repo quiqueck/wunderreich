@@ -17,7 +17,7 @@ public class WunderreichBlockEntities {
 
     public static <T extends BlockEntity> BlockEntityType<T> registerBlockEntity(String id,
                                                                                  FabricBlockEntityTypeBuilder<T> builder) {
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, Wunderreich.loc(id), builder.build(null));
+        return Registry.register(Registry.BLOCK_ENTITY_TYPE, Wunderreich.ID(id), builder.build(null));
     }
 
     public static void register() {

@@ -20,7 +20,7 @@ public abstract class ServerBoundPacketHandler<D> {
     protected ResourceLocation CHANNEL;
 
     public static <T extends ServerBoundPacketHandler> T register(String channel, T packetHandler) {
-        packetHandler.CHANNEL = Wunderreich.loc(channel);
+        packetHandler.CHANNEL = Wunderreich.ID(channel);
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
             ServerPlayNetworking.registerReceiver(handler,
                     packetHandler.CHANNEL,

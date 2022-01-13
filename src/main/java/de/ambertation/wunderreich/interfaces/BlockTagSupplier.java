@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.utils;
+package de.ambertation.wunderreich.interfaces;
 
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;

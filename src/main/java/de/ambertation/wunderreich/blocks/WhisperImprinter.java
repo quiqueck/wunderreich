@@ -2,10 +2,10 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
+import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import de.ambertation.wunderreich.utils.BlockTagSupplier;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
