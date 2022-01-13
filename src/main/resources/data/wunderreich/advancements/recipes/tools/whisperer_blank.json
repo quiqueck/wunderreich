@@ -9,7 +9,7 @@
             "conditions": {
                 "items": [
                     {
-                        "items": ["minecraft:lapis_ore"]
+                        "items": ["minecraft:lapis_lazuli"]
                     }
                 ]
             }
