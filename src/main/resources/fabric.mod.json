@@ -2,9 +2,8 @@
   "schemaVersion": 1,
   "id": "wunderreich",
   "version": "${version}",
-
   "name": "Wunderreich",
-  "description": "This is a mod rich in wonders.",
+  "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
   "authors": [
     "Quiqueck (Frank)"
   ],
@@ -12,10 +11,8 @@
     "homepage": "---",
     "sources": "https://github.com/quiqueck/wunderreich"
   },
-
   "license": "MIT",
   "icon": "assets/wunderreich/icon.png",
-
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -29,14 +26,16 @@
     "rei": [
       "de.ambertation.wunderreich.rei.ServerPlugin",
       "de.ambertation.wunderreich.rei.ClientPlugin"
+    ],
+    "modmenu": [
+      "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
     ]
   },
-  "accessWidener" : "wunderreich.accesswidener",
+  "accessWidener": "wunderreich.accesswidener",
   "mixins": [
-	  "wunderreich.mixins.client.json",
-      "wunderreich.mixins.common.json"
+    "wunderreich.mixins.client.json",
+    "wunderreich.mixins.common.json"
   ],
-
   "depends": {
     "fabricloader": ">=0.12.11",
     "fabric": "*",
