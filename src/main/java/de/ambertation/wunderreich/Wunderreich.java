@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichReceipes;
 import de.ambertation.wunderreich.rei.ImprinterRecipe;
+import de.ambertation.wunderreich.utils.Logger;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,17 +15,14 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
-import ru.bclib.api.dataexchange.DataExchangeAPI;
-import ru.bclib.util.Logger;
-
 import java.util.Optional;
 
 public class Wunderreich implements ModInitializer {
     public static final String MOD_ID = "wunderreich";
-    public static final Logger LOGGER = new Logger(MOD_ID);
+    public static final Logger LOGGER = new Logger();
     public static String VERSION = "0.0.0";
 
-    public static ResourceLocation makeID(String path) {
+    public static ResourceLocation loc(String path) {
         return new ResourceLocation(MOD_ID, path);
     }
 
@@ -47,7 +45,6 @@ public class Wunderreich implements ModInitializer {
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();
 
-        DataExchangeAPI.registerMod(MOD_ID);
         WunderreichConfigs.saveConfigs();
     }
 }

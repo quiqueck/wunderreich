@@ -50,7 +50,7 @@ public class WunderreichItems {
         boolean enabled = WunderreichConfigs.ITEM_CONFIG.newBooleanFor(name, item).get();
 
         if (enabled && register) {
-            final ResourceLocation id = Wunderreich.makeID(name);
+            final ResourceLocation id = Wunderreich.loc(name);
             if (item != Items.AIR) {
                 Registry.register(Registry.ITEM, id, item);
                 ITEMS.add(item);

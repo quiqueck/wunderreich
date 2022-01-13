@@ -13,7 +13,7 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 
 @Environment(EnvType.CLIENT)
 public final class WunderreichScreens {
-    public static final MenuType<WhispererMenu> WHISPERER = ScreenHandlerRegistry.registerSimple(Wunderreich.makeID(
+    public static final MenuType<WhispererMenu> WHISPERER = ScreenHandlerRegistry.registerSimple(Wunderreich.loc(
             "whisperer"), WhispererMenu::new);
 
     public static void registerScreens() {

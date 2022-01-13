@@ -20,7 +20,7 @@ public class WunderreichParticles {
     private static SimpleParticleType register(String name,
                                                PendingParticleFactory<net.minecraft.core.particles.SimpleParticleType> constructor) {
         SimpleParticleType particle = Registry.register(Registry.PARTICLE_TYPE,
-                Wunderreich.makeID(name),
+                Wunderreich.loc(name),
                 new SimpleParticleType(false));
         ParticleFactoryRegistry.getInstance().register(particle, constructor);
 
