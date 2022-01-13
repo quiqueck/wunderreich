@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.inventory;
 
-import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -11,11 +11,39 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+
 import org.jetbrains.annotations.Nullable;
-import ru.bclib.api.WorldDataAPI;
 
 public class BoxOfEirContainer extends SimpleContainer implements WorldlyContainer {
-    private static final int[] slots = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26};
+    private static final int[] slots = {
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18,
+            19,
+            20,
+            21,
+            22,
+            23,
+            24,
+            25,
+            26
+    };
 
     public BoxOfEirContainer() {
         super(slots.length);

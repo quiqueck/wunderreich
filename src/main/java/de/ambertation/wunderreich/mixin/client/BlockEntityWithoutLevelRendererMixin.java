@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.mixin.client;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -14,6 +14,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,7 +35,13 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
     private BoxOfEirBlockEntity boxOfEir;
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
-    public void wunderreich_render(ItemStack itemStack, TransformType transformType, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int j, CallbackInfo ci) {
+    public void wunderreich_render(ItemStack itemStack,
+                                   TransformType transformType,
+                                   PoseStack poseStack,
+                                   MultiBufferSource multiBufferSource,
+                                   int i,
+                                   int j,
+                                   CallbackInfo ci) {
         Item item = itemStack.getItem();
         if (item instanceof BlockItem) {
             Block block = ((BlockItem) item).getBlock();

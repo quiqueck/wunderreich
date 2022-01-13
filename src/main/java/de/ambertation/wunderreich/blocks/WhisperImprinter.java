@@ -4,9 +4,7 @@ import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
@@ -26,7 +24,11 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+
 import ru.bclib.api.TagAPI;
 import ru.bclib.client.render.BCLRenderLayer;
 import ru.bclib.interfaces.RenderLayerProvider;
@@ -34,6 +36,7 @@ import ru.bclib.interfaces.TagProvider;
 
 import java.util.List;
 import java.util.Random;
+import org.jetbrains.annotations.Nullable;
 
 public class WhisperImprinter extends Block implements TagProvider, RenderLayerProvider {
     /**
@@ -41,18 +44,23 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                .mapColor(MaterialColor.LAPIS)
-                .strength(5.0f, 1200.0f)
-                .luminance(8)
-                .breakByTool(FabricToolTags.PICKAXES)
-                .requiresTool()
-                .nonOpaque()
-                .sound(SoundType.AMETHYST)
+                               .mapColor(MaterialColor.LAPIS)
+                               .strength(5.0f, 1200.0f)
+                               .luminance(8)
+                               .breakByTool(FabricToolTags.PICKAXES)
+                               .requiresTool()
+                               .nonOpaque()
+                               .sound(SoundType.AMETHYST)
         );
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    public InteractionResult use(BlockState blockState,
+                                 Level level,
+                                 BlockPos blockPos,
+                                 Player player,
+                                 InteractionHand interactionHand,
+                                 BlockHitResult blockHitResult) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -61,14 +69,16 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
             player.openMenu(blockState.getMenuProvider(level, blockPos));
             return InteractionResult.CONSUME;
         }
-        
+
         return InteractionResult.FAIL;
     }
 
     @Override
     @Nullable
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
-        return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i, inventory, ContainerLevelAccess.create(level, blockPos)), new TextComponent("Hello"));
+        return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
+                inventory,
+                ContainerLevelAccess.create(level, blockPos)), new TextComponent("Hello"));
     }
 
     @Override
@@ -77,11 +87,24 @@ public class WhisperImprinter extends Block implements TagProvider, RenderLayerP
     }
 
     @Override
-    public void onProjectileHit(Level level, BlockState blockState, BlockHitResult blockHitResult, Projectile projectile) {
+    public void onProjectileHit(Level level,
+                                BlockState blockState,
+                                BlockHitResult blockHitResult,
+                                Projectile projectile) {
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
-            level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
-            level.playSound(null, blockPos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0f, 0.5f + level.random.nextFloat() * 1.2f);
+            level.playSound(null,
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
+            level.playSound(null,
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
         }
     }
 

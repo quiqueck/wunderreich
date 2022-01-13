@@ -8,8 +8,7 @@ import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import io.netty.util.internal.ConcurrentSet;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -17,11 +16,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.Tag;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.SimpleMenuProvider;
-import net.minecraft.world.WorldlyContainer;
-import net.minecraft.world.WorldlyContainerHolder;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -31,14 +26,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.block.AbstractChestBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DoubleBlockCombiner;
-import net.minecraft.world.level.block.EnderChestBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -54,12 +42,16 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
+
+import io.netty.util.internal.ConcurrentSet;
 import ru.bclib.api.TagAPI;
 import ru.bclib.interfaces.TagProvider;
 
 import java.util.List;
 import java.util.Random;
+import org.jetbrains.annotations.Nullable;
 
 public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, TagProvider {
     public static final DirectionProperty FACING;
@@ -80,15 +72,16 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
     public BoxOfEirBlock() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                        .luminance(7)
-                        //TODO: This needs to change to the TagAPI from BCLib!
-                        .breakByTool(FabricToolTags.PICKAXES)
-                        .requiresCorrectToolForDrops()
-                        .strength(12.5F, 800.0F)
+                               .luminance(7)
+                               //TODO: This needs to change to the TagAPI from BCLib!
+                               .breakByTool(FabricToolTags.PICKAXES)
+                               .requiresCorrectToolForDrops()
+                               .strength(12.5F, 800.0F)
                 , () -> {
                     return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
                 });
-        this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING, Direction.NORTH)).setValue(WATERLOGGED, false));
+        this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING,
+                Direction.NORTH)).setValue(WATERLOGGED, false));
     }
 
     public static void updateAllBoxes(MinecraftServer server, boolean withOpenState, boolean withFillrate) {
@@ -145,11 +138,17 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
         return null;
     }
 
-    public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(BlockState blockState, Level level, BlockPos blockPos, boolean bl) {
+    public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(BlockState blockState,
+                                                                                         Level level,
+                                                                                         BlockPos blockPos,
+                                                                                         boolean bl) {
         return DoubleBlockCombiner.Combiner::acceptNone;
     }
 
-    public VoxelShape getShape(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, CollisionContext collisionContext) {
+    public VoxelShape getShape(BlockState blockState,
+                               BlockGetter blockGetter,
+                               BlockPos blockPos,
+                               CollisionContext collisionContext) {
         return SHAPE;
     }
 
@@ -159,10 +158,11 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         FluidState fluidState = blockPlaceContext.getLevel()
-                .getFluidState(blockPlaceContext.getClickedPos());
+                                                 .getFluidState(blockPlaceContext.getClickedPos());
         return (BlockState) ((BlockState) this.defaultBlockState()
-                .setValue(FACING, blockPlaceContext.getHorizontalDirection()
-                        .getOpposite())).setValue(WATERLOGGED, fluidState.getType() == Fluids.WATER);
+                                              .setValue(FACING, blockPlaceContext.getHorizontalDirection()
+                                                                                 .getOpposite())).setValue(WATERLOGGED,
+                fluidState.getType() == Fluids.WATER);
     }
 
     public BlockState rotate(BlockState blockState, Rotation rotation) {
@@ -178,10 +178,17 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     }
 
     public FluidState getFluidState(BlockState blockState) {
-        return (Boolean) blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+        return (Boolean) blockState.getValue(WATERLOGGED)
+                ? Fluids.WATER.getSource(false)
+                : super.getFluidState(blockState);
     }
 
-    public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState2, LevelAccessor levelAccessor, BlockPos blockPos, BlockPos blockPos2) {
+    public BlockState updateShape(BlockState blockState,
+                                  Direction direction,
+                                  BlockState blockState2,
+                                  LevelAccessor levelAccessor,
+                                  BlockPos blockPos,
+                                  BlockPos blockPos2) {
         if ((Boolean) blockState.getValue(WATERLOGGED)) {
             levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
         }
@@ -189,7 +196,10 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
         return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
     }
 
-    public boolean isPathfindable(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, PathComputationType pathComputationType) {
+    public boolean isPathfindable(BlockState blockState,
+                                  BlockGetter blockGetter,
+                                  BlockPos blockPos,
+                                  PathComputationType pathComputationType) {
         return false;
     }
 
@@ -201,18 +211,27 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     }
 
     @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState blockState, BlockEntityType<T> blockEntityType) {
-        return level.isClientSide ? createTickerHelper(blockEntityType, WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, BoxOfEirBlockEntity::lidAnimateTick) : null;
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,
+                                                                  BlockState blockState,
+                                                                  BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? createTickerHelper(blockEntityType,
+                WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR,
+                BoxOfEirBlockEntity::lidAnimateTick) : null;
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level level, BlockPos blockPos, Player player, InteractionHand interactionHand, BlockHitResult blockHitResult) {
+    public InteractionResult use(BlockState blockState,
+                                 Level level,
+                                 BlockPos blockPos,
+                                 Player player,
+                                 InteractionHand interactionHand,
+                                 BlockHitResult blockHitResult) {
         final BoxOfEirContainer boxOfEirContainer = getContainer(level);
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (boxOfEirContainer != null && blockEntity instanceof BoxOfEirBlockEntity) {
             BlockPos blockPos2 = blockPos.above();
             if (level.getBlockState(blockPos2)
-                    .isRedstoneConductor(level, blockPos2)) {
+                     .isRedstoneConductor(level, blockPos2)) {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             } else if (level.isClientSide) {
                 return InteractionResult.SUCCESS;

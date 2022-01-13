@@ -1,13 +1,8 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.rei.ImprinterRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -29,15 +24,24 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import ru.bclib.api.dataexchange.DataExchangeAPI;
 
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(value = EnvType.CLIENT)
 public class WhispererScreen
         extends AbstractContainerScreen<WhispererMenu> {
-    private static final ResourceLocation VILLAGER_LOCATION = new ResourceLocation("textures/gui/container/villager2.png");
+    private static final ResourceLocation VILLAGER_LOCATION = new ResourceLocation(
+            "textures/gui/container/villager2.png");
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
     private static final int MERCHANT_MENU_PART_X = 99;
@@ -81,21 +85,32 @@ public class WhispererScreen
         final int paddingY = (this.height - this.imageHeight) / 2;
         int top = paddingY + TOP_MARGIN + BORDER_WIDTH;
         for (int idx = 0; idx < NUMBER_OF_OFFER_BUTTONS; ++idx) {
-            this.enchantButtons[idx] = this.addRenderableWidget(new WhispersButton(paddingX + TRADE_BUTTON_X, top, idx, button -> {
-                if (button instanceof WhispersButton) {
-                    this.shopItem = ((WhispersButton) button).getIndex() + this.scrollOff;
-                    this.postButtonClick();
-                }
-            }));
+            this.enchantButtons[idx] = this.addRenderableWidget(new WhispersButton(paddingX + TRADE_BUTTON_X,
+                    top,
+                    idx,
+                    button -> {
+                        if (button instanceof WhispersButton) {
+                            this.shopItem = ((WhispersButton) button).getIndex() + this.scrollOff;
+                            this.postButtonClick();
+                        }
+                    }));
             top += TRADE_BUTTON_HEIGHT;
         }
     }
 
     @Override
     protected void renderLabels(PoseStack poseStack, int x, int y) {
-        this.font.draw(poseStack, this.title, (float) (49 + this.imageWidth / 2 - this.font.width(this.title) / 2), 6.0f, 0x404040);
+        this.font.draw(poseStack,
+                this.title,
+                (float) (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
+                6.0f,
+                0x404040);
 
-        this.font.draw(poseStack, this.playerInventoryTitle, (float) this.inventoryLabelX, (float) this.inventoryLabelY, 0x404040);
+        this.font.draw(poseStack,
+                this.playerInventoryTitle,
+                (float) this.inventoryLabelX,
+                (float) this.inventoryLabelY,
+                0x404040);
         int component = this.font.width(ENCHANTS_LABEL);
         this.font.draw(poseStack, ENCHANTS_LABEL, (float) (TRADE_BUTTON_X - component / 2 + 48), 6.0f, 0x404040);
     }
@@ -109,7 +124,16 @@ public class WhispererScreen
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
 
-        blit(poseStack, paddingX, paddingY, this.getBlitOffset(), 0.0f, 0.0f, this.imageWidth, this.imageHeight, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        blit(poseStack,
+                paddingX,
+                paddingY,
+                this.getBlitOffset(),
+                0.0f,
+                0.0f,
+                this.imageWidth,
+                this.imageHeight,
+                TEXTURE_WIDTH,
+                TEXTURE_HEIGHT);
     }
 
 
@@ -123,9 +147,27 @@ public class WhispererScreen
             if (this.scrollOff == pageCount) {
                 scrollerOffset = SCROLLER_MAX_Y;
             }
-            WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y + scrollerOffset, this.getBlitOffset(), 0.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+            WhispererScreen.blit(poseStack,
+                    x + SCROLL_BAR_START_X,
+                    y + SCROLL_BAR_TOP_POS_Y + scrollerOffset,
+                    this.getBlitOffset(),
+                    0.0f,
+                    199.0f,
+                    SCROLLER_WIDTH,
+                    SCROLLER_HEIGHT,
+                    TEXTURE_WIDTH,
+                    TEXTURE_HEIGHT);
         } else {
-            WhispererScreen.blit(poseStack, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y, this.getBlitOffset(), 6.0f, 199.0f, SCROLLER_WIDTH, SCROLLER_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+            WhispererScreen.blit(poseStack,
+                    x + SCROLL_BAR_START_X,
+                    y + SCROLL_BAR_TOP_POS_Y,
+                    this.getBlitOffset(),
+                    6.0f,
+                    199.0f,
+                    SCROLLER_WIDTH,
+                    SCROLLER_HEIGHT,
+                    TEXTURE_WIDTH,
+                    TEXTURE_HEIGHT);
         }
     }
 
@@ -138,10 +180,18 @@ public class WhispererScreen
         this.tryRenderGuiItemScaled(Minecraft.getInstance().player, itemStack, i, j, 0, 0, scale);
     }
 
-    private void tryRenderGuiItemScaled(@Nullable LivingEntity livingEntity, ItemStack itemStack, int i, int j, int k, int l, float scale) {
+    private void tryRenderGuiItemScaled(@Nullable LivingEntity livingEntity,
+                                        ItemStack itemStack,
+                                        int i,
+                                        int j,
+                                        int k,
+                                        int l,
+                                        float scale) {
         if (!itemStack.isEmpty()) {
             BakedModel bakedModel = this.itemRenderer.getModel(itemStack, (Level) null, livingEntity, k);
-            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset + 50.0F + (float) l : this.itemRenderer.blitOffset + 50.0F;
+            this.itemRenderer.blitOffset = bakedModel.isGui3d()
+                    ? this.itemRenderer.blitOffset + 50.0F + (float) l
+                    : this.itemRenderer.blitOffset + 50.0F;
 
             try {
                 this.renderGuiItem(itemStack, i, j, bakedModel, scale);
@@ -163,7 +213,9 @@ public class WhispererScreen
                 throw new ReportedException(crashReport);
             }
 
-            this.itemRenderer.blitOffset = bakedModel.isGui3d() ? this.itemRenderer.blitOffset - 50.0F - (float) l : this.itemRenderer.blitOffset - 50.0F;
+            this.itemRenderer.blitOffset = bakedModel.isGui3d()
+                    ? this.itemRenderer.blitOffset - 50.0F - (float) l
+                    : this.itemRenderer.blitOffset - 50.0F;
         }
     }
 
@@ -187,7 +239,14 @@ public class WhispererScreen
             Lighting.setupForFlatItems();
         }
 
-        this.itemRenderer.render(itemStack, ItemTransforms.TransformType.GUI, false, poseStack2, bufferSource, 15728880, OverlayTexture.NO_OVERLAY, bakedModel);
+        this.itemRenderer.render(itemStack,
+                ItemTransforms.TransformType.GUI,
+                false,
+                poseStack2,
+                bufferSource,
+                15728880,
+                OverlayTexture.NO_OVERLAY,
+                bakedModel);
         bufferSource.endBatch();
         RenderSystem.enableDepthTest();
         if (bl) {
@@ -235,12 +294,20 @@ public class WhispererScreen
                 poseStack.popPose();
                 this.renderAndDecorateCostA(poseStack, costA, left + 12, decorateY);
                 if (!costB.isEmpty()) {
-                    this.itemRenderer.renderAndDecorateFakeItem(costB, paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X, decorateY);
-                    this.itemRenderer.renderGuiItemDecorations(this.font, costB, paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X, decorateY);
+                    this.itemRenderer.renderAndDecorateFakeItem(costB,
+                            paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
+                            decorateY);
+                    this.itemRenderer.renderGuiItemDecorations(this.font,
+                            costB,
+                            paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
+                            decorateY);
                 }
                 this.renderButtonArrows(poseStack, rule, paddingX, decorateY);
                 this.itemRenderer.renderAndDecorateFakeItem(result, paddingX + TRADE_BUTTON_X + BUY_ITEM_X, decorateY);
-                this.itemRenderer.renderGuiItemDecorations(this.font, result, paddingX + TRADE_BUTTON_X + BUY_ITEM_X, decorateY);
+                this.itemRenderer.renderGuiItemDecorations(this.font,
+                        result,
+                        paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
+                        decorateY);
                 this.itemRenderer.blitOffset = 0.0f;
                 top += TRADE_BUTTON_HEIGHT;
                 ++o;
@@ -261,7 +328,16 @@ public class WhispererScreen
         RenderSystem.enableBlend();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
-        WhispererScreen.blit(poseStack, x + TRADE_BUTTON_X + SELL_ITEM_2_X + TRADE_BUTTON_HEIGHT, y + 3, this.getBlitOffset(), 15.0f, 171.0f, 10, 9, TEXTURE_WIDTH, TEXTURE_HEIGHT);
+        WhispererScreen.blit(poseStack,
+                x + TRADE_BUTTON_X + SELL_ITEM_2_X + TRADE_BUTTON_HEIGHT,
+                y + 3,
+                this.getBlitOffset(),
+                15.0f,
+                171.0f,
+                10,
+                9,
+                TEXTURE_WIDTH,
+                TEXTURE_HEIGHT);
     }
 
     private void renderAndDecorateCostA(PoseStack poseStack, ItemStack costA, int x, int y) {
@@ -304,7 +380,9 @@ public class WhispererScreen
         this.isDragging = false;
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
-        if (this.canScroll(this.menu.getEnchants().size()) && mx > (paddingX + SCROLL_BAR_START_X) && mx < (paddingX + SCROLL_BAR_START_X + 6) && my > (paddingY + SCROLL_BAR_TOP_POS_Y) && my <= (paddingY + SCROLL_BAR_TOP_POS_Y + SCROLL_BAR_HEIGHT + 1)) {
+        if (this.canScroll(this.menu
+                .getEnchants()
+                .size()) && mx > (paddingX + SCROLL_BAR_START_X) && mx < (paddingX + SCROLL_BAR_START_X + 6) && my > (paddingY + SCROLL_BAR_TOP_POS_Y) && my <= (paddingY + SCROLL_BAR_TOP_POS_Y + SCROLL_BAR_HEIGHT + 1)) {
             this.isDragging = true;
         }
         return super.mouseClicked(mx, my, i);
@@ -327,17 +405,27 @@ public class WhispererScreen
 
         @Override
         public void renderToolTip(PoseStack poseStack, int i, int j) {
-            if (this.isHovered && WhispererScreen.this.menu.getEnchants().size() > this.index + WhispererScreen.this.scrollOff) {
+            if (this.isHovered && WhispererScreen.this.menu
+                    .getEnchants()
+                    .size() > this.index + WhispererScreen.this.scrollOff) {
                 if (i < this.x + TRADE_BUTTON_HEIGHT) {
-                    var typeName = new TranslatableComponent("enchantment.type." + WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).getCategory());
+                    var typeName = new TranslatableComponent("enchantment.type." + WhispererScreen.this.menu
+                            .getEnchants()
+                            .get(this.index + WhispererScreen.this.scrollOff)
+                            .getCategory());
                     WhispererScreen.this.renderTooltip(poseStack, typeName, i, j);
                 } else if (i < this.x + 50 && i > this.x + 30) {
-                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).getInputA();
+                    ItemStack itemStack = WhispererScreen.this.menu
+                            .getEnchants()
+                            .get(this.index + WhispererScreen.this.scrollOff)
+                            .getInputA();
                     if (!itemStack.isEmpty()) {
                         WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
                     }
                 } else if (i > this.x + 65) {
-                    ItemStack itemStack = WhispererScreen.this.menu.getEnchants().get(this.index + WhispererScreen.this.scrollOff).output;
+                    ItemStack itemStack = WhispererScreen.this.menu
+                            .getEnchants()
+                            .get(this.index + WhispererScreen.this.scrollOff).output;
                     WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
                 }
             }

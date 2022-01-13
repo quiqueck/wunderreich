@@ -3,28 +3,32 @@ package de.ambertation.wunderreich.network;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
 import de.ambertation.wunderreich.blocks.BoxOfEirBlock.LiveBlock;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 public class AddRemoveBoxOfEirMessage {
     public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir");
 
     public static void register() {
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
-            ServerPlayNetworking.registerReceiver(handler, CHANNEL, (_server, _player, _handler, _buf, _responseSender) -> {
-                boolean didAdd = _buf.readBoolean();
-                BlockPos pos = _buf.readBlockPos();
-                ServerLevel level = _player.getLevel();
+            ServerPlayNetworking.registerReceiver(handler,
+                    CHANNEL,
+                    (_server, _player, _handler, _buf, _responseSender) -> {
+                        boolean didAdd = _buf.readBoolean();
+                        BlockPos pos = _buf.readBlockPos();
+                        ServerLevel level = _player.getLevel();
 
-                if (didAdd) addedBox(level, pos);
-                else removedBox(level, pos);
-            });
+                        if (didAdd) addedBox(level, pos);
+                        else removedBox(level, pos);
+                    });
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

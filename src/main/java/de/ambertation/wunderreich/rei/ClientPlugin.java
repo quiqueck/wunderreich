@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.rei;
 
 import de.ambertation.wunderreich.registries.WunderreichItems;
+
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
 import me.shedaniel.rei.api.client.registry.display.DisplayRegistry;

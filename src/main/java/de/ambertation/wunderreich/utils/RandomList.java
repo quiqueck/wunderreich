@@ -1,19 +1,18 @@
 package de.ambertation.wunderreich.utils;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.Iterator;
+import org.jetbrains.annotations.NotNull;
 
 public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
     private final ArrayList<Entry<T>> list;
     private double weightSum;
 
-    public RandomList(){
+    public RandomList() {
         this(9);
     }
 
-    public RandomList(int capacity){
+    public RandomList(int capacity) {
         list = new ArrayList<>(capacity);
         weightSum = 0;
     }
@@ -21,14 +20,14 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
     @NotNull
     @Override
     public Iterator<Entry<T>> iterator() {
-       return list.iterator();
+        return list.iterator();
     }
 
-    public static class Entry<T>{
+    public static class Entry<T> {
         public final T value;
         public final double weight;
 
-        Entry(T value, double weight){
+        Entry(T value, double weight) {
             this.value = value;
             this.weight = weight;
         }
@@ -42,33 +41,33 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         }
     }
 
-    public void add(T value, double weight){
+    public void add(T value, double weight) {
         Entry<T> e = new Entry(value, weight);
         list.add(e);
-        weightSum+=e.weight;
+        weightSum += e.weight;
     }
 
-    public T get(int idx){
+    public T get(int idx) {
         Entry<T> e = list.get(idx);
-        if (e==null) return null;
+        if (e == null) return null;
         return e.value;
     }
 
-    public int getRandomIndex(){
+    public int getRandomIndex() {
         double sum = 0;
         double random = Math.random() * weightSum;
-        for (int i=0; i< list.size(); i++){
+        for (int i = 0; i < list.size(); i++) {
             Entry<T> e = list.get(i);
             sum += e.weight;
             if (random <= sum) return i;
         }
 
-        return list.size()-1;
+        return list.size() - 1;
     }
 
-    public T getRandom(){
+    public T getRandom() {
         int idx = getRandomIndex();
-        if (idx<0 || idx>=list.size()) return null;
+        if (idx < 0 || idx >= list.size()) return null;
         return get(idx);
     }
 

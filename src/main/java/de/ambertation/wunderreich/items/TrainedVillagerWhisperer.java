@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.rei.ImprinterRecipe;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -16,14 +17,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import org.jetbrains.annotations.Nullable;
 
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public final static String TAG_NAME = "WhisperedEnchantment";
-    
-    public TrainedVillagerWhisperer(){
+
+    public TrainedVillagerWhisperer() {
         super(40);
     }
 
@@ -70,7 +71,10 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         return EnchantmentHelper.getEnchantmentId(tag);
     }
 
-    public void appendHoverText(ItemStack itemStack, @Nullable Level level, List<Component> list, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack itemStack,
+                                @Nullable Level level,
+                                List<Component> list,
+                                TooltipFlag tooltipFlag) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         var tag = getEnchantment(itemStack);
 

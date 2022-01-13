@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.rei.ImprinterRecipe;
+
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -13,9 +14,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class WhispererMenu
         extends AbstractContainerMenu {
@@ -45,7 +44,12 @@ public class WhispererMenu
 
         this.addSlot(new Slot(this.container, INGREDIENT_SLOT_A, INGREDIENT_SLOT_A_X, ROW_Y));
         this.addSlot(new Slot(this.container, INGREDIENT_SLOT_B, INGREDIENT_SLOT_B_X, ROW_Y));
-        this.addSlot(new WhispererResultSlot(this, inventory.player, this.container, RESULT_SLOT, RESULT_SLOT_X, ROW_Y));
+        this.addSlot(new WhispererResultSlot(this,
+                inventory.player,
+                this.container,
+                RESULT_SLOT,
+                RESULT_SLOT_X,
+                ROW_Y));
 
         for (int i = 0; i < INV_SLOT_START; ++i) {
             for (int k = 0; k < 9; ++k) {
@@ -80,7 +84,12 @@ public class WhispererMenu
 
     void playImprintSound() {
         this.access.execute((level, blockPos) -> {
-            level.playSound(null, blockPos, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.BLOCKS, 1.0f, level.random.nextFloat() * 0.1f + 0.9f);
+            level.playSound(null,
+                    blockPos,
+                    SoundEvents.ENCHANTMENT_TABLE_USE,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    level.random.nextFloat() * 0.1f + 0.9f);
         });
     }
 
@@ -103,7 +112,10 @@ public class WhispererMenu
                     if (!this.moveItemStackTo(slotItem, HOTBAR_SLOT_START, HOTBAR_SLOT_END, false)) {
                         return ItemStack.EMPTY;
                     }
-                } else if (i >= HOTBAR_SLOT_START && i < HOTBAR_SLOT_END && !this.moveItemStackTo(slotItem, INV_SLOT_START, INV_SLOT_END, false)) {
+                } else if (i >= HOTBAR_SLOT_START && i < HOTBAR_SLOT_END && !this.moveItemStackTo(slotItem,
+                        INV_SLOT_START,
+                        INV_SLOT_END,
+                        false)) {
                     return ItemStack.EMPTY;
                 }
             } else if (!this.moveItemStackTo(slotItem, INV_SLOT_START, HOTBAR_SLOT_END, false)) {
@@ -164,7 +176,9 @@ public class WhispererMenu
                 this.container.setItem(INGREDIENT_SLOT_B, containerItem);
             }
 
-            if (this.container.getItem(INGREDIENT_SLOT_A).isEmpty() && this.container.getItem(INGREDIENT_SLOT_B).isEmpty()) {
+            if (this.container.getItem(INGREDIENT_SLOT_A).isEmpty() && this.container
+                    .getItem(INGREDIENT_SLOT_B)
+                    .isEmpty()) {
                 final WhisperRule rule = this.getEnchants().get(ruleIndex);
                 ItemStack costA = rule.getInputA();
                 this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_A, costA);

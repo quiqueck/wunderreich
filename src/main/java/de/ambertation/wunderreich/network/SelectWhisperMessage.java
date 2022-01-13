@@ -2,17 +2,21 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+
+import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
 import ru.bclib.api.dataexchange.DataHandler;
 import ru.bclib.api.dataexchange.DataHandlerDescriptor;
 
 public class SelectWhisperMessage extends DataHandler.FromClient {
-    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(Wunderreich.MOD_ID, "select_whisper"), SelectWhisperMessage::new, false, false);
+    public static final DataHandlerDescriptor DESCRIPTOR = new DataHandlerDescriptor(new ResourceLocation(Wunderreich.MOD_ID,
+            "select_whisper"), SelectWhisperMessage::new, false, false);
 
     protected int itemIndex = 0;
 

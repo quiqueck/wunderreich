@@ -2,8 +2,8 @@ package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+
 import net.minecraft.ChatFormatting;
-import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TranslatableComponent;
@@ -21,7 +21,11 @@ public class WhisperRule {
     public final int baseXP;
 
     private WhisperRule(Enchantment enchantment, EnchantmentInfo nfo) {
-        this(enchantment, Ingredient.of(nfo.inputA), Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)), nfo.baseXP, nfo.type);
+        this(enchantment,
+                Ingredient.of(nfo.inputA),
+                Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
+                nfo.baseXP,
+                nfo.type);
     }
 
     protected WhisperRule(Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
@@ -32,7 +36,12 @@ public class WhisperRule {
         this(enchantment, inputA, inputB, TrainedVillagerWhisperer.createForEnchantment(enchantment), baseXP, type);
     }
 
-    protected WhisperRule(Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type) {
+    protected WhisperRule(Enchantment enchantment,
+                          Ingredient inputA,
+                          Ingredient inputB,
+                          ItemStack output,
+                          int baseXP,
+                          ItemStack type) {
         this.enchantment = enchantment;
         this.baseXP = baseXP;
         this.output = output;
@@ -84,7 +93,11 @@ public class WhisperRule {
     }
 
     public boolean satisfiedBy(ItemStack itemStack, ItemStack itemStack2) {
-        return this.isRequiredItem(itemStack, this.inputA) && itemStack.getCount() >= this.getInputA().getCount() && this.isRequiredItem(itemStack2, this.inputB) && itemStack2.getCount() >= this.getInputB().getCount();
+        return this.isRequiredItem(itemStack, this.inputA) && itemStack.getCount() >= this
+                .getInputA()
+                .getCount() && this.isRequiredItem(itemStack2, this.inputB) && itemStack2.getCount() >= this
+                .getInputB()
+                .getCount();
     }
 
     public ItemStack assemble() {

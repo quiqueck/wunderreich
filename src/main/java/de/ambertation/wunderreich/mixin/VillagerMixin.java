@@ -2,11 +2,13 @@ package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.interfaces.AbstractVillagerAccessor;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.trading.MerchantOffers;
+
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

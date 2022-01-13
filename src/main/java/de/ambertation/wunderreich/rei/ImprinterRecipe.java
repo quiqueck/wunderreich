@@ -1,17 +1,12 @@
 package de.ambertation.wunderreich.rei;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.EnchantmentInfo;
 import de.ambertation.wunderreich.gui.whisperer.WhisperContainer;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.network.FriendlyByteBuf;
@@ -24,6 +19,14 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import ru.bclib.recipes.BCLRecipeManager;
 
 import java.util.Comparator;
@@ -39,12 +42,22 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     private static List<ImprinterRecipe> RECIPES_UI_SORTED = new LinkedList<>();
     private final ResourceLocation id;
 
-    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
+    private ImprinterRecipe(ResourceLocation id,
+                            Enchantment enchantment,
+                            Ingredient inputA,
+                            Ingredient inputB,
+                            int baseXP) {
         super(enchantment, inputA, inputB, baseXP);
         this.id = id;
     }
 
-    private ImprinterRecipe(ResourceLocation id, Enchantment enchantment, Ingredient inputA, Ingredient inputB, ItemStack output, int baseXP, ItemStack type) {
+    private ImprinterRecipe(ResourceLocation id,
+                            Enchantment enchantment,
+                            Ingredient inputA,
+                            Ingredient inputB,
+                            ItemStack output,
+                            int baseXP,
+                            ItemStack type) {
         super(enchantment, inputA, inputB, output, baseXP, type);
         this.id = id;
     }
@@ -63,8 +76,11 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         return RECIPES_UI_SORTED;
     }
 
-    private static void resortRecipes(){
-        RECIPES_UI_SORTED = RECIPES.stream().sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName())).collect(Collectors.toList());
+    private static void resortRecipes() {
+        RECIPES_UI_SORTED = RECIPES
+                .stream()
+                .sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName()))
+                .collect(Collectors.toList());
     }
 
     public static void register() {
@@ -72,7 +88,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(Type.ID), Type.INSTANCE);
 
         RECIPES.clear();
-        
+
         if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
             List<Enchantment> enchants = new LinkedList<>();
             Registry.ENCHANTMENT.forEach(e -> {
@@ -80,7 +96,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             });
             enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
                                                                .getString()));
-    
+
             enchants.forEach(e -> {
                 ImprinterRecipe r = new ImprinterRecipe(e);
                 RECIPES.add(r);
