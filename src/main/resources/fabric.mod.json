@@ -40,10 +40,10 @@
     "fabricloader": ">=0.12.11",
     "fabric": "*",
     "minecraft": "1.18.x",
-    "java": ">=17",
-    "bclib": ">=1.2.2"
+    "java": ">=17"
   },
   "suggests": {
-    "modmenu": "*"
+    "modmenu": ">=3.0.0",
+    "rei": ">=7.1"
   }
 }
