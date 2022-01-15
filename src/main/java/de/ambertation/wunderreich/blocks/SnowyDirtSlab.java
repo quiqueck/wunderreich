@@ -40,16 +40,18 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
                                   LevelAccessor levelAccessor,
                                   BlockPos blockPos,
                                   BlockPos blockPos2) {
+        blockState = super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
         if (direction == Direction.UP) {
             return blockState.setValue(SNOWY, isSnowySetting(blockState2));
         }
-        return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+
+        return blockState;
     }
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         BlockState blockState = blockPlaceContext.getLevel().getBlockState(blockPlaceContext.getClickedPos().above());
-        return this.defaultBlockState().setValue(SNOWY, isSnowySetting(blockState));
+        return super.getStateForPlacement(blockPlaceContext).setValue(SNOWY, isSnowySetting(blockState));
     }
 
     private static boolean isSnowySetting(BlockState blockState) {
@@ -58,8 +60,7 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder);
-        builder.add(SNOWY);
+        builder.add(TYPE, WATERLOGGED, SNOWY);
     }
 
     @Override

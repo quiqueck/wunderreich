@@ -47,24 +47,29 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
     }
 
     @Override
-    public void randomTick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Random random) {
-        if (!canBeGrass(blockState, serverLevel, blockPos)) {
-            serverLevel.setBlockAndUpdate(blockPos, WunderreichBlocks.DIRT_SLAB.defaultBlockState());
+    public void randomTick(BlockState blockState, ServerLevel level, BlockPos blockPos, Random random) {
+        if (!canBeGrass(blockState, level, blockPos)) {
+            level.setBlockAndUpdate(blockPos, WunderreichBlocks.DIRT_SLAB.defaultBlockState());
             return;
         }
-        if (serverLevel.getMaxLocalRawBrightness(blockPos.above()) >= 9) {
-            BlockState blockState2 = this.defaultBlockState();
+        if (level.getMaxLocalRawBrightness(blockPos.above()) >= 9) {
+            BlockState dirtSlabBlockState = this.defaultBlockState();
+            BlockState dirtBlockState = Blocks.DIRT.defaultBlockState();
             for (int i = 0; i < 4; ++i) {
-                BlockPos blockPos2 = blockPos.offset(random.nextInt(3) - 1,
+                BlockPos testPos = blockPos.offset(random.nextInt(3) - 1,
                         random.nextInt(5) - 3,
                         random.nextInt(3) - 1);
-                if (!serverLevel.getBlockState(blockPos2).is(WunderreichBlocks.DIRT_SLAB) || !canPropagate(
-                        blockState2,
-                        serverLevel,
-                        blockPos2)) continue;
-                serverLevel.setBlockAndUpdate(blockPos2,
-                        blockState2.setValue(SNOWY,
-                                serverLevel.getBlockState(blockPos2.above()).is(Blocks.SNOW)));
+                if (!canPropagate(dirtSlabBlockState, level, testPos)) continue;
+
+                if (level.getBlockState(testPos).is(Blocks.DIRT)) {
+                    level.setBlockAndUpdate(testPos,
+                            dirtBlockState.setValue(SNOWY,
+                                    level.getBlockState(testPos.above()).is(Blocks.SNOW)));
+                } else if (level.getBlockState(testPos).is(WunderreichBlocks.DIRT_SLAB)) {
+                    level.setBlockAndUpdate(testPos,
+                            dirtSlabBlockState.setValue(SNOWY,
+                                    level.getBlockState(testPos.above()).is(Blocks.SNOW)));
+                }
             }
         }
     }
