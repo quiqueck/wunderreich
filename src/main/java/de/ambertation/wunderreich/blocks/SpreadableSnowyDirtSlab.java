@@ -62,9 +62,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                 if (!canPropagate(dirtSlabBlockState, level, testPos)) continue;
 
                 if (level.getBlockState(testPos).is(Blocks.DIRT)) {
-                    level.setBlockAndUpdate(testPos,
-                            dirtBlockState.setValue(SNOWY,
-                                    level.getBlockState(testPos.above()).is(Blocks.SNOW)));
+                    level.setBlockAndUpdate(testPos, dirtBlockState);
                 } else if (level.getBlockState(testPos).is(WunderreichBlocks.DIRT_SLAB)) {
                     level.setBlockAndUpdate(testPos,
                             dirtSlabBlockState.setValue(SNOWY,
