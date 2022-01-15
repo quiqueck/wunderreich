@@ -24,6 +24,7 @@ public class BuildersTrowel extends DiggerItem {
                 WunderreichItems
                         .makeItemSettings()
                         .rarity(Rarity.UNCOMMON)
+                        .durability(Tiers.IRON.getUses() * 4)
         );
     }
 
@@ -54,17 +55,17 @@ public class BuildersTrowel extends DiggerItem {
         ItemStack item;
         InteractionResult result;
         int maxTries = 100;
-        do {
+        do { /* mache */
             item = list.getRandom();
-            if (item != null) {
+            if /* wenn */ (item != null) {
                 result = getInteractionResult(ctx, p, item);
                 maxTries--;
-            } else {
+            } else /* ansonsten */ {
                 result = InteractionResult.FAIL;
             }
-        } while (maxTries > 0 && (result == InteractionResult.FAIL || result == InteractionResult.PASS));
+        } /* solange */ while (maxTries > 0 && (result == InteractionResult.FAIL || result == InteractionResult.PASS));
 
-        return InteractionResult.FAIL;
+        return result;
     }
 
     private InteractionResult getInteractionResult(UseOnContext ctx, Player p, ItemStack item) {

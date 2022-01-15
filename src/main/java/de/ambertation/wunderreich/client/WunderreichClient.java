@@ -8,7 +8,6 @@ import de.ambertation.wunderreich.registries.WunderreichScreens;
 
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -22,7 +21,7 @@ public class WunderreichClient implements ClientModInitializer {
 
     private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
         return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET,
-                new ResourceLocation(Wunderreich.MOD_ID, "entity/chest/" + string));
+                Wunderreich.ID("entity/chest/" + string));
     }
 
     @Override
