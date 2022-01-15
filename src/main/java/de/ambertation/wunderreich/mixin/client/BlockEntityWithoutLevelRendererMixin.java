@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin.client;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
@@ -32,7 +32,7 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
     @Final
     private EnderChestBlockEntity enderChest;
 
-    private BoxOfEirBlockEntity boxOfEir;
+    private WunderKisteBlockEntity wunderKiste;
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void wunderreich_render(ItemStack itemStack,
@@ -45,11 +45,11 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
         Item item = itemStack.getItem();
         if (item instanceof BlockItem) {
             Block block = ((BlockItem) item).getBlock();
-            if (block instanceof BoxOfEirBlock) {
-                if (boxOfEir == null) {
-                    boxOfEir = new BoxOfEirBlockEntity(BlockPos.ZERO, WunderreichBlocks.BOX_OF_EIR.defaultBlockState());
+            if (block instanceof WunderKisteBlock) {
+                if (wunderKiste == null) {
+                    wunderKiste = new WunderKisteBlockEntity(BlockPos.ZERO, WunderreichBlocks.WUNDER_KISTE.defaultBlockState());
                 }
-                this.blockEntityRenderDispatcher.renderItem(boxOfEir, poseStack, multiBufferSource, i, j);
+                this.blockEntityRenderDispatcher.renderItem(wunderKiste, poseStack, multiBufferSource, i, j);
                 ci.cancel();
             }
         }

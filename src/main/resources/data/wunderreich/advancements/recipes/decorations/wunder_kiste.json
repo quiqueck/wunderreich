@@ -1,7 +1,7 @@
 {
     "parent": "minecraft:recipes/root",
     "rewards": {
-        "recipes": ["wunderreich:box_of_eir"]
+        "recipes": ["wunderreich:wunder_kiste"]
     },
     "criteria": {
         "has_lapis": {
@@ -37,7 +37,7 @@
         "has_the_recipe": {
             "trigger": "minecraft:recipe_unlocked",
             "conditions": {
-                "recipe": "wunderreich:box_of_eir"
+                "recipe": "wunderreich:wunder_kiste"
             }
         }
     },

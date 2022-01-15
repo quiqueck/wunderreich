@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.blockentities;
 
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 
-public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
+public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
     //EnderChestBlockEntity
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
@@ -46,24 +46,24 @@ public class BoxOfEirBlockEntity extends BlockEntity implements LidBlockEntity {
         }
 
         protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
-            level.blockEvent(BoxOfEirBlockEntity.this.worldPosition, WunderreichBlocks.BOX_OF_EIR, 1, j);
-            BoxOfEirBlock.updateAllBoxes(level.getServer(), true, false);
+            level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
+            WunderKisteBlock.updateAllBoxes(level.getServer(), true, false);
         }
 
         protected boolean isOwnContainer(Player player) {
-            return ((ActiveChestStorage) player).isActiveBoxOfEir(BoxOfEirBlockEntity.this);
+            return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
         }
     };
 
-    public BoxOfEirBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR, blockPos, blockState);
+    public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
+        super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
     }
 
     public static void lidAnimateTick(Level level,
                                       BlockPos blockPos,
                                       BlockState blockState,
-                                      BoxOfEirBlockEntity boxOfEirBlockEntity) {
-        boxOfEirBlockEntity.chestLidController.tickLid();
+                                      WunderKisteBlockEntity wunderKisteBlockEntity) {
+        wunderKisteBlockEntity.chestLidController.tickLid();
     }
 
     public boolean triggerEvent(int i, int j) {

@@ -70,7 +70,7 @@ public abstract class ServerBoundPacketHandler<D> {
     }
 
     public static void register() {
-        AddRemoveBoxOfEirMessage.INSTANCE.onRegister();
+        AddRemoveWunderKisteMessage.INSTANCE.onRegister();
         CycleTradesMessage.INSTANCE.onRegister();
         SelectWhisperMessage.INSTANCE.onRegister();
     }

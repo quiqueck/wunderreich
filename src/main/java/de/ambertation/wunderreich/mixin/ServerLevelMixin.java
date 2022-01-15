@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
-import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
+import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
+import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -22,10 +22,10 @@ public abstract class ServerLevelMixin {
 
     @Inject(method = "saveLevelData", at = @At("TAIL"))
     public void wunderreich_save(CallbackInfo ci) {
-        if (getServer() instanceof BoxOfEirContainerProvider) {
-            BoxOfEirContainer boxOfEirContainer = ((BoxOfEirContainerProvider) getServer()).getBoxOfEirContainer();
-            if (boxOfEirContainer != null) {
-                boxOfEirContainer.save();
+        if (getServer() instanceof WunderKisteContainerProvider) {
+            WunderKisteContainer wunderKisteContainer = ((WunderKisteContainerProvider) getServer()).getWunderKisteContainer();
+            if (wunderKisteContainer != null) {
+                wunderKisteContainer.save();
             }
         }
     }

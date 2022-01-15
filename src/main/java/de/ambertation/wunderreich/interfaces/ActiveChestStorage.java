@@ -1,11 +1,11 @@
 package de.ambertation.wunderreich.interfaces;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 
 public interface ActiveChestStorage {
-    public boolean isActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity);
+    public boolean isActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
 
-    public BoxOfEirBlockEntity getActiveBoxOfEir();
+    public WunderKisteBlockEntity getActiveWunderKiste();
 
-    public void setActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity);
+    public void setActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
 }

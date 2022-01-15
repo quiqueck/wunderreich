@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.inventory;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 
@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 
 import org.jetbrains.annotations.Nullable;
 
-public class BoxOfEirContainer extends SimpleContainer implements WorldlyContainer {
+public class WunderKisteContainer extends SimpleContainer implements WorldlyContainer {
     private static final int[] slots = {
             0,
             1,
@@ -45,7 +45,7 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
             26
     };
 
-    public BoxOfEirContainer() {
+    public WunderKisteContainer() {
         super(slots.length);
     }
 
@@ -100,13 +100,13 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
     }
 
     public boolean stillValid(Player player) {
-        final BoxOfEirBlockEntity chest = ((ActiveChestStorage) player).getActiveBoxOfEir();
+        final WunderKisteBlockEntity chest = ((ActiveChestStorage) player).getActiveWunderKiste();
         //return chest != null && !chest.stillValid(player) ? false : super.stillValid(player);
         return (chest == null || chest.stillValid(player)) && super.stillValid(player);
     }
 
     public void startOpen(Player player) {
-        final BoxOfEirBlockEntity chest = ((ActiveChestStorage) player).getActiveBoxOfEir();
+        final WunderKisteBlockEntity chest = ((ActiveChestStorage) player).getActiveWunderKiste();
         if (chest != null) {
             chest.startOpen(player);
         }
@@ -116,13 +116,13 @@ public class BoxOfEirContainer extends SimpleContainer implements WorldlyContain
 
     public void stopOpen(Player player) {
         final ActiveChestStorage cPlayer = (ActiveChestStorage) player;
-        final BoxOfEirBlockEntity chest = cPlayer.getActiveBoxOfEir();
+        final WunderKisteBlockEntity chest = cPlayer.getActiveWunderKiste();
         if (chest != null) {
             chest.stopOpen(player);
         }
 
         super.stopOpen(player);
-        cPlayer.setActiveBoxOfEir(null);
+        cPlayer.setActiveWunderKiste(null);
     }
 
     @Override

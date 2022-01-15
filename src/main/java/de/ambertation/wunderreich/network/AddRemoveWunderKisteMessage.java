@@ -1,8 +1,8 @@
 package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock.LiveBlock;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock.LiveBlock;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -13,11 +13,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 
-public class AddRemoveBoxOfEirMessage extends ServerBoundPacketHandler<AddRemoveBoxOfEirMessage.Content> {
-    public static final AddRemoveBoxOfEirMessage INSTANCE = ServerBoundPacketHandler.register("box_of_eir",
-            new AddRemoveBoxOfEirMessage());
+public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRemoveWunderKisteMessage.Content> {
+    public static final AddRemoveWunderKisteMessage INSTANCE = ServerBoundPacketHandler.register("wunder_kiste",
+            new AddRemoveWunderKisteMessage());
 
-    protected AddRemoveBoxOfEirMessage() {
+    protected AddRemoveWunderKisteMessage() {
     }
 
     protected static record Content(boolean didAdd, BlockPos pos, ServerLevel level) {
@@ -50,19 +50,19 @@ public class AddRemoveBoxOfEirMessage extends ServerBoundPacketHandler<AddRemove
 
     private static void addedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        Wunderreich.LOGGER.info("Adding BoxOfEir at " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
-        BoxOfEirBlock.liveBlocks.add(lb);
-        BoxOfEirBlock.updateNeighbours(level, pos);
+        Wunderreich.LOGGER.info("Adding WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
+        WunderKisteBlock.liveBlocks.add(lb);
+        WunderKisteBlock.updateNeighbours(level, pos);
     }
 
     private static void removedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        Wunderreich.LOGGER.info("Removing  BoxOfEir at " + pos + " " + BoxOfEirBlock.liveBlocks.contains(lb));
-        BoxOfEirBlock.liveBlocks.remove(lb);
-        BoxOfEirBlock.updateNeighbours(level, pos);
+        Wunderreich.LOGGER.info("Removing  WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
+        WunderKisteBlock.liveBlocks.remove(lb);
+        WunderKisteBlock.updateNeighbours(level, pos);
     }
 
-//    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "box_of_eir");
+//    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "wunder_kiste");
 //
 //    public static void register() {
 //        ServerPlayConnectionEvents.INIT.register((handler, server) -> {

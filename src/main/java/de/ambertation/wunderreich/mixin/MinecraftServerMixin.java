@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.LevelData;
-import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
-import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
+import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
+import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 
 import net.minecraft.core.RegistryAccess.RegistryHolder;
 import net.minecraft.server.MinecraftServer;
@@ -25,18 +25,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.net.Proxy;
 
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider {
-    private BoxOfEirContainer boxOfEirContainer;
+public abstract class MinecraftServerMixin implements WunderKisteContainerProvider {
+    private WunderKisteContainer wunderKisteContainer;
 
-    public BoxOfEirContainer getBoxOfEirContainer() {
-        return boxOfEirContainer;
+    public WunderKisteContainer getWunderKisteContainer() {
+        return wunderKisteContainer;
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     public void wunderreich_stop(CallbackInfo ci) {
         System.out.println("Unloading Cache for Box of Eir");
         //Make sure the levels can unload when the server closes
-        BoxOfEirBlock.liveBlocks.clear();
+        WunderKisteBlock.liveBlocks.clear();
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -56,11 +56,11 @@ public abstract class MinecraftServerMixin implements BoxOfEirContainerProvider 
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
         
         //we start a new world, so clear any old block
-        BoxOfEirBlock.liveBlocks.clear();
-        boxOfEirContainer = new BoxOfEirContainer();
-        boxOfEirContainer.load();
-        boxOfEirContainer.addListener((container) -> {
-            BoxOfEirBlock.updateAllBoxes((MinecraftServer) (Object) this, false, true);
+        WunderKisteBlock.liveBlocks.clear();
+        wunderKisteContainer = new WunderKisteContainer();
+        wunderKisteContainer.load();
+        wunderKisteContainer.addListener((container) -> {
+            WunderKisteBlock.updateAllBoxes((MinecraftServer) (Object) this, false, true);
         });
     }
 

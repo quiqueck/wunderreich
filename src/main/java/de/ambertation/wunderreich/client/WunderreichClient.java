@@ -17,7 +17,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
-    public static net.minecraft.client.resources.model.Material BOX_OF_EIR_LOCATION = chestMaterial("box_of_eir");
+    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_LOCATION = chestMaterial("wunder_kiste");
 
     private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
         return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET,

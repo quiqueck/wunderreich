@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.mixin.client;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.client.WunderreichClient;
 
 import net.minecraft.client.renderer.Sheets;
@@ -23,15 +23,15 @@ public abstract class SheetsMixin {
                                            ChestType chestType,
                                            boolean bl,
                                            CallbackInfoReturnable<Material> cir) {
-        if (blockEntity instanceof BoxOfEirBlockEntity) {
-            cir.setReturnValue(WunderreichClient.BOX_OF_EIR_LOCATION);
+        if (blockEntity instanceof WunderKisteBlockEntity) {
+            cir.setReturnValue(WunderreichClient.WUNDER_KISTE_LOCATION);
             cir.cancel();
         }
     }
 
     @Inject(method = "getAllMaterials", at = @At("TAIL"))
     private static void wunderreich_getAll(Consumer<Material> consumer, CallbackInfo ci) {
-        consumer.accept(WunderreichClient.BOX_OF_EIR_LOCATION);
+        consumer.accept(WunderreichClient.WUNDER_KISTE_LOCATION);
     }
 
 }

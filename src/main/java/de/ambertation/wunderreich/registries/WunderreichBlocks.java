@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.blocks.BoxOfEirBlock;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(2);
 
-    public static final Block BOX_OF_EIR = registerBlock("box_of_eir", new BoxOfEirBlock());
+    public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", new WunderKisteBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
 
     public static Collection<Block> getAllBlocks() {

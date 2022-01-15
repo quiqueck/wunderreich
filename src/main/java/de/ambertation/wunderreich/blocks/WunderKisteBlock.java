@@ -1,12 +1,12 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
-import de.ambertation.wunderreich.interfaces.BoxOfEirContainerProvider;
-import de.ambertation.wunderreich.inventory.BoxOfEirContainer;
-import de.ambertation.wunderreich.network.AddRemoveBoxOfEirMessage;
+import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
+import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -57,7 +57,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<BoxOfEirBlockEntity> {
+public class WunderKisteBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity> {
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
@@ -69,37 +69,37 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
         FACING = HorizontalDirectionalBlock.FACING;
         WATERLOGGED = BlockStateProperties.WATERLOGGED;
         SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
-        CONTAINER_TITLE = new TranslatableComponent("container.wunderreich.box_of_eir");
+        CONTAINER_TITLE = new TranslatableComponent("container.wunderreich.wunder_kiste");
     }
 
     EnderChestBlock chestBlock;
 
-    public BoxOfEirBlock() {
+    public WunderKisteBlock() {
         super(WunderreichBlocks.makeStoneBlockSettings()
                                .luminance(7)
                                .requiresTool()
                                .strength(12.5F, 800.0F)
                 , () -> {
-                    return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
+                    return WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE;
                 });
         this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING,
                 Direction.NORTH)).setValue(WATERLOGGED, false));
     }
 
     public static void updateAllBoxes(MinecraftServer server, boolean withOpenState, boolean withFillrate) {
-        BoxOfEirContainer container = getContainer(server);
-        BoxOfEirBlock.updateAllBoxes(container, withOpenState, withFillrate);
+        WunderKisteContainer container = getContainer(server);
+        WunderKisteBlock.updateAllBoxes(container, withOpenState, withFillrate);
     }
 
-    private static void updateAllBoxes(BoxOfEirContainer container, boolean withOpenState, boolean withFillrate) {
+    private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
         boolean[] anyOpen = {false};
         if (container != null) {
             //check if any box was opened
             if (withOpenState) {
                 liveBlocks.forEach((liveBlock) -> {
                     BlockEntity be = liveBlock.level.getBlockEntity(liveBlock.pos);
-                    if (be instanceof BoxOfEirBlockEntity) {
-                        BoxOfEirBlockEntity entity = (BoxOfEirBlockEntity) be;
+                    if (be instanceof WunderKisteBlockEntity) {
+                        WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
                         anyOpen[0] |= entity.isOpen();
                     }
                 });
@@ -116,7 +116,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
         BlockState state = level.getBlockState(pos);
         if (state != null) {
             Block block = state.getBlock();
-            if (block instanceof BoxOfEirBlock) {
+            if (block instanceof WunderKisteBlock) {
                 updateNeighbours(level, pos, state, block);
             }
         }
@@ -129,13 +129,13 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
         level.updateNeighborsAt(pos.relative(facing), box);
     }
 
-    public static BoxOfEirContainer getContainer(Level level) {
+    public static WunderKisteContainer getContainer(Level level) {
         return level != null ? getContainer(level.getServer()) : null;
     }
 
-    public static BoxOfEirContainer getContainer(MinecraftServer server) {
-        if (server != null && server instanceof BoxOfEirContainerProvider) {
-            return ((BoxOfEirContainerProvider) server).getBoxOfEirContainer();
+    public static WunderKisteContainer getContainer(MinecraftServer server) {
+        if (server != null && server instanceof WunderKisteContainerProvider) {
+            return ((WunderKisteContainerProvider) server).getWunderKisteContainer();
         }
         return null;
     }
@@ -207,8 +207,8 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
     public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Random random) {
         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
-        if (blockEntity instanceof BoxOfEirBlockEntity) {
-            ((BoxOfEirBlockEntity) blockEntity).recheckOpen();
+        if (blockEntity instanceof WunderKisteBlockEntity) {
+            ((WunderKisteBlockEntity) blockEntity).recheckOpen();
         }
     }
 
@@ -217,8 +217,8 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
                                                                   BlockState blockState,
                                                                   BlockEntityType<T> blockEntityType) {
         return level.isClientSide ? createTickerHelper(blockEntityType,
-                WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR,
-                BoxOfEirBlockEntity::lidAnimateTick) : null;
+                WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
+                WunderKisteBlockEntity::lidAnimateTick) : null;
     }
 
     @Override
@@ -228,9 +228,9 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
                                  Player player,
                                  InteractionHand interactionHand,
                                  BlockHitResult blockHitResult) {
-        final BoxOfEirContainer boxOfEirContainer = getContainer(level);
+        final WunderKisteContainer wunderKisteContainer = getContainer(level);
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
-        if (boxOfEirContainer != null && blockEntity instanceof BoxOfEirBlockEntity) {
+        if (wunderKisteContainer != null && blockEntity instanceof WunderKisteBlockEntity) {
             BlockPos blockPos2 = blockPos.above();
             if (level.getBlockState(blockPos2)
                      .isRedstoneConductor(level, blockPos2)) {
@@ -238,12 +238,12 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
             } else if (level.isClientSide) {
                 return InteractionResult.SUCCESS;
             } else {
-                BoxOfEirBlockEntity boxOfEirBlockEntity = (BoxOfEirBlockEntity) blockEntity;
+                WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) blockEntity;
 
-                ((ActiveChestStorage) player).setActiveBoxOfEir(boxOfEirBlockEntity);
+                ((ActiveChestStorage) player).setActiveWunderKiste(wunderKisteBlockEntity);
 
                 player.openMenu(new SimpleMenuProvider((i, inventory, playerx) -> {
-                    return ChestMenu.threeRows(i, inventory, boxOfEirContainer);
+                    return ChestMenu.threeRows(i, inventory, wunderKisteContainer);
                 }, CONTAINER_TITLE));
                 //player.awardStat(Stats.OPEN_ENDERCHEST);
                 PiglinAi.angerNearbyPiglins(player, true);
@@ -276,8 +276,8 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
     @Override
     public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
         //liveBlocks.add(blockPos);
-        AddRemoveBoxOfEirMessage.INSTANCE.send(true, blockPos);
-        return new BoxOfEirBlockEntity(blockPos, blockState);
+        AddRemoveWunderKisteMessage.INSTANCE.send(true, blockPos);
+        return new WunderKisteBlockEntity(blockPos, blockState);
     }
 
     @Override
@@ -287,9 +287,9 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-        BoxOfEirContainer boxOfEirContainer = getContainer(level);
-        if (boxOfEirContainer != null) {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(boxOfEirContainer);
+        WunderKisteContainer wunderKisteContainer = getContainer(level);
+        if (wunderKisteContainer != null) {
+            return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
         }
         return 0;
     }
@@ -322,7 +322,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
         if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
             //liveBlocks.remove(blockPos);
-            AddRemoveBoxOfEirMessage.INSTANCE.send(false, blockPos);
+            AddRemoveWunderKisteMessage.INSTANCE.send(false, blockPos);
         }
     }
 
@@ -338,7 +338,7 @@ public class BoxOfEirBlock extends AbstractChestBlock implements WorldlyContaine
 
     @Override
     public BlockEntityType getBlockEntityType() {
-        return WunderreichBlockEntities.BLOCK_ENTITY_BOX_OF_EIR;
+        return WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE;
     }
 
     @Override

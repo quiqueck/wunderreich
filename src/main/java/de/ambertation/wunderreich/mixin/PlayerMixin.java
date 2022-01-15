@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.blockentities.BoxOfEirBlockEntity;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 
 import net.minecraft.world.entity.player.Player;
@@ -12,17 +12,17 @@ import org.jetbrains.annotations.Nullable;
 @Mixin(Player.class)
 public abstract class PlayerMixin implements ActiveChestStorage {
     @Nullable
-    private BoxOfEirBlockEntity activeChest;
+    private WunderKisteBlockEntity activeChest;
 
-    public boolean isActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity) {
-        return this.activeChest == boxOfEirBlockEntity;
+    public boolean isActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity) {
+        return this.activeChest == wunderKisteBlockEntity;
     }
 
-    public BoxOfEirBlockEntity getActiveBoxOfEir() {
+    public WunderKisteBlockEntity getActiveWunderKiste() {
         return this.activeChest;
     }
 
-    public void setActiveBoxOfEir(BoxOfEirBlockEntity boxOfEirBlockEntity) {
-        this.activeChest = boxOfEirBlockEntity;
+    public void setActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity) {
+        this.activeChest = wunderKisteBlockEntity;
     }
 }
