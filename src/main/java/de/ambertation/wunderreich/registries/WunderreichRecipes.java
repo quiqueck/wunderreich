@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import com.google.gson.JsonElement;
@@ -66,6 +67,16 @@ public class WunderreichRecipes {
                 )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.IRON_INGOT, 1))
+                .register();
+    }
+
+    public static void createSlabRecipe(String name, Block baseBlock, Block block) {
+        RecipeJsonBuilder
+                .create(name)
+                .result(block)
+                .pattern("***")
+                .material('*', new ItemStack(baseBlock, 1))
+                .count(6)
                 .register();
     }
 }

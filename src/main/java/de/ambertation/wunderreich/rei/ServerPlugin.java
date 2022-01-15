@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 public class ServerPlugin implements REIServerPlugin {
     public static CategoryIdentifier<ImprinterDisplay> IMPRINTER = CategoryIdentifier.of(Wunderreich.MOD_ID,
-            ImprinterRecipe.Type.ID);
+            ImprinterRecipe.Type.ID.getPath());
 
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {

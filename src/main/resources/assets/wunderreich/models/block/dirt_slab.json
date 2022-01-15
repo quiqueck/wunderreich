@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "particle": "block/dirt",        
+    "bottom": "minecraft:block/dirt",
+    "top": "minecraft:block/dirt",
+    "side": "minecraft:block/dirt"
+  }
+}

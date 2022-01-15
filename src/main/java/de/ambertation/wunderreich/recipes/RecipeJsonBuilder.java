@@ -65,9 +65,17 @@ public class RecipeJsonBuilder {
     private String[] pattern = new String[3];
 
     public RecipeJsonBuilder pattern(String row1, String row2, String row3) {
-        this.pattern[0] = row1;
-        this.pattern[1] = row2;
-        this.pattern[2] = row3;
+        this.pattern = new String[]{row1, row2, row3};
+        return this;
+    }
+
+    public RecipeJsonBuilder pattern(String row1, String row2) {
+        this.pattern = new String[]{row1, row2};
+        return this;
+    }
+
+    public RecipeJsonBuilder pattern(String row1) {
+        this.pattern = new String[]{row1};
         return this;
     }
 
@@ -125,7 +133,7 @@ public class RecipeJsonBuilder {
 
 
         JsonArray jsonArray = new JsonArray();
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < pattern.length; i++)
             jsonArray.add(pattern[i]);
         json.add("pattern", jsonArray);
 

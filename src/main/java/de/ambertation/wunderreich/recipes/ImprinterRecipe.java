@@ -68,7 +68,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
     @NotNull
     private static ResourceLocation makeID(Enchantment e) {
-        return Wunderreich.ID(Type.ID + "/" + e.getDescriptionId());
+        return Wunderreich.ID(Type.ID.getPath() + "/" + e.getDescriptionId());
     }
 
     public static List<ImprinterRecipe> getRecipes() {
@@ -91,7 +91,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
     public static void register() {
         Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
-        Registry.register(Registry.RECIPE_TYPE, Wunderreich.ID(Type.ID), Type.INSTANCE);
+        Registry.register(Registry.RECIPE_TYPE, Type.ID, Type.INSTANCE);
 
         RECIPES.clear();
 
@@ -177,7 +177,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     public static class Type implements RecipeType<ImprinterRecipe> {
-        public static final String ID = "imprinter";
+        public static final ResourceLocation ID = Wunderreich.ID("imprinter");
         public static final RecipeType<ImprinterRecipe> INSTANCE = new Type(); //Registry.register(Registry.RECIPE_TYPE, Wunderreich.makeID(ID+"_recipe"), new Type());
 
         Type() {
@@ -185,12 +185,12 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
         @Override
         public String toString() {
-            return ID;
+            return ID.toString();
         }
     }
 
     private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
-        public final static ResourceLocation ID = Wunderreich.ID(Type.ID);
+        public final static ResourceLocation ID = Type.ID;
         public final static Serializer INSTANCE = new Serializer(); //Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
 
         @Override
@@ -234,7 +234,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             recipeJson.xp = r.baseXP;
             recipeJson.inputA = r.inputA.toJson();
             recipeJson.inputB = r.inputB.toJson();
-            recipeJson.type = Serializer.ID.toString();
+            recipeJson.type = Type.ID.toString();
 
             JsonObject root = new JsonObject();
             root.add("type", new JsonPrimitive(recipeJson.type));
