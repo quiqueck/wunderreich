@@ -49,27 +49,41 @@ public class BuildersTrowel extends DiggerItem {
                 }
             }
         }
+        if (list.isEmpty()) return InteractionResult.FAIL;
 
-
-        ItemStack item = list.getRandom();
-        if (item != null) {
-            bctx = new BlockPlaceContext(ctx.getPlayer(),
-                    ctx.getHand(),
-                    item,
-                    new BlockHitResult(ctx.getClickLocation(),
-                            ctx.getClickedFace(),
-                            ctx.getClickedPos(),
-                            ctx.isInside()));
-            BlockItem bi = (BlockItem) item.getItem();
-
-            InteractionResult result = bi.place(bctx);
-            if (result == InteractionResult.CONSUME && !p.getAbilities().instabuild) {
-                item.shrink(1);
+        ItemStack item;
+        InteractionResult result;
+        int maxTries = 100;
+        do {
+            item = list.getRandom();
+            if (item != null) {
+                result = getInteractionResult(ctx, p, item);
+                maxTries--;
+            } else {
+                result = InteractionResult.FAIL;
             }
-            ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
+        } while (maxTries > 0 && (result == InteractionResult.FAIL || result == InteractionResult.PASS));
 
-            return result;
-        }
         return InteractionResult.FAIL;
+    }
+
+    private InteractionResult getInteractionResult(UseOnContext ctx, Player p, ItemStack item) {
+        BlockPlaceContext bctx;
+        bctx = new BlockPlaceContext(ctx.getPlayer(),
+                ctx.getHand(),
+                item,
+                new BlockHitResult(ctx.getClickLocation(),
+                        ctx.getClickedFace(),
+                        ctx.getClickedPos(),
+                        ctx.isInside()));
+        BlockItem bi = (BlockItem) item.getItem();
+
+        InteractionResult result = bi.place(bctx);
+        if (result == InteractionResult.CONSUME && !p.getAbilities().instabuild) {
+            item.shrink(1);
+            ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
+        }
+
+        return result;
     }
 }
