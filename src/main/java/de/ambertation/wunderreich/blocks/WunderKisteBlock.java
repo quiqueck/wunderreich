@@ -1,11 +1,9 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
-import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
-import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
-import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
-import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
+import de.ambertation.wunderreich.interfaces.*;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.loot.LootTableJsonBuilder;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
@@ -27,6 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -57,7 +56,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class WunderKisteBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity> {
+public class WunderKisteBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
@@ -370,5 +369,25 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
         public int hashCode() {
             return pos.hashCode();
         }
+    }
+
+    @Override
+    public LootTableJsonBuilder buildLootTable() {
+        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
+                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
+                                                             .startAlternatives(altBuilder -> altBuilder
+                                                                     .startSelfEntry(builder -> builder
+                                                                             .silkTouch()
+                                                                     )
+                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
+                                                                             builder -> builder
+                                                                                     .setCount(4, false)
+                                                                                     .explosionDecay()
+                                                                     )
+                                                             )
+                                                     );
+
+        return b;
+
     }
 }

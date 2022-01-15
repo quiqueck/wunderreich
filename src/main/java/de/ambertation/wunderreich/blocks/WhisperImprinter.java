@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.blocks;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
+import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -36,7 +37,7 @@ import java.util.Random;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
-public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeRenderLayer {
+public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeRenderLayer, CanDropLoot {
     /**
      * Creates a new Block
      */

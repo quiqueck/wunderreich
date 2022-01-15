@@ -4,7 +4,8 @@
         "particle": "block/dirt",
         "bottom": "block/dirt",
         "top": "block/snow",
-        "side": "block/grass_block_snow"
+        "side": "block/grass_block_snow",
+        "overlay": "block/grass_block_side_overlay"
     },
     "elements": [
         {
