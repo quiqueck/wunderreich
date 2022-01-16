@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 
 import net.minecraft.resources.ResourceLocation;
@@ -11,6 +12,7 @@ import net.minecraft.world.level.block.Blocks;
 import com.google.gson.JsonElement;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class WunderreichRecipes {
@@ -28,7 +30,11 @@ public class WunderreichRecipes {
                 .material('#', Blocks.QUARTZ_BRICKS)
                 .material('N', Items.NETHERITE_INGOT)
                 .material('L', Blocks.LAPIS_BLOCK)
-                .register();
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.QUARTZ,
+                        Items.ANCIENT_DEBRIS,
+                        Items.LAPIS_LAZULI
+                ));
 
         RecipeJsonBuilder
                 .create("whisperer_blank")
@@ -41,7 +47,11 @@ public class WunderreichRecipes {
                 .material('G', Blocks.GLASS)
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 2))
                 .material('A', Items.AMETHYST_SHARD)
-                .register();
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.GLASS,
+                        Items.LAPIS_LAZULI,
+                        Items.AMETHYST_SHARD
+                ));
 
         RecipeJsonBuilder
                 .create("whisper_imprinter")
@@ -55,7 +65,12 @@ public class WunderreichRecipes {
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 1))
                 .material('A', new ItemStack(Blocks.AMETHYST_BLOCK, 1))
                 .material('D', new ItemStack(Blocks.COBBLED_DEEPSLATE, 1))
-                .register();
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.COPPER_INGOT,
+                        Items.LAPIS_LAZULI,
+                        Blocks.AMETHYST_BLOCK.asItem(),
+                        Blocks.COBBLED_DEEPSLATE.asItem()
+                ));
 
         RecipeJsonBuilder
                 .create("builders_trowel")
@@ -67,7 +82,9 @@ public class WunderreichRecipes {
                 )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.IRON_INGOT, 1))
-                .register();
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.IRON_INGOT
+                ));
     }
 
     public static void createSlabRecipe(String name, Block baseBlock, Block block) {
@@ -77,6 +94,6 @@ public class WunderreichRecipes {
                 .pattern("***")
                 .material('*', new ItemStack(baseBlock, 1))
                 .count(6)
-                .register();
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
     }
 }

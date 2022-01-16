@@ -174,10 +174,6 @@ public class LootTableJsonBuilder {
         this.type = type;
     }
 
-    public LootTableJsonBuilder restart() {
-        return new LootTableJsonBuilder(sourceID, type);
-    }
-
     public static LootTableJsonBuilder create(Block bl) {
         return new LootTableJsonBuilder(Registry.BLOCK.getKey(bl), LootTypes.BLOCK);
 

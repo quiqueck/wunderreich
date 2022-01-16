@@ -3,10 +3,7 @@ package de.ambertation.wunderreich;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
-import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.registries.WunderreichRecipes;
+import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
 
 import net.minecraft.resources.ResourceLocation;
@@ -41,6 +38,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichBlocks.register();
         WunderreichItems.register();
         WunderreichRecipes.register();
+        WunderreichAdvancements.register();
 
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();

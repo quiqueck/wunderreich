@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.recipes;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.WunderreichConfigs;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
@@ -16,9 +17,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RecipeJsonBuilder {
     private final ResourceLocation ID;
@@ -111,11 +110,45 @@ public class RecipeJsonBuilder {
         return canBuild;
     }
 
+    public JsonElement registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType type) {
+        List<Item> items = new ArrayList<>(materials.size());
+        for (var mat : materials.values()) {
+            for (var item : mat.getItems()) {
+                items.add(item.getItem());
+            }
+        }
+        return registerAndCreateAdvancement(type, items);
+    }
+
+    public JsonElement registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType type, List<Item> items) {
+        JsonElement res = register();
+        if (res == null) return null;
+
+        AdvancementsJsonBuilder b = null;
+        if (resultItem instanceof Block bl) {
+            b = AdvancementsJsonBuilder.createRecipe(bl.asItem(), type);
+        } else if (resultItem instanceof Item itm) {
+            b = AdvancementsJsonBuilder.createRecipe(itm, type);
+        }
+
+        if (b != null) {
+            int ct = 0;
+            for (var item : items) {
+                final String name = "has_" + ct++;
+                b.inventoryChangedCriteria(name, item);
+            }
+
+            b.register();
+        }
+        return res;
+    }
+
     public JsonElement register() {
         if (!canBuild) return null;
 
         JsonElement res = build();
         WunderreichRecipes.RECIPES.put(ID, res);
+
         return res;
     }
 
