@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 
 import net.minecraft.world.item.CreativeModeTab;
@@ -22,22 +22,22 @@ public class CreativeTabs {
     public static Block getBlockIcon() {
         return WunderreichBlocks.getAllBlocks()
                                 .stream()
-                                .filter(WunderreichConfigs.BLOCK_CONFIG::isEnabled)
+                                .filter(Configs.BLOCK_CONFIG::isEnabled)
                                 .findFirst()
                                 .orElse(Blocks.LAPIS_BLOCK);
     }
 
     public static Item getItemIcon() {
-        if (WunderreichConfigs.MAIN.allowLibrarianSelection() && WunderreichConfigs.ITEM_CONFIG.isEnabled(
+        if (Configs.MAIN.allowLibrarianSelection() && Configs.ITEM_CONFIG.isEnabled(
                 WunderreichItems.WHISPERER))
             return WunderreichItems.WHISPERER;
 
-        if (WunderreichConfigs.MAIN.allowBuilderTools.get() && WunderreichConfigs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
+        if (Configs.MAIN.allowBuilderTools.get() && Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
             return WunderreichItems.BUILDERS_TROWEL;
 
         return WunderreichItems.getAllItems()
                                .stream()
-                               .filter(WunderreichConfigs.ITEM_CONFIG::isEnabled)
+                               .filter(Configs.ITEM_CONFIG::isEnabled)
                                .findFirst()
                                .orElse(Items.BOOK);
     }

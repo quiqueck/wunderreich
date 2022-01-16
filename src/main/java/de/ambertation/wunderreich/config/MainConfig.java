@@ -27,6 +27,10 @@ public class MainConfig extends ConfigFile {
             "allowBuilderTools",
             true);
 
+    public final BooleanValue addDirtSlabs = new BooleanValue(FEATURE_CATEGORY,
+            "addDirtSlabs",
+            true);
+
 
     public MainConfig() {
         super("main");
@@ -34,7 +38,7 @@ public class MainConfig extends ConfigFile {
 
     public boolean allowLibrarianSelection() {
         return allowLibrarianSelection.get()
-                && WunderreichConfigs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER).get()
-                && WunderreichConfigs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER).get();
+                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER).get()
+                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER).get();
     }
 }

@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
@@ -63,7 +63,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
             return InteractionResult.SUCCESS;
         }
 
-        if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
+        if (Configs.MAIN.allowLibrarianSelection()) {
             player.openMenu(blockState.getMenuProvider(level, blockPos));
             return InteractionResult.CONSUME;
         }

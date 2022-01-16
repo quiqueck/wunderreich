@@ -18,6 +18,7 @@
   "title.config.wunderreich.main.features.allowLibrarianSelection": "Den ersten Handel von Bibliothekaren beeinflussen",
   "title.config.wunderreich.main.features.cyclingNeedsWhisperer": "\"Handel neu auswürfeln\" nur mit Flüsterer",
   "title.config.wunderreich.main.features.allowBuilderTools": "Baumeister Werkzeuge erlauben",
+  "title.config.wunderreich.main.features.addDirtSlabs": "Zusätzliche (Erd-)Stufen",
   "enchantment.type.ARMOR": "Rüstungen",
   "enchantment.type.ARMOR_FEET": "Fußrüstungen",
   "enchantment.type.ARMOR_LEGS": "Beinrüstungen",
@@ -38,5 +39,5 @@
   "advancements.wunderreich.whisperer_blank.title": "Stille vor dem Sturm",
   "advancements.wunderreich.whisperer_blank.description": "Baue eine leere Hülle um dein Geflüster zu prägen.",
   "advancements.wunderreich.whisperer.title": "Ein ominöses Flüstern",
-  "advancements.wunderreich.whisperer.description": "Präge deine Verzauberungsgeheimnisse auf einen leeres Flüstern."
+  "advancements.wunderreich.whisperer.description": "Präge deine Verzauberungsgeheimnisse auf einen leeren Flüstern."
 }

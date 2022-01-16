@@ -4,7 +4,7 @@
 package de.ambertation.wunderreich.gui;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 
@@ -65,7 +65,7 @@ public class CycleTradesButton extends Button {
             CycleTradesMessage.INSTANCE.send();
         }, merchantScreen, menu);
 
-        if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get()) {
+        if (Configs.MAIN.cyclingNeedsWhisperer.get()) {
             button.canUse = CycleTradesMessage.containsWhisperer(Minecraft.getInstance().player) != null;
             button.active = button.canUse;
             button.visible = button.canUse;

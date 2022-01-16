@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.recipes;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.whisperer.EnchantmentInfo;
 import de.ambertation.wunderreich.gui.whisperer.WhisperContainer;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
@@ -95,11 +95,11 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
         RECIPES.clear();
 
-        if (WunderreichConfigs.MAIN.allowLibrarianSelection()) {
+        if (Configs.MAIN.allowLibrarianSelection()) {
             List<Enchantment> enchants = new LinkedList<>();
             Registry.ENCHANTMENT.forEach(e -> {
                 ResourceLocation ID = makeID(e);
-                if (WunderreichConfigs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
+                if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
                     enchants.add(e);
             });
             enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)

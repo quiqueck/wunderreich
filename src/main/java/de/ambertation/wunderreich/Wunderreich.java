@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich;
 
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.*;
@@ -43,6 +43,6 @@ public class Wunderreich implements ModInitializer {
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();
 
-        WunderreichConfigs.saveConfigs();
+        Configs.saveConfigs();
     }
 }

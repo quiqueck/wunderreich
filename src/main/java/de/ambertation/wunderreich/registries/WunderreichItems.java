@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.BuildersTrowel;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
@@ -23,14 +23,14 @@ public class WunderreichItems {
 
     public static Item WHISPERER = registerItem("whisperer",
             new TrainedVillagerWhisperer(),
-            WunderreichConfigs.MAIN.allowLibrarianSelection.get());
+            Configs.MAIN.allowLibrarianSelection.get());
     public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
             new VillagerWhisperer(),
-            WunderreichConfigs.MAIN.allowLibrarianSelection.get() || WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get());
+            Configs.MAIN.allowLibrarianSelection.get() || Configs.MAIN.cyclingNeedsWhisperer.get());
 
     public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
             new BuildersTrowel(),
-            WunderreichConfigs.MAIN.allowBuilderTools.get());
+            Configs.MAIN.allowBuilderTools.get());
 
     @NotNull
     public static FabricItemSettings makeItemSettings() {
@@ -38,7 +38,7 @@ public class WunderreichItems {
     }
 
     public static Collection<Item> getAllItems() {
-        return WunderreichConfigs.ITEM_CONFIG.getAllObjects();
+        return Configs.ITEM_CONFIG.getAllObjects();
     }
 
     public static Item registerItem(String name, Item item) {
@@ -47,7 +47,7 @@ public class WunderreichItems {
 
     public static Item registerItem(String name, Item item, boolean register) {
         //this ensures that the dynamic config contains a valid entry for this Item.
-        boolean enabled = WunderreichConfigs.ITEM_CONFIG.newBooleanFor(name, item).get();
+        boolean enabled = Configs.ITEM_CONFIG.newBooleanFor(name, item).get();
 
         if (enabled && register) {
             final ResourceLocation id = Wunderreich.ID(name);

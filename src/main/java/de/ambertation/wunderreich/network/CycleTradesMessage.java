@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
@@ -113,10 +113,10 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 
     public static ItemStack containsWhisperer(Player player) {
         ItemStack res = null;
-        if (WunderreichConfigs.ITEM_CONFIG.isEnabled(WunderreichItems.BLANK_WHISPERER)) {
+        if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BLANK_WHISPERER)) {
             res = holds(player, WunderreichItems.BLANK_WHISPERER);
         }
-        if (res == null && WunderreichConfigs.ITEM_CONFIG.isEnabled(WunderreichItems.WHISPERER)) {
+        if (res == null && Configs.ITEM_CONFIG.isEnabled(WunderreichItems.WHISPERER)) {
             if (player.getMainHandItem().getItem() instanceof TrainedVillagerWhisperer) {
                 res = player.getMainHandItem();
             } else if (player.getOffhandItem().getItem() instanceof TrainedVillagerWhisperer) {
@@ -159,7 +159,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
     }
 
     public static boolean canSelectTrades(Villager villager, boolean doLog) {
-        if (!WunderreichConfigs.MAIN.allowLibrarianSelection()) return false;
+        if (!Configs.MAIN.allowLibrarianSelection()) return false;
         if (villager == null || villager.getVillagerXp() > 0) return false;
 
         VillagerData villagerData = villager.getVillagerData();
@@ -185,7 +185,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 if (!enchantments.isEmpty()) {
                     ResourceLocation type = EnchantmentHelper.getEnchantmentId(enchantments.getCompound(0));
 
-                    final int duraCost = WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get() ? 1 : 2;
+                    final int duraCost = Configs.MAIN.cyclingNeedsWhisperer.get() ? 1 : 2;
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
                         if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
                             whispererStack.stack().hurtAndBreak(duraCost,
@@ -214,7 +214,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         if (!(player.containerMenu instanceof MerchantMenu)) {
             return;
         }
-        if (!WunderreichConfigs.MAIN.allowTradesCycling.get()) return;
+        if (!Configs.MAIN.allowTradesCycling.get()) return;
         MerchantMenu menu = (MerchantMenu) player.containerMenu;
 
         if (menu instanceof IMerchantMenu mmenu) {
@@ -223,7 +223,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 return;
             }
 
-            if (WunderreichConfigs.MAIN.cyclingNeedsWhisperer.get()) {
+            if (Configs.MAIN.cyclingNeedsWhisperer.get()) {
                 ItemStack whisp = containsWhisperer(player);
                 if (whisp == null) return;
                 whisp.hurtAndBreak(1,

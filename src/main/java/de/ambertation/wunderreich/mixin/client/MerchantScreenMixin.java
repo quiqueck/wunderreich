@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin.client;
 
 
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.CycleTradesButton;
 
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -23,7 +23,7 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
 
     @Inject(method = "init", at = @At("TAIL"))
     public void wunderreich_onInit(CallbackInfo ci) {
-        if (!WunderreichConfigs.MAIN.allowTradesCycling.get()) return;
+        if (!Configs.MAIN.allowTradesCycling.get()) return;
 
         MerchantScreen merchantScreen = (MerchantScreen) (Object) this;
         CycleTradesButton button = CycleTradesButton.getCycleTradesButton(this,

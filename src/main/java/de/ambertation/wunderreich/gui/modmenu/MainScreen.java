@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
 import de.ambertation.wunderreich.config.ConfigFile;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
@@ -117,13 +117,13 @@ public class MainScreen extends Screen {
     protected void init() {
         super.init();
         final int BUTTON_HEIGHT = 20;
-        LayoutState state = new LayoutState(65);
+        LayoutState state = new LayoutState(55);
 
-        WunderreichConfigs.MAIN
+        Configs.MAIN
                 .getAllValues()
                 .stream()
                 .filter(o -> !o.isHiddenInUI())
-                .forEach(o -> addRow(state, WunderreichConfigs.MAIN, o));
+                .forEach(o -> addRow(state, Configs.MAIN, o));
 
         state.top += 15;
 
@@ -134,7 +134,7 @@ public class MainScreen extends Screen {
                 BUTTON_HEIGHT,
                 CommonComponents.GUI_DONE,
                 (button) -> {
-                    WunderreichConfigs.MAIN.save();
+                    Configs.MAIN.save();
                     onClose();
                 });
         this.addRenderableWidget(b);

@@ -2,7 +2,7 @@ package de.ambertation.wunderreich.recipes;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import net.minecraft.core.Registry;
@@ -25,14 +25,14 @@ public class RecipeJsonBuilder {
 
     private RecipeJsonBuilder(ResourceLocation ID) {
         this.ID = ID;
-        canBuild = WunderreichConfigs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
+        canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
     }
 
     private static boolean isEnabled(ItemLike item) {
         if (item instanceof Block bl) {
-            return WunderreichConfigs.BLOCK_CONFIG.isEnabled(bl);
+            return Configs.BLOCK_CONFIG.isEnabled(bl);
         } else if (item instanceof Item itm) {
-            return WunderreichConfigs.ITEM_CONFIG.isEnabled(itm);
+            return Configs.ITEM_CONFIG.isEnabled(itm);
         }
         return false;
     }

@@ -10,7 +10,7 @@ class TestConfig extends ConfigFile {
     }
 }
 
-public class WunderreichConfigs {
+public class Configs {
     public static final TestConfig TEST = new TestConfig();
     public static final MainConfig MAIN = new MainConfig();
     public static final BlockConfig BLOCK_CONFIG = new BlockConfig();

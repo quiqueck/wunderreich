@@ -5,7 +5,8 @@ import de.ambertation.wunderreich.blocks.DirtSlabBlock;
 import de.ambertation.wunderreich.blocks.SpreadableSnowyDirtSlab;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.config.MainConfig;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -28,11 +29,13 @@ public class WunderreichBlocks {
 
     public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", new WunderKisteBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
-    public static final Block GRASS_SLAB = registerSlab("grass_slab", Blocks.GRASS_BLOCK, SpreadableSnowyDirtSlab::new);
-    public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT);
+    public static final Block GRASS_SLAB = registerSlab("grass_slab", Blocks.GRASS_BLOCK, SpreadableSnowyDirtSlab::new,
+            Configs.MAIN.addDirtSlabs.get());
+    public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
+            Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
-        return WunderreichConfigs.BLOCK_CONFIG.getAllObjects();
+        return Configs.BLOCK_CONFIG.getAllObjects();
     }
 
     public static Block registerSlab(String name, Block baseBlock) {
@@ -64,7 +67,7 @@ public class WunderreichBlocks {
     }
 
     public static Block registerBlock(String name, Block block) {
-        if (WunderreichConfigs.BLOCK_CONFIG.newBooleanFor(name, block).get()) {
+        if (Configs.BLOCK_CONFIG.newBooleanFor(name, block).get()) {
             BLOCKS.add(block);
 
             ResourceLocation id = Wunderreich.ID(name);

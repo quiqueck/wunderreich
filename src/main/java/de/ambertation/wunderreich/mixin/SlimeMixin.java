@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.world.entity.monster.Slime;
 
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class SlimeMixin {
     @Inject(method = "shouldDespawnInPeaceful", at = @At("HEAD"), cancellable = true)
     protected void wunder_shouldDespawnInPeaceful(CallbackInfoReturnable<Boolean> cir) {
-        if (WunderreichConfigs.MAIN.doNotDespawnWithNameTag.get()) {
+        if (Configs.MAIN.doNotDespawnWithNameTag.get()) {
             Slime m = (Slime) (Object) this;
             if (m.hasCustomName()) {
                 cir.setReturnValue(false);

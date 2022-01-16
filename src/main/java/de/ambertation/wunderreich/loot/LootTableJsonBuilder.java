@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.loot;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.WunderreichConfigs;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
@@ -29,7 +29,7 @@ public class LootTableJsonBuilder {
                 .getAllBlocks()
                 .stream()
                 .filter(bl -> bl instanceof CanDropLoot)
-                .filter(WunderreichConfigs.BLOCK_CONFIG::isEnabled)
+                .filter(Configs.BLOCK_CONFIG::isEnabled)
                 .map(bl -> {
                             LootTableJsonBuilder l = ((CanDropLoot) bl).buildLootTable();
                             return new Helper(l.ID, l::build);
