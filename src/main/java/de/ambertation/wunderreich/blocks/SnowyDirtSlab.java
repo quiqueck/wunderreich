@@ -24,12 +24,10 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     public SnowyDirtSlab(Block baseBlock) {
         super(baseBlock);
 
-        this
-                .registerDefaultState(this
-                        .defaultBlockState()
-                        .setValue(TYPE, SlabType.BOTTOM)
-                        .setValue(WATERLOGGED, false)
-                        .setValue(SNOWY, false));
+        this.registerDefaultState(this.defaultBlockState()
+                                      .setValue(TYPE, SlabType.BOTTOM)
+                                      .setValue(WATERLOGGED, false)
+                                      .setValue(SNOWY, false));
     }
 
 

@@ -31,9 +31,9 @@ public class LootTableJsonBuilder {
                 .filter(bl -> bl instanceof CanDropLoot)
                 .filter(Configs.BLOCK_CONFIG::isEnabled)
                 .map(bl -> {
-                            LootTableJsonBuilder l = ((CanDropLoot) bl).buildLootTable();
-                            return new Helper(l.ID, l::build);
-                        }
+                         LootTableJsonBuilder l = ((CanDropLoot) bl).buildLootTable();
+                         return new Helper(l.ID, l::build);
+                     }
                 );
     }
 
@@ -55,23 +55,23 @@ public class LootTableJsonBuilder {
             return builder;
         }
 
-        public EntryBuilder<P> explosionDecay(){
+        public EntryBuilder<P> explosionDecay() {
             entry.addFunction(new ExplosionDecayFunction());
             return this;
         }
 
-        public EntryBuilder<P> setCount(int count, boolean add){
+        public EntryBuilder<P> setCount(int count, boolean add) {
             entry.addFunction(new SetCountFunction(count, add));
             return this;
         }
 
-        public EntryBuilder<P> silkTouch(){
+        public EntryBuilder<P> silkTouch() {
             return this.enchantedTool(Enchantments.SILK_TOUCH, 1);
         }
 
-        public EntryBuilder<P> enchantedTool(Enchantment e, int minLevel){
+        public EntryBuilder<P> enchantedTool(Enchantment e, int minLevel) {
             var id = Registry.ENCHANTMENT.getKey(e);
-            if (id!=null) {
+            if (id != null) {
                 var predicate = new EnchantmentPredicate();
                 predicate.addEnchantment(new de.ambertation.wunderreich.loot.Enchantment(id.toString(), minLevel));
                 entry.addCondition(new MatchToolCondition(predicate));
@@ -92,7 +92,8 @@ public class LootTableJsonBuilder {
         }
 
         public ME addSelfEntry() {
-            return startSelfEntry((b)->{});
+            return startSelfEntry((b) -> {
+            });
         }
 
         public ME startSelfEntry(Consumer<EntryBuilder<ME>> builder) {
@@ -101,7 +102,7 @@ public class LootTableJsonBuilder {
 
         public ME startItemEntry(Item itm, Consumer<EntryBuilder<ME>> builder) {
             ResourceLocation id = Registry.ITEM.getKey(itm);
-            return startEntry("minecraft:item",  id!=null?id.toString():"", builder);
+            return startEntry("minecraft:item", id != null ? id.toString() : "", builder);
         }
 
         public ME startItemEntry(String name, Consumer<EntryBuilder<ME>> builder) {
@@ -114,7 +115,7 @@ public class LootTableJsonBuilder {
             Entry e = new Entry(type, name);
             this.container.addEntry(e);
             builder.accept(makeEntryBuilder(e));
-            return (ME)this;
+            return (ME) this;
         }
     }
 

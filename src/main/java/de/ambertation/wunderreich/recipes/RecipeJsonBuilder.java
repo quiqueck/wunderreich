@@ -78,7 +78,7 @@ public class RecipeJsonBuilder {
         return this;
     }
 
-    private Map<Character, Ingredient> materials = new HashMap<>();
+    private final Map<Character, Ingredient> materials = new HashMap<>();
 
     public RecipeJsonBuilder material(Character c, ItemLike... items) {
         return material(c, Ingredient.of(items));

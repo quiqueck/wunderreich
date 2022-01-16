@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 class EventCheckBox extends Checkbox {
-    private Consumer<Boolean> onChange;
+    private final Consumer<Boolean> onChange;
     private boolean enabled;
 
     public EventCheckBox(int left,
@@ -91,15 +91,15 @@ public class MainScreen extends Screen {
 
     protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option) {
         EventCheckBox cb = new EventCheckBox(state.left + (option.getIsValidSupplier() != null ? 12 : 0),
-                state.top,
-                this.width - 2 * state.left,
-                20,
-                getComponent(config, option, "title"),
-                option.getRaw(),
-                (st) -> {
-                    option.set(st);
-                    updateEnabledState();
-                }
+                                             state.top,
+                                             this.width - 2 * state.left,
+                                             20,
+                                             getComponent(config, option, "title"),
+                                             option.getRaw(),
+                                             (st) -> {
+                                                 option.set(st);
+                                                 updateEnabledState();
+                                             }
         );
         if (option.getIsValidSupplier() != null) {
             dependentWidgets.put(cb, option.getIsValidSupplier());
@@ -129,14 +129,14 @@ public class MainScreen extends Screen {
 
         final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
         Button b = new Button(this.width - width - state.left,
-                this.height - BUTTON_HEIGHT - 20,
-                width,
-                BUTTON_HEIGHT,
-                CommonComponents.GUI_DONE,
-                (button) -> {
-                    Configs.MAIN.save();
-                    onClose();
-                });
+                              this.height - BUTTON_HEIGHT - 20,
+                              width,
+                              BUTTON_HEIGHT,
+                              CommonComponents.GUI_DONE,
+                              (button) -> {
+                                  Configs.MAIN.save();
+                                  onClose();
+                              });
         this.addRenderableWidget(b);
     }
 

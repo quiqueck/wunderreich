@@ -23,10 +23,14 @@ public abstract class ServerBoundPacketHandler<D> {
         packetHandler.CHANNEL = Wunderreich.ID(channel);
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
             ServerPlayNetworking.registerReceiver(handler,
-                    packetHandler.CHANNEL,
-                    (_server, _player, _handler, _buf, _responseSender) -> {
-                        packetHandler.receiveOnServer(_server, _player, _handler, _buf, _responseSender);
-                    });
+                                                  packetHandler.CHANNEL,
+                                                  (_server, _player, _handler, _buf, _responseSender) -> {
+                                                      packetHandler.receiveOnServer(_server,
+                                                                                    _player,
+                                                                                    _handler,
+                                                                                    _buf,
+                                                                                    _responseSender);
+                                                  });
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {

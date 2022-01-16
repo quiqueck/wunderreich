@@ -57,7 +57,8 @@ public class WunderreichAdvancements {
                 .create("used_trowel")
                 .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
                 .parent(root)
-                .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {});
+                .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {
+                });
         builders_trowel.register();
     }
 }

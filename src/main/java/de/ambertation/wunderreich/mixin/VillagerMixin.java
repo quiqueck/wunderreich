@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class VillagerMixin {
     protected void wunderreich_updateTradesProxy() {
         Villager self = (Villager) (Object) this;
-        AbstractVillagerAccessor acc = (AbstractVillagerAccessor) (Object) this;
+        AbstractVillagerAccessor acc = (AbstractVillagerAccessor) this;
 
         boolean found;
         MerchantOffers merchantOffers;

@@ -30,12 +30,12 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             return false;
         }
         int i = LayerLightEngine.getLightBlockInto(levelReader,
-                blockState,
-                blockPos,
-                blockState2,
-                blockPos2,
-                Direction.UP,
-                blockState2.getLightBlock(levelReader, blockPos2));
+                                                   blockState,
+                                                   blockPos,
+                                                   blockState2,
+                                                   blockPos2,
+                                                   Direction.UP,
+                                                   blockState2.getLightBlock(levelReader, blockPos2));
         return i < levelReader.getMaxLightLevel();
     }
 
@@ -57,16 +57,18 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             BlockState dirtBlockState = Blocks.DIRT.defaultBlockState();
             for (int i = 0; i < 4; ++i) {
                 BlockPos testPos = blockPos.offset(random.nextInt(3) - 1,
-                        random.nextInt(5) - 3,
-                        random.nextInt(3) - 1);
+                                                   random.nextInt(5) - 3,
+                                                   random.nextInt(3) - 1);
                 if (!canPropagate(dirtSlabBlockState, level, testPos)) continue;
 
                 if (level.getBlockState(testPos).is(Blocks.DIRT)) {
                     level.setBlockAndUpdate(testPos, dirtBlockState);
                 } else if (level.getBlockState(testPos).is(WunderreichBlocks.DIRT_SLAB)) {
                     level.setBlockAndUpdate(testPos,
-                            dirtSlabBlockState.setValue(SNOWY,
-                                    level.getBlockState(testPos.above()).is(Blocks.SNOW)));
+                                            dirtSlabBlockState.setValue(SNOWY,
+                                                                        level
+                                                                                .getBlockState(testPos.above())
+                                                                                .is(Blocks.SNOW)));
                 }
             }
         }

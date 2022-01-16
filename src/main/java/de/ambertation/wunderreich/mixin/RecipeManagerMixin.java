@@ -15,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(value=RecipeManager.class, priority=200)
+@Mixin(value = RecipeManager.class, priority = 200)
 public class RecipeManagerMixin {
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("HEAD"))

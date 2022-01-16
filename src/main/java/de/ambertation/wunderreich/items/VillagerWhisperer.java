@@ -6,8 +6,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 
-;
-
 public class VillagerWhisperer extends Item {
 
     public VillagerWhisperer() {
@@ -16,9 +14,9 @@ public class VillagerWhisperer extends Item {
 
     public VillagerWhisperer(int durability) {
         super(WunderreichItems
-                .makeItemSettings()
-                .rarity(Rarity.RARE)
-                .durability(durability)
+                      .makeItemSettings()
+                      .rarity(Rarity.RARE)
+                      .durability(durability)
         );
     }
 

@@ -27,10 +27,10 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
 
         MerchantScreen merchantScreen = (MerchantScreen) (Object) this;
         CycleTradesButton button = CycleTradesButton.getCycleTradesButton(this,
-                this.imageWidth,
-                this.imageHeight,
-                merchantScreen,
-                this.menu);
+                                                                          this.imageWidth,
+                                                                          this.imageHeight,
+                                                                          merchantScreen,
+                                                                          this.menu);
 
         this.addRenderableWidget(button);
     }

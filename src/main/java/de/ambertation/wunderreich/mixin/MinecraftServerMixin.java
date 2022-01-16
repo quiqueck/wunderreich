@@ -54,7 +54,7 @@ public abstract class MinecraftServerMixin implements WunderKisteContainerProvid
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
-        
+
         //we start a new world, so clear any old block
         WunderKisteBlock.liveBlocks.clear();
         wunderKisteContainer = new WunderKisteContainer();

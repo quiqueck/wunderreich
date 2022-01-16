@@ -81,8 +81,9 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                 , () -> {
                     return WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE;
                 });
-        this.registerDefaultState((BlockState) ((BlockState) ((BlockState) this.stateDefinition.any()).setValue(FACING,
-                Direction.NORTH)).setValue(WATERLOGGED, false));
+        this.registerDefaultState(this.stateDefinition.any().setValue(FACING,
+                                                                      Direction.NORTH)
+                                                      .setValue(WATERLOGGED, false));
     }
 
     public static void updateAllBoxes(MinecraftServer server, boolean withOpenState, boolean withFillrate) {
@@ -122,7 +123,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     public static void updateNeighbours(Level level, BlockPos pos, BlockState state, Block box) {
-        Direction facing = (Direction) state.getValue(FACING);
+        Direction facing = state.getValue(FACING);
         level.updateNeighbourForOutputSignal(pos, box);
         level.updateNeighborsAt(pos, box);
         level.updateNeighborsAt(pos.relative(facing), box);
@@ -160,18 +161,18 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         FluidState fluidState = blockPlaceContext.getLevel()
                                                  .getFluidState(blockPlaceContext.getClickedPos());
-        return (BlockState) ((BlockState) this.defaultBlockState()
-                                              .setValue(FACING, blockPlaceContext.getHorizontalDirection()
-                                                                                 .getOpposite())).setValue(WATERLOGGED,
-                fluidState.getType() == Fluids.WATER);
+        return this.defaultBlockState()
+                   .setValue(FACING, blockPlaceContext.getHorizontalDirection()
+                                                      .getOpposite()).setValue(WATERLOGGED,
+                                                                               fluidState.getType() == Fluids.WATER);
     }
 
     public BlockState rotate(BlockState blockState, Rotation rotation) {
-        return (BlockState) blockState.setValue(FACING, rotation.rotate((Direction) blockState.getValue(FACING)));
+        return blockState.setValue(FACING, rotation.rotate(blockState.getValue(FACING)));
     }
 
     public BlockState mirror(BlockState blockState, Mirror mirror) {
-        return blockState.rotate(mirror.getRotation((Direction) blockState.getValue(FACING)));
+        return blockState.rotate(mirror.getRotation(blockState.getValue(FACING)));
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -179,7 +180,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     public FluidState getFluidState(BlockState blockState) {
-        return (Boolean) blockState.getValue(WATERLOGGED)
+        return blockState.getValue(WATERLOGGED)
                 ? Fluids.WATER.getSource(false)
                 : super.getFluidState(blockState);
     }
@@ -190,7 +191,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                                   LevelAccessor levelAccessor,
                                   BlockPos blockPos,
                                   BlockPos blockPos2) {
-        if ((Boolean) blockState.getValue(WATERLOGGED)) {
+        if (blockState.getValue(WATERLOGGED)) {
             levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
         }
 
@@ -216,8 +217,8 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                                                                   BlockState blockState,
                                                                   BlockEntityType<T> blockEntityType) {
         return level.isClientSide ? createTickerHelper(blockEntityType,
-                WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
-                WunderKisteBlockEntity::lidAnimateTick) : null;
+                                                       WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
+                                                       WunderKisteBlockEntity::lidAnimateTick) : null;
     }
 
     @Override
@@ -300,7 +301,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        Direction facing = (Direction) blockState.getValue(FACING);
+        Direction facing = blockState.getValue(FACING);
         return /*direction==facing &&*/ hasAnyOpenInstance ? 15 : 0;
     }
 
@@ -380,9 +381,9 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                                                                              .silkTouch()
                                                                      )
                                                                      .startItemEntry(Items.NETHERITE_SCRAP,
-                                                                             builder -> builder
-                                                                                     .setCount(4, false)
-                                                                                     .explosionDecay()
+                                                                                     builder -> builder
+                                                                                             .setCount(4, false)
+                                                                                             .explosionDecay()
                                                                      )
                                                              )
                                                      );

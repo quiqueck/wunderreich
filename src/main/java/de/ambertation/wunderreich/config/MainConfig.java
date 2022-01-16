@@ -6,8 +6,8 @@ public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
 
     public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
-            "doNotDespawnWithNameTag",
-            true);
+                                                                         "doNotDespawnWithNameTag",
+                                                                         true);
 
     public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
 
@@ -24,12 +24,12 @@ public class MainConfig extends ConfigFile {
     ).and(allowTradesCycling);
 
     public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
-            "allowBuilderTools",
-            true);
+                                                                   "allowBuilderTools",
+                                                                   true);
 
     public final BooleanValue addDirtSlabs = new BooleanValue(FEATURE_CATEGORY,
-            "addDirtSlabs",
-            true);
+                                                              "addDirtSlabs",
+                                                              true);
 
 
     public MainConfig() {

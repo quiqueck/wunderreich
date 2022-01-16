@@ -6,7 +6,6 @@ import de.ambertation.wunderreich.blocks.SpreadableSnowyDirtSlab;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.config.MainConfig;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -30,9 +29,9 @@ public class WunderreichBlocks {
     public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", new WunderKisteBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
     public static final Block GRASS_SLAB = registerSlab("grass_slab", Blocks.GRASS_BLOCK, SpreadableSnowyDirtSlab::new,
-            Configs.MAIN.addDirtSlabs.get());
+                                                        Configs.MAIN.addDirtSlabs.get());
     public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
-            Configs.MAIN.addDirtSlabs.get());
+                                                       Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();

@@ -22,15 +22,15 @@ public class WunderreichItems {
     private static final List<Item> ITEMS = new ArrayList<>(3);
 
     public static Item WHISPERER = registerItem("whisperer",
-            new TrainedVillagerWhisperer(),
-            Configs.MAIN.allowLibrarianSelection.get());
+                                                new TrainedVillagerWhisperer(),
+                                                Configs.MAIN.allowLibrarianSelection.get());
     public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
-            new VillagerWhisperer(),
-            Configs.MAIN.allowLibrarianSelection.get() || Configs.MAIN.cyclingNeedsWhisperer.get());
+                                                      new VillagerWhisperer(),
+                                                      Configs.MAIN.allowLibrarianSelection.get() || Configs.MAIN.cyclingNeedsWhisperer.get());
 
     public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
-            new BuildersTrowel(),
-            Configs.MAIN.allowBuilderTools.get());
+                                                      new BuildersTrowel(),
+                                                      Configs.MAIN.allowBuilderTools.get());
 
     @NotNull
     public static FabricItemSettings makeItemSettings() {

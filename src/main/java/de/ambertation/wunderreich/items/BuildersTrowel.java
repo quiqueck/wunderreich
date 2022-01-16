@@ -72,12 +72,12 @@ public class BuildersTrowel extends DiggerItem {
     private InteractionResult getInteractionResult(UseOnContext ctx, Player p, ItemStack item) {
         BlockPlaceContext bctx;
         bctx = new BlockPlaceContext(ctx.getPlayer(),
-                ctx.getHand(),
-                item,
-                new BlockHitResult(ctx.getClickLocation(),
-                        ctx.getClickedFace(),
-                        ctx.getClickedPos(),
-                        ctx.isInside()));
+                                     ctx.getHand(),
+                                     item,
+                                     new BlockHitResult(ctx.getClickLocation(),
+                                                        ctx.getClickedFace(),
+                                                        ctx.getClickedPos(),
+                                                        ctx.isInside()));
         BlockItem bi = (BlockItem) item.getItem();
 
         InteractionResult result = bi.place(bctx);

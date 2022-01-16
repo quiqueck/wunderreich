@@ -75,8 +75,10 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     @Nullable
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
-                inventory,
-                ContainerLevelAccess.create(level, blockPos)), new TextComponent("Hello"));
+                                                                                  inventory,
+                                                                                  ContainerLevelAccess.create(level,
+                                                                                                              blockPos)),
+                                      new TextComponent("Hello"));
     }
 
     @Override
@@ -87,17 +89,17 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(null,
-                    blockPos,
-                    SoundEvents.AMETHYST_BLOCK_HIT,
-                    SoundSource.BLOCKS,
-                    1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
+                            blockPos,
+                            SoundEvents.AMETHYST_BLOCK_HIT,
+                            SoundSource.BLOCKS,
+                            1.0f,
+                            0.5f + level.random.nextFloat() * 1.2f);
             level.playSound(null,
-                    blockPos,
-                    SoundEvents.AMETHYST_BLOCK_CHIME,
-                    SoundSource.BLOCKS,
-                    1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
+                            blockPos,
+                            SoundEvents.AMETHYST_BLOCK_CHIME,
+                            SoundSource.BLOCKS,
+                            1.0f,
+                            0.5f + level.random.nextFloat() * 1.2f);
         }
     }
 

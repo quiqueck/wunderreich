@@ -3,9 +3,9 @@ package de.ambertation.wunderreich.interfaces;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 
 public interface ActiveChestStorage {
-    public boolean isActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
+    boolean isActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
 
-    public WunderKisteBlockEntity getActiveWunderKiste();
+    WunderKisteBlockEntity getActiveWunderKiste();
 
-    public void setActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
+    void setActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity);
 }

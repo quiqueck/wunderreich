@@ -207,7 +207,7 @@ public class ConfigFile {
     private JsonObject root;
     private boolean modified;
 
-    private List<Value<?>> knownValues = new LinkedList<>();
+    private final List<Value<?>> knownValues = new LinkedList<>();
 
     public List<Value<?>> getAllValues() {
         return knownValues;
@@ -242,7 +242,7 @@ public class ConfigFile {
         if (path == null || path.trim().equals("")) {
             return root;
         }
-        
+
         String[] names = path.split("\\.");
         JsonObject obj = root;
 

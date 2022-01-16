@@ -16,7 +16,7 @@ public class WunderreichTags {
     public static final TagRegistry<Item> ITEM = new TagRegistry<>();
 
     public static final Tag.Named<Block> MINEABLE_TROWEL = TagFactory.BLOCK.create(new ResourceLocation("c",
-            "mineable/trowel"));
+                                                                                                        "mineable/trowel"));
 
 
     static void supplyForBlock(Block bl) {

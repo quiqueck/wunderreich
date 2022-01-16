@@ -38,12 +38,12 @@ public class CycleTradesButton extends Button {
 
     public static final int WIDTH = 18;
     private static final ResourceLocation ARROW_BUTTON = new ResourceLocation(Wunderreich.MOD_ID,
-            "textures/gui/reroll.png");
+                                                                              "textures/gui/reroll.png");
     private static final int HALF_HEIGHT = 13;
     public static final int HEIGHT = HALF_HEIGHT * 2;
 
-    private MerchantScreen screen;
-    private MerchantMenu menu;
+    private final MerchantScreen screen;
+    private final MerchantMenu menu;
     private boolean canUse;
 
     public CycleTradesButton(int x, int y, OnPress pressable, MerchantScreen screen, MerchantMenu menu) {

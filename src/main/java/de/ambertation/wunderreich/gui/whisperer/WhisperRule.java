@@ -22,10 +22,10 @@ public class WhisperRule {
 
     private WhisperRule(Enchantment enchantment, EnchantmentInfo nfo) {
         this(enchantment,
-                Ingredient.of(nfo.inputA),
-                Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
-                nfo.baseXP,
-                nfo.type);
+             Ingredient.of(nfo.inputA),
+             Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
+             nfo.baseXP,
+             nfo.type);
     }
 
     protected WhisperRule(Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {

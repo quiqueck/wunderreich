@@ -22,7 +22,7 @@ class EntryFunction {
 }
 
 class ExplosionDecayFunction extends EntryFunction {
-    ExplosionDecayFunction(){
+    ExplosionDecayFunction() {
         super("minecraft:explosion_decay");
     }
 }
@@ -92,7 +92,7 @@ class EnchantmentPredicate extends EntryPredicate {
         this.enchantments = new ArrayList<>(1);
     }
 
-    void addEnchantment(Enchantment e){
+    void addEnchantment(Enchantment e) {
         enchantments.add(e);
     }
 
@@ -164,11 +164,11 @@ class Entry {
         this.name = name;
     }
 
-    void addFunction(EntryFunction f){
+    void addFunction(EntryFunction f) {
         functions.add(f);
     }
 
-    void addCondition(EntryCondition f){
+    void addCondition(EntryCondition f) {
         conditions.add(f);
     }
 
@@ -186,7 +186,7 @@ class Entry {
             conditions.stream().map(EntryCondition::serialize).forEach(f::add);
             root.add("conditions", f);
         }
-        if (name!=null) {
+        if (name != null) {
             root.add("name", new JsonPrimitive(name));
         }
         return root;
@@ -205,11 +205,11 @@ class EntryPool implements EntryList {
         entries = new ArrayList<>(0);
     }
 
-    public void addEntry(Entry e){
+    public void addEntry(Entry e) {
         entries.add(e);
     }
 
-    void addCondition(EntryCondition c){
+    void addCondition(EntryCondition c) {
         conditions.add(c);
     }
 

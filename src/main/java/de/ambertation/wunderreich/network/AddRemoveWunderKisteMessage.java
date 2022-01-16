@@ -15,7 +15,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRemoveWunderKisteMessage.Content> {
     public static final AddRemoveWunderKisteMessage INSTANCE = ServerBoundPacketHandler.register("wunder_kiste",
-            new AddRemoveWunderKisteMessage());
+                                                                                                 new AddRemoveWunderKisteMessage());
 
     protected AddRemoveWunderKisteMessage() {
     }

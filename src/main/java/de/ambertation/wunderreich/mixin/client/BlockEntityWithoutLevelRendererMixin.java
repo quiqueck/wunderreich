@@ -47,7 +47,8 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
             Block block = ((BlockItem) item).getBlock();
             if (block instanceof WunderKisteBlock) {
                 if (wunderKiste == null) {
-                    wunderKiste = new WunderKisteBlockEntity(BlockPos.ZERO, WunderreichBlocks.WUNDER_KISTE.defaultBlockState());
+                    wunderKiste = new WunderKisteBlockEntity(BlockPos.ZERO,
+                                                             WunderreichBlocks.WUNDER_KISTE.defaultBlockState());
                 }
                 this.blockEntityRenderDispatcher.renderItem(wunderKiste, poseStack, multiBufferSource, i, j);
                 ci.cancel();
