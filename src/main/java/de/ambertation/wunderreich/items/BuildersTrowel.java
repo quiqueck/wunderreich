@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.items;
 
+import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichTags;
 import de.ambertation.wunderreich.utils.RandomList;
@@ -80,9 +81,14 @@ public class BuildersTrowel extends DiggerItem {
         BlockItem bi = (BlockItem) item.getItem();
 
         InteractionResult result = bi.place(bctx);
-        if (result == InteractionResult.CONSUME && !p.getAbilities().instabuild) {
-            item.shrink(1);
-            ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
+        if (result == InteractionResult.CONSUME) {
+            if (p instanceof ServerPlayer sp) {
+                WunderreichAdvancements.USE_TROWEL.trigger(sp);
+            }
+            if (!p.getAbilities().instabuild) {
+                item.shrink(1);
+                ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
+            }
         }
 
         return result;

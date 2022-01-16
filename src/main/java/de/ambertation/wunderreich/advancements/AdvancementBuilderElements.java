@@ -35,7 +35,7 @@ class Display {
         root.add("title", obj);
 
         obj = new JsonObject();
-        obj.add("translate", new JsonPrimitive(title));
+        obj.add("translate", new JsonPrimitive(description));
         root.add("description", obj);
 
         if (frame != null) {

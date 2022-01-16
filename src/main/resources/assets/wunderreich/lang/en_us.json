@@ -39,5 +39,7 @@
   "advancements.wunderreich.whisperer_blank.title": "A screaming Whisper",
   "advancements.wunderreich.whisperer_blank.description": "Build an empty shell to imprint your whisper.",
   "advancements.wunderreich.whisperer.title": "An ominous Whisper",
-  "advancements.wunderreich.whisperer.description": "Imprint your enchantment secrets on a blank whisper."
+  "advancements.wunderreich.whisperer.description": "Imprint your enchantment secrets on a blank whisper.",
+  "advancements.wunderreich.used_trowel.title": "Do the Shuffle",
+  "advancements.wunderreich.used_trowel.description": "Use a Trowel to build a randomized wall from the Blocks in your Hotbar."
 }
