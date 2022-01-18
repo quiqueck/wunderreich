@@ -3,3 +3,4 @@ accessWidener   v1  named
 accessible method net/minecraft/client/particle/EnchantmentTableParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)V
 accessible method net/minecraft/client/particle/PortalParticle <init> (Lnet/minecraft/client/multiplayer/ClientLevel;DDDDDD)V
 accessible class net/minecraft/tags/TagManager$LoaderInfo
+accessible method net/minecraft/world/level/block/SpreadingSnowyDirtBlock canBeGrass (Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/LevelReader;Lnet/minecraft/core/BlockPos;)Z

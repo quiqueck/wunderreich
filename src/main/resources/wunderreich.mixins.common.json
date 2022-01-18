@@ -17,6 +17,7 @@
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
     "SlimeMixin",
+    "SpreadingSnowyDirtBlockMixin",
     "VillagerMixin"
   ],
   "client": [
