@@ -27,7 +27,9 @@ public class WunderreichBlocks {
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
 
     //Slabs
-    public static final Block GRASS_SLAB = registerSlab("grass_slab", Blocks.GRASS_BLOCK, SpreadableSnowyDirtSlab::new,
+    public static final Block GRASS_SLAB = registerSlab("grass_slab",
+                                                        Blocks.GRASS_BLOCK,
+                                                        SpreadableSnowyDirtSlab.GrassSlab::new,
                                                         Configs.MAIN.addDirtSlabs.get());
     public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
                                                        Configs.MAIN.addDirtSlabs.get());
