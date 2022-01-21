@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/orange_concrete_slab"
+            },
+            "type=double": {
+                "model": "block/orange_concrete"
+            },
+            "type=top": {
+                "model": "wunderreich:block/orange_concrete_top"
+            }
+        }
+    }

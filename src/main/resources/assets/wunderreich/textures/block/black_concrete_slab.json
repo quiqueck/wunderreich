@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/black_concrete_slab"
+            },
+            "type=double": {
+                "model": "block/black_concrete"
+            },
+            "type=top": {
+                "model": "wunderreich:block/black_concrete_top"
+            }
+        }
+    }

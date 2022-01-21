@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/lime_concrete_slab"
+            },
+            "type=double": {
+                "model": "block/lime_concrete"
+            },
+            "type=top": {
+                "model": "wunderreich:block/lime_concrete_top"
+            }
+        }
+    }

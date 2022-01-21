@@ -38,6 +38,71 @@ public class WunderreichBlocks {
     public static final Block RED_SAND_SLAB = registerSlab("red_sand_slab", Blocks.RED_SAND, SandSlab.Red::new,
                                                            Configs.MAIN.addDirtSlabs.get());
 
+    public static final Block WHITE_CONCRETE_SLAB = registerSlab("white_concrete_slab",
+                                                                 Blocks.WHITE_CONCRETE,
+                                                                 ConcreteSlabBlock::new,
+                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_GRAY_CONCRETE_SLAB = registerSlab("light_gray_concrete_slab",
+                                                                      Blocks.LIGHT_GRAY_CONCRETE,
+                                                                      ConcreteSlabBlock::new,
+                                                                      Configs.MAIN.addDirtSlabs.get());
+    public static final Block GRAY_CONCRETE_SLAB = registerSlab("gray_concrete_slab",
+                                                                Blocks.GRAY_CONCRETE,
+                                                                ConcreteSlabBlock::new,
+                                                                Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLACK_CONCRETE_SLAB = registerSlab("black_concrete_slab",
+                                                                 Blocks.BLACK_CONCRETE,
+                                                                 ConcreteSlabBlock::new,
+                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block BROWN_CONCRETE_SLAB = registerSlab("brown_concrete_slab",
+                                                                 Blocks.BROWN_CONCRETE,
+                                                                 ConcreteSlabBlock::new,
+                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block RED_CONCRETE_SLAB = registerSlab("red_concrete_slab",
+                                                               Blocks.RED_CONCRETE,
+                                                               ConcreteSlabBlock::new,
+                                                               Configs.MAIN.addDirtSlabs.get());
+    public static final Block ORANGE_CONCRETE_SLAB = registerSlab("orange_concrete_slab",
+                                                                  Blocks.ORANGE_CONCRETE,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block YELLOW_CONCRETE_SLAB = registerSlab("yellow_concrete_slab",
+                                                                  Blocks.YELLOW_CONCRETE,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIME_CONCRETE_SLAB = registerSlab("lime_concrete_slab",
+                                                                Blocks.LIME_CONCRETE,
+                                                                ConcreteSlabBlock::new,
+                                                                Configs.MAIN.addDirtSlabs.get());
+    public static final Block GREEN_CONCRETE_SLAB = registerSlab("green_concrete_slab",
+                                                                 Blocks.GREEN_CONCRETE,
+                                                                 ConcreteSlabBlock::new,
+                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block CYAN_CONCRETE_SLAB = registerSlab("cyan_concrete_slab",
+                                                                Blocks.CYAN_CONCRETE,
+                                                                ConcreteSlabBlock::new,
+                                                                Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_BLUE_CONCRETE_SLAB = registerSlab("light_blue_concrete_slab",
+                                                                      Blocks.LIGHT_BLUE_CONCRETE,
+                                                                      ConcreteSlabBlock::new,
+                                                                      Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLUE_CONCRETE_SLAB = registerSlab("blue_concrete_slab",
+                                                                Blocks.BLUE_CONCRETE,
+                                                                ConcreteSlabBlock::new,
+                                                                Configs.MAIN.addDirtSlabs.get());
+    public static final Block PURPLE_CONCRETE_SLAB = registerSlab("purple_concrete_slab",
+                                                                  Blocks.PURPLE_CONCRETE,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block MAGENTA_CONCRETE_SLAB = registerSlab("magenta_concrete_slab",
+                                                                   Blocks.MAGENTA_CONCRETE,
+                                                                   ConcreteSlabBlock::new,
+                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block PINK_CONCRETE_SLAB = registerSlab("pink_concrete_slab",
+                                                                Blocks.PINK_CONCRETE,
+                                                                ConcreteSlabBlock::new,
+                                                                Configs.MAIN.addDirtSlabs.get());
+
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();
     }

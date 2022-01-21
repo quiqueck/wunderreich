@@ -1,0 +1,9 @@
+{    
+        "parent": "minecraft:block/slab",
+        "textures": {
+            "particle": "block/light_gray_concrete",        
+            "bottom": "minecraft:block/light_gray_concrete",
+            "top": "minecraft:block/light_gray_concrete",
+            "side": "minecraft:block/light_gray_concrete"
+        }    
+    }
