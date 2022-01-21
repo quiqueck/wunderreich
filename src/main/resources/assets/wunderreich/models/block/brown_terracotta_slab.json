@@ -1,0 +1,9 @@
+{    
+        "parent": "minecraft:block/slab",
+        "textures": {
+            "particle": "block/brown_terracotta",        
+            "bottom": "minecraft:block/brown_terracotta",
+            "top": "minecraft:block/brown_terracotta",
+            "side": "minecraft:block/brown_terracotta"
+        }    
+    }

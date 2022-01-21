@@ -14,9 +14,9 @@ const colorsDE = [
     'Weiße', 'Hellgraue', 'Graue', 'Schwarze', 
     'Braune', 
     'Rote', 'Orange', 'Gelbe', 'Hellgrüne', 'Grüne', 'Türkise', 'Hellblaue', 'Blaue', 'Violette', 'Magenta', 'Pinke']
-const type = "concrete"
-const nameEN = "Concrete Slab"
-const nameDE = "Betonstufe"
+const type = "terracotta"
+const nameEN = "Terracotta Slab"
+const nameDE = "Keramikstufe"
 colors.forEach(color => {
     const blockName = color+'_'+type
     const basePath = "./src/main/resources/assets/wunderreich";

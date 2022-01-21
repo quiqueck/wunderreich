@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/magenta_terracotta_slab"
+            },
+            "type=double": {
+                "model": "block/magenta_terracotta"
+            },
+            "type=top": {
+                "model": "wunderreich:block/magenta_terracotta_top"
+            }
+        }
+    }

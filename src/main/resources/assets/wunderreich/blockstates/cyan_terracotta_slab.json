@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/cyan_terracotta_slab"
+            },
+            "type=double": {
+                "model": "block/cyan_terracotta"
+            },
+            "type=top": {
+                "model": "wunderreich:block/cyan_terracotta_top"
+            }
+        }
+    }

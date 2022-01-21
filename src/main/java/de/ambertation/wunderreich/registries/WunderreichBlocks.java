@@ -104,6 +104,70 @@ public class WunderreichBlocks {
                                                                 Blocks.PINK_CONCRETE,
                                                                 ConcreteSlabBlock::new,
                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block WHITE_TERRACOTTA_SLAB = registerSlab("white_terracotta_slab",
+                                                                   Blocks.WHITE_TERRACOTTA,
+                                                                   ConcreteSlabBlock::new,
+                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_GRAY_TERRACOTTA_SLAB = registerSlab("light_gray_terracotta_slab",
+                                                                        Blocks.LIGHT_GRAY_TERRACOTTA,
+                                                                        ConcreteSlabBlock::new,
+                                                                        Configs.MAIN.addDirtSlabs.get());
+    public static final Block GRAY_TERRACOTTA_SLAB = registerSlab("gray_terracotta_slab",
+                                                                  Blocks.GRAY_TERRACOTTA,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLACK_TERRACOTTA_SLAB = registerSlab("black_terracotta_slab",
+                                                                   Blocks.BLACK_TERRACOTTA,
+                                                                   ConcreteSlabBlock::new,
+                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block BROWN_TERRACOTTA_SLAB = registerSlab("brown_terracotta_slab",
+                                                                   Blocks.BROWN_TERRACOTTA,
+                                                                   ConcreteSlabBlock::new,
+                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block RED_TERRACOTTA_SLAB = registerSlab("red_terracotta_slab",
+                                                                 Blocks.RED_TERRACOTTA,
+                                                                 ConcreteSlabBlock::new,
+                                                                 Configs.MAIN.addDirtSlabs.get());
+    public static final Block ORANGE_TERRACOTTA_SLAB = registerSlab("orange_terracotta_slab",
+                                                                    Blocks.ORANGE_TERRACOTTA,
+                                                                    ConcreteSlabBlock::new,
+                                                                    Configs.MAIN.addDirtSlabs.get());
+    public static final Block YELLOW_TERRACOTTA_SLAB = registerSlab("yellow_terracotta_slab",
+                                                                    Blocks.YELLOW_TERRACOTTA,
+                                                                    ConcreteSlabBlock::new,
+                                                                    Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIME_TERRACOTTA_SLAB = registerSlab("lime_terracotta_slab",
+                                                                  Blocks.LIME_TERRACOTTA,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block GREEN_TERRACOTTA_SLAB = registerSlab("green_terracotta_slab",
+                                                                   Blocks.GREEN_TERRACOTTA,
+                                                                   ConcreteSlabBlock::new,
+                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block CYAN_TERRACOTTA_SLAB = registerSlab("cyan_terracotta_slab",
+                                                                  Blocks.CYAN_TERRACOTTA,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_BLUE_TERRACOTTA_SLAB = registerSlab("light_blue_terracotta_slab",
+                                                                        Blocks.LIGHT_BLUE_TERRACOTTA,
+                                                                        ConcreteSlabBlock::new,
+                                                                        Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLUE_TERRACOTTA_SLAB = registerSlab("blue_terracotta_slab",
+                                                                  Blocks.BLUE_TERRACOTTA,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
+    public static final Block PURPLE_TERRACOTTA_SLAB = registerSlab("purple_terracotta_slab",
+                                                                    Blocks.PURPLE_TERRACOTTA,
+                                                                    ConcreteSlabBlock::new,
+                                                                    Configs.MAIN.addDirtSlabs.get());
+    public static final Block MAGENTA_TERRACOTTA_SLAB = registerSlab("magenta_terracotta_slab",
+                                                                     Blocks.MAGENTA_TERRACOTTA,
+                                                                     ConcreteSlabBlock::new,
+                                                                     Configs.MAIN.addDirtSlabs.get());
+    public static final Block PINK_TERRACOTTA_SLAB = registerSlab("pink_terracotta_slab",
+                                                                  Blocks.PINK_TERRACOTTA,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();
