@@ -4,6 +4,6 @@
             "particle": "block/cyan_stained_glass",        
             "bottom": "minecraft:block/cyan_stained_glass",
             "top": "minecraft:block/cyan_stained_glass",
-            "side": "minecraft:block/cyan_stained_glass"
+            "side": "wunderreich:block/cyan_stained_glass"
         }    
     }

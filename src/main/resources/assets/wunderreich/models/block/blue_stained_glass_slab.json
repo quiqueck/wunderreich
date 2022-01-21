@@ -4,6 +4,6 @@
             "particle": "block/blue_stained_glass",        
             "bottom": "minecraft:block/blue_stained_glass",
             "top": "minecraft:block/blue_stained_glass",
-            "side": "minecraft:block/blue_stained_glass"
+            "side": "wunderreich:block/blue_stained_glass"
         }    
     }

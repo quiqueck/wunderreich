@@ -3,6 +3,6 @@
         "textures": {
             "bottom": "minecraft:block/black_stained_glass",
             "top": "minecraft:block/black_stained_glass",
-            "side": "minecraft:block/black_stained_glass"
+            "side": "wunderreich:block/black_stained_glass"
         }
     }

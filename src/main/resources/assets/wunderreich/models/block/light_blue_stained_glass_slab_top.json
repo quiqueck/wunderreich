@@ -3,6 +3,6 @@
         "textures": {
             "bottom": "minecraft:block/light_blue_stained_glass",
             "top": "minecraft:block/light_blue_stained_glass",
-            "side": "minecraft:block/light_blue_stained_glass"
+            "side": "wunderreich:block/light_blue_stained_glass"
         }
     }

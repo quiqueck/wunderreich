@@ -14,7 +14,7 @@ const colorsDE = [
     'Weiße', 'Hellgraue', 'Graue', 'Schwarze', 
     'Braune', 
     'Rote', 'Orange', 'Gelbe', 'Hellgrüne', 'Grüne', 'Türkise', 'Hellblaue', 'Blaue', 'Violette', 'Magenta', 'Pinke']
-const type = "terracotta"
+const type = "stained_glass"
 const nameEN = "Stained Glass Slab"
 const nameDE = "Glasstufe"
 colors.forEach(color => {
@@ -40,7 +40,7 @@ colors.forEach(color => {
         "textures": {
             "bottom": "minecraft:block/${blockName}",
             "top": "minecraft:block/${blockName}",
-            "side": "minecraft:block/${blockName}"
+            "side": "wunderreich:block/${blockName}"
         }
     }`
 
@@ -50,7 +50,7 @@ colors.forEach(color => {
             "particle": "block/${blockName}",        
             "bottom": "minecraft:block/${blockName}",
             "top": "minecraft:block/${blockName}",
-            "side": "minecraft:block/${blockName}"
+            "side": "wunderreich:block/${blockName}"
         }    
     }`
 

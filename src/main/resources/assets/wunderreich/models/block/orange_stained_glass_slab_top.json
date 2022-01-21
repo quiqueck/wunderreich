@@ -3,6 +3,6 @@
         "textures": {
             "bottom": "minecraft:block/orange_stained_glass",
             "top": "minecraft:block/orange_stained_glass",
-            "side": "minecraft:block/orange_stained_glass"
+            "side": "wunderreich:block/orange_stained_glass"
         }
     }

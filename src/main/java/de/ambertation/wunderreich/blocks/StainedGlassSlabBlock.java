@@ -21,6 +21,7 @@ public class StainedGlassSlabBlock extends DirtSlabBlock implements BlockTagSupp
     @Override
     public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
+        blockTags.accept(BlockTags.IMPERMEABLE);
     }
 
     @Override

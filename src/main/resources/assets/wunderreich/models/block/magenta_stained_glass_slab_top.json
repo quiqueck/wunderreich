@@ -3,6 +3,6 @@
         "textures": {
             "bottom": "minecraft:block/magenta_stained_glass",
             "top": "minecraft:block/magenta_stained_glass",
-            "side": "minecraft:block/magenta_stained_glass"
+            "side": "wunderreich:block/magenta_stained_glass"
         }
     }
