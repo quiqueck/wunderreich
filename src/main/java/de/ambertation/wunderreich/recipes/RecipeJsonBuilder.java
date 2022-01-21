@@ -123,6 +123,7 @@ public class RecipeJsonBuilder {
     public JsonElement registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType type, List<Item> items) {
         JsonElement res = register();
         if (res == null) return null;
+        if (items.size() == 0) return res;
 
         AdvancementsJsonBuilder b = null;
         if (resultItem instanceof Block bl) {
@@ -163,7 +164,6 @@ public class RecipeJsonBuilder {
         JsonObject json = new JsonObject();
 
         json.addProperty("type", "minecraft:crafting_shaped");
-
 
         JsonArray jsonArray = new JsonArray();
         for (int i = 0; i < pattern.length; i++)
