@@ -66,7 +66,6 @@ colors.forEach(color => {
     fs.writeFileSync(path.join(basePath, "blockstates", blockName+"_slab.json"), blockState);
     fs.writeFileSync(path.join(basePath, "models/block", blockName+"_slab.json"), modelBottom);
     fs.writeFileSync(path.join(basePath, "models/block", blockName+"_slab_top.json"), modelTop);
-    fs.writeFileSync(path.join(basePath, "textures/block", blockName+"_slab.json"), blockState);
     fs.writeFileSync(path.join(basePath, "models/item", blockName+"_slab.json"), item);
 
     console.log(register);
