@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
@@ -33,6 +34,9 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
 
         @Override
         public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+            blockTags.accept(BlockTags.SLABS);
+            itemTags.accept(ItemTags.SLABS);
+            
             blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
         }
     }

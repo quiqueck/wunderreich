@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.blocks;
 
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -24,7 +25,11 @@ public class SandSlab extends FallingSlab {
 
     @Override
     public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+        blockTags.accept(BlockTags.SLABS);
+        itemTags.accept(ItemTags.SLABS);
+
         blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
         blockTags.accept(BlockTags.SAND);
+        itemTags.accept(ItemTags.SAND);
     }
 }
