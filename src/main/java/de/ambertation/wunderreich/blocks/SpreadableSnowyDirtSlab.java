@@ -5,7 +5,10 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -20,8 +23,20 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import com.google.common.math.DoubleMath;
 
 import java.util.Random;
+import java.util.function.Consumer;
 
 public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
+    public static class GrassSlab extends SpreadableSnowyDirtSlab {
+        public GrassSlab(Block baseBlock) {
+            super(baseBlock);
+        }
+
+        @Override
+        public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+            blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
+        }
+    }
+
     public SpreadableSnowyDirtSlab(Block baseBlock) {
         super(baseBlock);
     }
