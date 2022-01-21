@@ -1,0 +1,9 @@
+{
+    "parent": "minecraft:block/slab",
+    "textures": {
+      "particle": "block/sand",        
+      "bottom": "minecraft:block/sand",
+      "top": "minecraft:block/sand",
+      "side": "minecraft:block/sand"
+    }
+  }

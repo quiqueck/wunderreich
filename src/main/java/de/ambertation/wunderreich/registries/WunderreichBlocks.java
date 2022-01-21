@@ -1,10 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.blocks.DirtSlabBlock;
-import de.ambertation.wunderreich.blocks.SpreadableSnowyDirtSlab;
-import de.ambertation.wunderreich.blocks.WhisperImprinter;
-import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.core.Registry;
@@ -28,12 +25,18 @@ public class WunderreichBlocks {
 
     public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", new WunderKisteBlock());
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
+
+    //Slabs
     public static final Block GRASS_SLAB = registerSlab("grass_slab", Blocks.GRASS_BLOCK, SpreadableSnowyDirtSlab::new,
                                                         Configs.MAIN.addDirtSlabs.get());
     public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
                                                        Configs.MAIN.addDirtSlabs.get());
     public static final Block COARSE_DIRT_SLAB = registerSlab("coarse_dirt_slab", Blocks.COARSE_DIRT,
+                                                              Configs.MAIN.addDirtSlabs.get());
+    public static final Block SAND_SLAB = registerSlab("sand_slab", Blocks.SAND, SandSlab::new,
                                                        Configs.MAIN.addDirtSlabs.get());
+    public static final Block RED_SAND_SLAB = registerSlab("red_sand_slab", Blocks.RED_SAND, SandSlab.Red::new,
+                                                           Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();

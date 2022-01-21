@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "type=bottom": {
+            "model": "wunderreich:block/red_sand_slab"
+        },
+        "type=double": {
+            "model": "block/red_sand"
+        },
+        "type=top": {
+            "model": "wunderreich:block/red_sand_slab_top"
+        }
+    }
+}
