@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/black_stained_glass_slab"
+            },
+            "type=double": {
+                "model": "block/black_stained_glass"
+            },
+            "type=top": {
+                "model": "wunderreich:block/black_stained_glass_slab_top"
+            }
+        }
+    }

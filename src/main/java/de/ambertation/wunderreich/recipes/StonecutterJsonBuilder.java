@@ -147,7 +147,7 @@ public class StonecutterJsonBuilder {
         json.addProperty("result", getKey(resultItem).toString());
         json.addProperty("count", count);
 
-        System.out.println(json);
+        //System.out.println(json);
         return json;
     }
 }

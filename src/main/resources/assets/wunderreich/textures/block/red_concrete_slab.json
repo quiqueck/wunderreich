@@ -7,7 +7,7 @@
                 "model": "block/red_concrete"
             },
             "type=top": {
-                "model": "wunderreich:block/red_concrete_top"
+                "model": "wunderreich:block/red_concrete_slab_top"
             }
         }
     }

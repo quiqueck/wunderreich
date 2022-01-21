@@ -15,8 +15,8 @@ const colorsDE = [
     'Braune', 
     'Rote', 'Orange', 'Gelbe', 'Hellgrüne', 'Grüne', 'Türkise', 'Hellblaue', 'Blaue', 'Violette', 'Magenta', 'Pinke']
 const type = "terracotta"
-const nameEN = "Terracotta Slab"
-const nameDE = "Keramikstufe"
+const nameEN = "Stained Glass Slab"
+const nameDE = "Glasstufe"
 colors.forEach(color => {
     const blockName = color+'_'+type
     const basePath = "./src/main/resources/assets/wunderreich";
@@ -30,7 +30,7 @@ colors.forEach(color => {
                 "model": "block/${blockName}"
             },
             "type=top": {
-                "model": "wunderreich:block/${blockName}_top"
+                "model": "wunderreich:block/${blockName}_slab_top"
             }
         }
     }`
@@ -60,7 +60,7 @@ colors.forEach(color => {
     const BLOCK_NAME = blockName.toUpperCase();
     const register = `public static final Block ${BLOCK_NAME}_SLAB = registerSlab("${blockName}_slab",
     Blocks.${BLOCK_NAME},
-    ConcreteSlabBlock::new,
+    StainedGlassSlabBlock::new,
     Configs.MAIN.addDirtSlabs.get());`
 
     fs.writeFileSync(path.join(basePath, "blockstates", blockName+"_slab.json"), blockState);

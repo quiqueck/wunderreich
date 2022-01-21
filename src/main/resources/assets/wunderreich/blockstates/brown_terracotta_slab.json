@@ -7,7 +7,7 @@
                 "model": "block/brown_terracotta"
             },
             "type=top": {
-                "model": "wunderreich:block/brown_terracotta_top"
+                "model": "wunderreich:block/brown_terracotta_slab_top"
             }
         }
     }

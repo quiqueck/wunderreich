@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/glass_slab"
+            },
+            "type=double": {
+                "model": "block/glass"
+            },
+            "type=top": {
+                "model": "wunderreich:block/glass_slab_top"
+            }
+        }
+    }

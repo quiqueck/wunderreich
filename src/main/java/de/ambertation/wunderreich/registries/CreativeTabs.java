@@ -20,6 +20,10 @@ public class CreativeTabs {
     public static final CreativeModeTab TAB_ITEMS;
 
     public static Block getBlockIcon() {
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE))
+            return WunderreichBlocks.WUNDER_KISTE;
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WHISPER_IMPRINTER))
+            return WunderreichBlocks.WHISPER_IMPRINTER;
         return WunderreichBlocks.getAllBlocks()
                                 .stream()
                                 .filter(Configs.BLOCK_CONFIG::isEnabled)

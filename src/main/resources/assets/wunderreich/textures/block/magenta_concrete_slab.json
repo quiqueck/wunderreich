@@ -7,7 +7,7 @@
                 "model": "block/magenta_concrete"
             },
             "type=top": {
-                "model": "wunderreich:block/magenta_concrete_top"
+                "model": "wunderreich:block/magenta_concrete_slab_top"
             }
         }
     }
