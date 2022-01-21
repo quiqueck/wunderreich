@@ -32,6 +32,8 @@ public class WunderreichBlocks {
                                                         Configs.MAIN.addDirtSlabs.get());
     public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
                                                        Configs.MAIN.addDirtSlabs.get());
+    public static final Block COARSE_DIRT_SLAB = registerSlab("coarse_dirt_slab", Blocks.COARSE_DIRT,
+                                                       Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();
