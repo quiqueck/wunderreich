@@ -242,7 +242,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             root.add("xp", new JsonPrimitive(recipeJson.xp));
             root.add("inputA", recipeJson.inputA);
             root.add("inputB", recipeJson.inputB);
-
+            
             return root;
         }
 
