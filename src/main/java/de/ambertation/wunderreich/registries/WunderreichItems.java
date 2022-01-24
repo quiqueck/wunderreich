@@ -10,6 +10,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tiers;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 
@@ -29,8 +30,12 @@ public class WunderreichItems {
                                                       Configs.MAIN.allowLibrarianSelection.get() || Configs.MAIN.cyclingNeedsWhisperer.get());
 
     public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
-                                                      new BuildersTrowel(),
+                                                      new BuildersTrowel(Tiers.IRON),
                                                       Configs.MAIN.allowBuilderTools.get());
+
+    public static Item DIAMOND_BUILDERS_TROWEL = registerItem("diamond_builders_trowel",
+                                                              new BuildersTrowel(Tiers.DIAMOND),
+                                                              Configs.MAIN.allowBuilderTools.get());
 
     @NotNull
     public static FabricItemSettings makeItemSettings() {

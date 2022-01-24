@@ -15,19 +15,21 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 
+import java.util.function.Supplier;
+
 public class BuildersTrowel extends DiggerItem {
     private final long seed;
 
-    public BuildersTrowel() {
+    public BuildersTrowel(Tiers tier) {
         super(
                 -2.5f, //attack DamageBase
                 -0.5f, //attack Speed
-                Tiers.IRON,
+                tier,
                 WunderreichTags.MINEABLE_TROWEL,
                 WunderreichItems
                         .makeItemSettings()
                         .rarity(Rarity.UNCOMMON)
-                        .durability(Tiers.IRON.getUses() * 4)
+                        .durability(tier.getUses() * 4)
              );
         seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
     }
@@ -61,11 +63,15 @@ public class BuildersTrowel extends DiggerItem {
         InteractionResult result;
         int maxTries = 100;
         final BlockPos cPos = ctx.getClickedPos();
+        final Supplier<Float> noise;
+        if (getTier() == Tiers.DIAMOND) noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(seed,
+                                                                                         cPos.getX() * 0.15,
+                                                                                         cPos.getY() * 0.2,
+                                                                                         cPos.getZ() * 0.15)) / 2;
+        else noise = RandomList::random;
+
         do {
-            item = list.getRandom(() -> (1 + OpenSimplex2.noise3_ImproveXZ(seed,
-                                                                           cPos.getX() * 0.15,
-                                                                           cPos.getY() * 0.2,
-                                                                           cPos.getZ() * 0.15)) / 2);
+            item = list.getRandom(noise);
             if (item != null) {
                 result = getInteractionResult(ctx, p, item);
                 maxTries--;

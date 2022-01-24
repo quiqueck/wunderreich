@@ -64,6 +64,7 @@
   "item.wunderreich.whisperer": "Imprinted Whisperer",
   "item.wunderreich.whisperer_blank": "Blank Whisperer",
   "item.wunderreich.builders_trowel": "Builders Trowel",
+  "item.wunderreich.diamond_builders_trowel": "Masterbuilders Trowel",
   "title.wunderreich.modmenu.main": "Wunderreich - Config",
   "title.config.wunderreich.main.features.doNotDespawnWithNameTag": "Keep Name-Tagged Monsters alive in Peacefull",
   "title.config.wunderreich.main.features.allowTradesCycling": "Show Trades-ReRoll Button for Villagers without XP",

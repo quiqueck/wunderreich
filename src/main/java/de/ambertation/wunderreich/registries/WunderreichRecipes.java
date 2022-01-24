@@ -86,6 +86,20 @@ public class WunderreichRecipes {
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                         Items.IRON_INGOT
                                                                                                           ));
+
+        RecipeJsonBuilder
+                .create("diamond_builders_trowel")
+                .result(WunderreichItems.BUILDERS_TROWEL)
+                .pattern(
+                        "***",
+                        " * ",
+                        " # "
+                        )
+                .material('#', new ItemStack(Items.STICK, 1))
+                .material('*', new ItemStack(Items.DIAMOND, 1))
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.DIAMOND
+                                                                                                          ));
     }
 
     public static void createSlabRecipe(String name, Block baseBlock, Block block) {
