@@ -7,7 +7,9 @@ import de.ambertation.wunderreich.config.Configs;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Material;
@@ -171,73 +173,57 @@ public class WunderreichBlocks {
 
     public static final Block GLASS_SLAB = registerSlab("glass_slab",
                                                         Blocks.GLASS,
-                                                        StainedGlassSlabBlock::new,
+                                                        GlassSlabBlock::new,
                                                         Configs.MAIN.addDirtSlabs.get());
 
-    public static final Block WHITE_STAINED_GLASS_SLAB = registerSlab("white_stained_glass_slab",
-                                                                      Blocks.WHITE_STAINED_GLASS,
-                                                                      StainedGlassSlabBlock::new,
-                                                                      Configs.MAIN.addDirtSlabs.get());
-    public static final Block LIGHT_GRAY_STAINED_GLASS_SLAB = registerSlab("light_gray_stained_glass_slab",
-                                                                           Blocks.LIGHT_GRAY_STAINED_GLASS,
-                                                                           StainedGlassSlabBlock::new,
-                                                                           Configs.MAIN.addDirtSlabs.get());
-    public static final Block GRAY_STAINED_GLASS_SLAB = registerSlab("gray_stained_glass_slab",
-                                                                     Blocks.GRAY_STAINED_GLASS,
-                                                                     StainedGlassSlabBlock::new,
-                                                                     Configs.MAIN.addDirtSlabs.get());
-    public static final Block BLACK_STAINED_GLASS_SLAB = registerSlab("black_stained_glass_slab",
-                                                                      Blocks.BLACK_STAINED_GLASS,
-                                                                      StainedGlassSlabBlock::new,
-                                                                      Configs.MAIN.addDirtSlabs.get());
-    public static final Block BROWN_STAINED_GLASS_SLAB = registerSlab("brown_stained_glass_slab",
-                                                                      Blocks.BROWN_STAINED_GLASS,
-                                                                      StainedGlassSlabBlock::new,
-                                                                      Configs.MAIN.addDirtSlabs.get());
-    public static final Block RED_STAINED_GLASS_SLAB = registerSlab("red_stained_glass_slab",
-                                                                    Blocks.RED_STAINED_GLASS,
-                                                                    StainedGlassSlabBlock::new,
-                                                                    Configs.MAIN.addDirtSlabs.get());
-    public static final Block ORANGE_STAINED_GLASS_SLAB = registerSlab("orange_stained_glass_slab",
-                                                                       Blocks.ORANGE_STAINED_GLASS,
-                                                                       StainedGlassSlabBlock::new,
-                                                                       Configs.MAIN.addDirtSlabs.get());
-    public static final Block YELLOW_STAINED_GLASS_SLAB = registerSlab("yellow_stained_glass_slab",
-                                                                       Blocks.YELLOW_STAINED_GLASS,
-                                                                       StainedGlassSlabBlock::new,
-                                                                       Configs.MAIN.addDirtSlabs.get());
-    public static final Block LIME_STAINED_GLASS_SLAB = registerSlab("lime_stained_glass_slab",
-                                                                     Blocks.LIME_STAINED_GLASS,
-                                                                     StainedGlassSlabBlock::new,
-                                                                     Configs.MAIN.addDirtSlabs.get());
-    public static final Block GREEN_STAINED_GLASS_SLAB = registerSlab("green_stained_glass_slab",
-                                                                      Blocks.GREEN_STAINED_GLASS,
-                                                                      StainedGlassSlabBlock::new,
-                                                                      Configs.MAIN.addDirtSlabs.get());
-    public static final Block CYAN_STAINED_GLASS_SLAB = registerSlab("cyan_stained_glass_slab",
-                                                                     Blocks.CYAN_STAINED_GLASS,
-                                                                     StainedGlassSlabBlock::new,
-                                                                     Configs.MAIN.addDirtSlabs.get());
-    public static final Block LIGHT_BLUE_STAINED_GLASS_SLAB = registerSlab("light_blue_stained_glass_slab",
-                                                                           Blocks.LIGHT_BLUE_STAINED_GLASS,
-                                                                           StainedGlassSlabBlock::new,
-                                                                           Configs.MAIN.addDirtSlabs.get());
-    public static final Block BLUE_STAINED_GLASS_SLAB = registerSlab("blue_stained_glass_slab",
-                                                                     Blocks.BLUE_STAINED_GLASS,
-                                                                     StainedGlassSlabBlock::new,
-                                                                     Configs.MAIN.addDirtSlabs.get());
-    public static final Block PURPLE_STAINED_GLASS_SLAB = registerSlab("purple_stained_glass_slab",
-                                                                       Blocks.PURPLE_STAINED_GLASS,
-                                                                       StainedGlassSlabBlock::new,
-                                                                       Configs.MAIN.addDirtSlabs.get());
-    public static final Block MAGENTA_STAINED_GLASS_SLAB = registerSlab("magenta_stained_glass_slab",
-                                                                        Blocks.MAGENTA_STAINED_GLASS,
-                                                                        StainedGlassSlabBlock::new,
-                                                                        Configs.MAIN.addDirtSlabs.get());
-    public static final Block PINK_STAINED_GLASS_SLAB = registerSlab("pink_stained_glass_slab",
-                                                                     Blocks.PINK_STAINED_GLASS,
-                                                                     StainedGlassSlabBlock::new,
-                                                                     Configs.MAIN.addDirtSlabs.get());
+    public static final Block WHITE_STAINED_GLASS_SLAB = registerStainedGlass("white_stained_glass_slab",
+                                                                              Blocks.WHITE_STAINED_GLASS,
+                                                                              Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_GRAY_STAINED_GLASS_SLAB = registerStainedGlass("light_gray_stained_glass_slab",
+                                                                                   Blocks.LIGHT_GRAY_STAINED_GLASS,
+                                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block GRAY_STAINED_GLASS_SLAB = registerStainedGlass("gray_stained_glass_slab",
+                                                                             Blocks.GRAY_STAINED_GLASS,
+                                                                             Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLACK_STAINED_GLASS_SLAB = registerStainedGlass("black_stained_glass_slab",
+                                                                              Blocks.BLACK_STAINED_GLASS,
+                                                                              Configs.MAIN.addDirtSlabs.get());
+    public static final Block BROWN_STAINED_GLASS_SLAB = registerStainedGlass("brown_stained_glass_slab",
+                                                                              Blocks.BROWN_STAINED_GLASS,
+                                                                              Configs.MAIN.addDirtSlabs.get());
+    public static final Block RED_STAINED_GLASS_SLAB = registerStainedGlass("red_stained_glass_slab",
+                                                                            Blocks.RED_STAINED_GLASS,
+                                                                            Configs.MAIN.addDirtSlabs.get());
+    public static final Block ORANGE_STAINED_GLASS_SLAB = registerStainedGlass("orange_stained_glass_slab",
+                                                                               Blocks.ORANGE_STAINED_GLASS,
+                                                                               Configs.MAIN.addDirtSlabs.get());
+    public static final Block YELLOW_STAINED_GLASS_SLAB = registerStainedGlass("yellow_stained_glass_slab",
+                                                                               Blocks.YELLOW_STAINED_GLASS,
+                                                                               Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIME_STAINED_GLASS_SLAB = registerStainedGlass("lime_stained_glass_slab",
+                                                                             Blocks.LIME_STAINED_GLASS,
+                                                                             Configs.MAIN.addDirtSlabs.get());
+    public static final Block GREEN_STAINED_GLASS_SLAB = registerStainedGlass("green_stained_glass_slab",
+                                                                              Blocks.GREEN_STAINED_GLASS,
+                                                                              Configs.MAIN.addDirtSlabs.get());
+    public static final Block CYAN_STAINED_GLASS_SLAB = registerStainedGlass("cyan_stained_glass_slab",
+                                                                             Blocks.CYAN_STAINED_GLASS,
+                                                                             Configs.MAIN.addDirtSlabs.get());
+    public static final Block LIGHT_BLUE_STAINED_GLASS_SLAB = registerStainedGlass("light_blue_stained_glass_slab",
+                                                                                   Blocks.LIGHT_BLUE_STAINED_GLASS,
+                                                                                   Configs.MAIN.addDirtSlabs.get());
+    public static final Block BLUE_STAINED_GLASS_SLAB = registerStainedGlass("blue_stained_glass_slab",
+                                                                             Blocks.BLUE_STAINED_GLASS,
+                                                                             Configs.MAIN.addDirtSlabs.get());
+    public static final Block PURPLE_STAINED_GLASS_SLAB = registerStainedGlass("purple_stained_glass_slab",
+                                                                               Blocks.PURPLE_STAINED_GLASS,
+                                                                               Configs.MAIN.addDirtSlabs.get());
+    public static final Block MAGENTA_STAINED_GLASS_SLAB = registerStainedGlass("magenta_stained_glass_slab",
+                                                                                Blocks.MAGENTA_STAINED_GLASS,
+                                                                                Configs.MAIN.addDirtSlabs.get());
+    public static final Block PINK_STAINED_GLASS_SLAB = registerStainedGlass("pink_stained_glass_slab",
+                                                                             Blocks.PINK_STAINED_GLASS,
+                                                                             Configs.MAIN.addDirtSlabs.get());
 
     public static Collection<Block> getAllBlocks() {
         return Configs.BLOCK_CONFIG.getAllObjects();
@@ -262,6 +248,16 @@ public class WunderreichBlocks {
         Block block = registerBlock(name, creator.apply(baseBlock), register);
         WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
         return block;
+    }
+
+    public static Block registerStainedGlass(String name,
+                                             Block baseBlock,
+                                             boolean register) {
+        if (baseBlock instanceof BeaconBeamBlock stained) {
+            return registerSlab(name, baseBlock, (bl) -> new StainedGlassSlabBlock(stained.getColor(), bl), register);
+        }
+        Wunderreich.LOGGER.warn(name + " is not a valid glass block.");
+        return registerSlab(name, baseBlock, (bl) -> new StainedGlassSlabBlock(DyeColor.MAGENTA, bl), register);
     }
 
     public static Block registerBlock(String name, Block block, boolean register) {
