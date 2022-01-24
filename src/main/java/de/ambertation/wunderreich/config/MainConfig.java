@@ -27,9 +27,9 @@ public class MainConfig extends ConfigFile {
                                                                    "allowBuilderTools",
                                                                    true);
 
-    public final BooleanValue addDirtSlabs = new BooleanValue(FEATURE_CATEGORY,
-                                                              "addDirtSlabs",
-                                                              true);
+    public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
+                                                          "addSlabs",
+                                                          true);
 
 
     public MainConfig() {
