@@ -16,6 +16,8 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class BuildersTrowel extends DiggerItem {
+    private final long seed;
+
     public BuildersTrowel() {
         super(
                 -2.5f, //attack DamageBase
@@ -27,10 +29,12 @@ public class BuildersTrowel extends DiggerItem {
                         .rarity(Rarity.UNCOMMON)
                         .durability(Tiers.IRON.getUses() * 4)
              );
+        seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
     }
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
+
         final Player p = ctx.getPlayer();
         if (!(p instanceof ServerPlayer)) return InteractionResult.FAIL;
 
@@ -58,10 +62,10 @@ public class BuildersTrowel extends DiggerItem {
         int maxTries = 100;
         final BlockPos cPos = ctx.getClickedPos();
         do {
-            item = list.getRandom(() -> (1 + OpenSimplex2.noise3_ImproveXZ(2492,
-                                                                           cPos.getX() * 0.2,
-                                                                           cPos.getY() * 0.3,
-                                                                           cPos.getZ() * 0.2)) / 2);
+            item = list.getRandom(() -> (1 + OpenSimplex2.noise3_ImproveXZ(seed,
+                                                                           cPos.getX() * 0.15,
+                                                                           cPos.getY() * 0.2,
+                                                                           cPos.getZ() * 0.15)) / 2);
             if (item != null) {
                 result = getInteractionResult(ctx, p, item);
                 maxTries--;
