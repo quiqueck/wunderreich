@@ -2,11 +2,12 @@ package de.ambertation.wunderreich.utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
 public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
     private final ArrayList<Entry<T>> list;
-    private double weightSum;
+    private float weightSum;
 
     public RandomList() {
         this(9);
@@ -25,9 +26,9 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
 
     public static class Entry<T> {
         public final T value;
-        public final double weight;
+        public final float weight;
 
-        Entry(T value, double weight) {
+        Entry(T value, float weight) {
             this.value = value;
             this.weight = weight;
         }
@@ -41,7 +42,7 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         }
     }
 
-    public void add(T value, double weight) {
+    public void add(T value, float weight) {
         Entry<T> e = new Entry(value, weight);
         list.add(e);
         weightSum += e.weight;
@@ -53,20 +54,35 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         return e.value;
     }
 
+    public static float random() {
+        return (float) Math.random();
+    }
+
     public int getRandomIndex() {
-        double sum = 0;
-        double random = Math.random() * weightSum;
-        for (int i = 0; i < list.size(); i++) {
-            Entry<T> e = list.get(i);
+        return getRandomIndex(RandomList::random);
+    }
+
+    public int getRandomIndex(Supplier<Float> rnd) {
+        final int CYCLES = 3;
+        final int count = list.size();
+        float sum = 0;
+        final float r = rnd.get();
+        float random = r * weightSum * CYCLES;
+        for (int i = 0; i < count * CYCLES; i++) {
+            Entry<T> e = list.get(i % count);
             sum += e.weight;
-            if (random <= sum) return i;
+            if (random <= sum) return i % count;
         }
 
         return list.size() - 1;
     }
 
     public T getRandom() {
-        int idx = getRandomIndex();
+        return getRandom(RandomList::random);
+    }
+
+    public T getRandom(Supplier<Float> rnd) {
+        int idx = getRandomIndex(rnd);
         if (idx < 0 || idx >= list.size()) return null;
         return get(idx);
     }

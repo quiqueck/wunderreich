@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.items;
 
+import de.ambertation.wunderreich.noise.OpenSimplex2;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichTags;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class BuildersTrowel extends DiggerItem {
-
     public BuildersTrowel() {
         super(
                 -2.5f, //attack DamageBase
@@ -26,7 +26,7 @@ public class BuildersTrowel extends DiggerItem {
                         .makeItemSettings()
                         .rarity(Rarity.UNCOMMON)
                         .durability(Tiers.IRON.getUses() * 4)
-        );
+             );
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BuildersTrowel extends DiggerItem {
 
         BlockPlaceContext bctx = new BlockPlaceContext(ctx);
 
-        final BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
+        //final BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
         final RandomList<ItemStack> list = new RandomList<>(9);
 
 
@@ -56,15 +56,19 @@ public class BuildersTrowel extends DiggerItem {
         ItemStack item;
         InteractionResult result;
         int maxTries = 100;
-        do { /* mache */
-            item = list.getRandom();
-            if /* wenn */ (item != null) {
+        final BlockPos cPos = ctx.getClickedPos();
+        do {
+            item = list.getRandom(() -> (1 + OpenSimplex2.noise3_ImproveXZ(2492,
+                                                                           cPos.getX() * 0.2,
+                                                                           cPos.getY() * 0.3,
+                                                                           cPos.getZ() * 0.2)) / 2);
+            if (item != null) {
                 result = getInteractionResult(ctx, p, item);
                 maxTries--;
-            } else /* ansonsten */ {
+            } else {
                 result = InteractionResult.FAIL;
             }
-        } /* solange */ while (maxTries > 0 && (result == InteractionResult.FAIL || result == InteractionResult.PASS));
+        } while (maxTries > 0 && (result == InteractionResult.FAIL || result == InteractionResult.PASS));
 
         return result;
     }
@@ -86,7 +90,7 @@ public class BuildersTrowel extends DiggerItem {
                 WunderreichAdvancements.USE_TROWEL.trigger(sp);
             }
             if (!p.getAbilities().instabuild) {
-                item.shrink(1);
+                //item.shrink(1); //place does already shrink
                 ctx.getItemInHand().hurtAndBreak(1, p, player -> player.broadcastBreakEvent(ctx.getHand()));
             }
         }
