@@ -89,7 +89,7 @@ public class WunderreichRecipes {
 
         RecipeJsonBuilder
                 .create("diamond_builders_trowel")
-                .result(WunderreichItems.BUILDERS_TROWEL)
+                .result(WunderreichItems.DIAMOND_BUILDERS_TROWEL)
                 .pattern(
                         "***",
                         " * ",
