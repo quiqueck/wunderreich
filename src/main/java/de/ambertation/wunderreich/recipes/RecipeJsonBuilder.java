@@ -20,13 +20,32 @@ import com.google.gson.JsonObject;
 import java.util.*;
 
 public class RecipeJsonBuilder {
-    private final ResourceLocation ID;
-    private boolean canBuild;
+    private static final ThreadLocal<RecipeJsonBuilder> BUILDER = ThreadLocal.withInitial(RecipeJsonBuilder::new);
 
-    private RecipeJsonBuilder(ResourceLocation ID) {
-        this.ID = ID;
-        canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
+    public static void invalidate() {
+        BUILDER.remove();
     }
+
+    ResourceLocation ID;
+    boolean canBuild;
+    ItemLike resultItem;
+    String[] pattern;
+    final Map<Character, Ingredient> materials = new HashMap<>();
+    int count;
+
+    private RecipeJsonBuilder reset(ResourceLocation ID) {
+        this.ID = ID;
+        this.canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
+        this.resultItem = null;
+        this.pattern = new String[0];
+        this.materials.clear();
+        this.count = 1;
+        return this;
+    }
+
+    private RecipeJsonBuilder() {
+    }
+
 
     private static boolean isEnabled(ItemLike item) {
         if (item instanceof Block bl) {
@@ -49,11 +68,10 @@ public class RecipeJsonBuilder {
 
     public static RecipeJsonBuilder create(String name) {
         ResourceLocation id = Wunderreich.ID(name);
-        RecipeJsonBuilder b = new RecipeJsonBuilder(id);
+        RecipeJsonBuilder b = BUILDER.get().reset(id);
         return b;
     }
 
-    private ItemLike resultItem;
 
     public RecipeJsonBuilder result(ItemLike item) {
         canBuild &= isEnabled(item);
@@ -61,7 +79,6 @@ public class RecipeJsonBuilder {
         return this;
     }
 
-    private String[] pattern = new String[3];
 
     public RecipeJsonBuilder pattern(String row1, String row2, String row3) {
         this.pattern = new String[]{row1, row2, row3};
@@ -77,8 +94,6 @@ public class RecipeJsonBuilder {
         this.pattern = new String[]{row1};
         return this;
     }
-
-    private final Map<Character, Ingredient> materials = new HashMap<>();
 
     public RecipeJsonBuilder material(Character c, ItemLike... items) {
         return material(c, Ingredient.of(items));
@@ -98,8 +113,6 @@ public class RecipeJsonBuilder {
         materials.put(c, ing);
         return this;
     }
-
-    private int count = 1;
 
     public RecipeJsonBuilder count(int count) {
         this.count = count;
@@ -162,13 +175,12 @@ public class RecipeJsonBuilder {
         }
 
         JsonObject json = new JsonObject();
-
         json.addProperty("type", "minecraft:crafting_shaped");
 
-        JsonArray jsonArray = new JsonArray();
+        JsonArray patternArray = new JsonArray();
         for (int i = 0; i < pattern.length; i++)
-            jsonArray.add(pattern[i]);
-        json.add("pattern", jsonArray);
+            patternArray.add(pattern[i]);
+        json.add("pattern", patternArray);
 
         JsonObject individualKey;
         JsonArray individualContainer;

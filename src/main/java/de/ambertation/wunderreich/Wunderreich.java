@@ -3,6 +3,8 @@ package de.ambertation.wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
+import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
+import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
 
@@ -44,5 +46,8 @@ public class Wunderreich implements ModInitializer {
         ServerBoundPacketHandler.register();
 
         Configs.saveConfigs();
+
+        RecipeJsonBuilder.invalidate();
+        StonecutterJsonBuilder.invalidate();
     }
 }
