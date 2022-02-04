@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich;
 
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
@@ -49,5 +50,6 @@ public class Wunderreich implements ModInitializer {
 
         RecipeJsonBuilder.invalidate();
         StonecutterJsonBuilder.invalidate();
+        AdvancementsJsonBuilder.invalidate();
     }
 }

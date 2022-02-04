@@ -8,19 +8,29 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Display {
-    private final String icon;
-    private final String title;
-    private final String description;
-    String frame = "task";
-    String background = null;
-    boolean showToast = true;
-    boolean announceToChat = true;
-    boolean hidden = false;
+    static final ThreadLocal<Display> DISPLAY = ThreadLocal.withInitial(Display::new);
+    private String icon;
+    private String title;
+    private String description;
+    String frame;
+    String background;
+    boolean showToast;
+    boolean announceToChat;
+    boolean hidden;
 
-    Display(String icon, String title, String description) {
+    private Display() {
+    }
+
+    Display reset(String icon, String title, String description) {
         this.icon = icon;
         this.title = title;
         this.description = description;
+        frame = "task";
+        background = null;
+        showToast = true;
+        announceToChat = true;
+        hidden = false;
+        return this;
     }
 
     JsonObject serialize() {

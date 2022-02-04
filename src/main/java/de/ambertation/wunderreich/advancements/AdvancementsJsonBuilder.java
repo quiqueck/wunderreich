@@ -131,9 +131,16 @@ public class AdvancementsJsonBuilder {
         }
     }
 
-    public final ResourceLocation ID;
-    public final AdvancementType type;
-    private String parent = null;
+    private static final ThreadLocal<AdvancementsJsonBuilder> BUILDER = ThreadLocal.withInitial(AdvancementsJsonBuilder::new);
+
+    public static void invalidate() {
+        BUILDER.remove();
+        Display.DISPLAY.remove();
+    }
+
+    public ResourceLocation ID;
+    public AdvancementType type;
+    private String parent;
     private Display display;
     private final Map<String, Criteria> criteria = new HashMap<>();
     private final List<Reward> rewards = new ArrayList<>(0);
@@ -145,7 +152,11 @@ public class AdvancementsJsonBuilder {
         RECIPE_TOOL
     }
 
-    private AdvancementsJsonBuilder(ResourceLocation id, AdvancementType type) {
+    private AdvancementsJsonBuilder() {
+
+    }
+
+    private AdvancementsJsonBuilder reset(ResourceLocation id, AdvancementType type) {
         if (type == AdvancementType.RECIPE_DECORATIONS) {
             ID = new ResourceLocation(id.getNamespace(), "recipes/decorations/" + id.getPath());
             parent = "minecraft:recipes/root";
@@ -154,17 +165,24 @@ public class AdvancementsJsonBuilder {
             parent = "minecraft:recipes/root";
         } else {
             ID = id;
+            parent = null;
         }
 
         this.type = type;
+        display = null;
+        criteria.clear();
+        rewards.clear();
+        canBuild = true;
+
+        return this;
     }
 
     public static AdvancementsJsonBuilder create(String name) {
-        return new AdvancementsJsonBuilder(Wunderreich.ID(name), AdvancementType.REGULAR);
+        return BUILDER.get().reset(Wunderreich.ID(name), AdvancementType.REGULAR);
     }
 
     public static AdvancementsJsonBuilder create(String name, AdvancementType type) {
-        return new AdvancementsJsonBuilder(Wunderreich.ID(name), type);
+        return BUILDER.get().reset(Wunderreich.ID(name), type);
     }
 
     public static AdvancementsJsonBuilder create(Item item) {
@@ -190,7 +208,7 @@ public class AdvancementsJsonBuilder {
         }
 
         String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
-        AdvancementsJsonBuilder b = new AdvancementsJsonBuilder(id, type);
+        AdvancementsJsonBuilder b = BUILDER.get().reset(id, type);
         if (builder != null) b.startDisplay(item, baseName + "title", baseName + "description", builder);
         b.canBuild = canBuild;
         return b;
@@ -201,8 +219,8 @@ public class AdvancementsJsonBuilder {
     }
 
 
-    public AdvancementsJsonBuilder parent(AdvancementsJsonBuilder parent) {
-        this.parent = parent.ID.toString();
+    public AdvancementsJsonBuilder parent(ResourceLocation parent) {
+        this.parent = parent.toString();
         return this;
     }
 
@@ -226,7 +244,7 @@ public class AdvancementsJsonBuilder {
             id = Registry.ITEM.getDefaultKey();
             canBuild = false;
         }
-        display = new Display(id.toString(), title, description);
+        display = Display.DISPLAY.get().reset(id.toString(), title, description);
         builder.accept(new DisplayBuilder(this, display));
         return this;
     }
@@ -258,12 +276,12 @@ public class AdvancementsJsonBuilder {
         return this;
     }
 
-    public JsonElement register() {
+    public ResourceLocation register() {
         if (!canBuild) return null;
 
         JsonElement res = build();
         WunderreichAdvancements.ADVANCEMENTS.put(ID, res);
-        return res;
+        return ID;
     }
 
 

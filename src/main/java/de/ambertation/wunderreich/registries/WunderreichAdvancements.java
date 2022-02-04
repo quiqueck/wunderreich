@@ -21,7 +21,7 @@ public class WunderreichAdvancements {
     public static void register() {
         USE_TROWEL = CriterionRegistry.register(new LocationTrigger(Wunderreich.ID("use_trowel")));
 
-        AdvancementsJsonBuilder root = AdvancementsJsonBuilder
+        ResourceLocation root = AdvancementsJsonBuilder
                 .create("root")
                 .startDisplay(
                         WunderreichBlocks.WHISPER_IMPRINTER.asItem(),
@@ -30,35 +30,27 @@ public class WunderreichAdvancements {
                                 .showToast()
                                 .visible()
                                 .announceToChat()
-                )
-                .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem());
-        root.register();
+                             )
+                .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem())
+                .register();
 
-        AdvancementsJsonBuilder whisper_blank = AdvancementsJsonBuilder
+        ResourceLocation whisper_blank = AdvancementsJsonBuilder
                 .create(WunderreichItems.BLANK_WHISPERER, b -> b.showToast().visible().announceToChat())
                 .parent(root)
-                .inventoryChangedCriteria("has_blank", WunderreichItems.BLANK_WHISPERER);
-        whisper_blank.register();
+                .inventoryChangedCriteria("has_blank", WunderreichItems.BLANK_WHISPERER)
+                .register();
 
-        AdvancementsJsonBuilder whisperer = AdvancementsJsonBuilder
+        ResourceLocation whisperer = AdvancementsJsonBuilder
                 .create(WunderreichItems.WHISPERER, b -> b.showToast().visible().announceToChat().goal())
                 .parent(whisper_blank)
-                .inventoryChangedCriteria("has_whisper", WunderreichItems.WHISPERER);
-        whisperer.register();
+                .inventoryChangedCriteria("has_whisper", WunderreichItems.WHISPERER)
+                .register();
 
-//        AdvancementsJsonBuilder builders_trowel = AdvancementsJsonBuilder
-//                .create(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
-//                .parent(root)
-//                .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {});
-//        .inventoryChangedCriteria("has_trowel", WunderreichItems.BUILDERS_TROWEL);
-//
-
-        AdvancementsJsonBuilder builders_trowel = AdvancementsJsonBuilder
+        ResourceLocation builders_trowel = AdvancementsJsonBuilder
                 .create("used_trowel")
                 .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
                 .parent(root)
                 .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {
-                });
-        builders_trowel.register();
+                }).register();
     }
 }
