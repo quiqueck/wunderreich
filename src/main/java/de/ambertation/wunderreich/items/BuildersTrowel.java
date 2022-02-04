@@ -42,7 +42,7 @@ public class BuildersTrowel extends DiggerItem {
 
         BlockPlaceContext bctx = new BlockPlaceContext(ctx);
 
-        //final BlockPos pos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
+
         final RandomList<ItemStack> list = new RandomList<>(9);
 
 
@@ -62,7 +62,7 @@ public class BuildersTrowel extends DiggerItem {
         ItemStack item;
         InteractionResult result;
         int maxTries = 100;
-        final BlockPos cPos = ctx.getClickedPos();
+        final BlockPos cPos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
         final Supplier<Float> noise;
         if (getTier() == Tiers.DIAMOND) noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(seed,
                                                                                          cPos.getX() * 0.15,
