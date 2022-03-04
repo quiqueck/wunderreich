@@ -97,11 +97,14 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
         if (Configs.MAIN.allowLibrarianSelection()) {
             List<Enchantment> enchants = new LinkedList<>();
-            Registry.ENCHANTMENT.forEach(e -> {
-                ResourceLocation ID = makeID(e);
-                if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
-                    enchants.add(e);
-            });
+            Registry.ENCHANTMENT
+                    .stream()
+                    .filter(e -> e.isTradeable())
+                    .forEach(e -> {
+                        ResourceLocation ID = makeID(e);
+                        if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
+                            enchants.add(e);
+                    });
             enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
                                                                .getString()));
 
@@ -242,7 +245,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             root.add("xp", new JsonPrimitive(recipeJson.xp));
             root.add("inputA", recipeJson.inputA);
             root.add("inputB", recipeJson.inputB);
-            
+
             return root;
         }
 
