@@ -62,11 +62,8 @@ public class FallingSlab extends DirtSlabBlock {
                 state = makeState(state, SlabType.BOTTOM);
             }
 
-            FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(serverLevel,
-                                                                           (double) blockPos.getX() + 0.5,
-                                                                           blockPos.getY(),
-                                                                           (double) blockPos.getZ() + 0.5,
-                                                                           state);
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(serverLevel, blockPos, state);
+
             this.falling(fallingBlockEntity);
             serverLevel.addFreshEntity(fallingBlockEntity);
         }

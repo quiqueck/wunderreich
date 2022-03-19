@@ -1,48 +1,43 @@
 package de.ambertation.wunderreich.utils;
 
+import com.google.common.collect.Maps;
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.registries.WunderreichTags;
-
+import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.SetTag;
 import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagCollection;
+import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagManager;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 import com.google.common.collect.Sets;
+import org.apache.commons.compress.utils.Lists;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import org.jetbrains.annotations.Nullable;
 
 public class TagRegistry<T> {
+    private static final List<TagRegistry<?>> REGISTRIES = Lists.newArrayList();
 
+    public static final TagRegistry<Block> BLOCK = new TagRegistry<>(Registry.BLOCK);
+    public static final TagRegistry<Item> ITEM = new TagRegistry<>(Registry.ITEM);
 
-    public TagRegistry() {
-        this(new HashMap<>());
-    }
-
-    protected TagRegistry(Map<ResourceLocation, Set<T>> t) {
-        this.tags = t;
+    public TagRegistry(DefaultedRegistry<T> registry) {
+        this.tags = Maps.newHashMap();
+        this.registry = registry;
+        REGISTRIES.add(this);
     }
 
     private final Map<ResourceLocation, Set<T>> tags;
-    private final Tag<T> empty = SetTag.empty();
+    private final DefaultedRegistry<T> registry;
 
-    public void add(Tag<T> tag, T... objects) {
-        if (tag instanceof Tag.Named named) {
-            addNamed(named, objects);
-        } else {
-            Wunderreich.LOGGER.warn("Unable to add " + tag);
-        }
-    }
 
-    public void addNamed(Tag.Named<T> tag, T... objects) {
-        ResourceLocation tagID = tag.getName();
+    public void add(TagKey<T> tag, T... objects) {
+        ResourceLocation tagID = tag.location();
         Set<T> set = tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
         for (T obj : objects) {
             if (obj != null) {
@@ -51,70 +46,48 @@ public class TagRegistry<T> {
         }
     }
 
-    private void add(ResourceLocation tagID, SetTag<T> objects) {
-        Set<T> set = tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
-        set.addAll(objects.getValues());
-    }
-
-    private TagRegistry<T> deepCopy() {
-        Map<ResourceLocation, Set<T>> t = new HashMap<>();
-        tags.entrySet().stream().forEach(entry -> {
-            t.put(entry.getKey(), Sets.newHashSet(entry.getValue()));
-        });
-
-        return new TagRegistry<>(t);
-    }
-
-    private Map<ResourceLocation, Tag<T>> buildMap() {
-        return tags.entrySet().stream().collect(Collectors.toMap(
-                e -> e.getKey(),
-                e -> SetTag.create(e.getValue())
-        ));
-    }
-
-    private TagCollection<T> buildTagCollection() {
-        Map<ResourceLocation, Tag<T>> map = buildMap();
-
-        return new TagCollection<T>() {
-            @Override
-            public Map<ResourceLocation, Tag<T>> getAllTags() {
-                return map;
-            }
-
-            @Override
-            public Tag<T> getTagOrEmpty(ResourceLocation resourceLocation) {
-                return map.getOrDefault(resourceLocation, empty);
-            }
-
-            @Nullable
-            @Override
-            public ResourceLocation getId(Tag<T> tag) {
-                if (tag instanceof Tag.Named) {
-                    return ((Tag.Named) tag).getName();
-                }
-                return (ResourceLocation) map.get(tag);
-            }
-        };
-    }
-
-    public static <T> TagCollection<T> addWunderreichTags(ResourceKey<? extends Registry<? extends T>> resourceKey,
-                                                          TagCollection<T> tagCollection) {
-        Map<ResourceLocation, Tag<T>> reg = null;
-        if (resourceKey.location().equals(new ResourceLocation("block"))) {
-            TagRegistry<Block> blockReg = WunderreichTags.BLOCK.deepCopy();
-
-            tagCollection
-                    .getAllTags()
-                    .entrySet()
-                    .stream()
-                    .forEach(entry -> {
-                        if (entry.getValue() instanceof SetTag<T> set) {
-                            blockReg.add(entry.getKey(), (SetTag<Block>) set);
-                        }
-                    });
-
-            return (TagCollection<T>) blockReg.buildTagCollection();
+    public static TagRegistry<?> getRegistryForDirectory(String directory){
+        for (TagRegistry<?> reg : REGISTRIES){
+            if (reg.isForDirectory(directory))
+                return reg;
         }
-        return tagCollection;
+        return null;
+    }
+
+    public boolean isForDirectory(String directory){
+        return TagManager.getTagDir(this.getRegistryKey()).equals(directory);
+    }
+
+    public ResourceKey<? extends Registry<T>> getRegistryKey(){
+        return registry.key();
+    }
+
+    private ResourceLocation getLocation(T element){
+        ResourceLocation id = registry.getKey(element);
+        if (id != registry.getDefaultKey()) {
+            return id;
+        }
+        return null;
+    }
+
+    public Map<ResourceLocation, Tag.Builder> addTags(Map<ResourceLocation, Tag.Builder> tagMap){
+         for (Map.Entry<ResourceLocation, Set<T>> entry : tags.entrySet()){
+             final ResourceLocation location = entry.getKey();
+             final Set<T> elements = entry.getValue();
+             final Tag.Builder builder = tagMap.computeIfAbsent(location, key -> Tag.Builder.tag());
+
+             for (T element : elements) {
+                 ResourceLocation elementLocation = getLocation(element);
+                 if (elementLocation != null) {
+                     builder.addElement(elementLocation, Wunderreich.MOD_ID);
+                 }
+             }
+         }
+
+         return tagMap;
+    }
+
+    public TagKey<T> createCommon(String name){
+        return TagKey.create(getRegistryKey(), new ResourceLocation("c", name));
     }
 }

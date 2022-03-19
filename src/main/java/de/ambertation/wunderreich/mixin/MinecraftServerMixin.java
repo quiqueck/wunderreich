@@ -5,14 +5,12 @@ import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 
-import net.minecraft.core.RegistryAccess.RegistryHolder;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.ServerResources;
+import net.minecraft.server.WorldStem;
 import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
-import net.minecraft.world.level.storage.WorldData;
 
 import com.mojang.authlib.GameProfileRepository;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -40,19 +38,7 @@ public abstract class MinecraftServerMixin implements WunderKisteContainerProvid
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void wunderreich_init(Thread thread,
-                                 RegistryHolder registryHolder,
-                                 LevelStorageAccess levelStorageAccess,
-                                 WorldData worldData,
-                                 PackRepository packRepository,
-                                 Proxy proxy,
-                                 DataFixer dataFixer,
-                                 ServerResources serverResources,
-                                 MinecraftSessionService minecraftSessionService,
-                                 GameProfileRepository gameProfileRepository,
-                                 GameProfileCache gameProfileCache,
-                                 ChunkProgressListenerFactory chunkProgressListenerFactory,
-                                 CallbackInfo ci) {
+    public void wunderreich_init(Thread thread, LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci) {
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
 
         //we start a new world, so clear any old block

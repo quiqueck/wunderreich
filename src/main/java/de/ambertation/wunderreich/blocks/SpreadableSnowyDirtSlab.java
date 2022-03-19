@@ -5,10 +5,7 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -33,7 +30,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         }
 
         @Override
-        public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+        public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
             blockTags.accept(BlockTags.SLABS);
             itemTags.accept(ItemTags.SLABS);
             

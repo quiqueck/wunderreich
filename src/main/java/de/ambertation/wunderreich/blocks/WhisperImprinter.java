@@ -14,7 +14,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -149,7 +149,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     }
 
     @Override
-    public void supplyTags(Consumer<Tag<Block>> blockTags, Consumer<Tag<Item>> itemTags) {
+    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
         blockTags.accept(BlockTags.NEEDS_STONE_TOOL);
     }
