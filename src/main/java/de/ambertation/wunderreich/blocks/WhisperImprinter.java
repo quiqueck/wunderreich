@@ -14,7 +14,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -49,7 +49,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                                .requiresTool()
                                .nonOpaque()
                                .sound(SoundType.AMETHYST)
-        );
+             );
     }
 
     @Override
@@ -142,14 +142,14 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                             i + random.nextFloat() - 0.5,
                             k - random.nextFloat() - 1.0f,
                             j + random.nextFloat() - 0.5
-                    );
+                                     );
                 }
             }
         }
     }
 
     @Override
-    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+    public void supplyTags(Consumer<Tag.Named<Block>> blockTags, Consumer<Tag.Named<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
         blockTags.accept(BlockTags.NEEDS_STONE_TOOL);
     }

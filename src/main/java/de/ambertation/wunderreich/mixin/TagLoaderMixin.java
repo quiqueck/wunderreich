@@ -19,7 +19,7 @@ public class TagLoaderMixin {
     @Final
     private String directory;
 
-    @ModifyArg(method = "loadAndBuild", at = @At(value = "INVOKE", target = "Lnet/minecraft/tags/TagLoader;build(Ljava/util/Map;)Ljava/util/Map;"))
+    @ModifyArg(method = "loadAndBuild", at = @At(value = "INVOKE", target = "Lnet/minecraft/tags/TagLoader;build(Ljava/util/Map;)Lnet/minecraft/tags/TagCollection;"))
     public Map<ResourceLocation, Tag.Builder> wunderreich_loadAndBuild(Map<ResourceLocation, Tag.Builder> tagMap) {
         final TagRegistry<?> registry = TagRegistry.getRegistryForDirectory(directory);
         if (registry != null) {

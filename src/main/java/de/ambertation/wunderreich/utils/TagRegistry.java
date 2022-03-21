@@ -1,43 +1,56 @@
 package de.ambertation.wunderreich.utils;
 
-import com.google.common.collect.Maps;
 import de.ambertation.wunderreich.Wunderreich;
+
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
-import net.minecraft.tags.TagKey;
-import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
+import net.fabricmc.fabric.api.tag.TagFactory;
+
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import org.apache.commons.compress.utils.Lists;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+
 
 public class TagRegistry<T> {
     private static final List<TagRegistry<?>> REGISTRIES = Lists.newArrayList();
 
-    public static final TagRegistry<Block> BLOCK = new TagRegistry<>(Registry.BLOCK);
-    public static final TagRegistry<Item> ITEM = new TagRegistry<>(Registry.ITEM);
+    public static final TagRegistry<Block> BLOCK = new TagRegistry<>("tags/blocks",
+                                                                     Registry.BLOCK,
+                                                                     TagFactory.BLOCK::create);
+    public static final TagRegistry<Item> ITEM = new TagRegistry<>("tags/items",
+                                                                   Registry.ITEM,
+                                                                   TagFactory.ITEM::create);
 
-    public TagRegistry(DefaultedRegistry<T> registry) {
+    public TagRegistry(String directory,
+                       DefaultedRegistry<T> registry,
+                       Function<ResourceLocation, Tag.Named<T>> tagCreator) {
         this.tags = Maps.newHashMap();
         this.registry = registry;
+        this.directory = directory;
+        this.tagCreator = tagCreator;
         REGISTRIES.add(this);
     }
 
     private final Map<ResourceLocation, Set<T>> tags;
     private final DefaultedRegistry<T> registry;
+    private final String directory;
+    private final Function<ResourceLocation, Tag.Named<T>> tagCreator;
 
 
-    public void add(TagKey<T> tag, T... objects) {
-        ResourceLocation tagID = tag.location();
+    @SafeVarargs
+    public final void add(Tag.Named<T> tag, T... objects) {
+        ResourceLocation tagID = tag.getName();
         Set<T> set = tags.computeIfAbsent(tagID, k -> Sets.newHashSet());
         for (T obj : objects) {
             if (obj != null) {
@@ -46,23 +59,23 @@ public class TagRegistry<T> {
         }
     }
 
-    public static TagRegistry<?> getRegistryForDirectory(String directory){
-        for (TagRegistry<?> reg : REGISTRIES){
+    public static TagRegistry<?> getRegistryForDirectory(String directory) {
+        for (TagRegistry<?> reg : REGISTRIES) {
             if (reg.isForDirectory(directory))
                 return reg;
         }
         return null;
     }
 
-    public boolean isForDirectory(String directory){
-        return TagManager.getTagDir(this.getRegistryKey()).equals(directory);
+    public boolean isForDirectory(String directory) {
+        return this.directory.equals(directory);
     }
 
-    public ResourceKey<? extends Registry<T>> getRegistryKey(){
+    public ResourceKey<? extends Registry<T>> getRegistryKey() {
         return registry.key();
     }
 
-    private ResourceLocation getLocation(T element){
+    private ResourceLocation getLocation(T element) {
         ResourceLocation id = registry.getKey(element);
         if (id != registry.getDefaultKey()) {
             return id;
@@ -70,24 +83,24 @@ public class TagRegistry<T> {
         return null;
     }
 
-    public Map<ResourceLocation, Tag.Builder> addTags(Map<ResourceLocation, Tag.Builder> tagMap){
-         for (Map.Entry<ResourceLocation, Set<T>> entry : tags.entrySet()){
-             final ResourceLocation location = entry.getKey();
-             final Set<T> elements = entry.getValue();
-             final Tag.Builder builder = tagMap.computeIfAbsent(location, key -> Tag.Builder.tag());
+    public Map<ResourceLocation, Tag.Builder> addTags(Map<ResourceLocation, Tag.Builder> tagMap) {
+        for (Map.Entry<ResourceLocation, Set<T>> entry : tags.entrySet()) {
+            final ResourceLocation location = entry.getKey();
+            final Set<T> elements = entry.getValue();
+            final Tag.Builder builder = tagMap.computeIfAbsent(location, key -> Tag.Builder.tag());
 
-             for (T element : elements) {
-                 ResourceLocation elementLocation = getLocation(element);
-                 if (elementLocation != null) {
-                     builder.addElement(elementLocation, Wunderreich.MOD_ID);
-                 }
-             }
-         }
+            for (T element : elements) {
+                ResourceLocation elementLocation = getLocation(element);
+                if (elementLocation != null) {
+                    builder.addElement(elementLocation, Wunderreich.MOD_ID);
+                }
+            }
+        }
 
-         return tagMap;
+        return tagMap;
     }
 
-    public TagKey<T> createCommon(String name){
-        return TagKey.create(getRegistryKey(), new ResourceLocation("c", name));
+    public Tag.Named<T> createCommon(String name) {
+        return tagCreator.apply(new ResourceLocation("c", name));
     }
 }

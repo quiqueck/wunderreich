@@ -4,12 +4,12 @@ import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.ItemTagSupplier;
 import de.ambertation.wunderreich.utils.TagRegistry;
 
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
 public class WunderreichTags {
-    public static final TagKey<Block> MINEABLE_TROWEL = TagRegistry.BLOCK.createCommon("mineable/trowel");
+    public static final Tag.Named<Block> MINEABLE_TROWEL = TagRegistry.BLOCK.createCommon("mineable/trowel");
 
     static void supplyForBlock(Block bl) {
         if (bl instanceof BlockTagSupplier supl) {
@@ -17,7 +17,7 @@ public class WunderreichTags {
             supl.supplyTags(
                     (tag) -> TagRegistry.BLOCK.add(tag, bl),
                     (tag) -> TagRegistry.ITEM.add(tag, itm)
-            );
+                           );
         }
     }
 
@@ -25,7 +25,7 @@ public class WunderreichTags {
         if (itm instanceof ItemTagSupplier supl) {
             supl.supplyTags(
                     (tag) -> TagRegistry.ITEM.add(tag, itm)
-            );
+                           );
         }
     }
 

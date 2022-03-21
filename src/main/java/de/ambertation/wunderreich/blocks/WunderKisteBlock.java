@@ -18,7 +18,7 @@ import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
@@ -332,7 +332,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     @Override
-    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+    public void supplyTags(Consumer<Tag.Named<Block>> blockTags, Consumer<Tag.Named<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 
@@ -376,17 +376,17 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     public LootTableJsonBuilder buildLootTable() {
         LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
                                                      .startPool(1.0, 0.0, poolBuilder -> poolBuilder
-                                                             .startAlternatives(altBuilder -> altBuilder
-                                                                     .startSelfEntry(builder -> builder
-                                                                             .silkTouch()
-                                                                     )
-                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
-                                                                                     builder -> builder
-                                                                                             .setCount(4, false)
-                                                                                             .explosionDecay()
-                                                                     )
-                                                             )
-                                                     );
+                                                                        .startAlternatives(altBuilder -> altBuilder
+                                                                                                   .startSelfEntry(builder -> builder
+                                                                                                                           .silkTouch()
+                                                                                                                  )
+                                                                                                   .startItemEntry(Items.NETHERITE_SCRAP,
+                                                                                                                   builder -> builder
+                                                                                                                           .setCount(4, false)
+                                                                                                                           .explosionDecay()
+                                                                                                                  )
+                                                                                          )
+                                                               );
 
         return b;
 
