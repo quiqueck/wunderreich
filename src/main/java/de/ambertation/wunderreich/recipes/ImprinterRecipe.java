@@ -199,6 +199,11 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         @Override
         public ImprinterRecipe fromNetwork(ResourceLocation id, FriendlyByteBuf packetBuffer) {
             Ingredient costA = Ingredient.fromNetwork(packetBuffer);
+            int count = packetBuffer.readByte();
+            if (costA.getItems().length>0 && count>0){
+                ItemStack stack = new ItemStack(costA.getItems()[0].getItem(), count);
+                costA = Ingredient.of(stack);
+            }
             Ingredient costB = Ingredient.fromNetwork(packetBuffer);
             ItemStack output = packetBuffer.readItem();
             /*byte packetType = */
@@ -223,6 +228,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         @Override
         public void toNetwork(FriendlyByteBuf buf, ImprinterRecipe recipe) {
             recipe.inputA.toNetwork(buf);
+            buf.writeByte(recipe.inputA.getItems().length==0?0:recipe.inputA.getItems()[0].getCount());
             recipe.inputB.toNetwork(buf);
             buf.writeItem(recipe.output);
             buf.writeByte(0); //this is a type we currently do not use
@@ -236,6 +242,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             recipeJson.enchantment = Registry.ENCHANTMENT.getKey(r.enchantment).toString();
             recipeJson.xp = r.baseXP;
             recipeJson.inputA = r.inputA.toJson();
+            recipeJson.count = r.inputA.getItems().length==0?0:r.inputA.getItems()[0].getCount();
             recipeJson.inputB = r.inputB.toJson();
             recipeJson.type = Type.ID.toString();
 
@@ -244,6 +251,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             root.add("enchantment", new JsonPrimitive(recipeJson.enchantment));
             root.add("xp", new JsonPrimitive(recipeJson.xp));
             root.add("inputA", recipeJson.inputA);
+            root.add("count",  new JsonPrimitive(recipeJson.count));
             root.add("inputB", recipeJson.inputB);
 
             return root;
@@ -271,6 +279,10 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
 
             Ingredient inputA = Ingredient.fromJson(recipeJson.inputA);
+            if (inputA.getItems().length>0 && recipeJson.count>0){
+                ItemStack stack = new ItemStack(inputA.getItems()[0].getItem(), recipeJson.count);
+                inputA = Ingredient.of(stack);
+            }
             Ingredient inputB = Ingredient.fromJson(recipeJson.inputB);
 
             if (recipeJson.xp <= 0) {
@@ -291,6 +303,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         static class ImprinterRecipeJsonFormat {
             String type;
             JsonElement inputA;
+            int count;
             JsonElement inputB;
             int xp;
             String enchantment;
