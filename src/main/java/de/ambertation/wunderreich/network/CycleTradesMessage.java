@@ -218,7 +218,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         MerchantMenu menu = (MerchantMenu) player.containerMenu;
 
         if (menu instanceof IMerchantMenu mmenu) {
-            Villager villager = mmenu.getVillager();
+            Villager villager = mmenu.wunder_getVillager();
             if (villager == null || villager.getVillagerXp() > 0) {
                 return;
             }
