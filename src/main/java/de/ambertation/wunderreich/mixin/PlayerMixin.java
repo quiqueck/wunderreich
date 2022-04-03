@@ -12,17 +12,17 @@ import org.jetbrains.annotations.Nullable;
 @Mixin(Player.class)
 public abstract class PlayerMixin implements ActiveChestStorage {
     @Nullable
-    private WunderKisteBlockEntity activeChest;
+    private WunderKisteBlockEntity wunder_activeChest;
 
     public boolean isActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity) {
-        return this.activeChest == wunderKisteBlockEntity;
+        return this.wunder_activeChest == wunderKisteBlockEntity;
     }
 
     public WunderKisteBlockEntity getActiveWunderKiste() {
-        return this.activeChest;
+        return this.wunder_activeChest;
     }
 
     public void setActiveWunderKiste(WunderKisteBlockEntity wunderKisteBlockEntity) {
-        this.activeChest = wunderKisteBlockEntity;
+        this.wunder_activeChest = wunderKisteBlockEntity;
     }
 }

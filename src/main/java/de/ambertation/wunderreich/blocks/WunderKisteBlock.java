@@ -50,9 +50,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import io.netty.util.internal.ConcurrentSet;
-
 import java.util.Random;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,7 +61,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    public static ConcurrentSet<LiveBlock> liveBlocks = new ConcurrentSet<>();
+    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
     private static boolean hasAnyOpenInstance = false;
 
     static {

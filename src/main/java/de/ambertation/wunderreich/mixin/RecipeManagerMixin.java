@@ -19,10 +19,10 @@ import java.util.Map;
 public class RecipeManagerMixin {
 
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("HEAD"))
-    public void interceptApply(Map<ResourceLocation, JsonElement> map,
-                               ResourceManager resourceManager,
-                               ProfilerFiller profiler,
-                               CallbackInfo info) {
+    public void wunder_interceptApply(Map<ResourceLocation, JsonElement> map,
+                                      ResourceManager resourceManager,
+                                      ProfilerFiller profiler,
+                                      CallbackInfo info) {
 
         WunderreichRecipes.RECIPES
                 .entrySet()

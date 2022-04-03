@@ -16,7 +16,7 @@ public abstract class MerchantMenuMixin implements IMerchantMenu {
     @Final
     private Merchant trader;
 
-    public Villager getVillager() {
+    public Villager wunder_getVillager() {
         if (!(trader instanceof Villager)) {
             return null;
         }
