@@ -6,6 +6,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -14,8 +15,6 @@ import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.Material;
-
-import java.util.Random;
 
 public class FallingSlab extends DirtSlabBlock {
     private final int dustColor;
@@ -43,12 +42,12 @@ public class FallingSlab extends DirtSlabBlock {
 
     public BlockState makeState(BlockState state, SlabType type) {
         return this.defaultBlockState()
-                   .setValue(TYPE, type)
-                   .setValue(WATERLOGGED, state.getValue(WATERLOGGED));
+                .setValue(TYPE, type)
+                .setValue(WATERLOGGED, state.getValue(WATERLOGGED));
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Random random) {
+    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
         SlabType belowType = (SlabType) below.getValues().get(TYPE);
 
@@ -82,7 +81,7 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     @Override
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
+    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
         BlockPos blockPos2;
         if (random.nextInt(16) == 0 && FallingBlock.isFree(level.getBlockState(blockPos2 = blockPos.below()))) {
             double d = (double) blockPos.getX() + random.nextDouble();

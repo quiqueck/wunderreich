@@ -1,11 +1,15 @@
 package de.ambertation.wunderreich.blocks;
 
+import com.google.common.math.DoubleMath;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.*;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
@@ -18,9 +22,6 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import com.google.common.math.DoubleMath;
-
-import java.util.Random;
 import java.util.function.Consumer;
 
 public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
@@ -33,7 +34,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
             blockTags.accept(BlockTags.SLABS);
             itemTags.accept(ItemTags.SLABS);
-            
+
             blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
         }
     }
@@ -94,11 +95,11 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             return false;
         }
         return !doesOcclude(reader,
-                            state,
-                            pos,
-                            aboveState,
-                            abovePos,
-                            Direction.UP);
+                state,
+                pos,
+                aboveState,
+                abovePos,
+                Direction.UP);
     }
 
     public static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
@@ -121,7 +122,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                                      BlockState blockState,
                                      ServerLevel level,
                                      BlockPos blockPos,
-                                     Random random) {
+                                     RandomSource random) {
         if (!canBeGrass(blockState, level, blockPos)) {
             final BlockState testState = level.getBlockState(blockPos);
             if (me instanceof SpreadableSnowyDirtSlab) {
@@ -131,12 +132,12 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                                 .defaultBlockState()
                                 .setValue(WATERLOGGED, testState.getValue(WATERLOGGED))
                                 .setValue(TYPE, testState.getValue(TYPE))
-                                       );
+                );
             } else if (me instanceof SpreadingSnowyDirtBlock) {
                 level.setBlockAndUpdate(
                         blockPos,
                         Blocks.DIRT.defaultBlockState()
-                                       );
+                );
             }
             return;
         }
@@ -148,23 +149,23 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
 
             for (int i = 0; i < 2; ++i) {
                 BlockPos testPos = blockPos.offset(random.nextInt(3) - 1,
-                                                   random.nextInt(5) - 3,
-                                                   random.nextInt(3) - 1);
+                        random.nextInt(5) - 3,
+                        random.nextInt(3) - 1);
                 testState = level.getBlockState(testPos);
                 if (!canPropagate(testState, level, testPos)) continue;
 
                 if (testState.is(Blocks.DIRT)) {
                     level.setBlockAndUpdate(testPos,
-                                            grassBlockState.setValue(SNOWY,
-                                                                     level.getBlockState(testPos.above())
-                                                                          .is(Blocks.SNOW)));
+                            grassBlockState.setValue(SNOWY,
+                                    level.getBlockState(testPos.above())
+                                            .is(Blocks.SNOW)));
                 } else if (testState.is(WunderreichBlocks.DIRT_SLAB)) {
                     final BlockState newState = grassSlabBlockState.setValue(SNOWY,
-                                                                             level.getBlockState(testPos.above())
-                                                                                  .is(Blocks.SNOW))
-                                                                   .setValue(WATERLOGGED,
-                                                                             testState.getValue(WATERLOGGED))
-                                                                   .setValue(TYPE, testState.getValue(TYPE));
+                                    level.getBlockState(testPos.above())
+                                            .is(Blocks.SNOW))
+                            .setValue(WATERLOGGED,
+                                    testState.getValue(WATERLOGGED))
+                            .setValue(TYPE, testState.getValue(TYPE));
                     level.setBlockAndUpdate(testPos, newState);
                 }
             }
@@ -172,7 +173,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
     }
 
     @Override
-    public void randomTick(BlockState blockState, ServerLevel level, BlockPos blockPos, Random random) {
+    public void randomTick(BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
         spreadingTick(this, blockState, level, blockPos, random);
     }
 }

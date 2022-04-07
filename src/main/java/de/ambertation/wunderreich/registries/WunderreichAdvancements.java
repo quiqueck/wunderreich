@@ -1,25 +1,22 @@
 package de.ambertation.wunderreich.registries;
 
+import com.google.gson.JsonElement;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
-
-import net.minecraft.advancements.critereon.LocationTrigger;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.resources.ResourceLocation;
-
-import net.fabricmc.fabric.api.object.builder.v1.advancement.CriterionRegistry;
-
-import com.google.gson.JsonElement;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class WunderreichAdvancements {
     public static final Map<ResourceLocation, JsonElement> ADVANCEMENTS = new HashMap<>();
-    public static LocationTrigger USE_TROWEL;
+    public static PlayerTrigger USE_TROWEL;
 
 
     public static void register() {
-        USE_TROWEL = CriterionRegistry.register(new LocationTrigger(Wunderreich.ID("use_trowel")));
+        USE_TROWEL = CriteriaTriggers.register(new PlayerTrigger(Wunderreich.ID("use_trowel")));
 
         ResourceLocation root = AdvancementsJsonBuilder
                 .create("root")
@@ -30,7 +27,7 @@ public class WunderreichAdvancements {
                                 .showToast()
                                 .visible()
                                 .announceToChat()
-                             )
+                )
                 .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem())
                 .register();
 

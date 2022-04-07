@@ -7,7 +7,8 @@ import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.TextComponent;
@@ -15,6 +16,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
@@ -29,13 +31,9 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import java.util.Random;
-import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Consumer;
 
 public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeRenderLayer, CanDropLoot {
     /**
@@ -43,12 +41,12 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                               .mapColor(MaterialColor.LAPIS)
-                               .strength(5.0f, 1200.0f)
-                               .luminance(8)
-                               .requiresTool()
-                               .nonOpaque()
-                               .sound(SoundType.AMETHYST)
+                .mapColor(MaterialColor.LAPIS)
+                .strength(5.0f, 1200.0f)
+                .luminance(8)
+                .requiresTool()
+                .nonOpaque()
+                .sound(SoundType.AMETHYST)
         );
     }
 
@@ -75,10 +73,10 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     @Nullable
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
-                                                                                  inventory,
-                                                                                  ContainerLevelAccess.create(level,
-                                                                                                              blockPos)),
-                                      new TextComponent("Hello"));
+                inventory,
+                ContainerLevelAccess.create(level,
+                        blockPos)),
+                new TextComponent("Hello"));
     }
 
     @Override
@@ -89,23 +87,23 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(null,
-                            blockPos,
-                            SoundEvents.AMETHYST_BLOCK_HIT,
-                            SoundSource.BLOCKS,
-                            1.0f,
-                            0.5f + level.random.nextFloat() * 1.2f);
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
             level.playSound(null,
-                            blockPos,
-                            SoundEvents.AMETHYST_BLOCK_CHIME,
-                            SoundSource.BLOCKS,
-                            1.0f,
-                            0.5f + level.random.nextFloat() * 1.2f);
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
         }
     }
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, Random random) {
+    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
         super.animateTick(blockState, level, blockPos, random);
 
 
