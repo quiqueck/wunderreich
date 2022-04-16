@@ -67,7 +67,7 @@
   "itemGroup.wunderreich.blocks": "Wunderreich",
   "title.wunderreich.modmenu.main": "Wunderreich - Einstellungen",
   "title.config.wunderreich.main.features.doNotDespawnWithNameTag": "Benannte Monster in friedlich erhalten",
-  "title.config.wunderreich.main.features.allowTradesCycling": "Button \"Handel neu auswürfeln\" für Dörfler ohne XP",
+  "title.config.wunderreich.main.features.allowTradesCycling": "Taste \"Handel neu auswürfeln\" für Dörfler ohne XP",
   "title.config.wunderreich.main.features.allowLibrarianSelection": "Den ersten Handel von Bibliothekaren beeinflussen",
   "title.config.wunderreich.main.features.cyclingNeedsWhisperer": "\"Handel neu auswürfeln\" nur mit Flüsterer",
   "title.config.wunderreich.main.features.allowBuilderTools": "Baumeister Werkzeuge erlauben",
@@ -86,13 +86,13 @@
   "enchantment.type.CROSSBOW": "Armbrust",
   "enchantment.type.VANISHABLE": "Verschwindendes",
   "enchantment.type.TRIDENT": "Dreizacke",
-  "enchantment.type.Other": "Andere Verzeubaerungen",
+  "enchantment.type.Other": "Andere Verzeuberungen",
   "advancements.wunderreich.root.title": "Ein flüstern im Wind",
-  "advancements.wunderreich.root.description": "Baue einen Flüsterpräger neuen Bibliothekaren Handelsgeheimnisse zuzuflüstern.",
+  "advancements.wunderreich.root.description": "Baue einen Flüsterpräger um neuen Bibliothekaren Handelsgeheimnisse zuzuflüstern.",
   "advancements.wunderreich.whisperer_blank.title": "Stille vor dem Sturm",
   "advancements.wunderreich.whisperer_blank.description": "Baue eine leere Hülle um dein Geflüster zu prägen.",
   "advancements.wunderreich.whisperer.title": "Ein ominöses Flüstern",
   "advancements.wunderreich.whisperer.description": "Präge deine Verzauberungsgeheimnisse auf einen leeren Flüstern.",
   "advancements.wunderreich.used_trowel.title": "Mische die Karten",
-  "advancements.wunderreich.used_trowel.description": "Benutze eine Kelle, um eine Mauer aus zufälligen Blöcken deiner Hotbar zu bauen."
+  "advancements.wunderreich.used_trowel.description": "Benutze eine Kelle, um mit zufälligen Blöcken aus deiner Hotbar zu bauen."
 }
