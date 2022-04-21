@@ -76,7 +76,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                 inventory,
                 ContainerLevelAccess.create(level,
                         blockPos)),
-                Component.translatable("Hello"));
+                Component.translatable("block.wunderreich.whisper_imprinter"));
     }
 
     @Override
