@@ -15,7 +15,6 @@ import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
@@ -67,7 +66,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
         FACING = HorizontalDirectionalBlock.FACING;
         WATERLOGGED = BlockStateProperties.WATERLOGGED;
         SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
-        CONTAINER_TITLE = new TranslatableComponent("container.wunderreich.wunder_kiste");
+        CONTAINER_TITLE = Component.translatable("container.wunderreich.wunder_kiste");
     }
 
     EnderChestBlock chestBlock;

@@ -3,11 +3,12 @@
  */
 package de.ambertation.wunderreich.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -15,8 +16,6 @@ import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -25,20 +24,17 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import org.jetbrains.annotations.NotNull;
 
 public class CycleTradesButton extends Button {
 
     public static final int WIDTH = 18;
     private static final ResourceLocation ARROW_BUTTON = new ResourceLocation(Wunderreich.MOD_ID,
-                                                                              "textures/gui/reroll.png");
+            "textures/gui/reroll.png");
     private static final int HALF_HEIGHT = 13;
     public static final int HEIGHT = HALF_HEIGHT * 2;
 
@@ -47,7 +43,7 @@ public class CycleTradesButton extends Button {
     private boolean canUse;
 
     public CycleTradesButton(int x, int y, OnPress pressable, MerchantScreen screen, MerchantMenu menu) {
-        super(x, y, WIDTH, HEIGHT, TextComponent.EMPTY, pressable);
+        super(x, y, WIDTH, HEIGHT, Component.empty(), pressable);
         this.screen = screen;
         this.menu = menu;
     }
@@ -97,7 +93,7 @@ public class CycleTradesButton extends Button {
 
         if (isHovered) {
             List<Component> components = new ArrayList<>(2);
-            components.add(new TranslatableComponent("tooltip.wunderreich.cycle_trades"));
+            components.add(Component.translatable("tooltip.wunderreich.cycle_trades"));
             MerchantOffers offers = this.menu.getOffers();
             for (MerchantOffer offer : offers) {
                 if (offer.getResult().is(Items.ENCHANTED_BOOK)) {

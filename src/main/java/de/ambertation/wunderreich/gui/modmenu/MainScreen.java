@@ -1,25 +1,21 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.config.ConfigFile;
 import de.ambertation.wunderreich.config.Configs;
-
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.vertex.PoseStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 class EventCheckBox extends Checkbox {
@@ -64,14 +60,14 @@ public class MainScreen extends Screen {
     Map<EventCheckBox, Supplier<Boolean>> dependentWidgets = new HashMap<>();
 
     public MainScreen(@Nullable Screen parent) {
-        super(new TranslatableComponent("title.wunderreich.modmenu.main"));
+        super(Component.translatable("title.wunderreich.modmenu.main"));
         this.parent = parent;
     }
 
-    protected <T> TranslatableComponent getComponent(ConfigFile config,
-                                                     ConfigFile.Value<T> option,
-                                                     String type) {
-        return new TranslatableComponent(type + ".config." + config.category + "." + option.token.path() + "." + option.token.key());
+    protected <T> Component getComponent(ConfigFile config,
+                                         ConfigFile.Value<T> option,
+                                         String type) {
+        return Component.translatable(type + ".config." + config.category + "." + option.token.path() + "." + option.token.key());
     }
 
     protected void updateEnabledState() {
@@ -91,15 +87,15 @@ public class MainScreen extends Screen {
 
     protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option) {
         EventCheckBox cb = new EventCheckBox(state.left + (option.getIsValidSupplier() != null ? 12 : 0),
-                                             state.top,
-                                             this.width - 2 * state.left,
-                                             20,
-                                             getComponent(config, option, "title"),
-                                             option.getRaw(),
-                                             (st) -> {
-                                                 option.set(st);
-                                                 updateEnabledState();
-                                             }
+                state.top,
+                this.width - 2 * state.left,
+                20,
+                getComponent(config, option, "title"),
+                option.getRaw(),
+                (st) -> {
+                    option.set(st);
+                    updateEnabledState();
+                }
         );
         if (option.getIsValidSupplier() != null) {
             dependentWidgets.put(cb, option.getIsValidSupplier());
@@ -129,14 +125,14 @@ public class MainScreen extends Screen {
 
         final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
         Button b = new Button(this.width - width - state.left,
-                              this.height - BUTTON_HEIGHT - 20,
-                              width,
-                              BUTTON_HEIGHT,
-                              CommonComponents.GUI_DONE,
-                              (button) -> {
-                                  Configs.MAIN.save();
-                                  onClose();
-                              });
+                this.height - BUTTON_HEIGHT - 20,
+                width,
+                BUTTON_HEIGHT,
+                CommonComponents.GUI_DONE,
+                (button) -> {
+                    Configs.MAIN.save();
+                    onClose();
+                });
         this.addRenderableWidget(b);
     }
 

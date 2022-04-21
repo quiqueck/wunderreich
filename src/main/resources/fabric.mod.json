@@ -37,9 +37,9 @@
     "wunderreich.mixins.common.json"
   ],
   "depends": {
-    "fabricloader": ">=0.13.3",
+    "fabricloader": ">=0.14.0",
     "fabric": "*",
-    "minecraft": "1.19-alpha.22.15.a",
+    "minecraft": "1.19-alpha.22.16.b",
     "java": ">=17"
   },
   "suggests": {

@@ -2,11 +2,9 @@ package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -22,10 +20,10 @@ public class WhisperRule {
 
     private WhisperRule(Enchantment enchantment, EnchantmentInfo nfo) {
         this(enchantment,
-             Ingredient.of(nfo.inputA),
-             Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
-             nfo.baseXP,
-             nfo.type);
+                Ingredient.of(nfo.inputA),
+                Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
+                nfo.baseXP,
+                nfo.type);
     }
 
     protected WhisperRule(Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
@@ -59,7 +57,7 @@ public class WhisperRule {
     }
 
     public static Component getFullname(Enchantment e, int lvl) {
-        MutableComponent mutableComponent = new TranslatableComponent(e.getDescriptionId());
+        MutableComponent mutableComponent = Component.translatable(e.getDescriptionId());
         if (e.isCurse()) {
             mutableComponent.withStyle(ChatFormatting.RED);
         } else {
@@ -69,9 +67,9 @@ public class WhisperRule {
         if (lvl != 1 || e.getMaxLevel() != 1) {
             mutableComponent
                     .append(" (")
-                    .append(new TranslatableComponent("tooltip.fragment.max"))
+                    .append(Component.translatable("tooltip.fragment.max"))
                     .append(" ")
-                    .append(new TranslatableComponent("enchantment.level." + lvl))
+                    .append(Component.translatable("enchantment.level." + lvl))
                     .append(")");
         }
 

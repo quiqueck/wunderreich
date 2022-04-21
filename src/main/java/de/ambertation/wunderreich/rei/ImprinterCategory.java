@@ -1,23 +1,5 @@
 package de.ambertation.wunderreich.rei;
 
-import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
-
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
-
-import com.google.common.collect.Lists;
-//import me.shedaniel.math.Point;
-//import me.shedaniel.math.Rectangle;
-//import me.shedaniel.rei.api.client.gui.Renderer;
-//import me.shedaniel.rei.api.client.gui.widgets.Widget;
-//import me.shedaniel.rei.api.client.gui.widgets.Widgets;
-//import me.shedaniel.rei.api.client.registry.display.DisplayCategory;
-//import me.shedaniel.rei.api.common.category.CategoryIdentifier;
-//import me.shedaniel.rei.api.common.util.EntryStacks;
-
-import java.util.List;
-
 //public class ImprinterCategory implements DisplayCategory<ImprinterDisplay> {
 //    @Override
 //    public Renderer getIcon() {
@@ -26,7 +8,7 @@ import java.util.List;
 //
 //    @Override
 //    public Component getTitle() {
-//        return new TranslatableComponent("block.wunderreich.whisper_imprinter");
+//        return Component.translatable("block.wunderreich.whisper_imprinter");
 //    }
 //
 //    @Override

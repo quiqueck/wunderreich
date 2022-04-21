@@ -11,7 +11,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -76,7 +76,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                 inventory,
                 ContainerLevelAccess.create(level,
                         blockPos)),
-                new TextComponent("Hello"));
+                Component.literal("Hello"));
     }
 
     @Override
