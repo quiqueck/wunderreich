@@ -43,7 +43,7 @@
     "java": ">=17"
   },
   "suggests": {
-    "modmenu": "3.x",
+    "modmenu": "4.0.x",
     "rei": "8.x"
   }
 }
