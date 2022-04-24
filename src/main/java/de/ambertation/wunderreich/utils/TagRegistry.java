@@ -12,9 +12,9 @@ import net.minecraft.world.level.block.Block;
 
 import net.fabricmc.fabric.api.tag.TagFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
 import java.util.Map;
