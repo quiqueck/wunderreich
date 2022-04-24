@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "wunderreich:block/dirt_path_slab"
+    },
+    "type=double": {
+      "model": "block/dirt_path"
+    },
+    "type=top": {
+      "model": "wunderreich:block/dirt_path_slab_top"
+    }
+  }
+}
