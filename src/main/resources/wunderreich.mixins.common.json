@@ -18,7 +18,8 @@
     "ServerLevelMixin",
     "SlimeMixin",
     "SpreadingSnowyDirtBlockMixin",
-    "VillagerMixin"
+    "VillagerMixin",
+    "ShovelItemMixin"
   ],
   "client": [
   ],
