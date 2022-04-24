@@ -35,6 +35,10 @@ public class WunderreichBlocks {
                                                         Configs.MAIN.addSlabs.get());
     public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
                                                        Configs.MAIN.addSlabs.get());
+    public static final Block DIRT_PATH_SLAB = registerSlab("dirt_path_slab",
+                                                            Blocks.DIRT_PATH,
+                                                            DirtPathSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
     public static final Block COARSE_DIRT_SLAB = registerSlab("coarse_dirt_slab", Blocks.COARSE_DIRT,
                                                               Configs.MAIN.addSlabs.get());
     public static final Block SAND_SLAB = registerSlab("sand_slab", Blocks.SAND, SandSlab::new,
