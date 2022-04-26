@@ -62,7 +62,7 @@ public class RecipeJsonBuilder {
         } else if (item instanceof Item itm) {
             return Registry.ITEM.getKey(itm);
         }
-        return new ResourceLocation("failed");
+        return null;
     }
 
 
@@ -158,7 +158,10 @@ public class RecipeJsonBuilder {
     }
 
     public JsonElement register() {
-        if (!canBuild) return null;
+        if (!canBuild) {
+            Wunderreich.LOGGER.info("Discarding Recipe for " + this.ID);
+            return null;
+        }
 
         JsonElement res = build();
         WunderreichRecipes.RECIPES.put(ID, res);
@@ -168,7 +171,10 @@ public class RecipeJsonBuilder {
 
 
     public JsonElement build() {
-        if (!canBuild) return null;
+        if (!canBuild) {
+            Wunderreich.LOGGER.info("Discarding Recipe for " + this.ID);
+            return null;
+        }
 
         if (resultItem == null) {
             throw new IllegalStateException("A Recipe needs a Result (" + ID + ")");
@@ -193,7 +199,12 @@ public class RecipeJsonBuilder {
             individualContainer = new JsonArray();
             for (ItemStack stack : items) {
                 individualKey = new JsonObject();
-                individualKey.addProperty("item", getKey(stack.getItem()).toString());
+                final ResourceLocation il = getKey(stack.getItem());
+                if (il == null) {
+                    Wunderreich.LOGGER.info("Ignoring Recipe for " + this.ID + " due to missing item.");
+                    return null;
+                }
+                individualKey.addProperty("item", il.toString());
                 if (stack.getCount() > 1) {
                     individualKey.addProperty("count", stack.getCount());
                 }
@@ -204,7 +215,12 @@ public class RecipeJsonBuilder {
         json.add("key", keyList);
 
         JsonObject result = new JsonObject();
-        result.addProperty("item", getKey(resultItem).toString());
+        final ResourceLocation resItem = getKey(resultItem);
+        if (resItem == null) {
+            Wunderreich.LOGGER.info("Ignoring Recipe for " + this.ID + " due to missing result item.");
+            return null;
+        }
+        result.addProperty("item", resItem.toString());
         result.addProperty("count", count);
         json.add("result", result);
 
