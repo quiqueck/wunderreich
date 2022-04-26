@@ -38,7 +38,7 @@ public class MainConfig extends ConfigFile {
 
     public boolean allowLibrarianSelection() {
         return allowLibrarianSelection.get()
-                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER).get()
-                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER).get();
+                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER)
+                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER);
     }
 }

@@ -23,10 +23,12 @@ import java.util.List;
 import java.util.function.Function;
 
 public class WunderreichBlocks {
-    private static final List<Block> BLOCKS = new ArrayList<>(2);
+    private static final List<Block> BLOCKS = new ArrayList<>(64);
 
-    public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", new WunderKisteBlock());
-    public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter", new WhisperImprinter());
+    public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", null, bb -> new WunderKisteBlock());
+    public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter",
+                                                                null,
+                                                                bb -> new WhisperImprinter());
 
     //Slabs
     public static final Block GRASS_SLAB = registerSlab("grass_slab",
@@ -237,7 +239,7 @@ public class WunderreichBlocks {
         return registerSlab(name, baseBlock, true);
     }
 
-    public static Block registerSlab(String name, Block baseBlock, Function<Block, DirtSlabBlock> creator) {
+    public static Block registerSlab(String name, Block baseBlock, Function<Block, Block> creator) {
         return registerSlab(name, baseBlock, creator, true);
     }
 
@@ -247,9 +249,9 @@ public class WunderreichBlocks {
 
     public static Block registerSlab(String name,
                                      Block baseBlock,
-                                     Function<Block, DirtSlabBlock> creator,
+                                     Function<Block, Block> creator,
                                      boolean register) {
-        Block block = registerBlock(name, creator.apply(baseBlock), register);
+        Block block = registerBlock(name, baseBlock, creator, register);
         WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
         return block;
     }
@@ -264,15 +266,20 @@ public class WunderreichBlocks {
         return registerSlab(name, baseBlock, (bl) -> new StainedGlassSlabBlock(DyeColor.MAGENTA, bl), register);
     }
 
-    public static Block registerBlock(String name, Block block, boolean register) {
+    private static Block registerBlock(String name,
+                                       Block baseBlock,
+                                       Function<Block, Block> creator,
+                                       boolean register) {
         if (register) {
-            return registerBlock(name, block);
+            return registerBlock(name, baseBlock, creator);
         }
-        return block;
+        return null;
     }
 
-    public static Block registerBlock(String name, Block block) {
-        if (Configs.BLOCK_CONFIG.newBooleanFor(name, block).get()) {
+    private static Block registerBlock(String name, Block baseBlock, Function<Block, Block> creator) {
+        if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
+            final Block block = creator.apply(baseBlock);
+            Configs.BLOCK_CONFIG.newBooleanFor(name, block);
             BLOCKS.add(block);
 
             ResourceLocation id = Wunderreich.ID(name);
@@ -292,8 +299,10 @@ public class WunderreichBlocks {
             }
 
             processBlock(id, block);
+
+            return block;
         }
-        return block;
+        return null;
     }
 
     public static void processBlock(ResourceLocation id, Block bl) {
