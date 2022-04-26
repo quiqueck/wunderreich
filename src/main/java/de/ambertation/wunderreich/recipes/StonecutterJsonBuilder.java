@@ -59,7 +59,7 @@ public class StonecutterJsonBuilder {
         } else if (item instanceof Item itm) {
             return Registry.ITEM.getKey(itm);
         }
-        return new ResourceLocation("failed");
+        return null;
     }
 
 
@@ -128,7 +128,10 @@ public class StonecutterJsonBuilder {
     }
 
     public JsonElement register() {
-        if (!canBuild) return null;
+        if (!canBuild) {
+            Wunderreich.LOGGER.info("Discarding Recipe for " + this.ID);
+            return null;
+        }
 
         JsonElement res = build();
         WunderreichRecipes.RECIPES.put(ID, res);
@@ -138,7 +141,10 @@ public class StonecutterJsonBuilder {
 
 
     public JsonElement build() {
-        if (!canBuild) return null;
+        if (!canBuild) {
+            Wunderreich.LOGGER.info("Discarding Recipe for " + this.ID);
+            return null;
+        }
 
         if (resultItem == null) {
             throw new IllegalStateException("A Recipe needs a Result (" + ID + ")");
@@ -153,11 +159,21 @@ public class StonecutterJsonBuilder {
 
 
         JsonObject ing = new JsonObject();
-        ing.addProperty("item", getKey(ingredient).toString());
+        final ResourceLocation ingredientLoc = getKey(ingredient);
+        if (ingredientLoc == null) {
+            Wunderreich.LOGGER.info("Ignoring Stonecutter-Recipe for " + this.ID + " due to missing ingredient.");
+            return null;
+        }
+        ing.addProperty("item", ingredientLoc.toString());
         json.add("ingredient", ing);
 
 
-        json.addProperty("result", getKey(resultItem).toString());
+        final ResourceLocation resLoc = getKey(resultItem);
+        if (resLoc == null) {
+            Wunderreich.LOGGER.info("Ignoring Stonecutter-Recipe for " + this.ID + " due to missing result item.");
+            return null;
+        }
+        json.addProperty("result", resLoc.toString());
         json.addProperty("count", count);
 
         //System.out.println(json);
