@@ -4,8 +4,10 @@ import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.utils.*;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -18,7 +20,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
-    //EnderChestBlockEntity
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
@@ -112,4 +113,5 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
     }
+
 }

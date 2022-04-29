@@ -22,6 +22,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
     public static net.minecraft.client.resources.model.Material WUNDER_KISTE_LOCATION = chestMaterial("wunder_kiste");
+    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_LOCATION = chestMaterial("wunder_kiste_bw");
 
     private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
         return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET,

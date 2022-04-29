@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.registries;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.items.WunderKisteItem;
 
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
@@ -49,10 +50,14 @@ public class CreativeTabs {
     static {
         TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.ID("blocks"))
                                            .icon(() -> new ItemStack(getBlockIcon()))
-                                           .appendItems(stacks -> stacks.addAll(WunderreichBlocks.getAllBlocks()
-                                                                                                 .stream()
-                                                                                                 .map(ItemStack::new)
-                                                                                                 .collect(Collectors.toList())))
+                                           .appendItems(stacks -> {
+                                               stacks.addAll(WunderreichBlocks.getAllBlocks()
+                                                                              .stream()
+                                                                              .filter(block -> block != WunderreichBlocks.WUNDER_KISTE)
+                                                                              .map(ItemStack::new)
+                                                                              .collect(Collectors.toList()));
+                                               WunderKisteItem.addAllVariants(stacks);
+                                           })
                                            .build();
 
 

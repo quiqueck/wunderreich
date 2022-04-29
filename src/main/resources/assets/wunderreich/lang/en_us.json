@@ -99,5 +99,22 @@
   "advancements.wunderreich.whisperer.title": "An ominous Whisper",
   "advancements.wunderreich.whisperer.description": "Imprint your enchantment secrets on a blank whisper.",
   "advancements.wunderreich.used_trowel.title": "Do the Shuffle",
-  "advancements.wunderreich.used_trowel.description": "Use a Trowel to build a randomized wall from the Blocks in your Hotbar."
+  "advancements.wunderreich.used_trowel.description": "Use a Trowel to build a randomized wall from the Blocks in your Hotbar.",
+  "wunderreich.wunderkiste.domain.HoverText": "Domain: %s",
+  "wunderreich.domain.white":"white",
+  "wunderreich.domain.orange":"orange",
+  "wunderreich.domain.magenta":"magenta",
+  "wunderreich.domain.light_blue":"light blue",
+  "wunderreich.domain.yellow":"yellow",
+  "wunderreich.domain.lime":"lime",
+  "wunderreich.domain.pink":"pink",
+  "wunderreich.domain.gray":"gray",
+  "wunderreich.domain.light_gray":"light gray",
+  "wunderreich.domain.cyan":"cyan",
+  "wunderreich.domain.purple":"purple",
+  "wunderreich.domain.blue":"blue",
+  "wunderreich.domain.brown":"brown",
+  "wunderreich.domain.green":"green",
+  "wunderreich.domain.red":"red",
+  "wunderreich.domain.black":"black"
 }

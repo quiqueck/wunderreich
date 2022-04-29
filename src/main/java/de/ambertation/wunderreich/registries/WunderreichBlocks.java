@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.registries;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.items.WunderKisteItem;
 
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
@@ -25,7 +26,7 @@ import java.util.function.Function;
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(64);
 
-    public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", null, bb -> new WunderKisteBlock());
+    public static final Block WUNDER_KISTE = registerBlock("wunder_kiste", null, bb -> new WunderKisteBlock(), bl -> new WunderKisteItem(bl));
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter",
                                                                 null,
                                                                 bb -> new WhisperImprinter());
@@ -277,6 +278,10 @@ public class WunderreichBlocks {
     }
 
     private static Block registerBlock(String name, Block baseBlock, Function<Block, Block> creator) {
+    return registerBlock(name, baseBlock, creator, block->new BlockItem(block, WunderreichItems.makeItemSettings()));
+    }
+
+    private static Block registerBlock(String name, Block baseBlock, Function<Block, Block> creator,  Function<Block, BlockItem> itemCreator) {
         if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
             final Block block = creator.apply(baseBlock);
             Configs.BLOCK_CONFIG.newBooleanFor(name, block);
@@ -292,7 +297,7 @@ public class WunderreichBlocks {
             Registry.register(Registry.BLOCK, id, block);
 
 
-            BlockItem item = new BlockItem(block, WunderreichItems.makeItemSettings());
+            BlockItem item = itemCreator.apply(block);
             if (item != Items.AIR) {
                 Registry.register(Registry.ITEM, id, item);
                 WunderreichItems.processItem(id, item);
