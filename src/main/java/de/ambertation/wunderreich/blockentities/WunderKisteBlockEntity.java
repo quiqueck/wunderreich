@@ -18,31 +18,30 @@ import net.minecraft.world.level.block.state.BlockState;
 
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
-    //EnderChestBlockEntity
     private final ChestLidController chestLidController = new ChestLidController();
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
             //System.out.println("Open " + blockPos.getZ());
             level.playSound(null,
-                            (double) blockPos.getX() + 0.5D,
-                            (double) blockPos.getY() + 0.5D,
-                            (double) blockPos.getZ() + 0.5D,
-                            SoundEvents.ENDER_CHEST_OPEN,
-                            SoundSource.BLOCKS,
-                            0.5F,
-                            level.random.nextFloat() * 0.1F + 0.9F);
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_OPEN,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
             //System.out.println("Close " + blockPos.getZ());
             level.playSound(null,
-                            (double) blockPos.getX() + 0.5D,
-                            (double) blockPos.getY() + 0.5D,
-                            (double) blockPos.getZ() + 0.5D,
-                            SoundEvents.ENDER_CHEST_CLOSE,
-                            SoundSource.BLOCKS,
-                            0.5F,
-                            level.random.nextFloat() * 0.1F + 0.9F);
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_CLOSE,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
@@ -94,8 +93,8 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             return false;
         } else {
             return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D,
-                                          (double) this.worldPosition.getY() + 0.5D,
-                                          (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
+                    (double) this.worldPosition.getY() + 0.5D,
+                    (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
         }
     }
 
@@ -112,4 +111,5 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
     }
+
 }

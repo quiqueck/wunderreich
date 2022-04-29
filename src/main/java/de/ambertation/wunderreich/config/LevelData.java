@@ -78,8 +78,8 @@ public class LevelData {
                 loadedRoot = NbtIo.readCompressed(dataFile);
             } catch (IOException e) {
                 Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
-                                        dataFile.toString(),
-                                        e);
+                        dataFile.toString(),
+                        e);
                 dataFile = getDataFile("_old");
                 try {
                     loadedRoot = NbtIo.readCompressed(dataFile);
@@ -134,7 +134,7 @@ public class LevelData {
         if (!root.contains(WUNDERKISTE_TAG_NAME)) {
             wunderkiste = new CompoundTag();
 
-            //this is the initial file format, convert it to the new one
+            //we found the initial file format => convert it to the new one
             if (root.contains(OLD_GLOBAL_TAG_NAME)) {
                 wunderkiste.put(WunderKisteBlock.DEFAULT_DOMAIN.toString(), root.getCompound(OLD_GLOBAL_TAG_NAME));
                 root.remove(OLD_GLOBAL_TAG_NAME);
@@ -152,11 +152,6 @@ public class LevelData {
             wunderkiste.put(domain, global);
             return global;
         }
-    }
-
-    @Deprecated(forRemoval = true)
-    public CompoundTag getGlobalInventory() {
-        return getWunderkisteInventory(OLD_GLOBAL_TAG_NAME);
     }
 
     private void unlock(String levelID, LevelStorageAccess levelStorageAccess) {

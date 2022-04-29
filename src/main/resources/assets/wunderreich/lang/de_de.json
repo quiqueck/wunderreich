@@ -99,5 +99,22 @@
   "advancements.wunderreich.whisperer.title": "Ein ominöses Flüstern",
   "advancements.wunderreich.whisperer.description": "Präge deine Verzauberungsgeheimnisse auf einen leeren Flüstern.",
   "advancements.wunderreich.used_trowel.title": "Mische die Karten",
-  "advancements.wunderreich.used_trowel.description": "Benutze eine Kelle, um mit zufälligen Blöcken aus deiner Hotbar zu bauen."
+  "advancements.wunderreich.used_trowel.description": "Benutze eine Kelle, um mit zufälligen Blöcken aus deiner Hotbar zu bauen.",
+  "wunderreich.wunderkiste.domain.HoverText": "%s Gruppe",
+  "wunderreich.domain.white":"Weiße",
+  "wunderreich.domain.orange":"Orange",
+  "wunderreich.domain.magenta":"Magenta",
+  "wunderreich.domain.light_blue":"Hellblaue",
+  "wunderreich.domain.yellow":"Gelbe",
+  "wunderreich.domain.lime":"Hellgrüne",
+  "wunderreich.domain.pink":"Rosa",
+  "wunderreich.domain.gray":"Graue",
+  "wunderreich.domain.light_gray":"Hellgraue",
+  "wunderreich.domain.cyan":"Türkise",
+  "wunderreich.domain.purple":"Violette",
+  "wunderreich.domain.blue":"Blaue",
+  "wunderreich.domain.brown":"Braune",
+  "wunderreich.domain.green":"Grüne",
+  "wunderreich.domain.red":"Rote",
+  "wunderreich.domain.black":"Schwarze"
 }
