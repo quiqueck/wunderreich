@@ -62,7 +62,10 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import com.google.common.collect.Maps;
+
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,7 +82,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
     public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
-    private static boolean hasAnyOpenInstance = false;
+    private static Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -122,18 +125,20 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
         if (!Configs.MAIN.wunderkisteIsRedstoneEnabled()) return;
 
-        boolean[] anyOpen = {false};
+
         if (container != null) {
             //check if any box was opened
             if (withOpenState) {
+                for (WunderKisteDomain d : WunderKisteDomain.values()) hasAnyOpenInstance.put(d, false);
+
                 liveBlocks.forEach((liveBlock) -> {
                     BlockEntity be = liveBlock.level.getBlockEntity(liveBlock.pos);
                     if (be instanceof WunderKisteBlockEntity) {
                         WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
-                        anyOpen[0] |= entity.isOpen();
+                        WunderKisteDomain d = WunderKisteServerExtension.getDomain(entity.getBlockState());
+                        hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.get(d));
                     }
                 });
-                hasAnyOpenInstance = anyOpen[0];
             }
 
             //send update message
@@ -378,8 +383,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        //Direction facing = blockState.getValue(FACING);
-        return /*direction==facing &&*/ hasAnyOpenInstance && Configs.MAIN.wunderkisteRedstoneSignal.get() ? 15 : 0;
+        if (!Configs.MAIN.wunderkisteRedstoneSignal.get()) return 0;
+        final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
+        return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
     }
 
 //	@Override
