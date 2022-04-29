@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
-    public final static String WUNDERKISTE_CATEGORY = "features.wunderkiste";
+    public final static String WUNDERKISTE_CATEGORY = "wunderkiste";
     public final static String WHIPSER_CATEGORY = "whispers";
 
     public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
@@ -42,6 +42,10 @@ public class MainConfig extends ConfigFile {
                                                                            "enableAnalogRedstoneOutput",
                                                                            true);
 
+    public final BooleanValue wunderkisteAllowMultiple = new BooleanValue(WUNDERKISTE_CATEGORY,
+                                                                          "wunderkisteAllowMultiple",
+                                                                          true);
+
     public final IntValue whisperDurability = new IntValue(WHIPSER_CATEGORY, "durability", 20);
     public final IntValue whisperTrainedDurability = new IntValue(WHIPSER_CATEGORY, "trainedDurability", 40);
     public final FloatValue whisperMinXPMultiplier = new FloatValue(WHIPSER_CATEGORY, "minXPMultiplier", 0.75f);
@@ -51,6 +55,7 @@ public class MainConfig extends ConfigFile {
         super("main");
         wunderkisteRedstoneSignal.hideInUI();
         wunderkisteRedstoneAnalog.hideInUI();
+        wunderkisteAllowMultiple.hideInUI();
     }
 
     public boolean allowLibrarianSelection() {
