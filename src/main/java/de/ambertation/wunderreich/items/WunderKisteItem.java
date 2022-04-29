@@ -41,8 +41,11 @@ public class WunderKisteItem extends BlockItem {
 
     public static ItemStack setDomain(ItemStack itemStack, WunderKisteDomain domain) {
         CompoundTag tag = new CompoundTag();
-        tag.putString(WunderKisteBlock.DOMAIN.getName(), domain.toString());
-        itemStack.addTagElement(BlockItem.BLOCK_STATE_TAG, tag);
+
+        if (!WunderKisteBlock.DEFAULT_DOMAIN.equals(domain)) {
+            tag.putString(WunderKisteBlock.DOMAIN.getName(), domain.toString());
+            itemStack.addTagElement(BlockItem.BLOCK_STATE_TAG, tag);
+        }
 
         return itemStack;
     }

@@ -9,10 +9,7 @@ import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.loot.LootTableJsonBuilder;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
-import de.ambertation.wunderreich.registries.CreativeTabs;
-import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
-import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
@@ -23,6 +20,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
@@ -296,8 +294,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                         if (!player.getAbilities().instabuild) {
                             tool.shrink(1);
                         }
-                    } else {
+                    }
 
+                    if(player instanceof ServerPlayer sp) {
+                        WunderreichAdvancements.COLOR_WUNDERKISTE.trigger(sp);
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
                 } else {
@@ -325,7 +325,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                     CONTAINER_TITLE,
                                     WunderKisteItem.getDomainComponent(domain)))
                     );
-                    //player.awardStat(Stats.OPEN_ENDERCHEST);
+
+                    if(player instanceof ServerPlayer sp) {
+                        WunderreichAdvancements.OPEN_WUNDERKISTE.trigger(sp);
+                    }
+
                     PiglinAi.angerNearbyPiglins(player, true);
                     return InteractionResult.CONSUME;
                 }
