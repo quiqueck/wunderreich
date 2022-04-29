@@ -3,12 +3,14 @@ package de.ambertation.wunderreich.network;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock.LiveBlock;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.state.BlockState;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
@@ -50,7 +52,16 @@ public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRem
 
     private static void addedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        Wunderreich.LOGGER.info("Adding WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
+        final BlockState state = level.getBlockState(pos);
+        Wunderreich.LOGGER.info(
+                "Adding WunderKiste at " +
+                        pos +
+                        " " +
+                        WunderKisteBlock.liveBlocks.contains(lb) +
+                        " (" +
+                        WunderKisteServerExtension.getDomain(state) +
+                        ")"
+                               );
         WunderKisteBlock.liveBlocks.add(lb);
         WunderKisteBlock.updateNeighbours(level, pos);
     }

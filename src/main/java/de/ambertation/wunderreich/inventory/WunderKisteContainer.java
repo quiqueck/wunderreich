@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.inventory;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -16,41 +17,17 @@ import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteContainer extends SimpleContainer implements WorldlyContainer {
     private static final int[] slots = {
-            0,
-            1,
-            2,
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17,
-            18,
-            19,
-            20,
-            21,
-            22,
-            23,
-            24,
-            25,
-            26
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
     };
+    public final WunderKisteDomain domain;
 
-    public WunderKisteContainer() {
+    public WunderKisteContainer(WunderKisteDomain domain) {
         super(slots.length);
+        this.domain = domain;
     }
 
     public void load() {
-        CompoundTag global = LevelData.getInstance().getGlobalInventory();
+        CompoundTag global = LevelData.getInstance().getWunderkisteInventory(domain);
         ListTag items;
         if (!global.contains("items")) {
             items = new ListTag();
@@ -62,7 +39,7 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
     }
 
     public void save() {
-        CompoundTag global = LevelData.getInstance().getGlobalInventory();
+        CompoundTag global = LevelData.getInstance().getWunderkisteInventory(domain);
         global.put("items", createTag());
         LevelData.getInstance().saveLevelConfig();
     }
@@ -139,4 +116,6 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
     public boolean canTakeItemThroughFace(int i, ItemStack itemStack, Direction direction) {
         return direction == Direction.DOWN;
     }
+
+
 }

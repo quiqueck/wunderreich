@@ -1,9 +1,8 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.LevelData;
-import de.ambertation.wunderreich.interfaces.WunderKisteContainerProvider;
-import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.server.MinecraftServer;
@@ -25,18 +24,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.net.Proxy;
 
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin implements WunderKisteContainerProvider {
-    private WunderKisteContainer wunderKisteContainer;
+public abstract class MinecraftServerMixin implements WunderKisteExtensionProvider {
+    private WunderKisteServerExtension wunderkiste = new WunderKisteServerExtension();
 
-    public WunderKisteContainer getWunderKisteContainer() {
-        return wunderKisteContainer;
+    public WunderKisteServerExtension getWunderKisteExtension() {
+        return wunderkiste;
     }
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     public void wunderreich_stop(CallbackInfo ci) {
-        System.out.println("Unloading Cache for Box of Eir");
-        //Make sure the levels can unload when the server closes
-        WunderKisteBlock.liveBlocks.clear();
+        if (wunderkiste != null) wunderkiste.onCloseServer();
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
@@ -53,15 +50,11 @@ public abstract class MinecraftServerMixin implements WunderKisteContainerProvid
                                  GameProfileCache gameProfileCache,
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
-        LevelData.getInstance().loadNewLevel(levelStorageAccess);
 
-        //we start a new world, so clear any old block
-        WunderKisteBlock.liveBlocks.clear();
-        wunderKisteContainer = new WunderKisteContainer();
-        wunderKisteContainer.load();
-        wunderKisteContainer.addListener((container) -> {
-            WunderKisteBlock.updateAllBoxes((MinecraftServer) (Object) this, false, true);
-        });
+        LevelData.getInstance().loadNewLevel(levelStorageAccess);
+        if (wunderkiste != null) {
+            wunderkiste.onStartServer();
+        }
     }
 
 }
