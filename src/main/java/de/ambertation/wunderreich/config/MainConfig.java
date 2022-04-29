@@ -58,4 +58,8 @@ public class MainConfig extends ConfigFile {
                 && Configs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER)
                 && Configs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER);
     }
+
+    public boolean wunderkisteIsRedstoneEnabled() {
+        return wunderkisteRedstoneSignal.get() || wunderkisteRedstoneAnalog.get();
+    }
 }

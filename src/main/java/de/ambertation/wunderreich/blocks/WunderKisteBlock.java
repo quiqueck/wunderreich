@@ -93,6 +93,8 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
+        if (!Configs.MAIN.wunderkisteIsRedstoneEnabled()) return;
+        
         boolean[] anyOpen = {false};
         if (container != null) {
             //check if any box was opened
