@@ -1,6 +1,8 @@
 package de.ambertation.wunderreich.config;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -20,6 +22,8 @@ import org.jetbrains.annotations.Nullable;
 
 public class LevelData {
     public final static String DATA_FOLDER = "data";
+    private static final String WUNDERKISTE_TAG_NAME = "wunderkiste";
+    private static final String OLD_GLOBAL_TAG_NAME = "global";
     private static LevelData INSTANCE;
 
     public static LevelData getInstance() {
@@ -116,20 +120,43 @@ public class LevelData {
         return root;
     }
 
-    public CompoundTag getGlobalInventory() {
-        //TODO: remove!!!
+    public CompoundTag getWunderkisteInventory(WunderKisteDomain domain) {
+        return getWunderkisteInventory(domain.toString());
+    }
+
+    private CompoundTag getWunderkisteInventory(String domain) {
         if (root == null) {
             Wunderreich.LOGGER.error("Accessed global Inventory before level load.");
             return new CompoundTag();
         }
 
-        if (root.contains("global", Tag.TAG_COMPOUND)) {
-            return root.getCompound("global");
+        CompoundTag wunderkiste;
+        if (!root.contains(WUNDERKISTE_TAG_NAME)) {
+            wunderkiste = new CompoundTag();
+
+            //this is the initial file format, convert it to the new one
+            if (root.contains(OLD_GLOBAL_TAG_NAME)) {
+                wunderkiste.put(WunderKisteBlock.DEFAULT_DOMAIN.toString(), root.getCompound(OLD_GLOBAL_TAG_NAME));
+                root.remove(OLD_GLOBAL_TAG_NAME);
+            }
+
+            root.put(WUNDERKISTE_TAG_NAME, wunderkiste);
+        } else {
+            wunderkiste = root.getCompound(WUNDERKISTE_TAG_NAME);
+        }
+
+        if (wunderkiste.contains(domain, Tag.TAG_COMPOUND)) {
+            return wunderkiste.getCompound(domain);
         } else {
             CompoundTag global = new CompoundTag();
-            root.put("global", global);
+            wunderkiste.put(domain, global);
             return global;
         }
+    }
+
+    @Deprecated(forRemoval = true)
+    public CompoundTag getGlobalInventory() {
+        return getWunderkisteInventory(OLD_GLOBAL_TAG_NAME);
     }
 
     private void unlock(String levelID, LevelStorageAccess levelStorageAccess) {

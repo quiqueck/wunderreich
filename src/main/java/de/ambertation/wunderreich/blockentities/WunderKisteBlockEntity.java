@@ -47,7 +47,7 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
         protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
             level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
-            WunderKisteBlock.updateAllBoxes(level.getServer(), true, false);
+            WunderKisteBlock.updateAllBoxes(blockState, level.getServer(), true, false);
         }
 
         protected boolean isOwnContainer(Player player) {

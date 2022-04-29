@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.*;
@@ -9,8 +10,9 @@ import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
+
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
 import net.minecraft.core.BlockPos;
@@ -27,6 +29,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
@@ -42,20 +45,28 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.Nullable;
 
-public class WunderKisteBlock extends AbstractChestBlock implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
+public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
+    public static final EnumProperty<WunderKisteDomain> DOMAIN_WUNDERKISTE;
+    public static final EnumProperty<WunderKisteDomain> DOMAIN;
+    public static final WunderKisteDomain DEFAULT_DOMAIN;
+
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
@@ -68,31 +79,43 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
         WATERLOGGED = BlockStateProperties.WATERLOGGED;
         SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
         CONTAINER_TITLE = Component.translatable("container.wunderreich.wunder_kiste");
+        DEFAULT_DOMAIN = WunderKisteDomain.LIGHT_BLUE;
+        DOMAIN_WUNDERKISTE = EnumProperty.create("domain", WunderKisteDomain.class);
+        DOMAIN = DOMAIN_WUNDERKISTE;
     }
-
-    EnderChestBlock chestBlock;
 
     public WunderKisteBlock() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                        .luminance(7)
-                        .requiresTool()
-                        .strength(12.5F, 800.0F)
-                , () -> {
-                    return WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE;
-                });
-        this.registerDefaultState(this.stateDefinition.any().setValue(FACING,
-                        Direction.NORTH)
-                .setValue(WATERLOGGED, false));
+                               .luminance(7)
+                               .requiresTool()
+                               .strength(12.5F, 800.0F)
+                , () -> WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE);
+        this.registerDefaultState(
+                this.stateDefinition
+                        .any()
+                        .setValue(FACING, Direction.NORTH)
+                        .setValue(WATERLOGGED, false)
+                        .setValue(DOMAIN, DEFAULT_DOMAIN)
+        );
     }
 
-    public static void updateAllBoxes(MinecraftServer server, boolean withOpenState, boolean withFillrate) {
-        WunderKisteContainer container = getContainer(server);
+    public static void updateAllBoxes(BlockState state,
+                                      MinecraftServer server,
+                                      boolean withOpenState,
+                                      boolean withFillrate) {
+        WunderKisteContainer container = getContainer(state, server);
         WunderKisteBlock.updateAllBoxes(container, withOpenState, withFillrate);
+    }
+
+    public static void updateAllBoxes(Container container, boolean withOpenState, boolean withFillrate) {
+        WunderKisteContainer c = null;
+        if (container instanceof WunderKisteContainer wc) c = wc;
+        updateAllBoxes(c, withOpenState, withFillrate);
     }
 
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
         if (!Configs.MAIN.wunderkisteIsRedstoneEnabled()) return;
-        
+
         boolean[] anyOpen = {false};
         if (container != null) {
             //check if any box was opened
@@ -130,13 +153,13 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
         level.updateNeighborsAt(pos.relative(facing), box);
     }
 
-    public static WunderKisteContainer getContainer(Level level) {
-        return level != null ? getContainer(level.getServer()) : null;
+    public static WunderKisteContainer getContainer(BlockState state, Level level) {
+        return level != null ? getContainer(state, level.getServer()) : null;
     }
 
-    public static WunderKisteContainer getContainer(MinecraftServer server) {
-        if (server != null && server instanceof WunderKisteContainerProvider) {
-            return ((WunderKisteContainerProvider) server).getWunderKisteContainer();
+    public static WunderKisteContainer getContainer(BlockState state, MinecraftServer server) {
+        if (server != null && server instanceof WunderKisteExtensionProvider extWunderkiste) {
+            return extWunderkiste.getWunderKisteExtension().getContainer(state);
         }
         return null;
     }
@@ -161,10 +184,10 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
 
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         FluidState fluidState = blockPlaceContext.getLevel()
-                .getFluidState(blockPlaceContext.getClickedPos());
+                                                 .getFluidState(blockPlaceContext.getClickedPos());
         return this.defaultBlockState()
-                .setValue(FACING, blockPlaceContext.getHorizontalDirection()
-                        .getOpposite()).setValue(WATERLOGGED,
+                   .setValue(FACING, blockPlaceContext.getHorizontalDirection()
+                                                      .getOpposite()).setValue(WATERLOGGED,
                         fluidState.getType() == Fluids.WATER);
     }
 
@@ -177,7 +200,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, WATERLOGGED);
+        builder.add(FACING, WATERLOGGED, DOMAIN);
     }
 
     public FluidState getFluidState(BlockState blockState) {
@@ -222,6 +245,13 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                 WunderKisteBlockEntity::lidAnimateTick) : null;
     }
 
+    private void dispatchParticles(Level level, BlockPos blockPos, WunderKisteDomain domain) {
+        int red = (domain.color & 0xFF) >> 16;
+        int green = (domain.color & 0xFF) >> 8;
+        int blue = domain.color & 0xFF;
+        level.levelEvent(LevelEvent.PARTICLES_SPELL_POTION_SPLASH, blockPos, (blue << 16) & (green << 8) & (red));
+    }
+
     @Override
     public InteractionResult use(BlockState blockState,
                                  Level level,
@@ -229,26 +259,61 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
                                  Player player,
                                  InteractionHand interactionHand,
                                  BlockHitResult blockHitResult) {
-        final WunderKisteContainer wunderKisteContainer = getContainer(level);
+        final WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
+
         if (wunderKisteContainer != null && blockEntity instanceof WunderKisteBlockEntity) {
-            BlockPos blockPos2 = blockPos.above();
-            if (level.getBlockState(blockPos2)
-                    .isRedstoneConductor(level, blockPos2)) {
-                return InteractionResult.sidedSuccess(level.isClientSide);
-            } else if (level.isClientSide) {
-                return InteractionResult.SUCCESS;
+            final ItemStack tool = player.getItemInHand(interactionHand);
+            WunderKisteDomain targetDomain = null;
+            if (Configs.MAIN.wunderkisteAllowMultiple.get()) {
+                for (WunderKisteDomain dom : WunderKisteDomain.values()) {
+                    if (tool.is(dom.triggerItem)) {
+                        targetDomain = dom;
+                        break;
+                    }
+                }
+            }
+
+
+            if (targetDomain != null) {
+                Wunderreich.LOGGER.info("Wants to change domain to " + targetDomain);
+
+                final BlockState state = level.getBlockState(blockPos);
+                final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(state);
+                if (!domain.equals(targetDomain)) {
+                    if (level instanceof ServerLevel server) {
+                        Wunderreich.LOGGER.info("Will change domain to " + targetDomain);
+                        server.setBlock(blockPos, state.setValue(DOMAIN, targetDomain), 3);
+                        dispatchParticles(level, blockPos, domain);
+                        tool.shrink(1);
+                    } else {
+
+                    }
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                } else {
+                    return InteractionResult.PASS;
+                }
             } else {
-                WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) blockEntity;
+                BlockPos blockPos2 = blockPos.above();
+                if (level.getBlockState(blockPos2)
+                         .isRedstoneConductor(level, blockPos2)) {
+                    return InteractionResult.sidedSuccess(level.isClientSide);
+                } else if (level.isClientSide) {
+                    return InteractionResult.SUCCESS;
+                } else {
+                    WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) blockEntity;
 
-                ((ActiveChestStorage) player).setActiveWunderKiste(wunderKisteBlockEntity);
+                    ((ActiveChestStorage) player).setActiveWunderKiste(wunderKisteBlockEntity);
 
-                player.openMenu(new SimpleMenuProvider((i, inventory, playerx) -> {
-                    return ChestMenu.threeRows(i, inventory, wunderKisteContainer);
-                }, CONTAINER_TITLE));
-                //player.awardStat(Stats.OPEN_ENDERCHEST);
-                PiglinAi.angerNearbyPiglins(player, true);
-                return InteractionResult.CONSUME;
+                    player.openMenu(new SimpleMenuProvider((containerID, inventory, playerx) -> ChestMenu.threeRows(
+                            containerID,
+                            inventory,
+                            wunderKisteContainer),
+                            CONTAINER_TITLE));
+                    //player.awardStat(Stats.OPEN_ENDERCHEST);
+                    PiglinAi.angerNearbyPiglins(player, true);
+                    return InteractionResult.CONSUME;
+                }
             }
         } else {
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -289,7 +354,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
         if (Configs.MAIN.wunderkisteRedstoneAnalog.get()) {
-            WunderKisteContainer wunderKisteContainer = getContainer(level);
+            WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
             if (wunderKisteContainer != null) {
                 return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
             }
@@ -331,7 +396,7 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
 
     @Override
     public WorldlyContainer getContainer(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos) {
-        return getContainer(levelAccessor.getServer());
+        return getContainer(blockState, levelAccessor.getServer());
     }
 
     @Override
@@ -378,20 +443,21 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     @Override
     public LootTableJsonBuilder buildLootTable() {
         LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
-                .startPool(1.0, 0.0, poolBuilder -> poolBuilder
-                        .startAlternatives(altBuilder -> altBuilder
-                                .startSelfEntry(builder -> builder
-                                        .silkTouch()
-                                )
-                                .startItemEntry(Items.NETHERITE_SCRAP,
-                                        builder -> builder
-                                                .setCount(4, false)
-                                                .explosionDecay()
-                                )
-                        )
-                );
+                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
+                                                             .startAlternatives(altBuilder -> altBuilder
+                                                                     .startSelfEntry(builder -> builder
+                                                                             .silkTouch()
+                                                                     )
+                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
+                                                                             builder -> builder
+                                                                                     .setCount(4, false)
+                                                                                     .explosionDecay()
+                                                                     )
+                                                             )
+                                                     );
 
         return b;
 
     }
+
 }
