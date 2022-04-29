@@ -73,6 +73,8 @@
   "title.config.wunderreich.main.features.cyclingNeedsWhisperer": "Trade-ReRoll requires Whisperer",
   "title.config.wunderreich.main.features.allowBuilderTools": "Enable Builder Tools",
   "title.config.wunderreich.main.features.addSlabs": "Add Additional Slabs",
+  "title.config.wunderreich.main.features.wunderkiste.enableRedstoneSignal": "Wunderkiste - Redstone output",
+  "title.config.wunderreich.main.features.wunderkiste.enableAnalogRedstoneOutput": "Wunderkiste - Analog Redstone Output",
   "enchantment.type.ARMOR": "Armor Enchantment",
   "enchantment.type.ARMOR_FEET": "Foot-Armor Enchantment",
   "enchantment.type.ARMOR_LEGS": "Leg-Armor Enchantment",

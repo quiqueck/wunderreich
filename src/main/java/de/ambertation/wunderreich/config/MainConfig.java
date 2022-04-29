@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
+    public final static String WUNDERKISTE_CATEGORY = "features.wunderkiste";
 
     public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
                                                                          "doNotDespawnWithNameTag",
@@ -32,8 +33,18 @@ public class MainConfig extends ConfigFile {
                                                           true);
 
 
+    public final BooleanValue wunderkisteRedstoneSignal = new BooleanValue(WUNDERKISTE_CATEGORY,
+                                                                           "enableRedstoneSignal",
+                                                                           true);
+
+    public final BooleanValue wunderkisteRedstoneAnalog = new BooleanValue(WUNDERKISTE_CATEGORY,
+                                                                           "enableAnalogRedstoneOutput",
+                                                                           true);
+
     public MainConfig() {
         super("main");
+        wunderkisteRedstoneSignal.hideInUI();
+        wunderkisteRedstoneAnalog.hideInUI();
     }
 
     public boolean allowLibrarianSelection() {
