@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.items;
 
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import net.minecraft.world.item.Item;
@@ -9,7 +10,7 @@ import net.minecraft.world.item.Rarity;
 public class VillagerWhisperer extends Item {
 
     public VillagerWhisperer() {
-        this(20);
+        this(Configs.MAIN.whisperDurability.get());
     }
 
     public VillagerWhisperer(int durability) {
@@ -17,7 +18,7 @@ public class VillagerWhisperer extends Item {
                       .makeItemSettings()
                       .rarity(Rarity.RARE)
                       .durability(durability)
-        );
+             );
     }
 
     @Override

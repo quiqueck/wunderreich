@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.items;
 
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
@@ -25,7 +26,7 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public final static String TAG_NAME = "WhisperedEnchantment";
 
     public TrainedVillagerWhisperer() {
-        super(40);
+        super(Configs.MAIN.whisperTrainedDurability.get());
     }
 
     public static Enchantment findEnchantment(CompoundTag tag) {

@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.*;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.loot.LootTableJsonBuilder;
@@ -92,6 +93,8 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
     }
 
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
+        if (!Configs.MAIN.wunderkisteIsRedstoneEnabled()) return;
+        
         boolean[] anyOpen = {false};
         if (container != null) {
             //check if any box was opened
@@ -282,27 +285,29 @@ public class WunderKisteBlock extends AbstractChestBlock implements WorldlyConta
 
     @Override
     public boolean hasAnalogOutputSignal(BlockState blockState) {
-        return true;
+        return Configs.MAIN.wunderkisteRedstoneAnalog.get();
     }
 
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-        WunderKisteContainer wunderKisteContainer = getContainer(level);
-        if (wunderKisteContainer != null) {
-            return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
+        if (Configs.MAIN.wunderkisteRedstoneAnalog.get()) {
+            WunderKisteContainer wunderKisteContainer = getContainer(level);
+            if (wunderKisteContainer != null) {
+                return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
+            }
         }
         return 0;
     }
 
     @Override
     public boolean isSignalSource(BlockState blockState) {
-        return true;
+        return Configs.MAIN.wunderkisteRedstoneSignal.get();
     }
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        Direction facing = blockState.getValue(FACING);
-        return /*direction==facing &&*/ hasAnyOpenInstance ? 15 : 0;
+        //Direction facing = blockState.getValue(FACING);
+        return /*direction==facing &&*/ hasAnyOpenInstance && Configs.MAIN.wunderkisteRedstoneSignal.get() ? 15 : 0;
     }
 
 //	@Override
