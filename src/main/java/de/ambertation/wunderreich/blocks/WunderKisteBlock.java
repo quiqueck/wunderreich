@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.blocks;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
-import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.*;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
@@ -18,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -120,7 +120,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
-        if (!Configs.MAIN.wunderkisteIsRedstoneEnabled()) return;
+        if (!WunderreichRules.Wunderkiste.isRedstoneEnabled()) return;
 
 
         if (container != null) {
@@ -270,7 +270,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         if (wunderKisteContainer != null && blockEntity instanceof WunderKisteBlockEntity) {
             final ItemStack tool = player.getItemInHand(interactionHand);
             WunderKisteDomain targetDomain = null;
-            if (Configs.MAIN.wunderkisteAllowMultiple.get()) {
+            if (WunderreichRules.Wunderkiste.canColor()) {
                 for (WunderKisteDomain dom : WunderKisteDomain.values()) {
                     if (tool.is(dom.triggerItem)) {
                         targetDomain = dom;
@@ -292,11 +292,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                         dispatchParticles(level, blockPos, targetDomain);
 
                         if (!player.getAbilities().instabuild) {
-                            tool.shrink(1);
+                            int cost = WunderreichRules.Wunderkiste.recolorCost();
+                            if (cost > 0) tool.shrink(cost);
                         }
                     }
 
-                    if(player instanceof ServerPlayer sp) {
+                    if (player instanceof ServerPlayer sp) {
                         WunderreichAdvancements.COLOR_WUNDERKISTE.trigger(sp);
                     }
                     return InteractionResult.sidedSuccess(level.isClientSide);
@@ -317,16 +318,19 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
 
                     player.openMenu(new SimpleMenuProvider((containerID, inventory, playerx) ->
-                            ChestMenu.threeRows(
-                                    containerID,
-                                    inventory,
-                                    wunderKisteContainer),
-                            new TranslatableComponent("%s - %s",
-                                    CONTAINER_TITLE,
-                                    WunderKisteItem.getDomainComponent(domain)))
+                                    ChestMenu.threeRows(
+                                            containerID,
+                                            inventory,
+                                            wunderKisteContainer),
+                                    WunderreichRules.Wunderkiste.haveMultiple()
+                                            ? new TranslatableComponent("%s - %s",
+                                            CONTAINER_TITLE,
+                                            WunderKisteItem.getDomainComponent(domain))
+                                            : CONTAINER_TITLE
+                            )
                     );
 
-                    if(player instanceof ServerPlayer sp) {
+                    if (player instanceof ServerPlayer sp) {
                         WunderreichAdvancements.OPEN_WUNDERKISTE.trigger(sp);
                     }
 
@@ -367,12 +371,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public boolean hasAnalogOutputSignal(BlockState blockState) {
-        return Configs.MAIN.wunderkisteRedstoneAnalog.get();
+        return WunderreichRules.Wunderkiste.analogRedstoneOutput();
     }
 
     @Override
     public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
-        if (Configs.MAIN.wunderkisteRedstoneAnalog.get()) {
+        if (WunderreichRules.Wunderkiste.analogRedstoneOutput()) {
             WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
             if (wunderKisteContainer != null) {
                 return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
@@ -383,12 +387,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public boolean isSignalSource(BlockState blockState) {
-        return Configs.MAIN.wunderkisteRedstoneSignal.get();
+        return WunderreichRules.Wunderkiste.redstonePowerWhenOpened();
     }
 
     @Override
     public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        if (!Configs.MAIN.wunderkisteRedstoneSignal.get()) return 0;
+        if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
         final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
         return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
     }
@@ -487,7 +491,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                                      );
 
         return b;
-
     }
 
     @Override

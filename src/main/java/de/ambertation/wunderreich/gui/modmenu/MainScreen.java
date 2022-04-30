@@ -91,15 +91,15 @@ public class MainScreen extends Screen {
 
     protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option) {
         EventCheckBox cb = new EventCheckBox(state.left + (option.getIsValidSupplier() != null ? 12 : 0),
-                                             state.top,
-                                             this.width - 2 * state.left,
-                                             20,
-                                             getComponent(config, option, "title"),
-                                             option.getRaw(),
-                                             (st) -> {
-                                                 option.set(st);
-                                                 updateEnabledState();
-                                             }
+                state.top,
+                this.width - 2 * state.left,
+                20,
+                getComponent(config, option, "title"),
+                option.getRaw(),
+                (st) -> {
+                    option.set(st);
+                    updateEnabledState();
+                }
         );
         if (option.getIsValidSupplier() != null) {
             dependentWidgets.put(cb, option.getIsValidSupplier());
@@ -122,21 +122,21 @@ public class MainScreen extends Screen {
         Configs.MAIN
                 .getAllValues()
                 .stream()
-                .filter(o -> !o.isHiddenInUI())
+                .filter(o -> !o.isDeprecated() && !o.isHiddenInUI())
                 .forEach(o -> addRow(state, Configs.MAIN, o));
 
         state.top += 15;
 
         final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
         Button b = new Button(this.width - width - state.left,
-                              this.height - BUTTON_HEIGHT - 20,
-                              width,
-                              BUTTON_HEIGHT,
-                              CommonComponents.GUI_DONE,
-                              (button) -> {
-                                  Configs.MAIN.save();
-                                  onClose();
-                              });
+                this.height - BUTTON_HEIGHT - 20,
+                width,
+                BUTTON_HEIGHT,
+                CommonComponents.GUI_DONE,
+                (button) -> {
+                    Configs.MAIN.save();
+                    onClose();
+                });
         this.addRenderableWidget(b);
     }
 

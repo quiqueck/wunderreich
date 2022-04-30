@@ -2,8 +2,8 @@ package de.ambertation.wunderreich.utils;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -15,9 +15,8 @@ public class WunderKisteServerExtension {
     private final Map<WunderKisteDomain, WunderKisteContainer> containers = Maps.newHashMap();
 
     public static WunderKisteDomain getDomain(BlockState state) {
-        if (Configs.MAIN.wunderkisteAllowMultiple.get() && state.hasProperty(WunderKisteBlock.DOMAIN))
-            return state.getValue(
-                    WunderKisteBlock.DOMAIN);
+        if (WunderreichRules.Wunderkiste.colorsOrDomains() && state.hasProperty(WunderKisteBlock.DOMAIN))
+            return state.getValue(WunderKisteBlock.DOMAIN);
         return WunderKisteBlock.DEFAULT_DOMAIN;
     }
 
@@ -26,7 +25,12 @@ public class WunderKisteServerExtension {
     }
 
     public WunderKisteContainer getContainer(WunderKisteDomain domain) {
-        return containers.computeIfAbsent(domain, this::loadOrCreate);
+        return containers.computeIfAbsent(
+                WunderreichRules.Wunderkiste.haveMultiple()
+                        ? domain
+                        : WunderKisteBlock.DEFAULT_DOMAIN,
+                this::loadOrCreate
+        );
     }
 
     private WunderKisteContainer loadOrCreate(WunderKisteDomain wunderKisteDomain) {
@@ -53,5 +57,6 @@ public class WunderKisteServerExtension {
         Wunderreich.LOGGER.info("Initializing Cache for Wunderkiste");
         WunderKisteBlock.liveBlocks.clear();
         containers.clear();
+
     }
 }

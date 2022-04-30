@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.interfaces.IMerchantMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -39,7 +40,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
         if (!(o instanceof ClosestWhisperer)) return false;
         ClosestWhisperer that = (ClosestWhisperer) o;
         return Objects.equals(stack, that.stack) && Objects.equals(player,
-                                                                   that.player) && slot == that.slot;
+                that.player) && slot == that.slot;
     }
 
     @Override
@@ -59,7 +60,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
 
 public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
     public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
-                                                                                        new CycleTradesMessage());
+            new CycleTradesMessage());
 
     protected CycleTradesMessage() {
     }
@@ -159,7 +160,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
     }
 
     public static boolean canSelectTrades(Villager villager, boolean doLog) {
-        if (!Configs.MAIN.allowLibrarianSelection()) return false;
+        if (!WunderreichRules.Whispers.allowLibrarianSelection()) return false;
         if (villager == null || villager.getVillagerXp() > 0) return false;
 
         VillagerData villagerData = villager.getVillagerData();
@@ -185,18 +186,18 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 if (!enchantments.isEmpty()) {
                     ResourceLocation type = EnchantmentHelper.getEnchantmentId(enchantments.getCompound(0));
 
-                    final int duraCost = Configs.MAIN.cyclingNeedsWhisperer.get() ? 1 : 2;
+                    final int duraCost = WunderreichRules.Whispers.cyclingNeedsWhisperer() ? 1 : 2;
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
                         if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
                             whispererStack.stack().hurtAndBreak(duraCost,
-                                                                whispererStack.player(),
-                                                                player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                    whispererStack.player(),
+                                    player -> player.broadcastBreakEvent(whispererStack.slot()));
                             return true;
                         }
                     } else {
                         whispererStack.stack().hurtAndBreak(duraCost,
-                                                            whispererStack.player(),
-                                                            player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                whispererStack.player(),
+                                player -> player.broadcastBreakEvent(whispererStack.slot()));
                         return true;
                     }
                 } else {
@@ -214,7 +215,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         if (!(player.containerMenu instanceof MerchantMenu)) {
             return;
         }
-        if (!Configs.MAIN.allowTradesCycling.get()) return;
+        if (!WunderreichRules.Whispers.allowTradesCycling()) return;
         MerchantMenu menu = (MerchantMenu) player.containerMenu;
 
         if (menu instanceof IMerchantMenu mmenu) {
@@ -223,14 +224,14 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 return;
             }
 
-            if (Configs.MAIN.cyclingNeedsWhisperer.get()) {
+            if (WunderreichRules.Whispers.cyclingNeedsWhisperer()) {
                 ItemStack whisp = containsWhisperer(player);
                 if (whisp == null) return;
                 whisp.hurtAndBreak(1,
-                                   player,
-                                   pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
-                                                                        ? InteractionHand.MAIN_HAND
-                                                                        : InteractionHand.OFF_HAND));
+                        player,
+                        pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
+                                ? InteractionHand.MAIN_HAND
+                                : InteractionHand.OFF_HAND));
             }
 
             villager.setOffers(null);
@@ -248,11 +249,11 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 //		}
 
             player.sendMerchantOffers(menu.containerId,
-                                      villager.getOffers(),
-                                      villager.getVillagerData().getLevel(),
-                                      villager.getVillagerXp(),
-                                      villager.showProgressBar(),
-                                      villager.canRestock());
+                    villager.getOffers(),
+                    villager.getVillagerData().getLevel(),
+                    villager.getVillagerXp(),
+                    villager.showProgressBar(),
+                    villager.canRestock());
         }
     }
 }

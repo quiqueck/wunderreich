@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.config;
 
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.utils.Version;
 
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -20,6 +21,8 @@ import org.jetbrains.annotations.Nullable;
 public class ConfigFile {
     private static final Gson JSON_BUILDER = new GsonBuilder().setPrettyPrinting()
                                                               .create();
+    public static final String MODIFY_VERSION = "modify_version";
+    public static final String CREATE_VERSION = "create_version";
 
     public record ConfigToken<T>(String path, String key, T defaultValue) {
         @Override
@@ -37,26 +40,42 @@ public class ConfigFile {
         public final ConfigToken<T> token;
 
         private boolean hiddenInUI = false;
+        private boolean deprecated = false;
 
         @Nullable
         protected Supplier<Boolean> isValidSupplier;
 
         public Value(String path, String key, T defaultValue) {
-            this(new ConfigToken(path, key, defaultValue));
+            this(new ConfigToken(path, key, defaultValue), false);
+        }
+
+        public Value(String path, String key, T defaultValue, boolean isDeprecated) {
+            this(new ConfigToken(path, key, defaultValue), isDeprecated);
         }
 
         public Value(ConfigToken token) {
+            this(token, false);
+        }
+
+        public Value(ConfigToken token, boolean isDeprecated) {
+            this.deprecated = isDeprecated; //make sure this is set before get, otherwise deprecated values will get added to the config!
+
             this.token = token;
             get(); //has the side effect of initializing the default value
             registerValue(this);
         }
 
-        public void hideInUI() {
+        public Value<T> hideInUI() {
             hiddenInUI = true;
+            return this;
         }
 
         public boolean isHiddenInUI() {
             return hiddenInUI;
+        }
+
+        public boolean isDeprecated() {
+            return deprecated;
         }
 
         @Nullable
@@ -65,9 +84,9 @@ public class ConfigFile {
         }
 
         public final T getRaw() {
-            JsonElement el = getValue(token);
+            JsonElement el = getValue(token, !deprecated);
             if (el == null) {
-                set(token.defaultValue);
+                if (!deprecated) set(token.defaultValue);
                 return token.defaultValue;
             }
             return convert(el);
@@ -77,12 +96,23 @@ public class ConfigFile {
             return getRaw();
         }
 
+        public void remove() {
+            removeValue(token);
+        }
+
+        public void migrate(Value<T> newConfig) {
+            newConfig.set(get());
+            remove();
+        }
+
         protected abstract T convert(@NotNull JsonElement el);
 
         @NotNull
         protected abstract JsonElement convert(T value);
 
         public void set(T value) {
+            if (deprecated) throw new IllegalStateException("'" + token.path() + "." +
+                    token.key + "' is deprecated and can no-longer be used");
             setValue(token, convert(value));
         }
 
@@ -117,6 +147,14 @@ public class ConfigFile {
             super(t);
         }
 
+        public IntValue(String path, String key, int defaultValue, boolean isDeprecated) {
+            super(path, key, defaultValue, isDeprecated);
+        }
+
+        protected IntValue(ConfigToken t, boolean isDeprecated) {
+            super(t, isDeprecated);
+        }
+
         @Override
         protected Integer convert(@NotNull JsonElement el) {
             return el.getAsInt();
@@ -125,6 +163,10 @@ public class ConfigFile {
         @Override
         protected @NotNull JsonElement convert(Integer value) {
             return new JsonPrimitive(value);
+        }
+
+        public IntValue hideInUI() {
+            return (IntValue) super.hideInUI();
         }
     }
 
@@ -137,6 +179,14 @@ public class ConfigFile {
             super(t);
         }
 
+        public FloatValue(String path, String key, float defaultValue, boolean isDeprecated) {
+            super(path, key, defaultValue, isDeprecated);
+        }
+
+        protected FloatValue(ConfigToken t, boolean isDeprecated) {
+            super(t, isDeprecated);
+        }
+
         @Override
         protected Float convert(@NotNull JsonElement el) {
             return el.getAsFloat();
@@ -145,6 +195,10 @@ public class ConfigFile {
         @Override
         protected @NotNull JsonElement convert(Float value) {
             return new JsonPrimitive(value);
+        }
+
+        public FloatValue hideInUI() {
+            return (FloatValue) super.hideInUI();
         }
     }
 
@@ -155,6 +209,14 @@ public class ConfigFile {
 
         protected BooleanValue(ConfigToken t) {
             super(t);
+        }
+
+        public BooleanValue(String path, String key, boolean defaultValue, boolean isDeprecated) {
+            super(path, key, defaultValue, isDeprecated);
+        }
+
+        protected BooleanValue(ConfigToken t, boolean isDeprecated) {
+            super(t, isDeprecated);
         }
 
         @Override
@@ -173,7 +235,7 @@ public class ConfigFile {
 
         public BooleanValue and(Supplier<Boolean> condition) {
             BooleanValue self = this;
-            BooleanValue res = new BooleanValue(token) {
+            BooleanValue res = new BooleanValue(token, isDeprecated()) {
                 @Override
                 public Boolean get() {
                     return condition.get() && self.get();
@@ -186,6 +248,31 @@ public class ConfigFile {
             };
             res.isValidSupplier = condition;
             return res;
+        }
+
+        public BooleanValue or(BooleanValue... condition) {
+            return or(() -> Arrays.stream(condition).map(c -> c.get()).reduce(true, (p, c) -> p || c));
+        }
+
+        public BooleanValue or(Supplier<Boolean> condition) {
+            BooleanValue self = this;
+            BooleanValue res = new BooleanValue(token, isDeprecated()) {
+                @Override
+                public Boolean get() {
+                    return condition.get() || self.get();
+                }
+
+                @Override
+                public void set(Boolean value) {
+                    self.set(value);
+                }
+            };
+            res.isValidSupplier = condition;
+            return res;
+        }
+
+        public BooleanValue hideInUI() {
+            return (BooleanValue) super.hideInUI();
         }
     }
 
@@ -222,23 +309,33 @@ public class ConfigFile {
         knownValues.add(v);
     }
 
-    private JsonElement getValue(ConfigToken t) {
-        JsonObject obj = getPathElement(t.path);
+    private JsonElement getValue(ConfigToken t, boolean addIfMissing) {
+        JsonObject obj = getPathElement(t.path, addIfMissing);
         if (!obj.has(t.key)) return null;
 
         return obj.get(t.key);
     }
 
     private void setValue(ConfigToken t, JsonElement value) {
-        if (!value.equals(getValue(t))) {
+        if (!value.equals(getValue(t, true))) {
             setModified();
         }
 
-        JsonObject obj = getPathElement(t.path);
+        JsonObject obj = getPathElement(t.path, true);
         obj.add(t.key, value);
     }
 
-    private JsonObject getPathElement(String path) {
+    private void removeValue(ConfigToken t) {
+        JsonObject o = getPathElement(t.path, false);
+        if (o.has(t.key)) {
+            Wunderreich.LOGGER.info("Removing Config " + t.path + "." + t.key);
+            o.remove(t.key);
+            setModified();
+        }
+    }
+
+
+    private JsonObject getPathElement(String path, boolean addIfMissing) {
         if (path == null || path.trim().equals("")) {
             return root;
         }
@@ -252,7 +349,9 @@ public class ConfigFile {
                 obj = obj.get(p).getAsJsonObject();
             } else {
                 JsonObject newObject = new JsonObject();
-                obj.add(p, newObject);
+                if (addIfMissing) {
+                    obj.add(p, newObject);
+                }
                 obj = newObject;
             }
         }
@@ -269,7 +368,7 @@ public class ConfigFile {
             }
         } else {
             this.root = new JsonObject();
-            this.root.add("create_version", new JsonPrimitive(Wunderreich.VERSION));
+            this.root.add(CREATE_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
         }
     }
 
@@ -281,7 +380,7 @@ public class ConfigFile {
         if (!modified && !force) return;
 
         try (FileWriter jsonWriter = new FileWriter(path)) {
-            this.root.add("modify_version", new JsonPrimitive(Wunderreich.VERSION));
+            this.root.add(MODIFY_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
             String string = JSON_BUILDER.toJson(root);
             jsonWriter.write(string);
             jsonWriter.flush();
@@ -289,5 +388,23 @@ public class ConfigFile {
         } catch (IOException ex) {
             Wunderreich.LOGGER.error("Unable to store Config File at '{}'.", path.toString(), ex);
         }
+    }
+
+    private String getVersionString(String name) {
+        JsonObject mod = getPathElement("", true);
+        if (mod == null) return "1.0.0";
+        JsonPrimitive p = mod.getAsJsonPrimitive(name);
+        if (p == null) return Wunderreich.VERSION.toString();
+        if (!p.isString()) return "1.0.0";
+
+        return p.getAsString();
+    }
+
+    public Version lastModifiedVersion() {
+        return new Version(getVersionString(MODIFY_VERSION));
+    }
+
+    public Version createdVersion() {
+        return new Version(getVersionString(CREATE_VERSION));
     }
 }
