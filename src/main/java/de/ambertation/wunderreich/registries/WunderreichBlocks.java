@@ -32,7 +32,7 @@ public class WunderreichBlocks {
             bl -> new WunderKisteItem(bl));
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter",
             null,
-            bb -> new WhisperImprinter());
+            bb -> new WhisperImprinter(), Configs.MAIN.enableWhispers.get());
 
     //Slabs
     public static final Block GRASS_SLAB = registerSlab("grass_slab",

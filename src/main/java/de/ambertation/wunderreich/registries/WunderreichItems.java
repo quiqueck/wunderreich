@@ -24,10 +24,10 @@ public class WunderreichItems {
 
     public static Item WHISPERER = registerItem("whisperer",
             new TrainedVillagerWhisperer(),
-            Configs.MAIN.allowImprintedWhispers.get());
+            Configs.MAIN.addImprintedWhispers.get());
     public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
             new VillagerWhisperer(),
-            Configs.MAIN.allowWhispers.get());
+            Configs.MAIN.addBlankWhispere.get());
 
     public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
             new BuildersTrowel(Tiers.IRON),

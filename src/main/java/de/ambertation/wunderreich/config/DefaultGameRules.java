@@ -40,13 +40,15 @@ public class DefaultGameRules extends ConfigFile {
             FEATURE_CATEGORY,
             "allowLibrarianSelection",
             true
-    ).and(allowTradesCycling).and(Configs.MAIN.allowImprintedWhispers);
+    ).and(allowTradesCycling).and(Configs.MAIN.addImprintedWhispers);
 
     public final BooleanValue cyclingNeedsWhisperer = new BooleanValue(
             FEATURE_CATEGORY,
             "cyclingNeedsWhisperer",
             true
-    ).and(allowTradesCycling).and(Configs.MAIN.allowWhispers.or(Configs.MAIN.allowImprintedWhispers));
+    )
+            .and(allowTradesCycling)
+            .and(() -> Configs.MAIN.addBlankWhispere.get() || Configs.MAIN.addImprintedWhispers.get());
 
     public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
             "doNotDespawnWithNameTag",
