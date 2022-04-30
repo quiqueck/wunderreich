@@ -67,16 +67,11 @@
   "itemGroup.wunderreich.items": "Wunderreich",
   "itemGroup.wunderreich.blocks": "Wunderreich",
   "title.wunderreich.modmenu.main": "Wunderreich - Einstellungen",
-  "title.config.wunderreich.main.features.doNotDespawnWithNameTag": "Benannte Monster in friedlich erhalten",
-  "title.config.wunderreich.main.features.allowTradesCycling": "Taste \"Handel neu auswürfeln\" für Dörfler ohne XP",
-  "title.config.wunderreich.main.features.allowLibrarianSelection": "Den ersten Handel von Bibliothekaren beeinflussen",
-  "title.config.wunderreich.main.features.cyclingNeedsWhisperer": "\"Handel neu auswürfeln\" nur mit Flüsterer",
+  "title.config.wunderreich.main.features.enableWhispers": "Flüstern erlauben",
+  "title.config.wunderreich.main.features.addBlankWhispere": "Leeren Flüsterer erzeugen",
+  "title.config.wunderreich.main.features.addImprintedWhispers": "Geprägte Flüsterer erzeugen",
   "title.config.wunderreich.main.features.allowBuilderTools": "Baumeister Werkzeuge erlauben",
   "title.config.wunderreich.main.features.addSlabs": "Zusätzliche Stufen",
-  "title.config.wunderreich.main.features.wunderkiste.enableRedstoneSignal": "Wunderkiste - Redstone Signal",
-  "title.config.wunderreich.main.features.wunderkiste.enableAnalogRedstoneOutput": "Wunderkiste - Analoge Redstone Ausgabe",
-  "title.config.wunderreich.main.whispers.durability": "Haltbarkeit Flüsterer",
-  "title.config.wunderreich.main.whispers.trainedDurability": "Haltbarkeit Gerägter Flüsterer",
   "enchantment.type.ARMOR": "Rüstungen",
   "enchantment.type.ARMOR_FEET": "Fußrüstungen",
   "enchantment.type.ARMOR_LEGS": "Beinrüstungen",
@@ -146,5 +141,7 @@
   "gamerule.wunderreichCyclingNeedsWhisperer": "Angebote Würfeln mit Flüsterer",
   "gamerule.wunderreichCyclingNeedsWhisperer.description": "Dörflern würfeln ihr Angebote nur neu, wenn der Spieler einen Flüsterer hält.",
   "gamerule.wunderreichDoNotDespawnWithNameTag": "Benannte Monster in Friedlich",
-  "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Feindliche Mobs bleiben in friedlich erhalten."
+  "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Feindliche Mobs bleiben in friedlich erhalten.",
+  "gamerule.whispersDurability.description": "Haltbarkeit eines Flüsterers",
+  "gamerule.whispersTrainedDurability.description": "Haltbarkeit eines geprägte Flüsterers"
 }

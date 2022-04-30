@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "wunderreich",
-  "version": "${version}",
+  "version": "1.0.5",
   "name": "Wunderreich",
   "description": "A Mod with Quality of live improvements and some new gameplay mechanics.",
   "authors": [
@@ -39,7 +39,10 @@
   "depends": {
     "fabricloader": ">=0.13.3",
     "fabric": "*",
-    "minecraft": ["1.18.0", "1.18.1"],
+    "minecraft": [
+      "1.18.0",
+      "1.18.1"
+    ],
     "java": ">=17"
   },
   "suggests": {
