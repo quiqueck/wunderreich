@@ -24,6 +24,22 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class LootTableJsonBuilder {
+    public final ResourceLocation ID;
+    public final ResourceLocation sourceID;
+    private final LootTypes type;
+    private final List<EntryPool> pools = new ArrayList<>(1);
+
+    private LootTableJsonBuilder(ResourceLocation sourceID, LootTypes type) {
+        this.sourceID = sourceID;
+        if (type == LootTypes.BLOCK) {
+            this.ID = new ResourceLocation(sourceID.getNamespace(), "blocks/" + sourceID.getPath());
+        } else {
+            this.ID = sourceID;
+        }
+
+        this.type = type;
+    }
+
     public static Stream<Helper> getAllBlocks() {
         return WunderreichBlocks
                 .getAllBlocks()
@@ -31,10 +47,66 @@ public class LootTableJsonBuilder {
                 .filter(bl -> bl instanceof CanDropLoot)
                 .filter(Configs.BLOCK_CONFIG::isEnabled)
                 .map(bl -> {
-                         LootTableJsonBuilder l = ((CanDropLoot) bl).buildLootTable();
-                         return new Helper(l.ID, l::build);
-                     }
+                            LootTableJsonBuilder l = ((CanDropLoot) bl).buildLootTable();
+                            return new Helper(l.ID, l::build);
+                        }
                 );
+    }
+
+    public static LootTableJsonBuilder create(Block bl) {
+        return new LootTableJsonBuilder(Registry.BLOCK.getKey(bl), LootTypes.BLOCK);
+
+    }
+
+    public static LootTableJsonBuilder create(String name, LootTypes type) {
+        return new LootTableJsonBuilder(Wunderreich.ID(name), type);
+    }
+
+    public LootTableJsonBuilder dropSelf() {
+        return this.startPool(
+                1,
+                0,
+                builder -> builder
+                        .survivesExplosion()
+                        .addSelfEntry()
+        );
+    }
+
+    public LootTableJsonBuilder startPool(double rolls, double bonusRolls, Consumer<PoolBuilder> builder) {
+        PoolBuilder res = new PoolBuilder(this, new EntryPool(rolls, bonusRolls));
+        pools.add(res.container);
+        builder.accept(res);
+        return this;
+    }
+
+    protected String getLootType() {
+        if (type == LootTypes.BLOCK) {
+            return "minecraft:block";
+        }
+        return null;
+    }
+
+    public JsonElement build() {
+        final String tt = getLootType();
+
+        if (tt == null) {
+            throw new IllegalStateException("A LootTable needs a Type (" + ID + ")");
+        }
+
+        JsonObject root = new JsonObject();
+
+        root.add("type", new JsonPrimitive(tt));
+
+        JsonArray f = new JsonArray();
+        pools.stream().map(EntryPool::serialize).forEach(f::add);
+        root.add("pools", f);
+
+        return root;
+    }
+
+    public enum LootTypes {
+        UNKNOWN,
+        BLOCK
     }
 
     public record Helper(ResourceLocation id, Supplier<JsonElement> json) {
@@ -152,77 +224,5 @@ public class LootTableJsonBuilder {
             builder.accept(res);
             return this;
         }
-    }
-
-    public final ResourceLocation ID;
-    public final ResourceLocation sourceID;
-    private final LootTypes type;
-    private final List<EntryPool> pools = new ArrayList<>(1);
-
-    public enum LootTypes {
-        UNKNOWN,
-        BLOCK
-    }
-
-    private LootTableJsonBuilder(ResourceLocation sourceID, LootTypes type) {
-        this.sourceID = sourceID;
-        if (type == LootTypes.BLOCK) {
-            this.ID = new ResourceLocation(sourceID.getNamespace(), "blocks/" + sourceID.getPath());
-        } else {
-            this.ID = sourceID;
-        }
-
-        this.type = type;
-    }
-
-    public static LootTableJsonBuilder create(Block bl) {
-        return new LootTableJsonBuilder(Registry.BLOCK.getKey(bl), LootTypes.BLOCK);
-
-    }
-
-    public static LootTableJsonBuilder create(String name, LootTypes type) {
-        return new LootTableJsonBuilder(Wunderreich.ID(name), type);
-    }
-
-    public LootTableJsonBuilder dropSelf() {
-        return this.startPool(
-                1,
-                0,
-                builder -> builder
-                        .survivesExplosion()
-                        .addSelfEntry()
-        );
-    }
-
-    public LootTableJsonBuilder startPool(double rolls, double bonusRolls, Consumer<PoolBuilder> builder) {
-        PoolBuilder res = new PoolBuilder(this, new EntryPool(rolls, bonusRolls));
-        pools.add(res.container);
-        builder.accept(res);
-        return this;
-    }
-
-    protected String getLootType() {
-        if (type == LootTypes.BLOCK) {
-            return "minecraft:block";
-        }
-        return null;
-    }
-
-    public JsonElement build() {
-        final String tt = getLootType();
-
-        if (tt == null) {
-            throw new IllegalStateException("A LootTable needs a Type (" + ID + ")");
-        }
-
-        JsonObject root = new JsonObject();
-
-        root.add("type", new JsonPrimitive(tt));
-
-        JsonArray f = new JsonArray();
-        pools.stream().map(EntryPool::serialize).forEach(f::add);
-        root.add("pools", f);
-
-        return root;
     }
 }

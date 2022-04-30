@@ -18,28 +18,14 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         weightSum = 0;
     }
 
+    public static float random() {
+        return (float) Math.random();
+    }
+
     @NotNull
     @Override
     public Iterator<Entry<T>> iterator() {
         return list.iterator();
-    }
-
-    public static class Entry<T> {
-        public final T value;
-        public final float weight;
-
-        Entry(T value, float weight) {
-            this.value = value;
-            this.weight = weight;
-        }
-
-        @Override
-        public String toString() {
-            return "Entry{" +
-                    "value=" + value +
-                    ", weight=" + weight +
-                    '}';
-        }
     }
 
     public void add(T value, float weight) {
@@ -52,10 +38,6 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         Entry<T> e = list.get(idx);
         if (e == null) return null;
         return e.value;
-    }
-
-    public static float random() {
-        return (float) Math.random();
     }
 
     public int getRandomIndex() {
@@ -94,5 +76,23 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
     @Override
     public String toString() {
         return list.toString();
+    }
+
+    public static class Entry<T> {
+        public final T value;
+        public final float weight;
+
+        Entry(T value, float weight) {
+            this.value = value;
+            this.weight = weight;
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "value=" + value +
+                    ", weight=" + weight +
+                    '}';
+        }
     }
 }

@@ -36,7 +36,7 @@ public class WunderreichAdvancements {
                                 .showToast()
                                 .visible()
                                 .announceToChat()
-                             )
+                )
                 .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem())
                 .register();
 
@@ -65,14 +65,16 @@ public class WunderreichAdvancements {
                     .startDisplay(WunderreichBlocks.WUNDER_KISTE.asItem(),
                             b -> b.showToast().visible().announceToChat())
                     .parent(root)
-                    .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> { }).register();
+                    .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> {
+                    }).register();
 
             ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
                     .startDisplay(Items.RED_DYE,
                             b -> b.showToast().visible().announceToChat().goal())
                     .parent(opened_wunderkiste)
-                    .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> { }).register();
+                    .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> {
+                    }).register();
         }
     }
 }

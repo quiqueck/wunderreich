@@ -27,7 +27,7 @@ public class WunderreichRecipes {
                         "LLL",
                         "#N#",
                         "###"
-                        )
+                )
                 .material('#', Blocks.QUARTZ_BRICKS)
                 .material('N', Items.NETHERITE_INGOT)
                 .material('L', Blocks.LAPIS_BLOCK)
@@ -35,7 +35,7 @@ public class WunderreichRecipes {
                         Items.QUARTZ,
                         Items.ANCIENT_DEBRIS,
                         Items.LAPIS_LAZULI
-                                                                                                          ));
+                ));
 
         RecipeJsonBuilder
                 .create("whisperer_blank")
@@ -44,7 +44,7 @@ public class WunderreichRecipes {
                         "GAG",
                         "ABA",
                         "GAG"
-                        )
+                )
                 .material('G', Blocks.GLASS)
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 2))
                 .material('A', Items.AMETHYST_SHARD)
@@ -52,7 +52,7 @@ public class WunderreichRecipes {
                         Items.GLASS,
                         Items.LAPIS_LAZULI,
                         Items.AMETHYST_SHARD
-                                                                                                          ));
+                ));
 
         RecipeJsonBuilder
                 .create("whisper_imprinter")
@@ -61,7 +61,7 @@ public class WunderreichRecipes {
                         "ABA",
                         "DCD",
                         "DDD"
-                        )
+                )
                 .material('C', new ItemStack(Blocks.OXIDIZED_COPPER, 2))
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 1))
                 .material('A', new ItemStack(Blocks.AMETHYST_BLOCK, 1))
@@ -71,7 +71,7 @@ public class WunderreichRecipes {
                         Items.LAPIS_LAZULI,
                         Blocks.AMETHYST_BLOCK.asItem(),
                         Blocks.COBBLED_DEEPSLATE.asItem()
-                                                                                                          ));
+                ));
 
         RecipeJsonBuilder
                 .create("builders_trowel")
@@ -80,12 +80,12 @@ public class WunderreichRecipes {
                         "***",
                         " * ",
                         " # "
-                        )
+                )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.IRON_INGOT, 1))
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                         Items.IRON_INGOT
-                                                                                                          ));
+                ));
 
         RecipeJsonBuilder
                 .create("diamond_builders_trowel")
@@ -94,12 +94,12 @@ public class WunderreichRecipes {
                         "***",
                         " * ",
                         " # "
-                        )
+                )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.DIAMOND, 1))
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                         Items.DIAMOND
-                                                                                                          ));
+                ));
     }
 
     public static void createSlabRecipe(String name, Block baseBlock, Block block) {

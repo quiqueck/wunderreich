@@ -22,9 +22,10 @@ import java.util.Set;
 
 public class TagRegistry<T> {
     private static final List<TagRegistry<?>> REGISTRIES = Lists.newArrayList();
-
     public static final TagRegistry<Block> BLOCK = new TagRegistry<>(Registry.BLOCK);
     public static final TagRegistry<Item> ITEM = new TagRegistry<>(Registry.ITEM);
+    private final Map<ResourceLocation, Set<T>> tags;
+    private final DefaultedRegistry<T> registry;
 
     public TagRegistry(DefaultedRegistry<T> registry) {
         this.tags = Maps.newHashMap();
@@ -32,9 +33,13 @@ public class TagRegistry<T> {
         REGISTRIES.add(this);
     }
 
-    private final Map<ResourceLocation, Set<T>> tags;
-    private final DefaultedRegistry<T> registry;
-
+    public static TagRegistry<?> getRegistryForDirectory(String directory) {
+        for (TagRegistry<?> reg : REGISTRIES) {
+            if (reg.isForDirectory(directory))
+                return reg;
+        }
+        return null;
+    }
 
     public void add(TagKey<T> tag, T... objects) {
         ResourceLocation tagID = tag.location();
@@ -44,14 +49,6 @@ public class TagRegistry<T> {
                 set.add(obj);
             }
         }
-    }
-
-    public static TagRegistry<?> getRegistryForDirectory(String directory) {
-        for (TagRegistry<?> reg : REGISTRIES) {
-            if (reg.isForDirectory(directory))
-                return reg;
-        }
-        return null;
     }
 
     public boolean isForDirectory(String directory) {

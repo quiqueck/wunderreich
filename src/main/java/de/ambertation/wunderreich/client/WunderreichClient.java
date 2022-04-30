@@ -28,7 +28,7 @@ public class WunderreichClient implements ClientModInitializer {
             "wunder_kiste_bw");
     public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
             "wunder_kiste_bw_top");
- 
+
     private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
         return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET,
                 Wunderreich.ID("entity/chest/" + string));

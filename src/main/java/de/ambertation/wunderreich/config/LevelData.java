@@ -25,6 +25,14 @@ public class LevelData {
     private static final String WUNDERKISTE_TAG_NAME = "wunderkiste";
     private static final String OLD_GLOBAL_TAG_NAME = "global";
     private static LevelData INSTANCE;
+    @Nullable
+    private Path levelPath;
+    @NotNull
+    private CompoundTag root;
+
+    private LevelData() {
+        CompoundTag root = new CompoundTag();
+    }
 
     public static LevelData getInstance() {
         if (INSTANCE == null) {
@@ -32,16 +40,6 @@ public class LevelData {
         }
         return INSTANCE;
     }
-
-    private LevelData() {
-        CompoundTag root = new CompoundTag();
-    }
-
-    @Nullable
-    private Path levelPath;
-
-    @NotNull
-    private CompoundTag root;
 
     private void reset() {
         levelPath = null;

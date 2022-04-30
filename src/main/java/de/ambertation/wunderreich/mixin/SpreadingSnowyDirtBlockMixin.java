@@ -25,9 +25,9 @@ public abstract class SpreadingSnowyDirtBlockMixin {
                                 Random random,
                                 CallbackInfo ci) {
         SpreadableSnowyDirtSlab.spreadingTick((SpreadingSnowyDirtBlock) (Object) this,
-                                              blockState,
-                                              serverLevel,
-                                              blockPos,
-                                              random);
+                blockState,
+                serverLevel,
+                blockPos,
+                random);
     }
 }

@@ -20,10 +20,6 @@ public class Version {
         this(String.format(Locale.ROOT, "%d.%d.%d", major, minor, patch));
     }
 
-    public int toInt() {
-        return toInt(version);
-    }
-
     private static int toInt(String version) {
         if (version == null || version.isEmpty()) return 0;
 
@@ -64,6 +60,10 @@ public class Version {
 
     public static Version fromInt(int version) {
         return new Version(major(version), minor(version), patch(version));
+    }
+
+    public int toInt() {
+        return toInt(version);
     }
 
     public boolean isLargerThan(Version v2) {

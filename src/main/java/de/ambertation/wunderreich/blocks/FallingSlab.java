@@ -25,6 +25,11 @@ public class FallingSlab extends DirtSlabBlock {
         this.dustColor = dustColor;
     }
 
+    public static boolean isFree(BlockState blockState) {
+        final Material material = blockState.getMaterial();
+        return blockState.isAir() || blockState.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
+    }
+
     @Override
     public void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
         level.scheduleTick(blockPos, this, this.getDelayAfterPlace());
@@ -52,7 +57,7 @@ public class FallingSlab extends DirtSlabBlock {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
         SlabType belowType = (SlabType) below.getValues().get(TYPE);
 
-        if ((FallingBlock.isFree(below) || (belowType != null && belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinBuildHeight()) {
+        if ((FallingBlock.isFree(below) || (belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinBuildHeight()) {
             BlockState state = serverLevel.getBlockState(blockPos);
 
             SlabType type = (SlabType) state.getValues().get(TYPE);
@@ -74,11 +79,6 @@ public class FallingSlab extends DirtSlabBlock {
 
     protected int getDelayAfterPlace() {
         return 2;
-    }
-
-    public static boolean isFree(BlockState blockState) {
-        final Material material = blockState.getMaterial();
-        return blockState.isAir() || blockState.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
     }
 
     @Override

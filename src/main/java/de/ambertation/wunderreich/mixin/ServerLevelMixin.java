@@ -3,16 +3,15 @@ package de.ambertation.wunderreich.mixin;
 import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
 import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -29,10 +28,6 @@ public abstract class ServerLevelMixin {
     @NotNull
     public abstract MinecraftServer getServer();
 
-    @Shadow
-    @Final
-    private ServerLevelData serverLevelData;
-
     @Inject(method = "saveLevelData", at = @At("TAIL"))
     public void wunderreich_save(CallbackInfo ci) {
         if (getServer() instanceof WunderKisteExtensionProvider exWunderkiste) {
@@ -46,7 +41,7 @@ public abstract class ServerLevelMixin {
                                  LevelStorageSource.LevelStorageAccess levelStorageAccess,
                                  ServerLevelData serverLevelData,
                                  ResourceKey resourceKey,
-                                 DimensionType dimensionType,
+                                 Holder holder,
                                  ChunkProgressListener chunkProgressListener,
                                  ChunkGenerator chunkGenerator,
                                  boolean bl,

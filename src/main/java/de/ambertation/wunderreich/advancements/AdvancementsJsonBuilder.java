@@ -21,6 +21,191 @@ import java.util.function.Consumer;
 
 public class AdvancementsJsonBuilder {
 
+    private static final ThreadLocal<AdvancementsJsonBuilder> BUILDER = ThreadLocal.withInitial(AdvancementsJsonBuilder::new);
+    private final Map<String, Criteria> criteria = new HashMap<>();
+    private final List<Reward> rewards = new ArrayList<>(0);
+    public ResourceLocation ID;
+    public AdvancementType type;
+    private String parent;
+    private Display display;
+    private boolean canBuild = true;
+
+    private AdvancementsJsonBuilder() {
+
+    }
+
+    public static void invalidate() {
+        BUILDER.remove();
+        Display.DISPLAY.remove();
+    }
+
+    public static AdvancementsJsonBuilder create(String name) {
+        return BUILDER.get().reset(Wunderreich.ID(name), AdvancementType.REGULAR);
+    }
+
+    public static AdvancementsJsonBuilder create(String name, AdvancementType type) {
+        return BUILDER.get().reset(Wunderreich.ID(name), type);
+    }
+
+    public static AdvancementsJsonBuilder create(Item item) {
+        return create(item, AdvancementType.REGULAR, (b) -> {
+        });
+    }
+
+    public static AdvancementsJsonBuilder create(Item item, AdvancementType type) {
+        return create(item, type, (b) -> {
+        });
+    }
+
+    public static AdvancementsJsonBuilder create(Item item, Consumer<DisplayBuilder> builder) {
+        return create(item, AdvancementType.REGULAR, builder);
+    }
+
+    public static AdvancementsJsonBuilder create(Item item, AdvancementType type, Consumer<DisplayBuilder> builder) {
+        var id = Registry.ITEM.getKey(item);
+        boolean canBuild = true;
+        if (id == null) {
+            canBuild = false;
+            id = Registry.ITEM.getDefaultKey();
+        }
+
+        String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
+        AdvancementsJsonBuilder b = BUILDER.get().reset(id, type);
+        if (builder != null) b.startDisplay(item, baseName + "title", baseName + "description", builder);
+        b.canBuild = canBuild;
+        return b;
+    }
+
+    public static AdvancementsJsonBuilder createRecipe(Item item, AdvancementType type) {
+        return create(item, type, null).awardRecipe(item).gotRecipeCriteria("has_the_recipe", item);
+    }
+
+    private AdvancementsJsonBuilder reset(ResourceLocation id, AdvancementType type) {
+        if (type == AdvancementType.RECIPE_DECORATIONS) {
+            ID = new ResourceLocation(id.getNamespace(), "recipes/decorations/" + id.getPath());
+            parent = "minecraft:recipes/root";
+        } else if (type == AdvancementType.RECIPE_TOOL) {
+            ID = new ResourceLocation(id.getNamespace(), "recipes/tools/" + id.getPath());
+            parent = "minecraft:recipes/root";
+        } else {
+            ID = id;
+            parent = null;
+        }
+
+        this.type = type;
+        display = null;
+        criteria.clear();
+        rewards.clear();
+        canBuild = true;
+
+        return this;
+    }
+
+    public AdvancementsJsonBuilder parent(ResourceLocation parent) {
+        this.parent = parent.toString();
+        return this;
+    }
+
+    public AdvancementsJsonBuilder parent(String parent) {
+        this.parent = parent;
+        return this;
+    }
+
+    public AdvancementsJsonBuilder startDisplay(Item icon,
+                                                Consumer<DisplayBuilder> builder) {
+        String baseName = "advancements." + ID.getNamespace() + "." + ID.getPath() + ".";
+        return startDisplay(icon, baseName + "title", baseName + "description", builder);
+    }
+
+    public AdvancementsJsonBuilder startDisplay(Item icon,
+                                                String title,
+                                                String description,
+                                                Consumer<DisplayBuilder> builder) {
+        var id = Registry.ITEM.getKey(icon);
+        if (id == null) {
+            id = Registry.ITEM.getDefaultKey();
+            canBuild = false;
+        }
+        display = Display.DISPLAY.get().reset(id.toString(), title, description);
+        builder.accept(new DisplayBuilder(this, display));
+        return this;
+    }
+
+    public AdvancementsJsonBuilder gotRecipeCriteria(String name, Item item) {
+        return startCriteria(name, "minecraft:recipe_unlocked", builder -> builder.recipeCondition(item));
+    }
+
+    public AdvancementsJsonBuilder inventoryChangedCriteria(String name, Item... items) {
+        return startCriteria(name, "minecraft:inventory_changed", builder -> builder.itemsCondition(items));
+    }
+
+    public AdvancementsJsonBuilder startCriteria(String name, String trigger, Consumer<CriteriaBuilder> builder) {
+        Criteria c = new Criteria(trigger);
+        criteria.put(name, c);
+        builder.accept(new CriteriaBuilder(this, c));
+        return this;
+    }
+
+    public AdvancementsJsonBuilder awardRecipe(Item... items) {
+        RecipeReward rew = new RecipeReward();
+        for (Item item : items) {
+            var id = Registry.ITEM.getKey(item);
+            if (id == null) continue;
+            rew.addRecipe(id.toString());
+        }
+        rewards.add(rew);
+        return this;
+    }
+
+    public ResourceLocation register() {
+        if (!canBuild) return null;
+
+        JsonElement res = build();
+        WunderreichAdvancements.ADVANCEMENTS.put(ID, res);
+        return ID;
+    }
+
+    public JsonElement build() {
+        if (!canBuild) return null;
+
+        JsonObject root = new JsonObject();
+        if (parent != null) {
+            root.add("parent", new JsonPrimitive(parent));
+        }
+        if (display != null) {
+            root.add("display", display.serialize());
+        }
+
+        if (!criteria.isEmpty()) {
+            JsonObject critObj = new JsonObject();
+            JsonArray requirements = new JsonArray();
+
+            criteria.entrySet().forEach(e -> {
+                critObj.add(e.getKey(), e.getValue().serialize());
+                requirements.add(new JsonPrimitive(e.getKey()));
+            });
+
+            root.add("criteria", critObj);
+            JsonArray a = new JsonArray();
+            a.add(requirements);
+            root.add("requirements", a);
+        }
+
+        if (!rewards.isEmpty()) {
+            JsonObject obj = new JsonObject();
+            rewards.stream().forEach(r -> r.serialize(obj));
+            root.add("rewards", obj);
+        }
+
+        return root;
+    }
+
+    public enum AdvancementType {
+        REGULAR,
+        RECIPE_DECORATIONS,
+        RECIPE_TOOL
+    }
+
     public static class CriteriaBuilder {
         final AdvancementsJsonBuilder base;
         final Criteria criteria;
@@ -129,194 +314,5 @@ public class AdvancementsJsonBuilder {
         public DisplayBuilder goal() {
             return frame(FrameType.GOAL);
         }
-    }
-
-    private static final ThreadLocal<AdvancementsJsonBuilder> BUILDER = ThreadLocal.withInitial(AdvancementsJsonBuilder::new);
-
-    public static void invalidate() {
-        BUILDER.remove();
-        Display.DISPLAY.remove();
-    }
-
-    public ResourceLocation ID;
-    public AdvancementType type;
-    private String parent;
-    private Display display;
-    private final Map<String, Criteria> criteria = new HashMap<>();
-    private final List<Reward> rewards = new ArrayList<>(0);
-    private boolean canBuild = true;
-
-    public enum AdvancementType {
-        REGULAR,
-        RECIPE_DECORATIONS,
-        RECIPE_TOOL
-    }
-
-    private AdvancementsJsonBuilder() {
-
-    }
-
-    private AdvancementsJsonBuilder reset(ResourceLocation id, AdvancementType type) {
-        if (type == AdvancementType.RECIPE_DECORATIONS) {
-            ID = new ResourceLocation(id.getNamespace(), "recipes/decorations/" + id.getPath());
-            parent = "minecraft:recipes/root";
-        } else if (type == AdvancementType.RECIPE_TOOL) {
-            ID = new ResourceLocation(id.getNamespace(), "recipes/tools/" + id.getPath());
-            parent = "minecraft:recipes/root";
-        } else {
-            ID = id;
-            parent = null;
-        }
-
-        this.type = type;
-        display = null;
-        criteria.clear();
-        rewards.clear();
-        canBuild = true;
-
-        return this;
-    }
-
-    public static AdvancementsJsonBuilder create(String name) {
-        return BUILDER.get().reset(Wunderreich.ID(name), AdvancementType.REGULAR);
-    }
-
-    public static AdvancementsJsonBuilder create(String name, AdvancementType type) {
-        return BUILDER.get().reset(Wunderreich.ID(name), type);
-    }
-
-    public static AdvancementsJsonBuilder create(Item item) {
-        return create(item, AdvancementType.REGULAR, (b) -> {
-        });
-    }
-
-    public static AdvancementsJsonBuilder create(Item item, AdvancementType type) {
-        return create(item, type, (b) -> {
-        });
-    }
-
-    public static AdvancementsJsonBuilder create(Item item, Consumer<DisplayBuilder> builder) {
-        return create(item, AdvancementType.REGULAR, builder);
-    }
-
-    public static AdvancementsJsonBuilder create(Item item, AdvancementType type, Consumer<DisplayBuilder> builder) {
-        var id = Registry.ITEM.getKey(item);
-        boolean canBuild = true;
-        if (id == null) {
-            canBuild = false;
-            id = Registry.ITEM.getDefaultKey();
-        }
-
-        String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
-        AdvancementsJsonBuilder b = BUILDER.get().reset(id, type);
-        if (builder != null) b.startDisplay(item, baseName + "title", baseName + "description", builder);
-        b.canBuild = canBuild;
-        return b;
-    }
-
-    public static AdvancementsJsonBuilder createRecipe(Item item, AdvancementType type) {
-        return create(item, type, null).awardRecipe(item).gotRecipeCriteria("has_the_recipe", item);
-    }
-
-
-    public AdvancementsJsonBuilder parent(ResourceLocation parent) {
-        this.parent = parent.toString();
-        return this;
-    }
-
-    public AdvancementsJsonBuilder parent(String parent) {
-        this.parent = parent;
-        return this;
-    }
-
-    public AdvancementsJsonBuilder startDisplay(Item icon,
-                                                Consumer<DisplayBuilder> builder) {
-        String baseName = "advancements." + ID.getNamespace() + "." + ID.getPath() + ".";
-        return startDisplay(icon, baseName + "title", baseName + "description", builder);
-    }
-
-    public AdvancementsJsonBuilder startDisplay(Item icon,
-                                                String title,
-                                                String description,
-                                                Consumer<DisplayBuilder> builder) {
-        var id = Registry.ITEM.getKey(icon);
-        if (id == null) {
-            id = Registry.ITEM.getDefaultKey();
-            canBuild = false;
-        }
-        display = Display.DISPLAY.get().reset(id.toString(), title, description);
-        builder.accept(new DisplayBuilder(this, display));
-        return this;
-    }
-
-    public AdvancementsJsonBuilder gotRecipeCriteria(String name, Item item) {
-        return startCriteria(name, "minecraft:recipe_unlocked", builder -> builder.recipeCondition(item));
-    }
-
-
-    public AdvancementsJsonBuilder inventoryChangedCriteria(String name, Item... items) {
-        return startCriteria(name, "minecraft:inventory_changed", builder -> builder.itemsCondition(items));
-    }
-
-    public AdvancementsJsonBuilder startCriteria(String name, String trigger, Consumer<CriteriaBuilder> builder) {
-        Criteria c = new Criteria(trigger);
-        criteria.put(name, c);
-        builder.accept(new CriteriaBuilder(this, c));
-        return this;
-    }
-
-    public AdvancementsJsonBuilder awardRecipe(Item... items) {
-        RecipeReward rew = new RecipeReward();
-        for (Item item : items) {
-            var id = Registry.ITEM.getKey(item);
-            if (id == null) continue;
-            rew.addRecipe(id.toString());
-        }
-        rewards.add(rew);
-        return this;
-    }
-
-    public ResourceLocation register() {
-        if (!canBuild) return null;
-
-        JsonElement res = build();
-        WunderreichAdvancements.ADVANCEMENTS.put(ID, res);
-        return ID;
-    }
-
-
-    public JsonElement build() {
-        if (!canBuild) return null;
-
-        JsonObject root = new JsonObject();
-        if (parent != null) {
-            root.add("parent", new JsonPrimitive(parent));
-        }
-        if (display != null) {
-            root.add("display", display.serialize());
-        }
-
-        if (!criteria.isEmpty()) {
-            JsonObject critObj = new JsonObject();
-            JsonArray requirements = new JsonArray();
-
-            criteria.entrySet().forEach(e -> {
-                critObj.add(e.getKey(), e.getValue().serialize());
-                requirements.add(new JsonPrimitive(e.getKey()));
-            });
-
-            root.add("criteria", critObj);
-            JsonArray a = new JsonArray();
-            a.add(requirements);
-            root.add("requirements", a);
-        }
-
-        if (!rewards.isEmpty()) {
-            JsonObject obj = new JsonObject();
-            rewards.stream().forEach(r -> r.serialize(obj));
-            root.add("rewards", obj);
-        }
-
-        return root;
     }
 }

@@ -19,6 +19,11 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
     private final ChestLidController chestLidController = new ChestLidController();
+
+    public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
+        super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
+    }
+
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
             //System.out.println("Open " + blockPos.getZ());
@@ -53,10 +58,6 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
         }
     };
-
-    public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
-    }
 
     public static void lidAnimateTick(Level level,
                                       BlockPos blockPos,
@@ -111,5 +112,4 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
     }
-
 }

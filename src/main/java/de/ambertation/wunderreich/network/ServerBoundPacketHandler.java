@@ -23,14 +23,14 @@ public abstract class ServerBoundPacketHandler<D> {
         packetHandler.CHANNEL = Wunderreich.ID(channel);
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
             ServerPlayNetworking.registerReceiver(handler,
-                                                  packetHandler.CHANNEL,
-                                                  (_server, _player, _handler, _buf, _responseSender) -> {
-                                                      packetHandler.receiveOnServer(_server,
-                                                                                    _player,
-                                                                                    _handler,
-                                                                                    _buf,
-                                                                                    _responseSender);
-                                                  });
+                    packetHandler.CHANNEL,
+                    (_server, _player, _handler, _buf, _responseSender) -> {
+                        packetHandler.receiveOnServer(_server,
+                                _player,
+                                _handler,
+                                _buf,
+                                _responseSender);
+                    });
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -38,6 +38,12 @@ public abstract class ServerBoundPacketHandler<D> {
         });
 
         return packetHandler;
+    }
+
+    public static void register() {
+        AddRemoveWunderKisteMessage.INSTANCE.onRegister();
+        CycleTradesMessage.INSTANCE.onRegister();
+        SelectWhisperMessage.INSTANCE.onRegister();
     }
 
     public void sendToServer(D content) {
@@ -63,7 +69,6 @@ public abstract class ServerBoundPacketHandler<D> {
         server.execute(() -> processOnGameThread(server, player, content));
     }
 
-
     protected abstract void serializeOnClient(FriendlyByteBuf buf, D content);
 
     protected abstract D deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender);
@@ -71,11 +76,5 @@ public abstract class ServerBoundPacketHandler<D> {
     protected abstract void processOnGameThread(MinecraftServer server, ServerPlayer player, D content);
 
     protected void onRegister() {
-    }
-
-    public static void register() {
-        AddRemoveWunderKisteMessage.INSTANCE.onRegister();
-        CycleTradesMessage.INSTANCE.onRegister();
-        SelectWhisperMessage.INSTANCE.onRegister();
     }
 }

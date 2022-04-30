@@ -30,6 +30,9 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
                                       .setValue(SNOWY, false));
     }
 
+    private static boolean isSnowySetting(BlockState blockState) {
+        return blockState.is(BlockTags.SNOW);
+    }
 
     @Override
     public BlockState updateShape(BlockState blockState,
@@ -50,10 +53,6 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         BlockState blockState = blockPlaceContext.getLevel().getBlockState(blockPlaceContext.getClickedPos().above());
         return super.getStateForPlacement(blockPlaceContext).setValue(SNOWY, isSnowySetting(blockState));
-    }
-
-    private static boolean isSnowySetting(BlockState blockState) {
-        return blockState.is(BlockTags.SNOW);
     }
 
     @Override

@@ -17,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -76,10 +75,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
+    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
-    private static Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -166,7 +165,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public static WunderKisteContainer getContainer(BlockState state, MinecraftServer server) {
-        if (server != null && server instanceof WunderKisteExtensionProvider extWunderkiste) {
+        if (server instanceof WunderKisteExtensionProvider extWunderkiste) {
             return extWunderkiste.getWunderKisteExtension().getContainer(state);
         }
         return null;
@@ -439,6 +438,41 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return WunderkisteRenderer::new;
     }
 
+    @Override
+    public List<ItemStack> getDrops(BlockState blockState, LootContext.Builder builder) {
+        return super.getDrops(blockState, builder).stream().map(stack -> {
+            if (stack.getItem() instanceof WunderKisteItem item) {
+                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+            }
+            return stack;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public LootTableJsonBuilder buildLootTable() {
+        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
+                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
+                                                             .startAlternatives(altBuilder -> altBuilder
+                                                                     .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
+                                                                     )
+                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
+                                                                             builder -> builder
+                                                                                     .setCount(4, false)
+                                                                                     .explosionDecay()
+                                                                     )
+                                                             )
+                                                     );
+
+        return b;
+    }
+
+    @Override
+    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
+        if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
+            WunderKisteItem.addAllVariants(itemList);
+        }
+    }
+
     //custom code
     public static class LiveBlock {
         public final BlockPos pos;
@@ -461,42 +495,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         @Override
         public int hashCode() {
             return pos.hashCode();
-        }
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState blockState, LootContext.Builder builder) {
-        return super.getDrops(blockState, builder).stream().map(stack -> {
-            if (stack.getItem() instanceof WunderKisteItem item) {
-                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
-            }
-            return stack;
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public LootTableJsonBuilder buildLootTable() {
-        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
-                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
-                                                             .startAlternatives(altBuilder -> altBuilder
-                                                                     .startSelfEntry(builder -> builder
-                                                                             .silkTouch()
-                                                                     )
-                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
-                                                                             builder -> builder
-                                                                                     .setCount(4, false)
-                                                                                     .explosionDecay()
-                                                                     )
-                                                             )
-                                                     );
-
-        return b;
-    }
-
-    @Override
-    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
-            WunderKisteItem.addAllVariants(itemList);
         }
     }
 }

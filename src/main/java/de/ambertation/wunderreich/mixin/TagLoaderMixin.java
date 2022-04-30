@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.utils.TagRegistry;
+
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.tags.TagLoader;

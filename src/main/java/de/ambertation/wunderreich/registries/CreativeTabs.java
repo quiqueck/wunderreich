@@ -14,11 +14,35 @@ import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 
-import java.util.stream.Collectors;
-
 public class CreativeTabs {
     public static final CreativeModeTab TAB_BLOCKS;
     public static final CreativeModeTab TAB_ITEMS;
+
+    static {
+        TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.ID("blocks"))
+                                           .icon(() -> new ItemStack(getBlockIcon()))
+                                           .appendItems(stacks -> {
+                                               stacks.addAll(WunderreichBlocks.getAllBlocks()
+                                                                              .stream()
+                                                                              .filter(block -> block != WunderreichBlocks.WUNDER_KISTE)
+                                                                              .map(ItemStack::new).toList());
+                                               WunderKisteItem.addAllVariants(stacks);
+                                           })
+                                           .build();
+
+
+        TAB_ITEMS = FabricItemGroupBuilder.create(Wunderreich.ID("items"))
+                                          .icon(() -> new ItemStack(getItemIcon()))
+                                          .appendItems(stacks -> {
+                                              stacks.addAll(WunderreichItems.getAllItems()
+                                                                            .stream()
+                                                                            .filter(item -> item != WunderreichItems.WHISPERER)
+                                                                            .map(ItemStack::new).toList());
+                                              TrainedVillagerWhisperer.addAllVariants(stacks);
+                                          })
+                                          .build();
+
+    }
 
     public static Block getBlockIcon() {
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE))
@@ -45,33 +69,5 @@ public class CreativeTabs {
                                .filter(Configs.ITEM_CONFIG::isEnabled)
                                .findFirst()
                                .orElse(Items.BOOK);
-    }
-
-    static {
-        TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.ID("blocks"))
-                                           .icon(() -> new ItemStack(getBlockIcon()))
-                                           .appendItems(stacks -> {
-                                               stacks.addAll(WunderreichBlocks.getAllBlocks()
-                                                                              .stream()
-                                                                              .filter(block -> block != WunderreichBlocks.WUNDER_KISTE)
-                                                                              .map(ItemStack::new)
-                                                                              .collect(Collectors.toList()));
-                                               WunderKisteItem.addAllVariants(stacks);
-                                           })
-                                           .build();
-
-
-        TAB_ITEMS = FabricItemGroupBuilder.create(Wunderreich.ID("items"))
-                                          .icon(() -> new ItemStack(getItemIcon()))
-                                          .appendItems(stacks -> {
-                                              stacks.addAll(WunderreichItems.getAllItems()
-                                                                            .stream()
-                                                                            .filter(item -> item != WunderreichItems.WHISPERER)
-                                                                            .map(ItemStack::new)
-                                                                            .collect(Collectors.toList()));
-                                              TrainedVillagerWhisperer.addAllVariants(stacks);
-                                          })
-                                          .build();
-
     }
 }

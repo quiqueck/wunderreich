@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -28,14 +27,10 @@ import java.util.Map;
 
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 public abstract class BlockEntityWithoutLevelRendererMixin {
+    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
     @Shadow
     @Final
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
-    @Shadow
-    @Final
-    private EnderChestBlockEntity enderChest;
-
-    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void wunderreich_render(ItemStack itemStack,
