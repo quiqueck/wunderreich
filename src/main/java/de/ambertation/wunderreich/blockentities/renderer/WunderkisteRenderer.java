@@ -28,7 +28,10 @@ import net.fabricmc.api.Environment;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
 import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 
 @Environment(value = EnvType.CLIENT)
@@ -55,7 +58,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                        PoseStack poseStack,
                        MultiBufferSource multiBufferSource,
                        int i,
-                       int uv2) {
+                       int overlayCoords) {
         final Level level = blockEntity.getLevel();
         final boolean renderInWorld = level != null;
 
@@ -75,11 +78,11 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             DoubleBlockCombiner.NeighborCombineResult<ChestBlockEntity> neighborCombineResult = renderInWorld
                     ? abstractChestBlock.combine(blockState, level, blockEntity.getBlockPos(), true)
                     : DoubleBlockCombiner.Combiner::acceptNone;
-            float h = neighborCombineResult.apply(ChestBlock.opennessCombiner(blockEntity)).get(f);
-            h = 1.0f - h;
-            h = 1.0f - h * h * h;
+            float openness = neighborCombineResult.apply(ChestBlock.opennessCombiner(blockEntity)).get(f);
+            openness = 1.0f - openness;
+            openness = 1.0f - openness * openness * openness;
 
-            int overlayCoords = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
+            final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
             Material material = getMaterial(d);
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
 
@@ -88,12 +91,27 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                     this.lid,
                     this.lock,
                     this.bottom,
-                    h,
-                    overlayCoords,
+                    openness,
                     uv2,
+                    overlayCoords,
                     FastColor.ARGB32.red(d.color) / (float) 0XFF,
                     FastColor.ARGB32.green(d.color) / (float) 0XFF,
-                    FastColor.ARGB32.blue(d.color) / (float) 0XFF);
+                    FastColor.ARGB32.blue(d.color) / (float) 0XFF
+            );
+
+            if (openness>0) {
+                material = getTopMaterial(d);
+                vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
+                this.renderAnimTop(poseStack,
+                        vertexConsumer,
+                        this.bottom,
+                        uv2,
+                        overlayCoords,
+                        FastColor.ARGB32.red(d.color) / (float) 0XFF,
+                        FastColor.ARGB32.green(d.color) / (float) 0XFF,
+                        FastColor.ARGB32.blue(d.color) / (float) 0XFF
+                );
+            }
             poseStack.popPose();
         }
     }
@@ -104,21 +122,93 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                 : WunderreichClient.WUNDER_KISTE_MONOCHROME_LOCATION;
     }
 
+    private static Material getTopMaterial(WunderKisteDomain d) {
+        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
+                ? WunderreichClient.WUNDER_KISTE_TOP_LOCATION
+                : WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION;
+    }
+
     private void render(PoseStack poseStack,
                         VertexConsumer vertexConsumer,
-                        ModelPart modelPart,
-                        ModelPart modelPart2,
-                        ModelPart modelPart3,
+                        ModelPart lidPart,
+                        ModelPart lockPart,
+                        ModelPart bottomPart,
                         float f,
-                        int overlayCoords,
                         int uv2,
+                        int overlayCoord,
                         float r,
                         float g,
-                        float b) {
-        modelPart2.xRot = modelPart.xRot = -(f * 1.5707964f);
+                        float b
+                        ) {
+        lockPart.xRot = lidPart.xRot = -(f * 1.5707964f);
 
-        modelPart.render(poseStack, vertexConsumer, overlayCoords, uv2, r, g, b, 0.0f);
-        modelPart2.render(poseStack, vertexConsumer, overlayCoords, uv2, r, g, b, 0.0f);
-        modelPart3.render(poseStack, vertexConsumer, overlayCoords, uv2, r, g, b, 1.0f);
+        lidPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 0.0f);
+        lockPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 0.0f);
+        bottomPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
+    }
+
+    private static Vertex[] TOP_PLANE = {
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f/16.0f, 13.0f/16.0f),
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f/16.0f, 13.0f/16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f/16.0f, 1.0f/16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f/16.0f, 1.0f/16.0f)
+    };
+
+    private void renderAnimTop(PoseStack poseStack,
+                               VertexConsumer vertexConsumer,
+                               ModelPart bottomPart,
+                               int uv2,
+                               int overlayCords,
+                               float r,
+                               float g,
+                               float b
+    ) {
+
+        poseStack.pushPose();
+        bottomPart.translateAndRotate(poseStack);
+        final PoseStack.Pose last = poseStack.last();
+        final Matrix4f pose = last.pose();
+        final Matrix3f npose = last.normal();
+
+        Vector3f normal = Vector3f.YP.copy();
+        normal.transform(npose);
+
+        for (Vertex v : TOP_PLANE) {
+            Vector4f vector4f = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f);
+            vector4f.transform(pose);
+            vertexConsumer.vertex(vector4f.x(),
+                    vector4f.y(),
+                    vector4f.z(),
+                    r,
+                    g,
+                    b,
+                    1.0f,
+                    v.u,
+                    v.v,
+                    overlayCords,
+                    uv2,
+                    normal.x(),
+                    normal.y(),
+                    normal.z());
+        }
+
+        poseStack.popPose();
+    }
+
+    @Environment(value = EnvType.CLIENT)
+    static class Vertex {
+        public final Vector3f pos;
+        public final float u;
+        public final float v;
+
+        public Vertex(float f, float g, float h, float i, float j) {
+            this(new Vector3f(f, g, h), i, j);
+        }
+
+        public Vertex(Vector3f vector3f, float f, float g) {
+            this.pos = vector3f;
+            this.u = f;
+            this.v = g;
+        }
     }
 }
