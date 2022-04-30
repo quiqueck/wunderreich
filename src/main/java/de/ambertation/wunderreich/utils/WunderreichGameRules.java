@@ -27,6 +27,18 @@ public class WunderreichGameRules {
         public final net.minecraft.world.level.GameRules.Key<T> key;
         public final V config;
 
+        protected Base(Category category, net.minecraft.world.level.GameRules.Type<T> type, V config) {
+            this(buildName(config), category, type, config);
+        }
+
+        protected Base(String name, Category category, net.minecraft.world.level.GameRules.Type<T> type, V config) {
+            Wunderreich.LOGGER.info("Adding GameRule '" + name + "' (default: " + config.get() + ")");
+            this.type = type;
+            this.config = config;
+
+            this.key = GameRuleRegistry.register(name, category, type);
+        }
+
         private static String upperCaseDots(String str) {
             final String regex = "(\\.\\w)";
 
@@ -40,18 +52,6 @@ public class WunderreichGameRules {
             return upperCaseDots(config.token.path()) + config.token.key().substring(0, 1).toUpperCase() + config.token
                     .key()
                     .substring(1);
-        }
-
-        protected Base(Category category, net.minecraft.world.level.GameRules.Type<T> type, V config) {
-            this(buildName(config), category, type, config);
-        }
-
-        protected Base(String name, Category category, net.minecraft.world.level.GameRules.Type<T> type, V config) {
-            Wunderreich.LOGGER.info("Adding GameRule '" + name + "' (default: " + config.get() + ")");
-            this.type = type;
-            this.config = config;
-
-            this.key = GameRuleRegistry.register(name, category, type);
         }
 
         protected abstract R get(@NotNull net.minecraft.world.level.GameRules rules);

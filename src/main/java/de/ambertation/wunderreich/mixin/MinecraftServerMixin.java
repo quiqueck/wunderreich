@@ -25,7 +25,7 @@ import java.net.Proxy;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements WunderKisteExtensionProvider {
-    private WunderKisteServerExtension wunderkiste = new WunderKisteServerExtension();
+    private final WunderKisteServerExtension wunderkiste = new WunderKisteServerExtension();
 
     public WunderKisteServerExtension getWunderKisteExtension() {
         return wunderkiste;
@@ -50,7 +50,7 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
                                  GameProfileCache gameProfileCache,
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
-        
+
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
         if (wunderkiste != null) {
             wunderkiste.onStartServer();

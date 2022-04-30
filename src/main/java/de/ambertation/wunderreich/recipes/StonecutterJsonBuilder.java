@@ -19,11 +19,6 @@ import java.util.List;
 
 public class StonecutterJsonBuilder {
     private static final ThreadLocal<StonecutterJsonBuilder> BUILDER = ThreadLocal.withInitial(StonecutterJsonBuilder::new);
-
-    public static void invalidate() {
-        BUILDER.remove();
-    }
-
     private ResourceLocation ID;
     private boolean canBuild;
     private ItemLike resultItem;
@@ -33,16 +28,9 @@ public class StonecutterJsonBuilder {
     private StonecutterJsonBuilder() {
     }
 
-    private StonecutterJsonBuilder reset(ResourceLocation ID) {
-        this.ID = ID;
-        canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
-        resultItem = null;
-        ingredient = null;
-        count = 1;
-
-        return this;
+    public static void invalidate() {
+        BUILDER.remove();
     }
-
 
     private static boolean isEnabled(ItemLike item) {
         if (item instanceof Block bl) {
@@ -62,13 +50,21 @@ public class StonecutterJsonBuilder {
         return null;
     }
 
-
     public static StonecutterJsonBuilder create(String name) {
         ResourceLocation id = Wunderreich.ID(name + "_stonecutter");
         StonecutterJsonBuilder b = BUILDER.get().reset(id);
         return b;
     }
 
+    private StonecutterJsonBuilder reset(ResourceLocation ID) {
+        this.ID = ID;
+        canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
+        resultItem = null;
+        ingredient = null;
+        count = 1;
+
+        return this;
+    }
 
     public StonecutterJsonBuilder result(ItemLike item) {
         canBuild &= isEnabled(item);

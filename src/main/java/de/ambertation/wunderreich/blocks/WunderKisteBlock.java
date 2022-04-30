@@ -75,10 +75,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
+    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
-    private static Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -165,7 +165,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public static WunderKisteContainer getContainer(BlockState state, MinecraftServer server) {
-        if (server != null && server instanceof WunderKisteExtensionProvider extWunderkiste) {
+        if (server instanceof WunderKisteExtensionProvider extWunderkiste) {
             return extWunderkiste.getWunderKisteExtension().getContainer(state);
         }
         return null;
@@ -438,31 +438,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return WunderkisteRenderer::new;
     }
 
-    //custom code
-    public static class LiveBlock {
-        public final BlockPos pos;
-        public final Level level;
-
-        public LiveBlock(BlockPos pos, Level level) {
-            this.pos = pos;
-            this.level = level;
-        }
-
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LiveBlock liveBlock = (LiveBlock) o;
-            return pos.equals(liveBlock.pos) && level.dimension().equals(liveBlock.level.dimension());
-        }
-
-        @Override
-        public int hashCode() {
-            return pos.hashCode();
-        }
-    }
-
     @Override
     public List<ItemStack> getDrops(BlockState blockState, LootContext.Builder builder) {
         return super.getDrops(blockState, builder).stream().map(stack -> {
@@ -496,6 +471,31 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
         if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
             WunderKisteItem.addAllVariants(itemList);
+        }
+    }
+
+    //custom code
+    public static class LiveBlock {
+        public final BlockPos pos;
+        public final Level level;
+
+        public LiveBlock(BlockPos pos, Level level) {
+            this.pos = pos;
+            this.level = level;
+        }
+
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            LiveBlock liveBlock = (LiveBlock) o;
+            return pos.equals(liveBlock.pos) && level.dimension().equals(liveBlock.level.dimension());
+        }
+
+        @Override
+        public int hashCode() {
+            return pos.hashCode();
         }
     }
 }

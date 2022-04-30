@@ -1,9 +1,7 @@
 package de.ambertation.wunderreich.items;
 
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
-import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -32,9 +30,9 @@ public class WunderKisteItem extends BlockItem {
 
     public static WunderKisteDomain getDomain(ItemStack itemStack) {
         CompoundTag tag = itemStack.getTag();
-        if (tag!=null) {
+        if (tag != null) {
             tag = tag.getCompound(BlockItem.BLOCK_STATE_TAG);
-            if (tag.contains(WunderKisteBlock.DOMAIN.getName())){
+            if (tag.contains(WunderKisteBlock.DOMAIN.getName())) {
                 String domainName = tag.getString(WunderKisteBlock.DOMAIN.getName());
                 return WunderKisteBlock.DOMAIN.getValue(domainName).orElse(WunderKisteBlock.DEFAULT_DOMAIN);
             }
@@ -53,17 +51,6 @@ public class WunderKisteItem extends BlockItem {
         return itemStack;
     }
 
-    @Override
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
-        super.appendHoverText(itemStack, level, list, tooltipFlag);
-        final WunderKisteDomain domain = getDomain(itemStack);
-        Component domainComponent = getDomainComponent(domain);
-        list.add(new TranslatableComponent("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(ChatFormatting.GRAY));
-    }
-
     public static Component getDomainComponent(WunderKisteDomain domain) {
         return new TranslatableComponent("wunderreich.domain." + domain.toString()).setStyle(Style.EMPTY.withColor(
                 domain.textColor).withBold(true));
@@ -79,6 +66,18 @@ public class WunderKisteItem extends BlockItem {
     @NotNull
     private static ItemStack createForDomain(WunderKisteDomain domain) {
         return setDomain(new ItemStack(WunderreichBlocks.WUNDER_KISTE.asItem(), 1), domain);
+    }
+
+    @Override
+    public void appendHoverText(ItemStack itemStack,
+                                @Nullable Level level,
+                                List<Component> list,
+                                TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, level, list, tooltipFlag);
+        final WunderKisteDomain domain = getDomain(itemStack);
+        Component domainComponent = getDomainComponent(domain);
+        list.add(new TranslatableComponent("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
+                ChatFormatting.GRAY));
     }
 
     @Override

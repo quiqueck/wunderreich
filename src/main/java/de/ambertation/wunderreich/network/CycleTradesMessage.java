@@ -65,47 +65,6 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
     protected CycleTradesMessage() {
     }
 
-    protected static record Content() {
-    }
-
-    public void send() {
-        sendToServer(null);
-    }
-
-    @Override
-    protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
-
-    }
-
-    @Override
-    protected Content deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender) {
-        return null;
-    }
-
-    @Override
-    protected void processOnGameThread(MinecraftServer server, ServerPlayer player, Content content) {
-        cycleTrades(player);
-    }
-
-//    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "cycle_trades");
-//    public static void register() {
-//        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
-//            ServerPlayNetworking.registerReceiver(handler,
-//                    CHANNEL,
-//                    (_server, _player, _handler, _buf, _responseSender) -> {
-//                        cycleTrades(_player);
-//                    });
-//        });
-//
-//        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
-//            ServerPlayNetworking.unregisterReceiver(handler, CHANNEL);
-//        });
-//    }
-//
-//    public static void send() {
-//        ClientPlayNetworking.send(CHANNEL, PacketByteBufs.create());
-//    }
-
     public static ItemStack holds(Player player, Item item) {
         if (player.getMainHandItem().is(item)) return player.getMainHandItem();
         if (player.getOffhandItem().is(item)) return player.getOffhandItem();
@@ -168,10 +127,27 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
         if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
 
         ClosestWhisperer whispererStack = getClosestWhisperer(villager, doLog);
-        if (whispererStack == null) return false;
-
-        return true;
+        return whispererStack != null;
     }
+
+//    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "cycle_trades");
+//    public static void register() {
+//        ServerPlayConnectionEvents.INIT.register((handler, server) -> {
+//            ServerPlayNetworking.registerReceiver(handler,
+//                    CHANNEL,
+//                    (_server, _player, _handler, _buf, _responseSender) -> {
+//                        cycleTrades(_player);
+//                    });
+//        });
+//
+//        ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
+//            ServerPlayNetworking.unregisterReceiver(handler, CHANNEL);
+//        });
+//    }
+//
+//    public static void send() {
+//        ClientPlayNetworking.send(CHANNEL, PacketByteBufs.create());
+//    }
 
     public static boolean hasSelectedTrades(Villager villager, MerchantOffers offers) {
         if (offers == null) return true;
@@ -208,7 +184,6 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 
         return false;
     }
-
 
     //Code adopted from "Easy Villagers"
     public static void cycleTrades(ServerPlayer player) {
@@ -255,5 +230,27 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                     villager.showProgressBar(),
                     villager.canRestock());
         }
+    }
+
+    public void send() {
+        sendToServer(null);
+    }
+
+    @Override
+    protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
+
+    }
+
+    @Override
+    protected Content deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender) {
+        return null;
+    }
+
+    @Override
+    protected void processOnGameThread(MinecraftServer server, ServerPlayer player, Content content) {
+        cycleTrades(player);
+    }
+
+    protected record Content() {
     }
 }

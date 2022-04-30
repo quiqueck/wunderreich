@@ -22,13 +22,16 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
     public static net.minecraft.client.resources.model.Material WUNDER_KISTE_LOCATION = chestMaterial("wunder_kiste");
-    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_TOP_LOCATION = chestMaterial("wunder_kiste_top");
-    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_LOCATION = chestMaterial("wunder_kiste_bw");
-    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial("wunder_kiste_bw_top");
+    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_TOP_LOCATION = chestMaterial(
+            "wunder_kiste_top");
+    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_LOCATION = chestMaterial(
+            "wunder_kiste_bw");
+    public static net.minecraft.client.resources.model.Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
+            "wunder_kiste_bw_top");
 
     private static net.minecraft.client.resources.model.Material chestMaterial(String string) {
         return new net.minecraft.client.resources.model.Material(Sheets.CHEST_SHEET,
-                                                                 Wunderreich.ID("entity/chest/" + string));
+                Wunderreich.ID("entity/chest/" + string));
     }
 
     @Override
@@ -43,7 +46,7 @@ public class WunderreichClient implements ClientModInitializer {
 
             if (block instanceof BlockEntityProvider view) {
                 BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                                                     view.getBlockEntityRenderProvider());
+                        view.getBlockEntityRenderProvider());
             }
         });
 
@@ -57,6 +60,6 @@ public class WunderreichClient implements ClientModInitializer {
         }, WunderreichBlocks.GRASS_SLAB);
 
         ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                            WunderreichBlocks.GRASS_SLAB);
+                WunderreichBlocks.GRASS_SLAB);
     }
 }

@@ -4,10 +4,8 @@ import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
-import de.ambertation.wunderreich.utils.*;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
@@ -21,29 +19,34 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
     private final ChestLidController chestLidController = new ChestLidController();
+
+    public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
+        super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
+    }
+
     private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
         protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
             //System.out.println("Open " + blockPos.getZ());
             level.playSound(null,
-                            (double) blockPos.getX() + 0.5D,
-                            (double) blockPos.getY() + 0.5D,
-                            (double) blockPos.getZ() + 0.5D,
-                            SoundEvents.ENDER_CHEST_OPEN,
-                            SoundSource.BLOCKS,
-                            0.5F,
-                            level.random.nextFloat() * 0.1F + 0.9F);
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_OPEN,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
             //System.out.println("Close " + blockPos.getZ());
             level.playSound(null,
-                            (double) blockPos.getX() + 0.5D,
-                            (double) blockPos.getY() + 0.5D,
-                            (double) blockPos.getZ() + 0.5D,
-                            SoundEvents.ENDER_CHEST_CLOSE,
-                            SoundSource.BLOCKS,
-                            0.5F,
-                            level.random.nextFloat() * 0.1F + 0.9F);
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_CLOSE,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
         }
 
         protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
@@ -55,10 +58,6 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
         }
     };
-
-    public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
-    }
 
     public static void lidAnimateTick(Level level,
                                       BlockPos blockPos,
@@ -95,8 +94,8 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             return false;
         } else {
             return !(player.distanceToSqr((double) this.worldPosition.getX() + 0.5D,
-                                          (double) this.worldPosition.getY() + 0.5D,
-                                          (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
+                    (double) this.worldPosition.getY() + 0.5D,
+                    (double) this.worldPosition.getZ() + 0.5D) > 64.0D);
         }
     }
 
@@ -113,5 +112,4 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
     }
-
 }

@@ -17,7 +17,7 @@ public class WunderreichTags {
             supl.supplyTags(
                     (tag) -> TagRegistry.BLOCK.add(tag, bl),
                     (tag) -> TagRegistry.ITEM.add(tag, itm)
-                           );
+            );
         }
     }
 
@@ -25,7 +25,7 @@ public class WunderreichTags {
         if (itm instanceof ItemTagSupplier supl) {
             supl.supplyTags(
                     (tag) -> TagRegistry.ITEM.add(tag, itm)
-                           );
+            );
         }
     }
 

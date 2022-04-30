@@ -41,6 +41,12 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
     private static final String BOTTOM = "bottom";
     private static final String LID = "lid";
     private static final String LOCK = "lock";
+    private static final Vertex[] TOP_PLANE = {
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 13.0f / 16.0f),
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 13.0f / 16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 1.0f / 16.0f)
+    };
     private final ModelPart lid;
     private final ModelPart bottom;
     private final ModelPart lock;
@@ -52,6 +58,18 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         this.bottom = modelPart.getChild(BOTTOM);
         this.lid = modelPart.getChild(LID);
         this.lock = modelPart.getChild(LOCK);
+    }
+
+    private static Material getMaterial(WunderKisteDomain d) {
+        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
+                ? WunderreichClient.WUNDER_KISTE_LOCATION
+                : WunderreichClient.WUNDER_KISTE_MONOCHROME_LOCATION;
+    }
+
+    private static Material getTopMaterial(WunderKisteDomain d) {
+        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
+                ? WunderreichClient.WUNDER_KISTE_TOP_LOCATION
+                : WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION;
     }
 
     @Override
@@ -120,18 +138,6 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         }
     }
 
-    private static Material getMaterial(WunderKisteDomain d) {
-        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
-                ? WunderreichClient.WUNDER_KISTE_LOCATION
-                : WunderreichClient.WUNDER_KISTE_MONOCHROME_LOCATION;
-    }
-
-    private static Material getTopMaterial(WunderKisteDomain d) {
-        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
-                ? WunderreichClient.WUNDER_KISTE_TOP_LOCATION
-                : WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION;
-    }
-
     private void render(PoseStack poseStack,
                         VertexConsumer vertexConsumer,
                         ModelPart lidPart,
@@ -150,13 +156,6 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         lockPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
         bottomPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
     }
-
-    private static Vertex[] TOP_PLANE = {
-            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 13.0f / 16.0f),
-            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 13.0f / 16.0f),
-            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f),
-            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 1.0f / 16.0f)
-    };
 
     private void renderAnimTop(PoseStack poseStack,
                                VertexConsumer vertexConsumer,

@@ -11,6 +11,9 @@ import net.minecraft.world.level.GameRules.Category;
 import net.minecraft.world.level.storage.ServerLevelData;
 
 public class WunderreichRules {
+    private static final BooleanRule NO_NAMETAGGED_DESPAWN =
+            new BooleanRule(Category.SPAWNING, Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
+
     public static void onLevelLoad(ServerLevel l, ServerLevelData serverLevelData) {
         Wunderreich.LOGGER.info("Loading ServerLevel: " + l);
         WunderreichGameRules.setCurrentRules(serverLevelData.getGameRules());
@@ -20,9 +23,6 @@ public class WunderreichRules {
         Whispers.register();
         Wunderkiste.register();
     }
-
-    private static final BooleanRule NO_NAMETAGGED_DESPAWN =
-            new BooleanRule(Category.SPAWNING, Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
 
     public static boolean doNotDespawnWithNameTag() {
         return NO_NAMETAGGED_DESPAWN.get();

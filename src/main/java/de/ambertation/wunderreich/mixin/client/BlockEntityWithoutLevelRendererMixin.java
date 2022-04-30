@@ -11,10 +11,8 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 
 import com.google.common.collect.Maps;
@@ -30,14 +28,13 @@ import java.util.Map;
 
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 public abstract class BlockEntityWithoutLevelRendererMixin {
+    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
     @Shadow
     @Final
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     @Shadow
     @Final
     private EnderChestBlockEntity enderChest;
-
-    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void wunderreich_render(ItemStack itemStack,
@@ -49,14 +46,16 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
                                    CallbackInfo ci) {
         Item item = itemStack.getItem();
         if (item instanceof WunderKisteItem) {
-                WunderKisteBlockEntity wunderKiste = wunderKisten.computeIfAbsent(
-                        WunderKisteItem.getDomain(itemStack),
-                        (domain)->new WunderKisteBlockEntity(BlockPos.ZERO,
-                    WunderreichBlocks.WUNDER_KISTE.defaultBlockState().setValue(WunderKisteBlock.DOMAIN, domain))
-                );
+            WunderKisteBlockEntity wunderKiste = wunderKisten.computeIfAbsent(
+                    WunderKisteItem.getDomain(itemStack),
+                    (domain) -> new WunderKisteBlockEntity(BlockPos.ZERO,
+                            WunderreichBlocks.WUNDER_KISTE
+                                    .defaultBlockState()
+                                    .setValue(WunderKisteBlock.DOMAIN, domain))
+            );
 
-                this.blockEntityRenderDispatcher.renderItem(wunderKiste, poseStack, multiBufferSource, i, j);
-                ci.cancel();
+            this.blockEntityRenderDispatcher.renderItem(wunderKiste, poseStack, multiBufferSource, i, j);
+            ci.cancel();
         }
     }
 }

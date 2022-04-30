@@ -19,7 +19,7 @@ import java.util.function.Function;
 
 public class ServerPlugin implements REIServerPlugin {
     public static CategoryIdentifier<ImprinterDisplay> IMPRINTER = CategoryIdentifier.of(Wunderreich.MOD_ID,
-                                                                                         ImprinterRecipe.Type.ID.getPath());
+            ImprinterRecipe.Type.ID.getPath());
 
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {
@@ -34,6 +34,6 @@ public class ServerPlugin implements REIServerPlugin {
         };
 
         registry.register((context, stack) -> nbtHasher.hash(context, enchantmentTag.apply(stack)),
-                          WunderreichItems.WHISPERER);
+                WunderreichItems.WHISPERER);
     }
 }

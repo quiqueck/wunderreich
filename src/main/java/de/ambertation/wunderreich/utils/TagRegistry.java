@@ -24,13 +24,16 @@ import java.util.function.Function;
 
 public class TagRegistry<T> {
     private static final List<TagRegistry<?>> REGISTRIES = Lists.newArrayList();
-
     public static final TagRegistry<Block> BLOCK = new TagRegistry<>("tags/blocks",
-                                                                     Registry.BLOCK,
-                                                                     TagFactory.BLOCK::create);
+            Registry.BLOCK,
+            TagFactory.BLOCK::create);
     public static final TagRegistry<Item> ITEM = new TagRegistry<>("tags/items",
-                                                                   Registry.ITEM,
-                                                                   TagFactory.ITEM::create);
+            Registry.ITEM,
+            TagFactory.ITEM::create);
+    private final Map<ResourceLocation, Set<T>> tags;
+    private final DefaultedRegistry<T> registry;
+    private final String directory;
+    private final Function<ResourceLocation, Tag.Named<T>> tagCreator;
 
     public TagRegistry(String directory,
                        DefaultedRegistry<T> registry,
@@ -42,11 +45,13 @@ public class TagRegistry<T> {
         REGISTRIES.add(this);
     }
 
-    private final Map<ResourceLocation, Set<T>> tags;
-    private final DefaultedRegistry<T> registry;
-    private final String directory;
-    private final Function<ResourceLocation, Tag.Named<T>> tagCreator;
-
+    public static TagRegistry<?> getRegistryForDirectory(String directory) {
+        for (TagRegistry<?> reg : REGISTRIES) {
+            if (reg.isForDirectory(directory))
+                return reg;
+        }
+        return null;
+    }
 
     @SafeVarargs
     public final void add(Tag.Named<T> tag, T... objects) {
@@ -57,14 +62,6 @@ public class TagRegistry<T> {
                 set.add(obj);
             }
         }
-    }
-
-    public static TagRegistry<?> getRegistryForDirectory(String directory) {
-        for (TagRegistry<?> reg : REGISTRIES) {
-            if (reg.isForDirectory(directory))
-                return reg;
-        }
-        return null;
     }
 
     public boolean isForDirectory(String directory) {

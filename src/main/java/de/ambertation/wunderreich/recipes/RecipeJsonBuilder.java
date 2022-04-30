@@ -21,31 +21,19 @@ import java.util.*;
 
 public class RecipeJsonBuilder {
     private static final ThreadLocal<RecipeJsonBuilder> BUILDER = ThreadLocal.withInitial(RecipeJsonBuilder::new);
-
-    public static void invalidate() {
-        BUILDER.remove();
-    }
-
+    final Map<Character, Ingredient> materials = new HashMap<>();
     ResourceLocation ID;
     boolean canBuild;
     ItemLike resultItem;
     String[] pattern;
-    final Map<Character, Ingredient> materials = new HashMap<>();
     int count;
-
-    private RecipeJsonBuilder reset(ResourceLocation ID) {
-        this.ID = ID;
-        this.canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
-        this.resultItem = null;
-        this.pattern = new String[0];
-        this.materials.clear();
-        this.count = 1;
-        return this;
-    }
 
     private RecipeJsonBuilder() {
     }
 
+    public static void invalidate() {
+        BUILDER.remove();
+    }
 
     private static boolean isEnabled(ItemLike item) {
         if (item instanceof Block bl) {
@@ -65,13 +53,21 @@ public class RecipeJsonBuilder {
         return null;
     }
 
-
     public static RecipeJsonBuilder create(String name) {
         ResourceLocation id = Wunderreich.ID(name);
         RecipeJsonBuilder b = BUILDER.get().reset(id);
         return b;
     }
 
+    private RecipeJsonBuilder reset(ResourceLocation ID) {
+        this.ID = ID;
+        this.canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
+        this.resultItem = null;
+        this.pattern = new String[0];
+        this.materials.clear();
+        this.count = 1;
+        return this;
+    }
 
     public RecipeJsonBuilder result(ItemLike item) {
         canBuild &= isEnabled(item);
@@ -108,7 +104,7 @@ public class RecipeJsonBuilder {
                 .stream(ing.getItems())
                 .map(ItemStack::getItem)
                 .map(RecipeJsonBuilder::isEnabled)
-                .noneMatch(v -> v == false);
+                .noneMatch(v -> !v);
 
         materials.put(c, ing);
         return this;
@@ -184,8 +180,7 @@ public class RecipeJsonBuilder {
         json.addProperty("type", "minecraft:crafting_shaped");
 
         JsonArray patternArray = new JsonArray();
-        for (int i = 0; i < pattern.length; i++)
-            patternArray.add(pattern[i]);
+        for (String s : pattern) patternArray.add(s);
         json.add("pattern", patternArray);
 
         JsonObject individualKey;

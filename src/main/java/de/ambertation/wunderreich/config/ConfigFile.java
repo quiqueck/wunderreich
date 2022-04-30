@@ -19,10 +19,139 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class ConfigFile {
-    private static final Gson JSON_BUILDER = new GsonBuilder().setPrettyPrinting()
-                                                              .create();
     public static final String MODIFY_VERSION = "modify_version";
     public static final String CREATE_VERSION = "create_version";
+    private static final Gson JSON_BUILDER = new GsonBuilder().setPrettyPrinting()
+                                                              .create();
+    public final String category;
+    private final File path;
+    private final List<Value<?>> knownValues = new LinkedList<>();
+    private JsonObject root;
+    private boolean modified;
+
+    public ConfigFile(String category) {
+        this(Wunderreich.MOD_ID, category);
+    }
+
+    public ConfigFile(String basePath, String category) {
+        final Path dir = FabricLoader.getInstance().getConfigDir().resolve(basePath);
+        path = dir.resolve(category + ".json").toFile();
+        this.category = basePath + "." + category;
+
+        if (!dir.toFile().exists()) dir.toFile().mkdirs();
+        loadFromDisc();
+    }
+
+    public List<Value<?>> getAllValues() {
+        return knownValues;
+    }
+
+    private void setModified() {
+        modified = true;
+    }
+
+    private void registerValue(Value<?> v) {
+        knownValues.remove(v);
+        knownValues.add(v);
+    }
+
+    private JsonElement getValue(ConfigToken t, boolean addIfMissing) {
+        JsonObject obj = getPathElement(t.path, addIfMissing);
+        if (!obj.has(t.key)) return null;
+
+        return obj.get(t.key);
+    }
+
+    private void setValue(ConfigToken t, JsonElement value) {
+        if (!value.equals(getValue(t, true))) {
+            setModified();
+        }
+
+        JsonObject obj = getPathElement(t.path, true);
+        obj.add(t.key, value);
+    }
+
+    private void removeValue(ConfigToken t) {
+        JsonObject o = getPathElement(t.path, false);
+        if (o.has(t.key)) {
+            Wunderreich.LOGGER.info("Removing Config " + t.path + "." + t.key);
+            o.remove(t.key);
+            setModified();
+        }
+    }
+
+    private JsonObject getPathElement(String path, boolean addIfMissing) {
+        if (path == null || path.trim().equals("")) {
+            return root;
+        }
+
+        String[] names = path.split("\\.");
+        JsonObject obj = root;
+
+        for (int i = 0; i < names.length; i++) {
+            final String p = names[i];
+            if (obj.has(p)) {
+                obj = obj.get(p).getAsJsonObject();
+            } else {
+                JsonObject newObject = new JsonObject();
+                if (addIfMissing) {
+                    obj.add(p, newObject);
+                }
+                obj = newObject;
+            }
+        }
+        return obj;
+    }
+
+    public void loadFromDisc() {
+        modified = false;
+        if (path.exists()) {
+            try (Reader reader = new FileReader(path)) {
+                this.root = JSON_BUILDER.fromJson(reader, JsonElement.class).getAsJsonObject();
+            } catch (Exception ex) {
+                Wunderreich.LOGGER.error("Unable to open Config File at '{}'.", path.toString(), ex);
+            }
+        } else {
+            this.root = new JsonObject();
+            this.root.add(CREATE_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
+        }
+    }
+
+    public void save() {
+        save(false);
+    }
+
+    public void save(boolean force) {
+        if (!modified && !force) return;
+
+        try (FileWriter jsonWriter = new FileWriter(path)) {
+            this.root.add(MODIFY_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
+            String string = JSON_BUILDER.toJson(root);
+            jsonWriter.write(string);
+            jsonWriter.flush();
+            modified = false;
+        } catch (IOException ex) {
+            Wunderreich.LOGGER.error("Unable to store Config File at '{}'.", path.toString(), ex);
+        }
+    }
+
+    private String getVersionString(String name) {
+        JsonObject mod = getPathElement("", true);
+        if (mod == null) return "1.0.0";
+        JsonPrimitive p = mod.getAsJsonPrimitive(name);
+        if (p == null) return Wunderreich.VERSION.toString();
+        if (!p.isString()) return "1.0.0";
+
+        return p.getAsString();
+    }
+
+    public Version lastModifiedVersion() {
+        return new Version(getVersionString(MODIFY_VERSION));
+    }
+
+    public Version createdVersion() {
+        return new Version(getVersionString(CREATE_VERSION));
+    }
 
     public record ConfigToken<T>(String path, String key, T defaultValue) {
         @Override
@@ -38,12 +167,10 @@ public class ConfigFile {
     public abstract class Value<T> {
         @NotNull
         public final ConfigToken<T> token;
-
-        private boolean hiddenInUI = false;
-        private boolean deprecated = false;
-
         @Nullable
         protected Supplier<Boolean> isValidSupplier;
+        private boolean hiddenInUI = false;
+        private boolean deprecated = false;
 
         public Value(String path, String key, T defaultValue) {
             this(new ConfigToken(path, key, defaultValue), false);
@@ -251,7 +378,7 @@ public class ConfigFile {
         }
 
         public BooleanValue or(BooleanValue... condition) {
-            return or(() -> Arrays.stream(condition).map(c -> c.get()).reduce(true, (p, c) -> p || c));
+            return or(() -> Arrays.stream(condition).map(Value::get).reduce(false, (p, c) -> p || c));
         }
 
         public BooleanValue or(Supplier<Boolean> condition) {
@@ -274,137 +401,5 @@ public class ConfigFile {
         public BooleanValue hideInUI() {
             return (BooleanValue) super.hideInUI();
         }
-    }
-
-    public ConfigFile(String category) {
-        this(Wunderreich.MOD_ID, category);
-    }
-
-    public ConfigFile(String basePath, String category) {
-        final Path dir = FabricLoader.getInstance().getConfigDir().resolve(basePath);
-        path = dir.resolve(category + ".json").toFile();
-        this.category = basePath + "." + category;
-
-        if (!dir.toFile().exists()) dir.toFile().mkdirs();
-        loadFromDisc();
-    }
-
-    private final File path;
-    public final String category;
-    private JsonObject root;
-    private boolean modified;
-
-    private final List<Value<?>> knownValues = new LinkedList<>();
-
-    public List<Value<?>> getAllValues() {
-        return knownValues;
-    }
-
-    private void setModified() {
-        modified = true;
-    }
-
-    private void registerValue(Value<?> v) {
-        knownValues.remove(v);
-        knownValues.add(v);
-    }
-
-    private JsonElement getValue(ConfigToken t, boolean addIfMissing) {
-        JsonObject obj = getPathElement(t.path, addIfMissing);
-        if (!obj.has(t.key)) return null;
-
-        return obj.get(t.key);
-    }
-
-    private void setValue(ConfigToken t, JsonElement value) {
-        if (!value.equals(getValue(t, true))) {
-            setModified();
-        }
-
-        JsonObject obj = getPathElement(t.path, true);
-        obj.add(t.key, value);
-    }
-
-    private void removeValue(ConfigToken t) {
-        JsonObject o = getPathElement(t.path, false);
-        if (o.has(t.key)) {
-            Wunderreich.LOGGER.info("Removing Config " + t.path + "." + t.key);
-            o.remove(t.key);
-            setModified();
-        }
-    }
-
-
-    private JsonObject getPathElement(String path, boolean addIfMissing) {
-        if (path == null || path.trim().equals("")) {
-            return root;
-        }
-
-        String[] names = path.split("\\.");
-        JsonObject obj = root;
-
-        for (int i = 0; i < names.length; i++) {
-            final String p = names[i];
-            if (obj.has(p)) {
-                obj = obj.get(p).getAsJsonObject();
-            } else {
-                JsonObject newObject = new JsonObject();
-                if (addIfMissing) {
-                    obj.add(p, newObject);
-                }
-                obj = newObject;
-            }
-        }
-        return obj;
-    }
-
-    public void loadFromDisc() {
-        modified = false;
-        if (path.exists()) {
-            try (Reader reader = new FileReader(path)) {
-                this.root = JSON_BUILDER.fromJson(reader, JsonElement.class).getAsJsonObject();
-            } catch (Exception ex) {
-                Wunderreich.LOGGER.error("Unable to open Config File at '{}'.", path.toString(), ex);
-            }
-        } else {
-            this.root = new JsonObject();
-            this.root.add(CREATE_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
-        }
-    }
-
-    public void save() {
-        save(false);
-    }
-
-    public void save(boolean force) {
-        if (!modified && !force) return;
-
-        try (FileWriter jsonWriter = new FileWriter(path)) {
-            this.root.add(MODIFY_VERSION, new JsonPrimitive(Wunderreich.VERSION.toString()));
-            String string = JSON_BUILDER.toJson(root);
-            jsonWriter.write(string);
-            jsonWriter.flush();
-            modified = false;
-        } catch (IOException ex) {
-            Wunderreich.LOGGER.error("Unable to store Config File at '{}'.", path.toString(), ex);
-        }
-    }
-
-    private String getVersionString(String name) {
-        JsonObject mod = getPathElement("", true);
-        if (mod == null) return "1.0.0";
-        JsonPrimitive p = mod.getAsJsonPrimitive(name);
-        if (p == null) return Wunderreich.VERSION.toString();
-        if (!p.isString()) return "1.0.0";
-
-        return p.getAsString();
-    }
-
-    public Version lastModifiedVersion() {
-        return new Version(getVersionString(MODIFY_VERSION));
-    }
-
-    public Version createdVersion() {
-        return new Version(getVersionString(CREATE_VERSION));
     }
 }
