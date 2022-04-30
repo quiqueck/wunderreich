@@ -20,7 +20,7 @@ public class DefaultGameRules extends ConfigFile {
 
     public final BooleanValue wunderkisteCanColor = new BooleanValue(WUNDERKISTE_CATEGORY,
             "canColor",
-            true);
+            false);
 
     public final BooleanValue wunderkisteShowColored = new BooleanValue(WUNDERKISTE_CATEGORY,
             "showColored",
@@ -28,7 +28,7 @@ public class DefaultGameRules extends ConfigFile {
 
     public final BooleanValue wunderkisteAllowDomains = new BooleanValue(WUNDERKISTE_CATEGORY,
             "allowDomains",
-            true);
+            false);
 
     public final IntValue wunderkisteChangeDomainCost = new IntValue(WUNDERKISTE_CATEGORY,
             "changeDomainCost",
