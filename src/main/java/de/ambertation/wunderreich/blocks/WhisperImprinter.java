@@ -1,12 +1,12 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.BlockPos;
@@ -49,7 +49,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                                .requiresTool()
                                .nonOpaque()
                                .sound(SoundType.AMETHYST)
-             );
+        );
     }
 
     @Override
@@ -63,7 +63,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
             return InteractionResult.SUCCESS;
         }
 
-        if (Configs.MAIN.allowLibrarianSelection()) {
+        if (WunderreichRules.Whispers.allowLibrarianSelection()) {
             player.openMenu(blockState.getMenuProvider(level, blockPos));
             return InteractionResult.CONSUME;
         }
@@ -75,10 +75,10 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     @Nullable
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
-                                                                                  inventory,
-                                                                                  ContainerLevelAccess.create(level,
-                                                                                                              blockPos)),
-                                      new TextComponent("Hello"));
+                inventory,
+                ContainerLevelAccess.create(level,
+                        blockPos)),
+                new TextComponent("Hello"));
     }
 
     @Override
@@ -89,17 +89,17 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(null,
-                            blockPos,
-                            SoundEvents.AMETHYST_BLOCK_HIT,
-                            SoundSource.BLOCKS,
-                            1.0f,
-                            0.5f + level.random.nextFloat() * 1.2f);
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
             level.playSound(null,
-                            blockPos,
-                            SoundEvents.AMETHYST_BLOCK_CHIME,
-                            SoundSource.BLOCKS,
-                            1.0f,
-                            0.5f + level.random.nextFloat() * 1.2f);
+                    blockPos,
+                    SoundEvents.AMETHYST_BLOCK_CHIME,
+                    SoundSource.BLOCKS,
+                    1.0f,
+                    0.5f + level.random.nextFloat() * 1.2f);
         }
     }
 
@@ -142,7 +142,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                             i + random.nextFloat() - 0.5,
                             k - random.nextFloat() - 1.0f,
                             j + random.nextFloat() - 0.5
-                                     );
+                    );
                 }
             }
         }

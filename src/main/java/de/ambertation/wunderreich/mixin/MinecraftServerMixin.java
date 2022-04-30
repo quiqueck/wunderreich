@@ -50,11 +50,12 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
                                  GameProfileCache gameProfileCache,
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
-
+        
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
         if (wunderkiste != null) {
             wunderkiste.onStartServer();
         }
+
     }
 
 }

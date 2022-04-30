@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,8 +31,8 @@ public class WhispererResultSlot extends Slot {
 
     void createExperience(ServerLevel level, int maxXP) {
         if (this.player instanceof ServerPlayer) {
-            final double delta = Configs.MAIN.whisperMaxXPMultiplier.get() - Configs.MAIN.whisperMinXPMultiplier.get();
-            final int xp = (int) (maxXP * (Math.random() * delta + Configs.MAIN.whisperMinXPMultiplier.get()));
+            final double delta = WunderreichRules.Whispers.maxXPMultiplier() - WunderreichRules.Whispers.minXPMultiplier();
+            final int xp = (int) (maxXP * (Math.random() * delta + WunderreichRules.Whispers.minXPMultiplier()));
             ExperienceOrb.award(level, player.position(), xp);
         }
     }

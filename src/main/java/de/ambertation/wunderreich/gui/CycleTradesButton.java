@@ -4,9 +4,9 @@
 package de.ambertation.wunderreich.gui;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -38,7 +38,7 @@ public class CycleTradesButton extends Button {
 
     public static final int WIDTH = 18;
     private static final ResourceLocation ARROW_BUTTON = new ResourceLocation(Wunderreich.MOD_ID,
-                                                                              "textures/gui/reroll.png");
+            "textures/gui/reroll.png");
     private static final int HALF_HEIGHT = 13;
     public static final int HEIGHT = HALF_HEIGHT * 2;
 
@@ -65,7 +65,7 @@ public class CycleTradesButton extends Button {
             CycleTradesMessage.INSTANCE.send();
         }, merchantScreen, menu);
 
-        if (Configs.MAIN.cyclingNeedsWhisperer.get()) {
+        if (WunderreichRules.Whispers.cyclingNeedsWhisperer()) {
             button.canUse = CycleTradesMessage.containsWhisperer(Minecraft.getInstance().player) != null;
             button.active = button.canUse;
             button.visible = button.canUse;

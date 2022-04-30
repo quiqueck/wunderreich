@@ -1,70 +1,72 @@
 package de.ambertation.wunderreich.config;
 
-import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.Wunderreich;
 
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
-    public final static String WUNDERKISTE_CATEGORY = "wunderkiste";
-    public final static String WHIPSER_CATEGORY = "whispers";
 
-    public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
-                                                                         "doNotDespawnWithNameTag",
-                                                                         true);
+    @Deprecated(forRemoval = true)
+    public final BooleanValue deprecated_doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
+            "doNotDespawnWithNameTag",
+            true, true);
 
-    public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
+    @Deprecated(forRemoval = true)
+    public final BooleanValue deprecated_allowTradesCycling = new BooleanValue(FEATURE_CATEGORY,
+            "allowTradesCycling",
+            true, true);
 
-    public final BooleanValue allowLibrarianSelection = new BooleanValue(
+    @Deprecated(forRemoval = true)
+    public final BooleanValue deprecated_allowLibrarianSelection = new BooleanValue(
             FEATURE_CATEGORY,
             "allowLibrarianSelection",
+            true,
             true
-    ).and(allowTradesCycling);
+    ).and(deprecated_allowTradesCycling);
 
-    public final BooleanValue cyclingNeedsWhisperer = new BooleanValue(
+    @Deprecated(forRemoval = true)
+    public final BooleanValue deprecated_cyclingNeedsWhisperer = new BooleanValue(
             FEATURE_CATEGORY,
             "cyclingNeedsWhisperer",
+            true,
             true
-    ).and(allowTradesCycling);
+    ).and(deprecated_allowTradesCycling);
+
+    public final BooleanValue allowWhispers = new BooleanValue(
+            FEATURE_CATEGORY,
+            "allowWhispers",
+            true
+    );
+
+    public final BooleanValue allowImprintedWhispers = new BooleanValue(
+            FEATURE_CATEGORY,
+            "allowImprintedWhispers",
+            true
+    );
 
     public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
-                                                                   "allowBuilderTools",
-                                                                   true);
+            "allowBuilderTools",
+            true);
 
     public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
-                                                          "addSlabs",
-                                                          true);
+            "addSlabs",
+            true);
 
-
-    public final BooleanValue wunderkisteRedstoneSignal = new BooleanValue(WUNDERKISTE_CATEGORY,
-                                                                           "enableRedstoneSignal",
-                                                                           true);
-
-    public final BooleanValue wunderkisteRedstoneAnalog = new BooleanValue(WUNDERKISTE_CATEGORY,
-                                                                           "enableAnalogRedstoneOutput",
-                                                                           true);
-
-    public final BooleanValue wunderkisteAllowMultiple = new BooleanValue(WUNDERKISTE_CATEGORY,
-                                                                          "wunderkisteAllowMultiple",
-                                                                          true);
-
-    public final IntValue whisperDurability = new IntValue(WHIPSER_CATEGORY, "durability", 20);
-    public final IntValue whisperTrainedDurability = new IntValue(WHIPSER_CATEGORY, "trainedDurability", 40);
-    public final FloatValue whisperMinXPMultiplier = new FloatValue(WHIPSER_CATEGORY, "minXPMultiplier", 0.75f);
-    public final FloatValue whisperMaxXPMultiplier = new FloatValue(WHIPSER_CATEGORY, "maxXPMultiplier", 1.0f);
 
     public MainConfig() {
         super("main");
-        wunderkisteRedstoneSignal.hideInUI();
-        wunderkisteRedstoneAnalog.hideInUI();
-        wunderkisteAllowMultiple.hideInUI();
     }
 
-    public boolean allowLibrarianSelection() {
-        return allowLibrarianSelection.get()
-                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.BLANK_WHISPERER)
-                && Configs.ITEM_CONFIG.valueOf(WunderreichItems.WHISPERER);
-    }
+    public void runMigrations() {
+        if (this.lastModifiedVersion().isLessThan("1.0.5")) {
+            Wunderreich.LOGGER.info("Running 1.0.5 migration for main.json...");
 
-    public boolean wunderkisteIsRedstoneEnabled() {
-        return wunderkisteRedstoneSignal.get() || wunderkisteRedstoneAnalog.get();
+            allowWhispers.set(deprecated_allowTradesCycling.get() || deprecated_allowLibrarianSelection.get() || deprecated_cyclingNeedsWhisperer.get());
+            allowImprintedWhispers.set(deprecated_allowLibrarianSelection.get());
+
+            deprecated_doNotDespawnWithNameTag.migrate(Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
+            deprecated_allowTradesCycling.migrate(Configs.DEFAULT_RULES.allowTradesCycling);
+            deprecated_allowLibrarianSelection.migrate(Configs.DEFAULT_RULES.allowLibrarianSelection);
+            deprecated_cyclingNeedsWhisperer.migrate(Configs.DEFAULT_RULES.cyclingNeedsWhisperer);
+        }
     }
 }

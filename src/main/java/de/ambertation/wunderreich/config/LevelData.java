@@ -78,8 +78,8 @@ public class LevelData {
                 loadedRoot = NbtIo.readCompressed(dataFile);
             } catch (IOException e) {
                 Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
-                                        dataFile.toString(),
-                                        e);
+                        dataFile.toString(),
+                        e);
                 dataFile = getDataFile("_old");
                 try {
                     loadedRoot = NbtIo.readCompressed(dataFile);
@@ -91,7 +91,7 @@ public class LevelData {
 
         if (loadedRoot == null) {
             loadedRoot = new CompoundTag();
-            loadedRoot.putString("create_version", Wunderreich.VERSION);
+            loadedRoot.putString("create_version", Wunderreich.VERSION.toString());
         }
 
         this.root = loadedRoot;
@@ -104,7 +104,7 @@ public class LevelData {
         }
 
         final File tempFile = getDataFile("_temp");
-        root.putString("modify_version", Wunderreich.VERSION);
+        root.putString("modify_version", Wunderreich.VERSION.toString());
         try {
             NbtIo.writeCompressed(root, tempFile);
             final File dataFile = getDataFile("");

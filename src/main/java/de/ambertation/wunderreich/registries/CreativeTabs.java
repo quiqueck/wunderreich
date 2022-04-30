@@ -33,7 +33,7 @@ public class CreativeTabs {
     }
 
     public static Item getItemIcon() {
-        if (Configs.MAIN.allowLibrarianSelection() && Configs.ITEM_CONFIG.isEnabled(
+        if (WunderreichRules.Whispers.allowLibrarianSelection() && Configs.ITEM_CONFIG.isEnabled(
                 WunderreichItems.WHISPERER))
             return WunderreichItems.WHISPERER;
 
