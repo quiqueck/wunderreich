@@ -7,8 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.world.level.chunk.ChunkGenerator;
-import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
 
@@ -46,9 +45,8 @@ public abstract class ServerLevelMixin {
                                  LevelStorageSource.LevelStorageAccess levelStorageAccess,
                                  ServerLevelData serverLevelData,
                                  ResourceKey resourceKey,
-                                 DimensionType dimensionType,
+                                 LevelStem levelStem,
                                  ChunkProgressListener chunkProgressListener,
-                                 ChunkGenerator chunkGenerator,
                                  boolean bl,
                                  long l,
                                  List list,
