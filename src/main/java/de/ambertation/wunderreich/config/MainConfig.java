@@ -12,7 +12,7 @@ public class MainConfig extends ConfigFile {
     );
     public final BooleanValue addBlankWhispere = new BooleanValue(
             FEATURE_CATEGORY,
-            "addBlankWhispere",
+            "addBlankWhisperer",
             true
     ).and(enableWhispers);
 
