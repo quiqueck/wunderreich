@@ -25,6 +25,14 @@ public class LevelData {
     private static final String WUNDERKISTE_TAG_NAME = "wunderkiste";
     private static final String OLD_GLOBAL_TAG_NAME = "global";
     private static LevelData INSTANCE;
+    @Nullable
+    private Path levelPath;
+    @NotNull
+    private CompoundTag root;
+
+    private LevelData() {
+        CompoundTag root = new CompoundTag();
+    }
 
     public static LevelData getInstance() {
         if (INSTANCE == null) {
@@ -32,16 +40,6 @@ public class LevelData {
         }
         return INSTANCE;
     }
-
-    private LevelData() {
-        CompoundTag root = new CompoundTag();
-    }
-
-    @Nullable
-    private Path levelPath;
-
-    @NotNull
-    private CompoundTag root;
 
     private void reset() {
         levelPath = null;
@@ -53,6 +51,7 @@ public class LevelData {
         accessor = getLevelStorageAccessAndLock(levelSource, levelID);
 
         loadNewLevel(accessor);
+        assert accessor != null;
         unlock(levelID, accessor);
     }
 
@@ -65,6 +64,7 @@ public class LevelData {
     }
 
     private File getDataFile(String comment) {
+        assert levelPath != null;
         return levelPath.resolve(DATA_FOLDER + "/" + Wunderreich.MOD_ID + comment + ".nbt").toFile();
     }
 
@@ -116,7 +116,7 @@ public class LevelData {
         }
     }
 
-    public CompoundTag getRoot() {
+    public @NotNull CompoundTag getRoot() {
         return root;
     }
 
@@ -125,11 +125,6 @@ public class LevelData {
     }
 
     private CompoundTag getWunderkisteInventory(String domain) {
-        if (root == null) {
-            Wunderreich.LOGGER.error("Accessed global Inventory before level load.");
-            return new CompoundTag();
-        }
-
         CompoundTag wunderkiste;
         if (!root.contains(WUNDERKISTE_TAG_NAME)) {
             wunderkiste = new CompoundTag();

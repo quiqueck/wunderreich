@@ -20,33 +20,6 @@ public class CreativeTabs {
     public static final CreativeModeTab TAB_BLOCKS;
     public static final CreativeModeTab TAB_ITEMS;
 
-    public static Block getBlockIcon() {
-        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE))
-            return WunderreichBlocks.WUNDER_KISTE;
-        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WHISPER_IMPRINTER))
-            return WunderreichBlocks.WHISPER_IMPRINTER;
-        return WunderreichBlocks.getAllBlocks()
-                                .stream()
-                                .filter(Configs.BLOCK_CONFIG::isEnabled)
-                                .findFirst()
-                                .orElse(Blocks.LAPIS_BLOCK);
-    }
-
-    public static Item getItemIcon() {
-        if (WunderreichRules.Whispers.allowLibrarianSelection() && Configs.ITEM_CONFIG.isEnabled(
-                WunderreichItems.WHISPERER))
-            return WunderreichItems.WHISPERER;
-
-        if (Configs.MAIN.allowBuilderTools.get() && Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
-            return WunderreichItems.BUILDERS_TROWEL;
-
-        return WunderreichItems.getAllItems()
-                               .stream()
-                               .filter(Configs.ITEM_CONFIG::isEnabled)
-                               .findFirst()
-                               .orElse(Items.BOOK);
-    }
-
     static {
         TAB_BLOCKS = FabricItemGroupBuilder.create(Wunderreich.ID("blocks"))
                                            .icon(() -> new ItemStack(getBlockIcon()))
@@ -73,5 +46,32 @@ public class CreativeTabs {
                                           })
                                           .build();
 
+    }
+
+    public static Block getBlockIcon() {
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE))
+            return WunderreichBlocks.WUNDER_KISTE;
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WHISPER_IMPRINTER))
+            return WunderreichBlocks.WHISPER_IMPRINTER;
+        return WunderreichBlocks.getAllBlocks()
+                                .stream()
+                                .filter(Configs.BLOCK_CONFIG::isEnabled)
+                                .findFirst()
+                                .orElse(Blocks.LAPIS_BLOCK);
+    }
+
+    public static Item getItemIcon() {
+        if (WunderreichRules.Whispers.allowLibrarianSelection() && Configs.ITEM_CONFIG.isEnabled(
+                WunderreichItems.WHISPERER))
+            return WunderreichItems.WHISPERER;
+
+        if (Configs.MAIN.allowBuilderTools.get() && Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
+            return WunderreichItems.BUILDERS_TROWEL;
+
+        return WunderreichItems.getAllItems()
+                               .stream()
+                               .filter(Configs.ITEM_CONFIG::isEnabled)
+                               .findFirst()
+                               .orElse(Items.BOOK);
     }
 }

@@ -17,12 +17,32 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRemoveWunderKisteMessage.Content> {
     public static final AddRemoveWunderKisteMessage INSTANCE = ServerBoundPacketHandler.register("wunder_kiste",
-                                                                                                 new AddRemoveWunderKisteMessage());
+            new AddRemoveWunderKisteMessage());
 
     protected AddRemoveWunderKisteMessage() {
     }
 
-    protected static record Content(boolean didAdd, BlockPos pos, ServerLevel level) {
+    private static void addedBox(ServerLevel level, BlockPos pos) {
+        final LiveBlock lb = new LiveBlock(pos, level);
+        final BlockState state = level.getBlockState(pos);
+        Wunderreich.LOGGER.info(
+                "Adding WunderKiste at " +
+                        pos +
+                        " " +
+                        WunderKisteBlock.liveBlocks.contains(lb) +
+                        " (" +
+                        WunderKisteServerExtension.getDomain(state) +
+                        ")"
+        );
+        WunderKisteBlock.liveBlocks.add(lb);
+        WunderKisteBlock.updateNeighbours(level, pos);
+    }
+
+    private static void removedBox(ServerLevel level, BlockPos pos) {
+        final LiveBlock lb = new LiveBlock(pos, level);
+        Wunderreich.LOGGER.info("Removing  WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
+        WunderKisteBlock.liveBlocks.remove(lb);
+        WunderKisteBlock.updateNeighbours(level, pos);
     }
 
     public void send(boolean didAdd, BlockPos pos) {
@@ -50,27 +70,7 @@ public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRem
         else removedBox(content.level, content.pos);
     }
 
-    private static void addedBox(ServerLevel level, BlockPos pos) {
-        final LiveBlock lb = new LiveBlock(pos, level);
-        final BlockState state = level.getBlockState(pos);
-        Wunderreich.LOGGER.info(
-                "Adding WunderKiste at " +
-                        pos +
-                        " " +
-                        WunderKisteBlock.liveBlocks.contains(lb) +
-                        " (" +
-                        WunderKisteServerExtension.getDomain(state) +
-                        ")"
-                               );
-        WunderKisteBlock.liveBlocks.add(lb);
-        WunderKisteBlock.updateNeighbours(level, pos);
-    }
-
-    private static void removedBox(ServerLevel level, BlockPos pos) {
-        final LiveBlock lb = new LiveBlock(pos, level);
-        Wunderreich.LOGGER.info("Removing  WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
-        WunderKisteBlock.liveBlocks.remove(lb);
-        WunderKisteBlock.updateNeighbours(level, pos);
+    protected record Content(boolean didAdd, BlockPos pos, ServerLevel level) {
     }
 
 //    public final static ResourceLocation CHANNEL = new ResourceLocation(Wunderreich.MOD_ID, "wunder_kiste");

@@ -50,18 +50,6 @@ public class WunderKisteItem extends BlockItem {
         return itemStack;
     }
 
-    @Override
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
-        super.appendHoverText(itemStack, level, list, tooltipFlag);
-        final WunderKisteDomain domain = getDomain(itemStack);
-        Component domainComponent = getDomainComponent(domain);
-        list.add(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
-                ChatFormatting.GRAY));
-    }
-
     public static Component getDomainComponent(WunderKisteDomain domain) {
         return Component.translatable("wunderreich.domain." + domain.toString()).setStyle(Style.EMPTY.withColor(
                 domain.textColor).withBold(true));
@@ -76,11 +64,24 @@ public class WunderKisteItem extends BlockItem {
 
     @NotNull
     private static ItemStack createForDomain(WunderKisteDomain domain) {
+        assert WunderreichBlocks.WUNDER_KISTE != null;
         return setDomain(new ItemStack(WunderreichBlocks.WUNDER_KISTE.asItem(), 1), domain);
     }
 
     @Override
-    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
+    public void appendHoverText(@NotNull ItemStack itemStack,
+                                @Nullable Level level,
+                                @NotNull List<Component> list,
+                                @NotNull TooltipFlag tooltipFlag) {
+        super.appendHoverText(itemStack, level, list, tooltipFlag);
+        final WunderKisteDomain domain = getDomain(itemStack);
+        Component domainComponent = getDomainComponent(domain);
+        list.add(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
+                ChatFormatting.GRAY));
+    }
+
+    @Override
+    public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
         if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
             addAllVariants(itemList);
         }

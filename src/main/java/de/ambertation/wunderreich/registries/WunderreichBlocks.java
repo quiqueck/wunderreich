@@ -25,7 +25,6 @@ import java.util.function.Function;
 
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(64);
-
     public static final Block WUNDER_KISTE = registerBlock("wunder_kiste",
             null,
             bb -> new WunderKisteBlock(),
@@ -33,7 +32,7 @@ public class WunderreichBlocks {
     public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter",
             null,
             bb -> new WhisperImprinter(), Configs.MAIN.enableWhispers.get());
-
+    
     //Slabs
     public static final Block GRASS_SLAB = registerSlab("grass_slab",
             Blocks.GRASS_BLOCK,
@@ -51,7 +50,6 @@ public class WunderreichBlocks {
             Configs.MAIN.addSlabs.get());
     public static final Block RED_SAND_SLAB = registerSlab("red_sand_slab", Blocks.RED_SAND, SandSlab.Red::new,
             Configs.MAIN.addSlabs.get());
-
     public static final Block WHITE_CONCRETE_SLAB = registerSlab("white_concrete_slab",
             Blocks.WHITE_CONCRETE,
             ConcreteSlabBlock::new,
@@ -180,12 +178,10 @@ public class WunderreichBlocks {
             Blocks.PINK_TERRACOTTA,
             ConcreteSlabBlock::new,
             Configs.MAIN.addSlabs.get());
-
     public static final Block GLASS_SLAB = registerSlab("glass_slab",
             Blocks.GLASS,
             GlassSlabBlock::new,
             Configs.MAIN.addSlabs.get());
-
     public static final Block WHITE_STAINED_GLASS_SLAB = registerStainedGlass("white_stained_glass_slab",
             Blocks.WHITE_STAINED_GLASS,
             Configs.MAIN.addSlabs.get());

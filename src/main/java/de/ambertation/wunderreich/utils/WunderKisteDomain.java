@@ -23,12 +23,12 @@ public enum WunderKisteDomain implements StringRepresentable {
     RED("red", Items.RED_DYE, 0xB8342C),
     BLACK("black", Items.BLACK_DYE, 0x252529);
 
-    private final String name;
     public final Item triggerItem;
     public final int color;
     public final TextColor textColor;
+    private final String name;
 
-    private WunderKisteDomain(String name, Item triggerItem, int color) {
+    WunderKisteDomain(String name, Item triggerItem, int color) {
         this.name = name;
         this.triggerItem = triggerItem;
         this.color = color;

@@ -16,6 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.material.Material;
 
+import org.jetbrains.annotations.NotNull;
+
 public class FallingSlab extends DirtSlabBlock {
     private final int dustColor;
 
@@ -24,30 +26,39 @@ public class FallingSlab extends DirtSlabBlock {
         this.dustColor = dustColor;
     }
 
+    public static boolean isFree(BlockState blockState) {
+        final Material material = blockState.getMaterial();
+        return blockState.isAir() || blockState.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
+    }
+
     @Override
-    public void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+    public void onPlace(@NotNull BlockState blockState,
+                        Level level,
+                        BlockPos blockPos,
+                        BlockState blockState2,
+                        boolean bl) {
         level.scheduleTick(blockPos, this, this.getDelayAfterPlace());
     }
 
     @Override
-    public BlockState updateShape(BlockState blockState,
-                                  Direction direction,
-                                  BlockState blockState2,
+    public BlockState updateShape(@NotNull BlockState blockState,
+                                  @NotNull Direction direction,
+                                  @NotNull BlockState blockState2,
                                   LevelAccessor levelAccessor,
-                                  BlockPos blockPos,
-                                  BlockPos blockPos2) {
+                                  @NotNull BlockPos blockPos,
+                                  @NotNull BlockPos blockPos2) {
         levelAccessor.scheduleTick(blockPos, this, this.getDelayAfterPlace());
         return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
     }
 
     public BlockState makeState(BlockState state, SlabType type) {
         return this.defaultBlockState()
-                .setValue(TYPE, type)
-                .setValue(WATERLOGGED, state.getValue(WATERLOGGED));
+                   .setValue(TYPE, type)
+                   .setValue(WATERLOGGED, state.getValue(WATERLOGGED));
     }
 
     @Override
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
+    public void tick(@NotNull BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
         SlabType belowType = (SlabType) below.getValues().get(TYPE);
 
@@ -75,13 +86,11 @@ public class FallingSlab extends DirtSlabBlock {
         return 2;
     }
 
-    public static boolean isFree(BlockState blockState) {
-        final Material material = blockState.getMaterial();
-        return blockState.isAir() || blockState.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
-    }
-
     @Override
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
+    public void animateTick(@NotNull BlockState blockState,
+                            @NotNull Level level,
+                            @NotNull BlockPos blockPos,
+                            RandomSource random) {
         BlockPos blockPos2;
         if (random.nextInt(16) == 0 && FallingBlock.isFree(level.getBlockState(blockPos2 = blockPos.below()))) {
             double d = (double) blockPos.getX() + random.nextDouble();

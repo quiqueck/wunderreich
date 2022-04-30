@@ -67,6 +67,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
@@ -75,10 +76,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     public static final DirectionProperty FACING;
     public static final BooleanProperty WATERLOGGED;
+    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    public static final Set<LiveBlock> liveBlocks = ConcurrentHashMap.newKeySet(8);
-    private static Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -165,27 +166,27 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public static WunderKisteContainer getContainer(BlockState state, MinecraftServer server) {
-        if (server != null && server instanceof WunderKisteExtensionProvider extWunderkiste) {
+        if (server instanceof WunderKisteExtensionProvider extWunderkiste) {
             return extWunderkiste.getWunderKisteExtension().getContainer(state);
         }
         return null;
     }
 
-    public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(BlockState blockState,
-                                                                                         Level level,
-                                                                                         BlockPos blockPos,
+    public DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combine(@NotNull BlockState blockState,
+                                                                                         @NotNull Level level,
+                                                                                         @NotNull BlockPos blockPos,
                                                                                          boolean bl) {
         return DoubleBlockCombiner.Combiner::acceptNone;
     }
 
-    public VoxelShape getShape(BlockState blockState,
-                               BlockGetter blockGetter,
-                               BlockPos blockPos,
-                               CollisionContext collisionContext) {
+    public VoxelShape getShape(@NotNull BlockState blockState,
+                               @NotNull BlockGetter blockGetter,
+                               @NotNull BlockPos blockPos,
+                               @NotNull CollisionContext collisionContext) {
         return SHAPE;
     }
 
-    public RenderShape getRenderShape(BlockState blockState) {
+    public RenderShape getRenderShape(@NotNull BlockState blockState) {
         return RenderShape.ENTITYBLOCK_ANIMATED;
     }
 
@@ -217,11 +218,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public BlockState updateShape(BlockState blockState,
-                                  Direction direction,
-                                  BlockState blockState2,
-                                  LevelAccessor levelAccessor,
-                                  BlockPos blockPos,
-                                  BlockPos blockPos2) {
+                                  @NotNull Direction direction,
+                                  @NotNull BlockState blockState2,
+                                  @NotNull LevelAccessor levelAccessor,
+                                  @NotNull BlockPos blockPos,
+                                  @NotNull BlockPos blockPos2) {
         if (blockState.getValue(WATERLOGGED)) {
             levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
         }
@@ -229,10 +230,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
     }
 
-    public boolean isPathfindable(BlockState blockState,
-                                  BlockGetter blockGetter,
-                                  BlockPos blockPos,
-                                  PathComputationType pathComputationType) {
+    public boolean isPathfindable(@NotNull BlockState blockState,
+                                  @NotNull BlockGetter blockGetter,
+                                  @NotNull BlockPos blockPos,
+                                  @NotNull PathComputationType pathComputationType) {
         return false;
     }
 
@@ -245,8 +246,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Nullable
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level,
-                                                                  BlockState blockState,
-                                                                  BlockEntityType<T> blockEntityType) {
+                                                                  @NotNull BlockState blockState,
+                                                                  @NotNull BlockEntityType<T> blockEntityType) {
         return level.isClientSide ? createTickerHelper(blockEntityType,
                 WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
                 WunderKisteBlockEntity::lidAnimateTick) : null;
@@ -257,12 +258,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public InteractionResult use(BlockState blockState,
-                                 Level level,
-                                 BlockPos blockPos,
-                                 Player player,
-                                 InteractionHand interactionHand,
-                                 BlockHitResult blockHitResult) {
+    public InteractionResult use(@NotNull BlockState blockState,
+                                 @NotNull Level level,
+                                 @NotNull BlockPos blockPos,
+                                 @NotNull Player player,
+                                 @NotNull InteractionHand interactionHand,
+                                 @NotNull BlockHitResult blockHitResult) {
         final WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
 
@@ -343,7 +344,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
+    public void animateTick(@NotNull BlockState blockState,
+                            @NotNull Level level,
+                            @NotNull BlockPos blockPos,
+                            @NotNull RandomSource random) {
         for (int i = 0; i < 3; ++i) {
             int xFactor = random.nextInt(2) * 2 - 1;
             int zFactor = random.nextInt(2) * 2 - 1;
@@ -362,19 +366,19 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+    public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
         //liveBlocks.add(blockPos);
         AddRemoveWunderKisteMessage.INSTANCE.send(true, blockPos);
         return new WunderKisteBlockEntity(blockPos, blockState);
     }
 
     @Override
-    public boolean hasAnalogOutputSignal(BlockState blockState) {
+    public boolean hasAnalogOutputSignal(@NotNull BlockState blockState) {
         return WunderreichRules.Wunderkiste.analogRedstoneOutput();
     }
 
     @Override
-    public int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
+    public int getAnalogOutputSignal(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos) {
         if (WunderreichRules.Wunderkiste.analogRedstoneOutput()) {
             WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
             if (wunderKisteContainer != null) {
@@ -385,12 +389,15 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public boolean isSignalSource(BlockState blockState) {
+    public boolean isSignalSource(@NotNull BlockState blockState) {
         return WunderreichRules.Wunderkiste.redstonePowerWhenOpened();
     }
 
     @Override
-    public int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+    public int getSignal(@NotNull BlockState blockState,
+                         @NotNull BlockGetter blockGetter,
+                         @NotNull BlockPos blockPos,
+                         @NotNull Direction direction) {
         if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
         final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
         return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
@@ -403,12 +410,20 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 //	}
 
     @Deprecated
-    public void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+    public void onPlace(@NotNull BlockState blockState,
+                        @NotNull Level level,
+                        @NotNull BlockPos blockPos,
+                        @NotNull BlockState blockState2,
+                        boolean bl) {
         super.onPlace(blockState, level, blockPos, blockState2, bl);
     }
 
     @Deprecated
-    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+    public void onRemove(@NotNull BlockState blockState,
+                         @NotNull Level level,
+                         @NotNull BlockPos blockPos,
+                         @NotNull BlockState blockState2,
+                         boolean bl) {
         super.onRemove(blockState, level, blockPos, blockState2, bl);
 
         if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
@@ -418,7 +433,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public WorldlyContainer getContainer(BlockState blockState, LevelAccessor levelAccessor, BlockPos blockPos) {
+    public WorldlyContainer getContainer(@NotNull BlockState blockState,
+                                         LevelAccessor levelAccessor,
+                                         @NotNull BlockPos blockPos) {
         return getContainer(blockState, levelAccessor.getServer());
     }
 
@@ -436,6 +453,41 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     @Environment(EnvType.CLIENT)
     public BlockEntityRendererProvider getBlockEntityRenderProvider() {
         return WunderkisteRenderer::new;
+    }
+
+    @Override
+    public List<ItemStack> getDrops(@NotNull BlockState blockState, LootContext.@NotNull Builder builder) {
+        return super.getDrops(blockState, builder).stream().map(stack -> {
+            if (stack.getItem() instanceof WunderKisteItem item) {
+                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+            }
+            return stack;
+        }).collect(Collectors.toList());
+    }
+
+    @Override
+    public LootTableJsonBuilder buildLootTable() {
+        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
+                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
+                                                             .startAlternatives(altBuilder -> altBuilder
+                                                                     .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
+                                                                     )
+                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
+                                                                             builder -> builder
+                                                                                     .setCount(4, false)
+                                                                                     .explosionDecay()
+                                                                     )
+                                                             )
+                                                     );
+
+        return b;
+    }
+
+    @Override
+    public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
+        if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
+            WunderKisteItem.addAllVariants(itemList);
+        }
     }
 
     //custom code
@@ -460,42 +512,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         @Override
         public int hashCode() {
             return pos.hashCode();
-        }
-    }
-
-    @Override
-    public List<ItemStack> getDrops(BlockState blockState, LootContext.Builder builder) {
-        return super.getDrops(blockState, builder).stream().map(stack -> {
-            if (stack.getItem() instanceof WunderKisteItem item) {
-                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
-            }
-            return stack;
-        }).collect(Collectors.toList());
-    }
-
-    @Override
-    public LootTableJsonBuilder buildLootTable() {
-        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
-                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
-                                                             .startAlternatives(altBuilder -> altBuilder
-                                                                     .startSelfEntry(builder -> builder
-                                                                             .silkTouch()
-                                                                     )
-                                                                     .startItemEntry(Items.NETHERITE_SCRAP,
-                                                                             builder -> builder
-                                                                                     .setCount(4, false)
-                                                                                     .explosionDecay()
-                                                                     )
-                                                             )
-                                                     );
-
-        return b;
-    }
-
-    @Override
-    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
-            WunderKisteItem.addAllVariants(itemList);
         }
     }
 }

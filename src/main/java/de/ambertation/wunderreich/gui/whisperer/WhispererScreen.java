@@ -1,13 +1,8 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -26,9 +21,18 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.List;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(value = EnvType.CLIENT)
 public class WhispererScreen
@@ -92,7 +96,7 @@ public class WhispererScreen
     }
 
     @Override
-    protected void renderLabels(PoseStack poseStack, int x, int y) {
+    protected void renderLabels(@NotNull PoseStack poseStack, int x, int y) {
         this.font.draw(poseStack,
                 this.title,
                 (float) (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
@@ -109,7 +113,7 @@ public class WhispererScreen
     }
 
     @Override
-    protected void renderBg(PoseStack poseStack, float f, int i, int j) {
+    protected void renderBg(@NotNull PoseStack poseStack, float f, int i, int j) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
         RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
@@ -256,7 +260,7 @@ public class WhispererScreen
 
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
+    public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
         this.renderBackground(poseStack);
         super.render(poseStack, i, j, f);
         var enchants = this.menu.getEnchants();
@@ -397,7 +401,7 @@ public class WhispererScreen
         }
 
         @Override
-        public void renderToolTip(PoseStack poseStack, int i, int j) {
+        public void renderToolTip(@NotNull PoseStack poseStack, int i, int j) {
             if (this.isHovered && WhispererScreen.this.menu
                     .getEnchants()
                     .size() > this.index + WhispererScreen.this.scrollOff) {

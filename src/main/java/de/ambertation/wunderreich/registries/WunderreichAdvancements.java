@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.registries;
 
-import com.google.gson.JsonElement;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
@@ -9,6 +8,8 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Items;
+
+import com.google.gson.JsonElement;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -58,19 +59,22 @@ public class WunderreichAdvancements {
                 }).register();
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE)) {
+            assert WunderreichBlocks.WUNDER_KISTE != null;
             ResourceLocation opened_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_open")
                     .startDisplay(WunderreichBlocks.WUNDER_KISTE.asItem(),
                             b -> b.showToast().visible().announceToChat())
                     .parent(root)
-                    .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> { }).register();
+                    .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> {
+                    }).register();
 
             ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
                     .startDisplay(Items.RED_DYE,
                             b -> b.showToast().visible().announceToChat().goal())
                     .parent(opened_wunderkiste)
-                    .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> { }).register();
+                    .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> {
+                    }).register();
         }
     }
 }

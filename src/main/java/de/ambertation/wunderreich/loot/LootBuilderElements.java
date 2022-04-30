@@ -7,6 +7,10 @@ import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.List;
 
+interface EntryList {
+    void addEntry(Entry e);
+}
+
 class EntryFunction {
     private final String function;
 
@@ -147,10 +151,6 @@ class AlternativeEntries extends Entry implements EntryList {
         }
         return root;
     }
-}
-
-interface EntryList {
-    void addEntry(Entry e);
 }
 
 class Entry {

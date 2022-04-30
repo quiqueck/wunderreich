@@ -9,14 +9,14 @@ import java.util.List;
 
 class Display {
     static final ThreadLocal<Display> DISPLAY = ThreadLocal.withInitial(Display::new);
-    private String icon;
-    private String title;
-    private String description;
     String frame;
     String background;
     boolean showToast;
     boolean announceToChat;
     boolean hidden;
+    private String icon;
+    private String title;
+    private String description;
 
     private Display() {
     }
@@ -78,7 +78,7 @@ class RecipeReward extends Reward {
     void serialize(JsonObject obj) {
         if (recipes.size() > 0) {
             JsonArray f = new JsonArray();
-            recipes.stream().map(s -> new JsonPrimitive(s)).forEach(f::add);
+            recipes.stream().map(JsonPrimitive::new).forEach(f::add);
             obj.add("recipes", f);
         }
     }

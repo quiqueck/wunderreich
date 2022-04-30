@@ -11,12 +11,9 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 public class SelectWhisperMessage extends ServerBoundPacketHandler<SelectWhisperMessage.Content> {
     public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register("select_whisper",
-                                                                                          new SelectWhisperMessage());
+            new SelectWhisperMessage());
 
     protected SelectWhisperMessage() {
-    }
-
-    protected static record Content(int itemIndex) {
     }
 
     public void send(int itemIndex) {
@@ -43,5 +40,8 @@ public class SelectWhisperMessage extends ServerBoundPacketHandler<SelectWhisper
             menu.setSelectionHint(itemIndex);
             menu.tryMoveItems(itemIndex);
         }
+    }
+
+    protected record Content(int itemIndex) {
     }
 }

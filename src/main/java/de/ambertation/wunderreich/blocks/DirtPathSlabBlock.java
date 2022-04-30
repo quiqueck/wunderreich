@@ -23,6 +23,12 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     protected static final VoxelShape TOP_AABB;
     protected static final VoxelShape DOUBLE_AABB;
 
+    static {
+        BOTTOM_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
+        TOP_AABB = Block.box(0.0D, 8.0D, 0.0D, 16.0D, 15.0D, 16.0D);
+        DOUBLE_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
+    }
+
     public DirtPathSlabBlock(Block baseBlock) {
         super(baseBlock);
     }
@@ -81,12 +87,5 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
             default:
                 return BOTTOM_AABB;
         }
-    }
-
-
-    static {
-        BOTTOM_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 7.0D, 16.0D);
-        TOP_AABB = Block.box(0.0D, 8.0D, 0.0D, 16.0D, 15.0D, 16.0D);
-        DOUBLE_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
     }
 }

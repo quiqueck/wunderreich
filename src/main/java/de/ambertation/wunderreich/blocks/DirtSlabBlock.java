@@ -2,7 +2,6 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
@@ -22,16 +21,7 @@ public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDro
         super(FabricBlockSettings.copyOf(baseBlock));
     }
 
-    @Override
-    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
-        blockTags.accept(BlockTags.SLABS);
-        itemTags.accept(ItemTags.SLABS);
-        blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
-        blockTags.accept(BlockTags.DIRT);
-        itemTags.accept(ItemTags.DIRT);
-    }
-
-    public static BlockState createStateFrom(Block baseBlock, BlockState currentState){
+    public static BlockState createStateFrom(Block baseBlock, BlockState currentState) {
         SlabType type = SlabType.BOTTOM;
         boolean waterlogged = false;
         if (currentState.hasProperty(SlabBlock.TYPE)) {
@@ -41,6 +31,18 @@ public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDro
             waterlogged = currentState.getValue(SlabBlock.WATERLOGGED);
         }
 
-        return baseBlock.defaultBlockState().setValue(SlabBlock.TYPE, type).setValue(SlabBlock.WATERLOGGED, waterlogged);
+        return baseBlock
+                .defaultBlockState()
+                .setValue(SlabBlock.TYPE, type)
+                .setValue(SlabBlock.WATERLOGGED, waterlogged);
+    }
+
+    @Override
+    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+        blockTags.accept(BlockTags.SLABS);
+        itemTags.accept(ItemTags.SLABS);
+        blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
+        blockTags.accept(BlockTags.DIRT);
+        itemTags.accept(ItemTags.DIRT);
     }
 }

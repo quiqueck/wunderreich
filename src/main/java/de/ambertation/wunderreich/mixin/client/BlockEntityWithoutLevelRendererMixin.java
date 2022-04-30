@@ -28,14 +28,13 @@ import java.util.Map;
 
 @Mixin(BlockEntityWithoutLevelRenderer.class)
 public abstract class BlockEntityWithoutLevelRendererMixin {
+    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
     @Shadow
     @Final
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
     @Shadow
     @Final
     private EnderChestBlockEntity enderChest;
-
-    private final Map<WunderKisteDomain, WunderKisteBlockEntity> wunderKisten = Maps.newHashMap();
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void wunderreich_render(ItemStack itemStack,

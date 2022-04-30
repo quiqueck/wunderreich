@@ -23,7 +23,7 @@ import java.net.Proxy;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements WunderKisteExtensionProvider {
-    private WunderKisteServerExtension wunderkiste = new WunderKisteServerExtension();
+    private final WunderKisteServerExtension wunderkiste = new WunderKisteServerExtension();
 
     public WunderKisteServerExtension getWunderKisteExtension() {
         return wunderkiste;
@@ -31,15 +31,23 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
 
     @Inject(method = "stopServer", at = @At("HEAD"))
     public void wunderreich_stop(CallbackInfo ci) {
-        if (wunderkiste != null) wunderkiste.onCloseServer();
+        wunderkiste.onCloseServer();
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void wunderreich_init(Thread thread, LevelStorageAccess levelStorageAccess, PackRepository packRepository, WorldStem worldStem, Proxy proxy, DataFixer dataFixer, MinecraftSessionService minecraftSessionService, GameProfileRepository gameProfileRepository, GameProfileCache gameProfileCache, ChunkProgressListenerFactory chunkProgressListenerFactory, CallbackInfo ci) {
+    public void wunderreich_init(Thread thread,
+                                 LevelStorageAccess levelStorageAccess,
+                                 PackRepository packRepository,
+                                 WorldStem worldStem,
+                                 Proxy proxy,
+                                 DataFixer dataFixer,
+                                 MinecraftSessionService minecraftSessionService,
+                                 GameProfileRepository gameProfileRepository,
+                                 GameProfileCache gameProfileCache,
+                                 ChunkProgressListenerFactory chunkProgressListenerFactory,
+                                 CallbackInfo ci) {
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
-        if (wunderkiste != null) {
-            wunderkiste.onStartServer();
-        }
+        wunderkiste.onStartServer();
     }
 
 }

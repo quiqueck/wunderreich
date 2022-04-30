@@ -6,8 +6,6 @@ import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.client.renderer.RenderType;
@@ -32,9 +30,13 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraft.world.phys.BlockHitResult;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import java.util.function.Consumer;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeRenderLayer, CanDropLoot {
     /**
@@ -42,22 +44,22 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                .mapColor(MaterialColor.LAPIS)
-                .strength(5.0f, 1200.0f)
-                .luminance(8)
-                .requiresTool()
-                .nonOpaque()
-                .sound(SoundType.AMETHYST)
+                               .mapColor(MaterialColor.LAPIS)
+                               .strength(5.0f, 1200.0f)
+                               .luminance(8)
+                               .requiresTool()
+                               .nonOpaque()
+                               .sound(SoundType.AMETHYST)
         );
     }
 
     @Override
-    public InteractionResult use(BlockState blockState,
+    public InteractionResult use(@NotNull BlockState blockState,
                                  Level level,
-                                 BlockPos blockPos,
-                                 Player player,
-                                 InteractionHand interactionHand,
-                                 BlockHitResult blockHitResult) {
+                                 @NotNull BlockPos blockPos,
+                                 @NotNull Player player,
+                                 @NotNull InteractionHand interactionHand,
+                                 @NotNull BlockHitResult blockHitResult) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -72,7 +74,9 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
 
     @Override
     @Nullable
-    public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
+    public MenuProvider getMenuProvider(@NotNull BlockState blockState,
+                                        @NotNull Level level,
+                                        @NotNull BlockPos blockPos) {
         return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
                 inventory,
                 ContainerLevelAccess.create(level,
@@ -82,9 +86,9 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
 
     @Override
     public void onProjectileHit(Level level,
-                                BlockState blockState,
-                                BlockHitResult blockHitResult,
-                                Projectile projectile) {
+                                @NotNull BlockState blockState,
+                                @NotNull BlockHitResult blockHitResult,
+                                @NotNull Projectile projectile) {
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(null,
@@ -104,7 +108,10 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource random) {
+    public void animateTick(@NotNull BlockState blockState,
+                            @NotNull Level level,
+                            @NotNull BlockPos blockPos,
+                            @NotNull RandomSource random) {
         super.animateTick(blockState, level, blockPos, random);
 
 

@@ -16,43 +16,11 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.NotNull;
+
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
     private final ChestLidController chestLidController = new ChestLidController();
-    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
-        protected void onOpen(Level level, BlockPos blockPos, BlockState blockState) {
-            //System.out.println("Open " + blockPos.getZ());
-            level.playSound(null,
-                    (double) blockPos.getX() + 0.5D,
-                    (double) blockPos.getY() + 0.5D,
-                    (double) blockPos.getZ() + 0.5D,
-                    SoundEvents.ENDER_CHEST_OPEN,
-                    SoundSource.BLOCKS,
-                    0.5F,
-                    level.random.nextFloat() * 0.1F + 0.9F);
-        }
-
-        protected void onClose(Level level, BlockPos blockPos, BlockState blockState) {
-            //System.out.println("Close " + blockPos.getZ());
-            level.playSound(null,
-                    (double) blockPos.getX() + 0.5D,
-                    (double) blockPos.getY() + 0.5D,
-                    (double) blockPos.getZ() + 0.5D,
-                    SoundEvents.ENDER_CHEST_CLOSE,
-                    SoundSource.BLOCKS,
-                    0.5F,
-                    level.random.nextFloat() * 0.1F + 0.9F);
-        }
-
-        protected void openerCountChanged(Level level, BlockPos blockPos, BlockState blockState, int i, int j) {
-            level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
-            WunderKisteBlock.updateAllBoxes(blockState, level.getServer(), true, false);
-        }
-
-        protected boolean isOwnContainer(Player player) {
-            return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
-        }
-    };
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
@@ -64,6 +32,46 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
                                       WunderKisteBlockEntity wunderKisteBlockEntity) {
         wunderKisteBlockEntity.chestLidController.tickLid();
     }
+
+    private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
+        protected void onOpen(Level level, BlockPos blockPos, @NotNull BlockState blockState) {
+            //System.out.println("Open " + blockPos.getZ());
+            level.playSound(null,
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_OPEN,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
+        }
+
+        protected void onClose(Level level, BlockPos blockPos, @NotNull BlockState blockState) {
+            //System.out.println("Close " + blockPos.getZ());
+            level.playSound(null,
+                    (double) blockPos.getX() + 0.5D,
+                    (double) blockPos.getY() + 0.5D,
+                    (double) blockPos.getZ() + 0.5D,
+                    SoundEvents.ENDER_CHEST_CLOSE,
+                    SoundSource.BLOCKS,
+                    0.5F,
+                    level.random.nextFloat() * 0.1F + 0.9F);
+        }
+
+        protected void openerCountChanged(Level level,
+                                          @NotNull BlockPos blockPos,
+                                          @NotNull BlockState blockState,
+                                          int i,
+                                          int j) {
+            assert WunderreichBlocks.WUNDER_KISTE != null;
+            level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
+            WunderKisteBlock.updateAllBoxes(blockState, level.getServer(), true, false);
+        }
+
+        protected boolean isOwnContainer(@NotNull Player player) {
+            return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
+        }
+    };
 
     public boolean triggerEvent(int i, int j) {
         if (i == 1) {
@@ -111,5 +119,6 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
     }
+
 
 }

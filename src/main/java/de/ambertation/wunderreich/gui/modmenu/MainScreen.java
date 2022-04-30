@@ -1,21 +1,25 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import de.ambertation.wunderreich.config.ConfigFile;
 import de.ambertation.wunderreich.config.Configs;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import org.jetbrains.annotations.Nullable;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
+import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 class EventCheckBox extends Checkbox {
@@ -136,7 +140,7 @@ public class MainScreen extends Screen {
         this.addRenderableWidget(b);
     }
 
-    public void render(PoseStack poseStack, int i, int j, float f) {
+    public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
         this.renderDirtBackground(i);
         drawCenteredString(poseStack, this.font, this.title, width / 2, 20, 0xFFFFFFFF);
         super.render(poseStack, i, j, f);

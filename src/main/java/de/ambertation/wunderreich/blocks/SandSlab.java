@@ -9,12 +9,6 @@ import net.minecraft.world.level.block.Block;
 import java.util.function.Consumer;
 
 public class SandSlab extends FallingSlab {
-    public static class Red extends SandSlab {
-        public Red(Block baseBlock) {
-            super(0xA95821, baseBlock);
-        }
-    }
-
     public SandSlab(Block baseBlock) {
         this(0xDBD3A0, baseBlock);
     }
@@ -31,5 +25,11 @@ public class SandSlab extends FallingSlab {
         blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
         blockTags.accept(BlockTags.SAND);
         itemTags.accept(ItemTags.SAND);
+    }
+
+    public static class Red extends SandSlab {
+        public Red(Block baseBlock) {
+            super(0xA95821, baseBlock);
+        }
     }
 }
