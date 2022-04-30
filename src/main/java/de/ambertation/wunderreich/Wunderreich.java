@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
+import de.ambertation.wunderreich.utils.Version;
 
 import net.minecraft.resources.ResourceLocation;
 
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class Wunderreich implements ModInitializer {
     public static final String MOD_ID = "wunderreich";
     public static final Logger LOGGER = new Logger();
-    public static String VERSION = "0.0.0";
+    public static Version VERSION = new Version("0.0.0");
 
     public static ResourceLocation ID(String path) {
         return new ResourceLocation(MOD_ID, path);
@@ -31,7 +32,7 @@ public class Wunderreich implements ModInitializer {
         Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
         if (optional.isPresent()) {
             ModContainer modContainer = optional.get();
-            VERSION = modContainer.getMetadata().getVersion().toString();
+            VERSION = new Version(modContainer.getMetadata().getVersion().toString());
         }
 
         // This code runs as soon as Minecraft is in a mod-load-ready state.
@@ -42,6 +43,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichItems.register();
         WunderreichRecipes.register();
         WunderreichAdvancements.register();
+        WunderreichRules.register();
 
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();

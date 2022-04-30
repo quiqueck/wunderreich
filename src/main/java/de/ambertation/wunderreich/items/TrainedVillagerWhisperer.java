@@ -1,10 +1,10 @@
 package de.ambertation.wunderreich.items;
 
-import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
@@ -26,7 +26,7 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public final static String TAG_NAME = "WhisperedEnchantment";
 
     public TrainedVillagerWhisperer() {
-        super(Configs.MAIN.whisperTrainedDurability.get());
+        super(WunderreichRules.Whispers.trainedDurability());
     }
 
     public static Enchantment findEnchantment(CompoundTag tag) {

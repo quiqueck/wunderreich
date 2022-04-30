@@ -1,8 +1,10 @@
 package de.ambertation.wunderreich.blockentities.renderer;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
@@ -67,7 +69,9 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         if (!renderInWorld) blockState = blockState.setValue(ChestBlock.FACING, Direction.SOUTH);
 
         if ((blockState.getBlock() instanceof AbstractChestBlock abstractChestBlock)) {
-            final WunderKisteDomain d = WunderKisteServerExtension.getDomain(blockState);
+            final WunderKisteDomain d = WunderreichRules.Wunderkiste.showColors()
+                    ? WunderKisteServerExtension.getDomain(blockState)
+                    : WunderKisteBlock.DEFAULT_DOMAIN;
 
             poseStack.pushPose();
             float g = blockState.getValue(ChestBlock.FACING).toYRot();

@@ -118,7 +118,7 @@ public class MainScreen extends Screen {
         Configs.MAIN
                 .getAllValues()
                 .stream()
-                .filter(o -> !o.isHiddenInUI())
+                .filter(o -> !o.isDeprecated() && !o.isHiddenInUI())
                 .forEach(o -> addRow(state, Configs.MAIN, o));
 
         state.top += 15;
