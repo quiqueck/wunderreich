@@ -99,7 +99,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                     FastColor.ARGB32.blue(d.color) / (float) 0XFF
             );
 
-            if (openness>0) {
+            if (openness > 0) {
                 material = getTopMaterial(d);
                 vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
                 this.renderAnimTop(poseStack,
@@ -139,19 +139,19 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                         float r,
                         float g,
                         float b
-                        ) {
+    ) {
         lockPart.xRot = lidPart.xRot = -(f * 1.5707964f);
 
-        lidPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 0.0f);
-        lockPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 0.0f);
+        lidPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
+        lockPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
         bottomPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
     }
 
     private static Vertex[] TOP_PLANE = {
-            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f/16.0f, 13.0f/16.0f),
-            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f/16.0f, 13.0f/16.0f),
-            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f/16.0f, 1.0f/16.0f),
-            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f/16.0f, 1.0f/16.0f)
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 13.0f / 16.0f),
+            new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 13.0f / 16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f),
+            new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 1.0f / 16.0f)
     };
 
     private void renderAnimTop(PoseStack poseStack,
