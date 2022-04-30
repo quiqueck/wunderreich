@@ -5,6 +5,32 @@ import de.ambertation.wunderreich.Wunderreich;
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
 
+    public final BooleanValue enableWhispers = new BooleanValue(
+            FEATURE_CATEGORY,
+            "enableWhispers",
+            true
+    );
+    public final BooleanValue addBlankWhispere = new BooleanValue(
+            FEATURE_CATEGORY,
+            "addBlankWhispere",
+            true
+    ).and(enableWhispers);
+
+    public final BooleanValue addImprintedWhispers = new BooleanValue(
+            FEATURE_CATEGORY,
+            "addImprintedWhispers",
+            true
+    ).and(enableWhispers);
+
+    public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
+            "allowBuilderTools",
+            true);
+
+    public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
+            "addSlabs",
+            true);
+
+
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
             "doNotDespawnWithNameTag",
@@ -31,27 +57,6 @@ public class MainConfig extends ConfigFile {
             true
     ).and(deprecated_allowTradesCycling);
 
-    public final BooleanValue allowWhispers = new BooleanValue(
-            FEATURE_CATEGORY,
-            "allowWhispers",
-            true
-    );
-
-    public final BooleanValue allowImprintedWhispers = new BooleanValue(
-            FEATURE_CATEGORY,
-            "allowImprintedWhispers",
-            true
-    );
-
-    public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
-            "allowBuilderTools",
-            true);
-
-    public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
-            "addSlabs",
-            true);
-
-
     public MainConfig() {
         super("main");
     }
@@ -60,8 +65,9 @@ public class MainConfig extends ConfigFile {
         if (this.lastModifiedVersion().isLessThan("1.0.5")) {
             Wunderreich.LOGGER.info("Running 1.0.5 migration for main.json...");
 
-            allowWhispers.set(deprecated_allowTradesCycling.get() || deprecated_allowLibrarianSelection.get() || deprecated_cyclingNeedsWhisperer.get());
-            allowImprintedWhispers.set(deprecated_allowLibrarianSelection.get());
+            enableWhispers.set(deprecated_allowLibrarianSelection.get() || deprecated_cyclingNeedsWhisperer.get());
+            addBlankWhispere.set(deprecated_allowLibrarianSelection.get() || deprecated_cyclingNeedsWhisperer.get());
+            addImprintedWhispers.set(deprecated_allowLibrarianSelection.get());
 
             deprecated_doNotDespawnWithNameTag.migrate(Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
             deprecated_allowTradesCycling.migrate(Configs.DEFAULT_RULES.allowTradesCycling);
