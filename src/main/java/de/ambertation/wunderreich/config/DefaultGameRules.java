@@ -27,11 +27,11 @@ public class DefaultGameRules extends ConfigFile {
                                                                         true);
 
     public final BooleanValue wunderkisteAllowDomains = new BooleanValue(WUNDERKISTE_CATEGORY,
-                                                                         "allowDomains",
+                                                                         "allowNetworks",
                                                                          true);
 
     public final IntValue wunderkisteChangeDomainCost = new IntValue(WUNDERKISTE_CATEGORY,
-                                                                     "changeDomainCost",
+                                                                     "changeNetworkCost",
                                                                      1);
 
     public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
