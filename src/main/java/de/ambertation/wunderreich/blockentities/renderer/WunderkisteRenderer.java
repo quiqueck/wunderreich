@@ -60,14 +60,11 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         this.lock = modelPart.getChild(LOCK);
     }
 
-    private static Material getMaterial(WunderKisteDomain d) {
-        return d.getMaterial();
-    }
 
     private static Material getTopMaterial(WunderKisteDomain d) {
-        return d == WunderKisteDomain.WHITE || d == WunderKisteDomain.GRAY || d == WunderKisteDomain.LIGHT_GRAY || d == WunderKisteDomain.BLACK || d == WunderKisteDomain.BLUE || d == WunderKisteDomain.LIGHT_BLUE
-                ? WunderreichClient.WUNDER_KISTE_TOP_LOCATION
-                : WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION;
+        return d.useMonochromeFallback
+                ? WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
+                : WunderreichClient.WUNDER_KISTE_TOP_LOCATION;
     }
 
     @Override
@@ -103,9 +100,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             openness = 1.0f - openness * openness * openness;
 
             final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
-            Material material = getMaterial(d);
+            Material material = d.getMaterial();
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
-
             this.render(poseStack,
                         vertexConsumer,
                         this.lid,
