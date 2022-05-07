@@ -11,28 +11,28 @@ public class DefaultGameRules extends ConfigFile {
     public final IntValue whisperMaxXPMultiplier = new IntValue(WHIPSER_CATEGORY, "maxXPMultiplier", 100);
 
     public final BooleanValue wunderkisteRedstonePowerWhenOpened = new BooleanValue(WUNDERKISTE_CATEGORY,
-            "redstonePowerWhenOpened",
-            true);
+                                                                                    "redstonePowerWhenOpened",
+                                                                                    true);
 
     public final BooleanValue wunderkisteAnalogRedstoneOutput = new BooleanValue(WUNDERKISTE_CATEGORY,
-            "analogRedstoneOutput",
-            true);
+                                                                                 "analogRedstoneOutput",
+                                                                                 true);
 
     public final BooleanValue wunderkisteCanColor = new BooleanValue(WUNDERKISTE_CATEGORY,
-            "canColor",
-            false);
+                                                                     "canColor",
+                                                                     true);
 
     public final BooleanValue wunderkisteShowColored = new BooleanValue(WUNDERKISTE_CATEGORY,
-            "showColored",
-            true);
+                                                                        "showColored",
+                                                                        true);
 
     public final BooleanValue wunderkisteAllowDomains = new BooleanValue(WUNDERKISTE_CATEGORY,
-            "allowDomains",
-            false);
+                                                                         "allowDomains",
+                                                                         true);
 
     public final IntValue wunderkisteChangeDomainCost = new IntValue(WUNDERKISTE_CATEGORY,
-            "changeDomainCost",
-            1);
+                                                                     "changeDomainCost",
+                                                                     1);
 
     public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
 
@@ -51,8 +51,8 @@ public class DefaultGameRules extends ConfigFile {
             .and(() -> Configs.MAIN.addBlankWhispere.get() || Configs.MAIN.addImprintedWhispers.get());
 
     public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
-            "doNotDespawnWithNameTag",
-            true);
+                                                                         "doNotDespawnWithNameTag",
+                                                                         true);
 
 
     public DefaultGameRules() {
