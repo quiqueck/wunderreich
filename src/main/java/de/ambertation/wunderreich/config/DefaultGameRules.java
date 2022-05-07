@@ -20,18 +20,18 @@ public class DefaultGameRules extends ConfigFile {
 
     public final BooleanValue wunderkisteCanColor = new BooleanValue(WUNDERKISTE_CATEGORY,
                                                                      "canColor",
-                                                                     false);
+                                                                     true);
 
     public final BooleanValue wunderkisteShowColored = new BooleanValue(WUNDERKISTE_CATEGORY,
                                                                         "showColored",
                                                                         true);
 
     public final BooleanValue wunderkisteAllowDomains = new BooleanValue(WUNDERKISTE_CATEGORY,
-                                                                         "allowNetworks",
-                                                                         false);
+                                                                         "allowDomains",
+                                                                         true);
 
     public final IntValue wunderkisteChangeDomainCost = new IntValue(WUNDERKISTE_CATEGORY,
-                                                                     "changeNetworkCost",
+                                                                     "changeDomainCost",
                                                                      1);
 
     public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
