@@ -31,10 +31,9 @@ public abstract class SheetsMixin {
 
     @Inject(method = "getAllMaterials", at = @At("TAIL"))
     private static void wunderreich_getAll(Consumer<Material> consumer, CallbackInfo ci) {
-        consumer.accept(WunderreichClient.WUNDER_KISTE_LOCATION);
         consumer.accept(WunderreichClient.WUNDER_KISTE_TOP_LOCATION);
-        consumer.accept(WunderreichClient.WUNDER_KISTE_MONOCHROME_LOCATION);
         consumer.accept(WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION);
+        WunderreichClient.getAllWunderkisteMaterials(consumer);
     }
 
 }
