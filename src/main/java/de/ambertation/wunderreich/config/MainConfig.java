@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 
 public class MainConfig extends ConfigFile {
     public final static String FEATURE_CATEGORY = "features";
+    public final static String DISPLAY_CATEGORY = "display";
 
     public final BooleanValue enableWhispers = new BooleanValue(
             FEATURE_CATEGORY,
@@ -23,23 +24,27 @@ public class MainConfig extends ConfigFile {
     ).and(enableWhispers);
 
     public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
-            "allowBuilderTools",
-            true);
+                                                                   "allowBuilderTools",
+                                                                   true);
 
     public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
-            "addSlabs",
-            true);
+                                                          "addSlabs",
+                                                          true);
+
+    public final BooleanValue multiTexturedWunderkiste = new BooleanValue(DISPLAY_CATEGORY,
+                                                                          "multiTexturedWunderkiste",
+                                                                          true);
 
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
-            "doNotDespawnWithNameTag",
-            true, true);
+                                                                                    "doNotDespawnWithNameTag",
+                                                                                    true, true);
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowTradesCycling = new BooleanValue(FEATURE_CATEGORY,
-            "allowTradesCycling",
-            true, true);
+                                                                               "allowTradesCycling",
+                                                                               true, true);
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowLibrarianSelection = new BooleanValue(
@@ -60,6 +65,7 @@ public class MainConfig extends ConfigFile {
     public MainConfig() {
         super("main");
     }
+
 
     public void runMigrations() {
         if (this.lastModifiedVersion().isLessThan("1.0.5")) {
