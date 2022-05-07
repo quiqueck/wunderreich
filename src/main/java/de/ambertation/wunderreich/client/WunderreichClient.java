@@ -29,11 +29,10 @@ import java.util.function.Consumer;
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
     private static final Map<String, Material> WUNDERKISTE_MATERIALS = Maps.newHashMap();
-    public static Material WUNDER_KISTE_LOCATION = chestMaterial("wunder_kiste");
+    public static Material WUNDER_KISTE_LOCATION = getWunderkisteColor("wunder_kiste");
     public static Material WUNDER_KISTE_TOP_LOCATION = chestMaterial(
             "wunder_kiste_top");
-    public static Material WUNDER_KISTE_MONOCHROME_LOCATION = chestMaterial(
-            "wunder_kiste_bw");
+
     public static Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
             "wunder_kiste_bw_top");
 

@@ -72,6 +72,7 @@
   "title.config.wunderreich.main.features.addImprintedWhispers": "Add Imprinted Whispers",
   "title.config.wunderreich.main.features.allowBuilderTools": "Enable Builder Tools",
   "title.config.wunderreich.main.features.addSlabs": "Add Additional Slabs",
+  "title.config.wunderreich.main.display.multiTexturedWunderkiste": "Full Texture Fidelity for Wunderkiste (more memory, slower loads)",
   "enchantment.type.ARMOR": "Armor Enchantment",
   "enchantment.type.ARMOR_FEET": "Foot-Armor Enchantment",
   "enchantment.type.ARMOR_LEGS": "Leg-Armor Enchantment",
