@@ -6,8 +6,9 @@ import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagEntry;
 import net.minecraft.tags.TagKey;
+import net.minecraft.tags.TagLoader;
 import net.minecraft.tags.TagManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -16,6 +17,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -66,16 +68,16 @@ public class TagRegistry<T> {
         return null;
     }
 
-    public Map<ResourceLocation, Tag.Builder> addTags(Map<ResourceLocation, Tag.Builder> tagMap) {
+    public Map<ResourceLocation, List<TagLoader.EntryWithSource>> addTags(Map<ResourceLocation, List<TagLoader.EntryWithSource>> tagMap) {
         for (Map.Entry<ResourceLocation, Set<T>> entry : tags.entrySet()) {
             final ResourceLocation location = entry.getKey();
             final Set<T> elements = entry.getValue();
-            final Tag.Builder builder = tagMap.computeIfAbsent(location, key -> Tag.Builder.tag());
+            final List<TagLoader.EntryWithSource> builder = tagMap.computeIfAbsent(location, (loc) -> new ArrayList());
 
             for (T element : elements) {
                 ResourceLocation elementLocation = getLocation(element);
                 if (elementLocation != null) {
-                    builder.addElement(elementLocation, Wunderreich.MOD_ID);
+                    builder.add(new TagLoader.EntryWithSource(TagEntry.element(elementLocation), Wunderreich.MOD_ID));
                 }
             }
         }

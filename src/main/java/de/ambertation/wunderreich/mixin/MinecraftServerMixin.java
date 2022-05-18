@@ -5,14 +5,12 @@ import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
 import net.minecraft.server.packs.repository.PackRepository;
-import net.minecraft.server.players.GameProfileCache;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
-import com.mojang.authlib.GameProfileRepository;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.datafixers.DataFixer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,9 +39,7 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
                                  WorldStem worldStem,
                                  Proxy proxy,
                                  DataFixer dataFixer,
-                                 MinecraftSessionService minecraftSessionService,
-                                 GameProfileRepository gameProfileRepository,
-                                 GameProfileCache gameProfileCache,
+                                 Services services,
                                  ChunkProgressListenerFactory chunkProgressListenerFactory,
                                  CallbackInfo ci) {
         LevelData.getInstance().loadNewLevel(levelStorageAccess);

@@ -15,7 +15,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerProfession;
@@ -40,7 +39,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
         if (!(o instanceof ClosestWhisperer)) return false;
         ClosestWhisperer that = (ClosestWhisperer) o;
         return Objects.equals(stack, that.stack) && Objects.equals(player,
-                that.player) && slot == that.slot;
+                                                                   that.player) && slot == that.slot;
     }
 
     @Override
@@ -60,7 +59,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
 
 public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
     public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
-            new CycleTradesMessage());
+                                                                                        new CycleTradesMessage());
 
     protected CycleTradesMessage() {
     }
@@ -124,7 +123,8 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 
         VillagerData villagerData = villager.getVillagerData();
         VillagerProfession profession = villagerData.getProfession();
-        if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
+        if (VillagerProfession.LIBRARIAN.equals(profession)) return false;
+        //if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
 
         ClosestWhisperer whispererStack = getClosestWhisperer(villager, doLog);
         return whispererStack != null;
@@ -166,14 +166,14 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
                         if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
                             whispererStack.stack().hurtAndBreak(duraCost,
-                                    whispererStack.player(),
-                                    player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                                                whispererStack.player(),
+                                                                player -> player.broadcastBreakEvent(whispererStack.slot()));
                             return true;
                         }
                     } else {
                         whispererStack.stack().hurtAndBreak(duraCost,
-                                whispererStack.player(),
-                                player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                                            whispererStack.player(),
+                                                            player -> player.broadcastBreakEvent(whispererStack.slot()));
                         return true;
                     }
                 } else {
@@ -203,10 +203,10 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 ItemStack whisp = containsWhisperer(player);
                 if (whisp == null) return;
                 whisp.hurtAndBreak(1,
-                        player,
-                        pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
-                                ? InteractionHand.MAIN_HAND
-                                : InteractionHand.OFF_HAND));
+                                   player,
+                                   pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
+                                                                        ? InteractionHand.MAIN_HAND
+                                                                        : InteractionHand.OFF_HAND));
             }
 
             villager.setOffers(null);
@@ -224,11 +224,11 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 //		}
 
             player.sendMerchantOffers(menu.containerId,
-                    villager.getOffers(),
-                    villager.getVillagerData().getLevel(),
-                    villager.getVillagerXp(),
-                    villager.showProgressBar(),
-                    villager.canRestock());
+                                      villager.getOffers(),
+                                      villager.getVillagerData().getLevel(),
+                                      villager.getVillagerXp(),
+                                      villager.showProgressBar(),
+                                      villager.canRestock());
         }
     }
 
