@@ -44,6 +44,6 @@
   },
   "suggests": {
     "modmenu": "4.0.x",
-    "rei": "8.x"
+    "rei": "9.x"
   }
 }
