@@ -41,6 +41,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichBlockEntities.register();
         WunderreichBlocks.register();
         WunderreichItems.register();
+        WunderreichPoi.register();
         WunderreichRecipes.register();
         WunderreichAdvancements.register();
         WunderreichRules.register();
