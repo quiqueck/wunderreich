@@ -265,6 +265,21 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         }
     }
 
+    public boolean shouldTick(ServerLevel level) {
+        return FORCE_LOAD_CHUNKS.containsKey(level);
+    }
+
+    public boolean shouldTick(ServerLevel level, BlockPos pos) {
+        ChunkPos cPos = new ChunkPos(pos);
+        return shouldTick(level, cPos);
+    }
+
+    public boolean shouldTick(ServerLevel level, ChunkPos cPos) {
+        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(level, k -> new LinkedList<>());
+        return chunks.contains(cPos);
+    }
+
+
     @FunctionalInterface
     public interface ChangeEvent {
         void emit(LiveBlock bl);
