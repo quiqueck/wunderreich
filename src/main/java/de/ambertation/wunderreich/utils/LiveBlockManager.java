@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.utils;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.LevelData;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
@@ -11,6 +12,7 @@ import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
@@ -23,8 +25,11 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
+    public static final TicketType<ChunkPos> TICKET = TicketType.create("wunderkiste",
+            Comparator.comparingLong(ChunkPos::toLong));
     public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
     private static final String POSITIONS_TAG = "positions";
     private final String type;
@@ -34,7 +39,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     private boolean isLoaded = false;
     private Timer saveTimer;
 
-    private static final Map<ResourceKey<Level>, List<ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
+    private static final Map<Level, List<ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
 
     public LiveBlockManager(String type) {
         this.type = type;
@@ -119,7 +124,6 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
         if (list != null) {
             liveBlocks.addAll(list);
-            list.forEach(l -> addLoadedChunk(l));
         }
         isLoaded = true;
     }
@@ -146,6 +150,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
         liveBlocks.add(live);
         emitChangeAt(live);
+        addLoadedChunk(live, WunderreichRules.Wunderkiste.chunkLoaderDist());
         scheduleSave();
         return true;
     }
@@ -160,6 +165,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
         liveBlocks.remove(live);
         emitChangeAt(live);
+        removeLoadedChunk(live, WunderreichRules.Wunderkiste.chunkLoaderDist());
         scheduleSave();
         return true;
     }
@@ -180,14 +186,82 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         if (!listeners.contains(listener)) listeners.add(listener);
     }
 
-    public static void addLoadedChunk(LiveBlock live) {
-        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.key, k -> new LinkedList<>());
+    private static Stream<ChunkPos> chunksWithRadius(ChunkPos start, int radius) {
+        Stream.Builder<ChunkPos> p = Stream.builder();
+        for (int x = 1 - radius; x < radius; x++) {
+            for (int z = 1 - radius; z < radius; z++) {
+                p.add(new ChunkPos(start.x + x, start.z + z));
+            }
+        }
+        return p.build();
+    }
 
-        Optional<ChunkPosCounter> pos = chunks.stream().filter(c -> c.equals(live.chunkPos)).findAny();
-        if (!pos.isPresent()) {
-            chunks.add(new ChunkPosCounter(live.chunkPos));
-        } else {
-            pos.get().inc();
+    public static void addLoadedChunk(LiveBlock live, int radius) {
+        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.level, k -> new LinkedList<>());
+
+        chunksWithRadius(live.chunkPos, radius).forEach(cPos -> {
+                    Optional<ChunkPosCounter> pos = chunks.stream().filter(c -> c.equals(cPos)).findAny();
+                    if (pos.isEmpty()) {
+                        chunks.add(new ChunkPosCounter(cPos));
+                        addTicket(live.level, cPos);
+                    } else {
+                        pos.get().inc();
+                    }
+                }
+        );
+    }
+
+
+    private static void addTicket(Level level, ChunkPos cPos) {
+
+        if (level instanceof ServerLevel server) {
+            Wunderreich.LOGGER.info("Keep Chunk " + cPos + " in " + level
+                    .dimension()
+                    .location() + " permanently loaded");
+            server.getChunkSource().chunkMap
+                    .getDistanceManager()
+                    .addRegionTicket(TICKET, cPos, 2, cPos);
+        }
+    }
+
+    public static void removeLoadedChunk(LiveBlock live, int radius) {
+        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.level, k -> new LinkedList<>());
+
+        chunksWithRadius(live.chunkPos, radius).forEach(cPos -> {
+                    Optional<ChunkPosCounter> pos = chunks.stream().filter(c -> c.equals(cPos)).findAny();
+                    if (pos.isPresent()) {
+                        if (pos.get().dec() == 0) {
+                            chunks.remove(cPos);
+                            removeTicket(live.level, cPos);
+                        }
+                    }
+                }
+        );
+    }
+
+    private static void removeTicket(Level level, ChunkPos cPos) {
+        if (level instanceof ServerLevel server) {
+            Wunderreich.LOGGER.info("Remove Chunk " + cPos + " in " + level
+                    .dimension()
+                    .location() + " from force loaded list");
+
+            server.getChunkSource().chunkMap
+                    .getDistanceManager()
+                    .removeRegionTicket(TICKET, cPos, 2, cPos);
+        }
+    }
+
+    public void rebuildLoadedChunks() {
+        for (var e : FORCE_LOAD_CHUNKS.entrySet()) {
+            for (var cPos : e.getValue()) {
+                removeTicket(e.getKey(), cPos);
+            }
+        }
+
+        FORCE_LOAD_CHUNKS.clear();
+
+        for (LiveBlock live : liveBlocks) {
+            addLoadedChunk(live, WunderreichRules.Wunderkiste.chunkLoaderDist());
         }
     }
 
@@ -196,12 +270,11 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         void emit(LiveBlock bl);
     }
 
-    private static class ChunkPosCounter {
-        public final ChunkPos chunkPos;
+    private static class ChunkPosCounter extends ChunkPos {
         public final AtomicInteger count;
 
         private ChunkPosCounter(ChunkPos chunkPos) {
-            this.chunkPos = chunkPos;
+            super(chunkPos.x, chunkPos.z);
             count = new AtomicInteger(1);
         }
 
@@ -209,25 +282,13 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             count.incrementAndGet();
         }
 
-        public void dec() {
-            count.decrementAndGet();
-        }
-
-        public boolean isZero() {
-            return count.getAcquire() == 0;
+        public int dec() {
+            return count.decrementAndGet();
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof ChunkPosCounter)) return false;
-            ChunkPosCounter that = (ChunkPosCounter) o;
-            return chunkPos.equals(that.chunkPos);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(chunkPos);
+        public boolean equals(Object object) {
+            return super.equals(object);
         }
     }
 
@@ -258,7 +319,10 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         }
 
         void loadLevel(Map<ResourceKey<Level>, ServerLevel> levels) {
-            level = levels.get(key);
+            if (level == null) {
+                level = levels.get(key);
+                addLoadedChunk(this, WunderreichRules.Wunderkiste.chunkLoaderDist());
+            }
         }
 
         @Override

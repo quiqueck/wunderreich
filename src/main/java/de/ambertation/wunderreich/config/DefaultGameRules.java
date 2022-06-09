@@ -54,6 +54,10 @@ public class DefaultGameRules extends ConfigFile {
             "doNotDespawnWithNameTag",
             true);
 
+    public final IntValue wunderkisteChunkLoaderRadius = new IntValue(WUNDERKISTE_CATEGORY,
+            "chunkLoaderRadius",
+            1);
+
 
     public DefaultGameRules() {
         super("defaultGameRules");
