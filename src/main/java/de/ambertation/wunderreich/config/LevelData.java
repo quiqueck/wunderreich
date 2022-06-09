@@ -78,8 +78,8 @@ public class LevelData {
                     loadedRoot = NbtIo.readCompressed(dataFile);
                 } catch (IOException e) {
                     Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
-                                            dataFile.toString(),
-                                            e
+                            dataFile.toString(),
+                            e
                     );
                     dataFile = getDataFile("_old");
                     try {
