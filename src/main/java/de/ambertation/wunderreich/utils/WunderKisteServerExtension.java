@@ -13,6 +13,7 @@ import java.util.Map;
 
 public class WunderKisteServerExtension {
     private final Map<WunderKisteDomain, WunderKisteContainer> containers = Maps.newHashMap();
+    public static final LiveBlockManager<LiveBlockManager.LiveBlock> WUNDERKISTEN = new LiveBlockManager<>();
 
     public static WunderKisteDomain getDomain(BlockState state) {
         if (WunderreichRules.Wunderkiste.colorsOrDomains() && state.hasProperty(WunderKisteBlock.DOMAIN))
@@ -48,14 +49,16 @@ public class WunderKisteServerExtension {
 
     public void onCloseServer() {
         Wunderreich.LOGGER.info("Unloading Cache for Wunderkiste");
+
         //Make sure the levels can unload when the server closes
-        WunderKisteBlock.liveBlocks.clear();
+        WUNDERKISTEN.unLoad();
     }
 
     public void onStartServer() {
         //we start a new world, so clear any old block
         Wunderreich.LOGGER.info("Initializing Cache for Wunderkiste");
-        WunderKisteBlock.liveBlocks.clear();
+        //this needs access to the LevelData
+        WUNDERKISTEN.load();
         containers.clear();
 
     }

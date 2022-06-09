@@ -2,7 +2,7 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.blocks.WunderKisteBlock.LiveBlock;
+import de.ambertation.wunderreich.utils.LiveBlockManager.LiveBlock;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.core.BlockPos;
@@ -16,8 +16,15 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 
 public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRemoveWunderKisteMessage.Content> {
-    public static final AddRemoveWunderKisteMessage INSTANCE = ServerBoundPacketHandler.register("wunder_kiste",
-            new AddRemoveWunderKisteMessage());
+    public static final AddRemoveWunderKisteMessage INSTANCE = ServerBoundPacketHandler.register(
+            "wunder_kiste",
+            new AddRemoveWunderKisteMessage()
+    );
+
+    static {
+        WunderKisteBlock.getLiveBlockManager().onChangeAt(WunderKisteBlock::updateNeighbours);
+    }
+
 
     protected AddRemoveWunderKisteMessage() {
     }
@@ -29,20 +36,19 @@ public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRem
                 "Adding WunderKiste at " +
                         pos +
                         " " +
-                        WunderKisteBlock.liveBlocks.contains(lb) +
+                        WunderKisteBlock.getLiveBlockManager().contains(lb) +
                         " (" +
                         WunderKisteServerExtension.getDomain(state) +
                         ")"
         );
-        WunderKisteBlock.liveBlocks.add(lb);
-        WunderKisteBlock.updateNeighbours(level, pos);
+        WunderKisteBlock.getLiveBlockManager().add(lb);
     }
 
     private static void removedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
-        Wunderreich.LOGGER.info("Removing  WunderKiste at " + pos + " " + WunderKisteBlock.liveBlocks.contains(lb));
-        WunderKisteBlock.liveBlocks.remove(lb);
-        WunderKisteBlock.updateNeighbours(level, pos);
+        Wunderreich.LOGGER.info("Removing  WunderKiste at " + pos + " " + WunderKisteBlock.getLiveBlockManager()
+                                                                                          .contains(lb));
+        WunderKisteBlock.getLiveBlockManager().remove(lb);
     }
 
     public void send(boolean didAdd, BlockPos pos) {
