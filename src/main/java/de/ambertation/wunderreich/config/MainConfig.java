@@ -24,27 +24,27 @@ public class MainConfig extends ConfigFile {
     ).and(enableWhispers);
 
     public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
-                                                                   "allowBuilderTools",
-                                                                   true);
+            "allowBuilderTools",
+            true);
 
     public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
-                                                          "addSlabs",
-                                                          true);
+            "addSlabs",
+            true);
 
     public final BooleanValue multiTexturedWunderkiste = new BooleanValue(DISPLAY_CATEGORY,
-                                                                          "multiTexturedWunderkiste",
-                                                                          true);
+            "multiTexturedWunderkiste",
+            true);
 
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
-                                                                                    "doNotDespawnWithNameTag",
-                                                                                    true, true);
+            "doNotDespawnWithNameTag",
+            true, true);
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowTradesCycling = new BooleanValue(FEATURE_CATEGORY,
-                                                                               "allowTradesCycling",
-                                                                               true, true);
+            "allowTradesCycling",
+            true, true);
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowLibrarianSelection = new BooleanValue(
