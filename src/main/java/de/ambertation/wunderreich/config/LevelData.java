@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public class LevelData {
     public final static String DATA_FOLDER = "data";
     private static final String WUNDERKISTE_TAG_NAME = "wunderkiste";
+    private static final String LIVEBLOCKS_TAG_NAME = "live_blocks";
     private static final String OLD_GLOBAL_TAG_NAME = "global";
     private static LevelData INSTANCE;
     @Nullable
@@ -69,55 +70,78 @@ public class LevelData {
     }
 
     private void loadLevelConfig() {
-        CompoundTag loadedRoot = null;
-        File dataFile = getDataFile("");
+        synchronized (this) {
+            CompoundTag loadedRoot = null;
+            File dataFile = getDataFile("");
 
-        //reload existing file
-        if (dataFile.exists()) {
-            try {
-                loadedRoot = NbtIo.readCompressed(dataFile);
-            } catch (IOException e) {
-                Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
-                        dataFile.toString(),
-                        e);
-                dataFile = getDataFile("_old");
+            //reload existing file
+            if (dataFile.exists()) {
                 try {
                     loadedRoot = NbtIo.readCompressed(dataFile);
-                } catch (IOException ee) {
-                    Wunderreich.LOGGER.error("Failed to access level config from '{}'", dataFile.toString(), ee);
+                } catch (IOException e) {
+                    Wunderreich.LOGGER.info("Unable to access level config from '{}'. Trying previous version.",
+                                            dataFile.toString(),
+                                            e
+                    );
+                    dataFile = getDataFile("_old");
+                    try {
+                        loadedRoot = NbtIo.readCompressed(dataFile);
+                    } catch (IOException ee) {
+                        Wunderreich.LOGGER.error("Failed to access level config from '{}'", dataFile.toString(), ee);
+                    }
                 }
             }
-        }
 
-        if (loadedRoot == null) {
-            loadedRoot = new CompoundTag();
-            loadedRoot.putString("create_version", Wunderreich.VERSION.toString());
-        }
+            if (loadedRoot == null) {
+                loadedRoot = new CompoundTag();
+                loadedRoot.putString("create_version", Wunderreich.VERSION.toString());
+            }
 
-        this.root = loadedRoot;
+            this.root = loadedRoot;
+        }
     }
 
     public void saveLevelConfig() {
-        if (levelPath == null) {
-            Wunderreich.LOGGER.error("Unable to write level config.");
-            return;
-        }
+        synchronized (this) {
+            if (levelPath == null) {
+                Wunderreich.LOGGER.error("Unable to write level config.");
+                return;
+            }
 
-        final File tempFile = getDataFile("_temp");
-        root.putString("modify_version", Wunderreich.VERSION.toString());
-        try {
-            NbtIo.writeCompressed(root, tempFile);
-            final File dataFile = getDataFile("");
-            final File oldFile = getDataFile("_old");
+            final File tempFile = getDataFile("_temp");
+            root.putString("modify_version", Wunderreich.VERSION.toString());
+            try {
+                NbtIo.writeCompressed(root, tempFile);
+                final File dataFile = getDataFile("");
+                final File oldFile = getDataFile("_old");
 
-            Util.safeReplaceFile(dataFile, tempFile, oldFile);
-        } catch (IOException e) {
-            Wunderreich.LOGGER.error("Unable to write level config for '{}'.", levelPath.toString(), e);
+                Util.safeReplaceFile(dataFile, tempFile, oldFile);
+            } catch (IOException e) {
+                Wunderreich.LOGGER.error("Unable to write level config for '{}'.", levelPath.toString(), e);
+            }
         }
     }
 
     public @NotNull CompoundTag getRoot() {
         return root;
+    }
+
+    public CompoundTag getLiveBlocks(String type) {
+        CompoundTag liveBlocks;
+        if (!root.contains(LIVEBLOCKS_TAG_NAME)) {
+            liveBlocks = new CompoundTag();
+            root.put(LIVEBLOCKS_TAG_NAME, liveBlocks);
+        } else {
+            liveBlocks = root.getCompound(LIVEBLOCKS_TAG_NAME);
+        }
+
+        if (!liveBlocks.contains(type)) {
+            CompoundTag item = new CompoundTag();
+            liveBlocks.put(type, item);
+            return item;
+        } else {
+            return liveBlocks.getCompound(type);
+        }
     }
 
     public CompoundTag getWunderkisteInventory(WunderKisteDomain domain) {

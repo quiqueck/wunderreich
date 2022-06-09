@@ -128,7 +128,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 for (WunderKisteDomain d : WunderKisteDomain.values()) hasAnyOpenInstance.put(d, false);
 
                 getLiveBlockManager().forEach((liveBlock) -> {
-                    BlockEntity be = liveBlock.level.getBlockEntity(liveBlock.pos);
+                    BlockEntity be = liveBlock.getLevel().getBlockEntity(liveBlock.pos);
                     if (be instanceof WunderKisteBlockEntity) {
                         WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
                         WunderKisteDomain d = WunderKisteServerExtension.getDomain(entity.getBlockState());
@@ -144,11 +144,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public static void updateNeighbours(LiveBlockManager.LiveBlock live) {
-        BlockState state = live.level.getBlockState(live.pos);
+        BlockState state = live.getLevel().getBlockState(live.pos);
         if (state != null) {
             Block block = state.getBlock();
             if (block instanceof WunderKisteBlock) {
-                updateNeighbours(live.level, live.pos, state, block);
+                updateNeighbours(live.getLevel(), live.pos, state, block);
             }
         }
     }
@@ -420,7 +420,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
-        //liveBlocks.add(blockPos);
+        // This is no longer needed as we keep permanent Track of all placed Wunderkiste Blocks
+        // We keep this code around for old worlds, that added Wunderkisten before they were
+        // persistently managed
         AddRemoveWunderKisteMessage.INSTANCE.send(true, blockPos);
         return new WunderKisteBlockEntity(blockPos, blockState);
     }
@@ -432,6 +434,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                         @NotNull BlockState blockState2,
                         boolean bl
     ) {
+        if (level instanceof ServerLevel serverLevel) {
+            AddRemoveWunderKisteMessage.addedBox(serverLevel, blockPos);
+        } else {
+            AddRemoveWunderKisteMessage.INSTANCE.send(true, blockPos);
+        }
         super.onPlace(blockState, level, blockPos, blockState2, bl);
     }
 
@@ -444,9 +451,14 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     ) {
         super.onRemove(blockState, level, blockPos, blockState2, bl);
 
+        if (level instanceof ServerLevel serverLevel) {
+            AddRemoveWunderKisteMessage.removedBox(serverLevel, blockPos);
+        } else {
+            AddRemoveWunderKisteMessage.INSTANCE.send(false, blockPos);
+        }
         if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
             //liveBlocks.remove(blockPos);
-            AddRemoveWunderKisteMessage.INSTANCE.send(false, blockPos);
+            //AddRemoveWunderKisteMessage.INSTANCE.send(false, blockPos);
         }
     }
 
