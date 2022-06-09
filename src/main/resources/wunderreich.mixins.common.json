@@ -6,7 +6,6 @@
   "mixins": [
     "AbstractVillagerMixin",
     "GhastMixin",
-    "TagLoaderMixin",
     "LootTablesMixin",
     "MerchantMenuMixin",
     "MinecraftServerMixin",
@@ -16,10 +15,12 @@
     "RecipeManagerMixin",
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
+    "ShovelItemMixin",
     "SlimeMixin",
     "SpreadingSnowyDirtBlockMixin",
+    "TagLoaderMixin",
     "VillagerMixin",
-    "ShovelItemMixin"
+    "liveblock.ServerLevelMixin"
   ],
   "client": [
   ],
