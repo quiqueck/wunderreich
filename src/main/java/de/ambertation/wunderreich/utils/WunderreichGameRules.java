@@ -3,11 +3,14 @@ package de.ambertation.wunderreich.utils;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.ConfigFile;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.GameRules.Category;
 
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 
+import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.jetbrains.annotations.NotNull;
@@ -84,6 +87,13 @@ public class WunderreichGameRules {
     public static class IntRule extends Base<net.minecraft.world.level.GameRules.IntegerValue, ConfigFile.IntValue, Integer> {
         public IntRule(Category category, ConfigFile.IntValue config) {
             this(category, config, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        }
+
+        public IntRule(Category category,
+                       ConfigFile.IntValue config,
+                       int minValue,
+                       int maxValue, BiConsumer<MinecraftServer, GameRules.IntegerValue> callback) {
+            super(category, GameRuleFactory.createIntRule(config.get(), minValue, maxValue, callback), config);
         }
 
         public IntRule(Category category,

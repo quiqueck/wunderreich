@@ -129,6 +129,8 @@
   "gamerule.wunderkisteRedstonePowerWhenOpened.description": "Wunderkisten emit 15 edstone power when any one in the world was opened.",
   "gamerule.wunderkisteAnalogRedstoneOutput": "Analog Wunderkiste",
   "gamerule.wunderkisteAnalogRedstoneOutput.description": "Wunderkisten emit analog redstone signal (for Comperators)",
+  "gamerule.wunderkisteChunkLoaderRadius": "Wunderkiste Load Area",
+  "gamerule.wunderkisteChunkLoaderRadius.description": "Chunk radius of an area around the Wunderkiste that always remains loaded.",
   "gamerule.whispersDurability": "Whisper Durability",
   "gamerule.whispersDurability.description": "Durability for a blank whisper",
   "gamerule.whispersTrainedDurability": "Imprinted Whisperer Durability",
