@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 import de.ambertation.wunderreich.utils.WunderreichGameRules;
 import de.ambertation.wunderreich.utils.WunderreichGameRules.BooleanRule;
 import de.ambertation.wunderreich.utils.WunderreichGameRules.IntRule;
@@ -107,6 +108,15 @@ public class WunderreichRules {
         private static final IntRule COLOR_COST_WUNDERKISTE =
                 new IntRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteChangeDomainCost, 0, 64);
 
+        private static final IntRule CHUNK_LOADER_DIST_WUNDERKISTE =
+                new IntRule(Category.UPDATES,
+                        Configs.DEFAULT_RULES.wunderkisteChunkLoaderRadius,
+                        0,
+                        5,
+                        (server, value) -> {
+                            WunderKisteServerExtension.WUNDERKISTEN.rebuildLoadedChunks();
+                        });
+
         public static boolean redstonePowerWhenOpened() {
             return REDSTONE_POWER.get();
         }
@@ -129,6 +139,10 @@ public class WunderreichRules {
 
         public static int recolorCost() {
             return COLOR_COST_WUNDERKISTE.get();
+        }
+
+        public static int chunkLoaderDist() {
+            return CHUNK_LOADER_DIST_WUNDERKISTE.get();
         }
 
         public static boolean colorsOrDomains() {
