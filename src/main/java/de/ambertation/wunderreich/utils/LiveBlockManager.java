@@ -34,7 +34,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     private boolean isLoaded = false;
     private Timer saveTimer;
 
-    private static Map<ResourceKey<Level>, List<ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
+    private static final Map<ResourceKey<Level>, List<ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
 
     public LiveBlockManager(String type) {
         this.type = type;

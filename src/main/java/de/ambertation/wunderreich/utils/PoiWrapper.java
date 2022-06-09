@@ -57,7 +57,7 @@ public class PoiWrapper {
             BlockPos center,
             boolean wideSearch,
             WorldBorder worldBorder
-                                           ) {
+    ) {
         return findPoiAround(key, level, center, wideSearch, worldBorder);
     }
 
@@ -66,7 +66,7 @@ public class PoiWrapper {
             BlockPos center,
             int radius,
             WorldBorder worldBorder
-                                           ) {
+    ) {
         return findPoiAround(key, level, center, radius, worldBorder);
     }
 
@@ -76,7 +76,7 @@ public class PoiWrapper {
             BlockPos center,
             boolean wideSearch,
             WorldBorder worldBorder
-                                                  ) {
+    ) {
         return findPoiAround(key, level, center, wideSearch ? 16 : 128, worldBorder);
     }
 
@@ -86,7 +86,7 @@ public class PoiWrapper {
             BlockPos center,
             int radius,
             WorldBorder worldBorder
-                                                  ) {
+    ) {
         PoiManager poiManager = level.getPoiManager();
 
         poiManager.ensureLoadedAndValid(level, center, radius);

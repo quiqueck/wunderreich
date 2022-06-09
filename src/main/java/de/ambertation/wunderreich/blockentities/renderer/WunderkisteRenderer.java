@@ -105,30 +105,30 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             Material material = d.getMaterial();
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
             this.render(poseStack,
-                        vertexConsumer,
-                        this.lid,
-                        this.lock,
-                        this.bottom,
-                        openness,
-                        uv2,
-                        overlayCoords,
-                        FastColor.ARGB32.red(d.overlayColor) / (float) 0XFF,
-                        FastColor.ARGB32.green(d.overlayColor) / (float) 0XFF,
-                        FastColor.ARGB32.blue(d.overlayColor) / (float) 0XFF
-                       );
+                    vertexConsumer,
+                    this.lid,
+                    this.lock,
+                    this.bottom,
+                    openness,
+                    uv2,
+                    overlayCoords,
+                    FastColor.ARGB32.red(d.overlayColor) / (float) 0XFF,
+                    FastColor.ARGB32.green(d.overlayColor) / (float) 0XFF,
+                    FastColor.ARGB32.blue(d.overlayColor) / (float) 0XFF
+            );
 
             if (openness > 0) {
                 material = getTopMaterial(d);
                 vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
                 this.renderAnimTop(poseStack,
-                                   vertexConsumer,
-                                   this.bottom,
-                                   uv2,
-                                   overlayCoords,
-                                   FastColor.ARGB32.red(d.color) / (float) 0XFF,
-                                   FastColor.ARGB32.green(d.color) / (float) 0XFF,
-                                   FastColor.ARGB32.blue(d.color) / (float) 0XFF
-                                  );
+                        vertexConsumer,
+                        this.bottom,
+                        uv2,
+                        overlayCoords,
+                        FastColor.ARGB32.red(d.color) / (float) 0XFF,
+                        FastColor.ARGB32.green(d.color) / (float) 0XFF,
+                        FastColor.ARGB32.blue(d.color) / (float) 0XFF
+                );
             }
             poseStack.popPose();
         }
@@ -145,7 +145,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                         float r,
                         float g,
                         float b
-                       ) {
+    ) {
         lockPart.xRot = lidPart.xRot = -(f * 1.5707964f);
 
         lidPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
@@ -161,7 +161,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                                float r,
                                float g,
                                float b
-                              ) {
+    ) {
 
         poseStack.pushPose();
         bottomPart.translateAndRotate(poseStack);
@@ -176,19 +176,19 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             Vector4f vector4f = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f);
             vector4f.transform(pose);
             vertexConsumer.vertex(vector4f.x(),
-                                  vector4f.y(),
-                                  vector4f.z(),
-                                  r,
-                                  g,
-                                  b,
-                                  1.0f,
-                                  v.u,
-                                  v.v,
-                                  overlayCords,
-                                  uv2,
-                                  normal.x(),
-                                  normal.y(),
-                                  normal.z());
+                    vector4f.y(),
+                    vector4f.z(),
+                    r,
+                    g,
+                    b,
+                    1.0f,
+                    v.u,
+                    v.v,
+                    overlayCords,
+                    uv2,
+                    normal.x(),
+                    normal.y(),
+                    normal.z());
         }
 
         poseStack.popPose();

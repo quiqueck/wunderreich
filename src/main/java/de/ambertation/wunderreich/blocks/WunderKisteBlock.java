@@ -201,7 +201,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return this.defaultBlockState()
                    .setValue(FACING, blockPlaceContext.getHorizontalDirection()
                                                       .getOpposite()).setValue(WATERLOGGED,
-                                                                               fluidState.getType() == Fluids.WATER
+                        fluidState.getType() == Fluids.WATER
                 );
     }
 
@@ -258,8 +258,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                                                   @NotNull BlockEntityType<T> blockEntityType
     ) {
         return level.isClientSide ? createTickerHelper(blockEntityType,
-                                                       WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
-                                                       WunderKisteBlockEntity::lidAnimateTick
+                WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
+                WunderKisteBlockEntity::lidAnimateTick
         ) : null;
     }
 
@@ -329,19 +329,19 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
 
                     player.openMenu(new SimpleMenuProvider((containerID, inventory, playerx) ->
-                                                                   ChestMenu.threeRows(
-                                                                           containerID,
-                                                                           inventory,
-                                                                           wunderKisteContainer
-                                                                   ),
-                                                           WunderreichRules.Wunderkiste.haveMultiple()
-                                                                   ? Component.translatable("%s - %s",
-                                                                                            CONTAINER_TITLE,
-                                                                                            WunderKisteItem.getDomainComponent(
-                                                                                                    domain)
-                                                           )
-                                                                   : CONTAINER_TITLE
+                                    ChestMenu.threeRows(
+                                            containerID,
+                                            inventory,
+                                            wunderKisteContainer
+                                    ),
+                                    WunderreichRules.Wunderkiste.haveMultiple()
+                                            ? Component.translatable("%s - %s",
+                                            CONTAINER_TITLE,
+                                            WunderKisteItem.getDomainComponent(
+                                                    domain)
                                     )
+                                            : CONTAINER_TITLE
+                            )
                     );
 
                     if (player instanceof ServerPlayer sp) {
@@ -504,9 +504,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                                                      .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
                                                                      )
                                                                      .startItemEntry(Items.NETHERITE_SCRAP,
-                                                                                     builder -> builder
-                                                                                             .setCount(4, false)
-                                                                                             .explosionDecay()
+                                                                             builder -> builder
+                                                                                     .setCount(4, false)
+                                                                                     .explosionDecay()
                                                                      )
                                                              )
                                                      );

@@ -39,7 +39,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
         if (!(o instanceof ClosestWhisperer)) return false;
         ClosestWhisperer that = (ClosestWhisperer) o;
         return Objects.equals(stack, that.stack) && Objects.equals(player,
-                                                                   that.player) && slot == that.slot;
+                that.player) && slot == that.slot;
     }
 
     @Override
@@ -59,7 +59,7 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
 
 public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
     public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
-                                                                                        new CycleTradesMessage());
+            new CycleTradesMessage());
 
     protected CycleTradesMessage() {
     }
@@ -166,14 +166,14 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
                         if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
                             whispererStack.stack().hurtAndBreak(duraCost,
-                                                                whispererStack.player(),
-                                                                player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                    whispererStack.player(),
+                                    player -> player.broadcastBreakEvent(whispererStack.slot()));
                             return true;
                         }
                     } else {
                         whispererStack.stack().hurtAndBreak(duraCost,
-                                                            whispererStack.player(),
-                                                            player -> player.broadcastBreakEvent(whispererStack.slot()));
+                                whispererStack.player(),
+                                player -> player.broadcastBreakEvent(whispererStack.slot()));
                         return true;
                     }
                 } else {
@@ -203,10 +203,10 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                 ItemStack whisp = containsWhisperer(player);
                 if (whisp == null) return;
                 whisp.hurtAndBreak(1,
-                                   player,
-                                   pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
-                                                                        ? InteractionHand.MAIN_HAND
-                                                                        : InteractionHand.OFF_HAND));
+                        player,
+                        pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
+                                ? InteractionHand.MAIN_HAND
+                                : InteractionHand.OFF_HAND));
             }
 
             villager.setOffers(null);
@@ -224,11 +224,11 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 //		}
 
             player.sendMerchantOffers(menu.containerId,
-                                      villager.getOffers(),
-                                      villager.getVillagerData().getLevel(),
-                                      villager.getVillagerXp(),
-                                      villager.showProgressBar(),
-                                      villager.canRestock());
+                    villager.getOffers(),
+                    villager.getVillagerData().getLevel(),
+                    villager.getVillagerXp(),
+                    villager.showProgressBar(),
+                    villager.canRestock());
         }
     }
 
