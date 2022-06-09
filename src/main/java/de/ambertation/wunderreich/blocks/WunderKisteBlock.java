@@ -63,7 +63,6 @@ import com.google.common.collect.Maps;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -245,7 +244,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return false;
     }
 
-    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, Random random) {
+    @Override
+    public void tick(BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
         BlockEntity blockEntity = serverLevel.getBlockEntity(blockPos);
         if (blockEntity instanceof WunderKisteBlockEntity) {
             ((WunderKisteBlockEntity) blockEntity).recheckOpen();
