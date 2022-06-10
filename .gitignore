@@ -2,6 +2,7 @@
 .idea/
 build/
 run/
+run-server/
 target/
 .vscode/
 .settings/org.eclipse.buildship.core.prefs
