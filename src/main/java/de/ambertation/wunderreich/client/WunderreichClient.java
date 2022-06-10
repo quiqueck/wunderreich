@@ -64,7 +64,7 @@ public class WunderreichClient implements ClientModInitializer {
 
             if (block instanceof BlockEntityProvider view) {
                 BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                                                     view.getBlockEntityRenderProvider());
+                        view.getBlockEntityRenderProvider());
             }
         });
 
@@ -77,6 +77,6 @@ public class WunderreichClient implements ClientModInitializer {
         }, WunderreichBlocks.GRASS_SLAB);
 
         ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                            WunderreichBlocks.GRASS_SLAB);
+                WunderreichBlocks.GRASS_SLAB);
     }
 }

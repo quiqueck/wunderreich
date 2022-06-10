@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.mixin;
+package de.ambertation.wunderreich.mixin.despawn;
 
 import de.ambertation.wunderreich.registries.WunderreichRules;
 

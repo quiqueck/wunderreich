@@ -129,6 +129,8 @@
   "gamerule.wunderkisteRedstonePowerWhenOpened.description": "Alle Wunderkisten eines Netzwerks geben 15 Redstone ab wenn irgendwo in der Welt eine geöffnet wurde.",
   "gamerule.wunderkisteAnalogRedstoneOutput": "Analoge Wunderkiste",
   "gamerule.wunderkisteAnalogRedstoneOutput.description": "Wunderkisten geben je nach Füllstand eine analoges Redstone-Signal ab (über Komperatoren)",
+  "gamerule.wunderkisteChunkLoaderRadius": "Wunderkisten Ladebereich",
+  "gamerule.wunderkisteChunkLoaderRadius.description": "Chunk-Radius eines Bereichs um die Wunderkiste, der immer geladen bleibt.",
   "gamerule.whispersDurability": "Haltbarkeit Flüsterer",
   "gamerule.whispersTrainedDurability": "Haltbarkeit Geprägter Flüsterer",
   "gamerule.whispersMinXPMultiplier": "%% Min. XP bei Prägen",

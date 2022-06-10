@@ -5,21 +5,22 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AbstractVillagerMixin",
-    "GhastMixin",
-    "TagLoaderMixin",
     "LootTablesMixin",
     "MerchantMenuMixin",
     "MinecraftServerMixin",
-    "MonsterMixin",
-    "PhantomMixin",
     "PlayerMixin",
     "RecipeManagerMixin",
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
-    "SlimeMixin",
+    "ShovelItemMixin",
     "SpreadingSnowyDirtBlockMixin",
+    "TagLoaderMixin",
     "VillagerMixin",
-    "ShovelItemMixin"
+    "despawn.GhastMixin",
+    "despawn.MonsterMixin",
+    "despawn.PhantomMixin",
+    "despawn.SlimeMixin",
+    "liveblock.ServerLevelMixin"
   ],
   "client": [
   ],
