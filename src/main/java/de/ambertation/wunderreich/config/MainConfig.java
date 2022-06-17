@@ -35,6 +35,10 @@ public class MainConfig extends ConfigFile {
                                                           "addStairs",
                                                           true);
 
+    public final BooleanValue addWalls = new BooleanValue(FEATURE_CATEGORY,
+                                                           "addWalls",
+                                                           true);
+
     public final BooleanValue multiTexturedWunderkiste = new BooleanValue(DISPLAY_CATEGORY,
             "multiTexturedWunderkiste",
             true);

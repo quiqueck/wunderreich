@@ -95,6 +95,7 @@ public class WunderreichBlocks {
     public static void register() {
         WunderreichSlabBlocks.register();
         WunderreichStairBlocks.register();
+        WunderreichWallBlocks.register();
     }
 
 }
