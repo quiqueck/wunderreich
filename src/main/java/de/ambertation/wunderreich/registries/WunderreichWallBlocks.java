@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.blocks.WoolWallBlock;
 import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.world.level.block.Block;
@@ -11,67 +12,67 @@ import java.util.function.Function;
 public class WunderreichWallBlocks {
     public static final Block WHITE_WOOL_WALL = registerWall("white_wool_wall",
                                                              Blocks.WHITE_WOOL,
-                                                             WallBlock::new,
+                                                             WoolWallBlock::new,
                                                              Configs.MAIN.addWalls.get());
     public static final Block LIGHT_GRAY_WOOL_WALL = registerWall("light_gray_wool_wall",
                                                                   Blocks.LIGHT_GRAY_WOOL,
-                                                                  WallBlock::new,
+                                                                  WoolWallBlock::new,
                                                                   Configs.MAIN.addWalls.get());
     public static final Block GRAY_WOOL_WALL = registerWall("gray_wool_wall",
                                                             Blocks.GRAY_WOOL,
-                                                            WallBlock::new,
+                                                            WoolWallBlock::new,
                                                             Configs.MAIN.addWalls.get());
     public static final Block BLACK_WOOL_WALL = registerWall("black_wool_wall",
                                                              Blocks.BLACK_WOOL,
-                                                             WallBlock::new,
+                                                             WoolWallBlock::new,
                                                              Configs.MAIN.addWalls.get());
     public static final Block BROWN_WOOL_WALL = registerWall("brown_wool_wall",
                                                              Blocks.BROWN_WOOL,
-                                                             WallBlock::new,
+                                                             WoolWallBlock::new,
                                                              Configs.MAIN.addWalls.get());
     public static final Block RED_WOOL_WALL = registerWall("red_wool_wall",
                                                            Blocks.RED_WOOL,
-                                                           WallBlock::new,
+                                                           WoolWallBlock::new,
                                                            Configs.MAIN.addWalls.get());
     public static final Block ORANGE_WOOL_WALL = registerWall("orange_wool_wall",
                                                               Blocks.ORANGE_WOOL,
-                                                              WallBlock::new,
+                                                              WoolWallBlock::new,
                                                               Configs.MAIN.addWalls.get());
     public static final Block YELLOW_WOOL_WALL = registerWall("yellow_wool_wall",
                                                               Blocks.YELLOW_WOOL,
-                                                              WallBlock::new,
+                                                              WoolWallBlock::new,
                                                               Configs.MAIN.addWalls.get());
     public static final Block LIME_WOOL_WALL = registerWall("lime_wool_wall",
                                                             Blocks.LIME_WOOL,
-                                                            WallBlock::new,
+                                                            WoolWallBlock::new,
                                                             Configs.MAIN.addWalls.get());
     public static final Block GREEN_WOOL_WALL = registerWall("green_wool_wall",
                                                              Blocks.GREEN_WOOL,
-                                                             WallBlock::new,
+                                                             WoolWallBlock::new,
                                                              Configs.MAIN.addWalls.get());
     public static final Block CYAN_WOOL_WALL = registerWall("cyan_wool_wall",
                                                             Blocks.CYAN_WOOL,
-                                                            WallBlock::new,
+                                                            WoolWallBlock::new,
                                                             Configs.MAIN.addWalls.get());
     public static final Block LIGHT_BLUE_WOOL_WALL = registerWall("light_blue_wool_wall",
                                                                   Blocks.LIGHT_BLUE_WOOL,
-                                                                  WallBlock::new,
+                                                                  WoolWallBlock::new,
                                                                   Configs.MAIN.addWalls.get());
     public static final Block BLUE_WOOL_WALL = registerWall("blue_wool_wall",
                                                             Blocks.BLUE_WOOL,
-                                                            WallBlock::new,
+                                                            WoolWallBlock::new,
                                                             Configs.MAIN.addWalls.get());
     public static final Block PURPLE_WOOL_WALL = registerWall("purple_wool_wall",
                                                               Blocks.PURPLE_WOOL,
-                                                              WallBlock::new,
+                                                              WoolWallBlock::new,
                                                               Configs.MAIN.addWalls.get());
     public static final Block MAGENTA_WOOL_WALL = registerWall("magenta_wool_wall",
                                                                Blocks.MAGENTA_WOOL,
-                                                               WallBlock::new,
+                                                               WoolWallBlock::new,
                                                                Configs.MAIN.addWalls.get());
     public static final Block PINK_WOOL_WALL = registerWall("pink_wool_wall",
                                                             Blocks.PINK_WOOL,
-                                                            WallBlock::new,
+                                                            WoolWallBlock::new,
                                                             Configs.MAIN.addWalls.get());
 
 

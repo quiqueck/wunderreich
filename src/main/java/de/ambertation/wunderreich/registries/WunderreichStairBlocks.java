@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.blocks.StairBlock;
+import de.ambertation.wunderreich.blocks.WoolStairBlock;
 import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.world.level.block.Block;
@@ -151,67 +152,67 @@ public class WunderreichStairBlocks {
 
     public static final Block WHITE_WOOL_STAIRS = registerStairs("white_wool_stairs",
                                                                  Blocks.WHITE_WOOL,
-                                                                 StairBlock::new,
+                                                                 WoolStairBlock::new,
                                                                  Configs.MAIN.addStairs.get());
     public static final Block LIGHT_GRAY_WOOL_STAIRS = registerStairs("light_gray_wool_stairs",
                                                                       Blocks.LIGHT_GRAY_WOOL,
-                                                                      StairBlock::new,
+                                                                      WoolStairBlock::new,
                                                                       Configs.MAIN.addStairs.get());
     public static final Block GRAY_WOOL_STAIRS = registerStairs("gray_wool_stairs",
                                                                 Blocks.GRAY_WOOL,
-                                                                StairBlock::new,
+                                                                WoolStairBlock::new,
                                                                 Configs.MAIN.addStairs.get());
     public static final Block BLACK_WOOL_STAIRS = registerStairs("black_wool_stairs",
                                                                  Blocks.BLACK_WOOL,
-                                                                 StairBlock::new,
+                                                                 WoolStairBlock::new,
                                                                  Configs.MAIN.addStairs.get());
     public static final Block BROWN_WOOL_STAIRS = registerStairs("brown_wool_stairs",
                                                                  Blocks.BROWN_WOOL,
-                                                                 StairBlock::new,
+                                                                 WoolStairBlock::new,
                                                                  Configs.MAIN.addStairs.get());
     public static final Block RED_WOOL_STAIRS = registerStairs("red_wool_stairs",
                                                                Blocks.RED_WOOL,
-                                                               StairBlock::new,
+                                                               WoolStairBlock::new,
                                                                Configs.MAIN.addStairs.get());
     public static final Block ORANGE_WOOL_STAIRS = registerStairs("orange_wool_stairs",
                                                                   Blocks.ORANGE_WOOL,
-                                                                  StairBlock::new,
+                                                                  WoolStairBlock::new,
                                                                   Configs.MAIN.addStairs.get());
     public static final Block YELLOW_WOOL_STAIRS = registerStairs("yellow_wool_stairs",
                                                                   Blocks.YELLOW_WOOL,
-                                                                  StairBlock::new,
+                                                                  WoolStairBlock::new,
                                                                   Configs.MAIN.addStairs.get());
     public static final Block LIME_WOOL_STAIRS = registerStairs("lime_wool_stairs",
                                                                 Blocks.LIME_WOOL,
-                                                                StairBlock::new,
+                                                                WoolStairBlock::new,
                                                                 Configs.MAIN.addStairs.get());
     public static final Block GREEN_WOOL_STAIRS = registerStairs("green_wool_stairs",
                                                                  Blocks.GREEN_WOOL,
-                                                                 StairBlock::new,
+                                                                 WoolStairBlock::new,
                                                                  Configs.MAIN.addStairs.get());
     public static final Block CYAN_WOOL_STAIRS = registerStairs("cyan_wool_stairs",
                                                                 Blocks.CYAN_WOOL,
-                                                                StairBlock::new,
+                                                                WoolStairBlock::new,
                                                                 Configs.MAIN.addStairs.get());
     public static final Block LIGHT_BLUE_WOOL_STAIRS = registerStairs("light_blue_wool_stairs",
                                                                       Blocks.LIGHT_BLUE_WOOL,
-                                                                      StairBlock::new,
+                                                                      WoolStairBlock::new,
                                                                       Configs.MAIN.addStairs.get());
     public static final Block BLUE_WOOL_STAIRS = registerStairs("blue_wool_stairs",
                                                                 Blocks.BLUE_WOOL,
-                                                                StairBlock::new,
+                                                                WoolStairBlock::new,
                                                                 Configs.MAIN.addStairs.get());
     public static final Block PURPLE_WOOL_STAIRS = registerStairs("purple_wool_stairs",
                                                                   Blocks.PURPLE_WOOL,
-                                                                  StairBlock::new,
+                                                                  WoolStairBlock::new,
                                                                   Configs.MAIN.addStairs.get());
     public static final Block MAGENTA_WOOL_STAIRS = registerStairs("magenta_wool_stairs",
                                                                    Blocks.MAGENTA_WOOL,
-                                                                   StairBlock::new,
+                                                                   WoolStairBlock::new,
                                                                    Configs.MAIN.addStairs.get());
     public static final Block PINK_WOOL_STAIRS = registerStairs("pink_wool_stairs",
                                                                 Blocks.PINK_WOOL,
-                                                                StairBlock::new,
+                                                                WoolStairBlock::new,
                                                                 Configs.MAIN.addStairs.get());
 
     public static Block registerStairs(String name,
