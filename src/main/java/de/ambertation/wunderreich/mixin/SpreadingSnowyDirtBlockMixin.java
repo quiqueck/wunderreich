@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(SpreadingSnowyDirtBlock.class)
+@Mixin(value=SpreadingSnowyDirtBlock.class, priority = 2000)
 public abstract class SpreadingSnowyDirtBlockMixin {
 
 
-    @Inject(method = "randomTick", at = @At("TAIL"))
+    @Inject(method = "randomTick", at = @At("HEAD"))
     void wunderreich_randomTick(BlockState blockState,
                                 ServerLevel serverLevel,
                                 BlockPos blockPos,
