@@ -123,7 +123,7 @@ public class WunderreichRecipes {
         RecipeJsonBuilder
                 .create(name)
                 .result(block)
-                .pattern("*", "**", "***")
+                .pattern("*  ", "** ", "***")
                 .material('*', new ItemStack(baseBlock, 1))
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
@@ -140,7 +140,7 @@ public class WunderreichRecipes {
         RecipeJsonBuilder
                 .create(name)
                 .result(block)
-                .pattern("***", "***", "")
+                .pattern("***", "***")
                 .material('*', new ItemStack(baseBlock, 1))
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
