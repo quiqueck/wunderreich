@@ -118,4 +118,21 @@ public class WunderreichRecipes {
                 .count(2)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
     }
+
+    public static void createStairsRecipe(String name, Block baseBlock, Block block) {
+        RecipeJsonBuilder
+                .create(name)
+                .result(block)
+                .pattern("*", "**", "***")
+                .material('*', new ItemStack(baseBlock, 1))
+                .count(6)
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
+
+        StonecutterJsonBuilder
+                .create(name)
+                .result(block)
+                .ingredient(baseBlock)
+                .count(1)
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
+    }
 }
