@@ -3,9 +3,9 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
+import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.client.renderer.BiomeColors;
@@ -74,9 +74,9 @@ public class WunderreichClient implements ClientModInitializer {
                     : GrassColor.get(0.5D, 1.0D);
 
             return 0xffffffff;
-        }, WunderreichBlocks.GRASS_SLAB);
+        }, WunderreichSlabBlocks.GRASS_SLAB);
 
         ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                WunderreichBlocks.GRASS_SLAB);
+                                            WunderreichSlabBlocks.GRASS_SLAB);
     }
 }

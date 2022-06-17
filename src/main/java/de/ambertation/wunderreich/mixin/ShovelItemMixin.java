@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.blocks.DirtSlabBlock;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,11 +25,11 @@ public class ShovelItemMixin {
             final Level level = useOnContext.getLevel();
             final BlockPos pos = useOnContext.getClickedPos();
             final BlockState currentState = level.getBlockState(pos);
-            if (WunderreichBlocks.DIRT_SLAB.equals(currentState.getBlock()) || WunderreichBlocks.GRASS_SLAB.equals(
+            if (WunderreichSlabBlocks.DIRT_SLAB.equals(currentState.getBlock()) || WunderreichSlabBlocks.GRASS_SLAB.equals(
                     currentState.getBlock())) {
 
-                final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichBlocks.DIRT_PATH_SLAB,
-                        currentState);
+                final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichSlabBlocks.DIRT_PATH_SLAB,
+                                                                          currentState);
                 final Player player = useOnContext.getPlayer();
                 if (!level.isClientSide) {
                     level.setBlock(pos, newState, 11);
