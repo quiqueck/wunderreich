@@ -28,9 +28,10 @@ const fs = require("fs")
         'Akazienholz', 'Birkenholz', 'Eichenholz', 'Schwarzeichenholz', 
         'Tropenholz', 
         'Karmesin', 'Wirr', "Fichtenholz", 'Mangrovenholz']
-const type = "terracotta"
-const nameEN = "Terrakotta Wall"
-const nameDE = "Keramikmauer"
+const type = ""
+const nameEN = " Wall"
+const nameDE = "mauer"
+const texturePlus = "_planks"
 colors.forEach(color => {
     const blockName = type==''?color:(color+'_'+type)
     const basePath = "./src/main/resources/assets/wunderreich";
@@ -129,26 +130,26 @@ colors.forEach(color => {
     const modelInventory = `{
   "parent": "minecraft:block/wall_inventory",
   "textures": {
-    "wall": "minecraft:block/${blockName}"
+    "wall": "minecraft:block/${blockName}${texturePlus}"
   }
 }`
 
     const modelPost = `{
     "parent": "minecraft:block/template_wall_post",
     "textures": {
-        "wall": "minecraft:block/${blockName}"
+        "wall": "minecraft:block/${blockName}${texturePlus}"
     }
 }`
     const modelSideTall = `{
     "parent": "minecraft:block/template_wall_side_tall",
     "textures": {
-        "wall": "minecraft:block/${blockName}"
+        "wall": "minecraft:block/${blockName}${texturePlus}"
     }
 }`
     const modelSide = `{
     "parent": "minecraft:block/template_wall_side",
     "textures": {
-        "wall": "minecraft:block/${blockName}"
+        "wall": "minecraft:block/${blockName}${texturePlus}"
     }
 }`
 
@@ -176,13 +177,13 @@ colors.forEach(color => {
 console.log()
 for (let i=0; i<colors.length; i++){
     let color = colors[i]
-    const blockName = color+'_'+type
-    console.log(`"block.wunderreich.${blockName}_wall": "${colorsEN[i]} ${nameEN}",`)
+    const blockName = type==''?color:(color+'_'+type)
+    console.log(`"block.wunderreich.${blockName}_wall": "${colorsEN[i]}${nameEN}",`)
 }
 
 console.log()
 for (let i=0; i<colors.length; i++){
     let color = colors[i]
-    const blockName = color+'_'+type
-    console.log(`"block.wunderreich.${blockName}_wall": "${colorsDE[i]} ${nameDE}",`)
+    const blockName = type==''?color:(color+'_'+type)
+    console.log(`"block.wunderreich.${blockName}_wall": "${colorsDE[i]}${nameDE}",`)
 }

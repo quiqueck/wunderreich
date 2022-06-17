@@ -213,6 +213,43 @@ public class WunderreichWallBlocks {
 
 
 
+    public static final Block ACACIA_WALL = registerWall("acacia_wall",
+                                                         Blocks.ACACIA_PLANKS,
+                                                         WallBlock::new,
+                                                         Configs.MAIN.addWalls.get());
+    public static final Block BIRCH_WALL = registerWall("birch_wall",
+                                                        Blocks.BIRCH_PLANKS,
+                                                        WallBlock::new,
+                                                        Configs.MAIN.addWalls.get());
+    public static final Block OAK_WALL = registerWall("oak_wall",
+                                                      Blocks.OAK_PLANKS,
+                                                      WallBlock::new,
+                                                      Configs.MAIN.addWalls.get());
+    public static final Block DARK_OAK_WALL = registerWall("dark_oak_wall",
+                                                           Blocks.DARK_OAK_PLANKS,
+                                                           WallBlock::new,
+                                                           Configs.MAIN.addWalls.get());
+    public static final Block JUNGLE_WALL = registerWall("jungle_wall",
+                                                         Blocks.JUNGLE_PLANKS,
+                                                         WallBlock::new,
+                                                         Configs.MAIN.addWalls.get());
+    public static final Block CRIMSON_WALL = registerWall("crimson_wall",
+                                                          Blocks.CRIMSON_PLANKS,
+                                                          WallBlock::new,
+                                                          Configs.MAIN.addWalls.get());
+    public static final Block WARPED_WALL = registerWall("warped_wall",
+                                                         Blocks.WARPED_PLANKS,
+                                                         WallBlock::new,
+                                                         Configs.MAIN.addWalls.get());
+    public static final Block SPRUCE_WALL = registerWall("spruce_wall",
+                                                         Blocks.SPRUCE_PLANKS,
+                                                         WallBlock::new,
+                                                         Configs.MAIN.addWalls.get());
+    public static final Block MANGROVE_WALL = registerWall("mangrove_wall",
+                                                           Blocks.MANGROVE_PLANKS,
+                                                           WallBlock::new,
+                                                           Configs.MAIN.addWalls.get());
+
 
     public static Block registerWall(String name,
                                        Block baseBlock,
