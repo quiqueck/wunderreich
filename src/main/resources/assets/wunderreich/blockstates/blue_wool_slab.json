@@ -1,0 +1,13 @@
+{
+        "variants": {
+            "type=bottom": {
+                "model": "wunderreich:block/blue_wool_slab"
+            },
+            "type=double": {
+                "model": "block/blue_wool"
+            },
+            "type=top": {
+                "model": "wunderreich:block/blue_wool_slab_top"
+            }
+        }
+    }

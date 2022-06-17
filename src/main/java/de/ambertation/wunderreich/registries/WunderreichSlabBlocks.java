@@ -210,6 +210,73 @@ public class WunderreichSlabBlocks {
                                                                              Blocks.PINK_STAINED_GLASS,
                                                                              Configs.MAIN.addSlabs.get());
 
+
+
+    public static final Block WHITE_WOOL_SLAB = registerSlab("white_wool_slab",
+                                                             Blocks.WHITE_WOOL,
+                                                             ConcreteSlabBlock::new,
+                                                             Configs.MAIN.addSlabs.get());
+    public static final Block LIGHT_GRAY_WOOL_SLAB = registerSlab("light_gray_wool_slab",
+                                                                  Blocks.LIGHT_GRAY_WOOL,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addSlabs.get());
+    public static final Block GRAY_WOOL_SLAB = registerSlab("gray_wool_slab",
+                                                            Blocks.GRAY_WOOL,
+                                                            ConcreteSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
+    public static final Block BLACK_WOOL_SLAB = registerSlab("black_wool_slab",
+                                                             Blocks.BLACK_WOOL,
+                                                             ConcreteSlabBlock::new,
+                                                             Configs.MAIN.addSlabs.get());
+    public static final Block BROWN_WOOL_SLAB = registerSlab("brown_wool_slab",
+                                                             Blocks.BROWN_WOOL,
+                                                             ConcreteSlabBlock::new,
+                                                             Configs.MAIN.addSlabs.get());
+    public static final Block RED_WOOL_SLAB = registerSlab("red_wool_slab",
+                                                           Blocks.RED_WOOL,
+                                                           ConcreteSlabBlock::new,
+                                                           Configs.MAIN.addSlabs.get());
+    public static final Block ORANGE_WOOL_SLAB = registerSlab("orange_wool_slab",
+                                                              Blocks.ORANGE_WOOL,
+                                                              ConcreteSlabBlock::new,
+                                                              Configs.MAIN.addSlabs.get());
+    public static final Block YELLOW_WOOL_SLAB = registerSlab("yellow_wool_slab",
+                                                              Blocks.YELLOW_WOOL,
+                                                              ConcreteSlabBlock::new,
+                                                              Configs.MAIN.addSlabs.get());
+    public static final Block LIME_WOOL_SLAB = registerSlab("lime_wool_slab",
+                                                            Blocks.LIME_WOOL,
+                                                            ConcreteSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
+    public static final Block GREEN_WOOL_SLAB = registerSlab("green_wool_slab",
+                                                             Blocks.GREEN_WOOL,
+                                                             ConcreteSlabBlock::new,
+                                                             Configs.MAIN.addSlabs.get());
+    public static final Block CYAN_WOOL_SLAB = registerSlab("cyan_wool_slab",
+                                                            Blocks.CYAN_WOOL,
+                                                            ConcreteSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
+    public static final Block LIGHT_BLUE_WOOL_SLAB = registerSlab("light_blue_wool_slab",
+                                                                  Blocks.LIGHT_BLUE_WOOL,
+                                                                  ConcreteSlabBlock::new,
+                                                                  Configs.MAIN.addSlabs.get());
+    public static final Block BLUE_WOOL_SLAB = registerSlab("blue_wool_slab",
+                                                            Blocks.BLUE_WOOL,
+                                                            ConcreteSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
+    public static final Block PURPLE_WOOL_SLAB = registerSlab("purple_wool_slab",
+                                                              Blocks.PURPLE_WOOL,
+                                                              ConcreteSlabBlock::new,
+                                                              Configs.MAIN.addSlabs.get());
+    public static final Block MAGENTA_WOOL_SLAB = registerSlab("magenta_wool_slab",
+                                                               Blocks.MAGENTA_WOOL,
+                                                               ConcreteSlabBlock::new,
+                                                               Configs.MAIN.addSlabs.get());
+    public static final Block PINK_WOOL_SLAB = registerSlab("pink_wool_slab",
+                                                            Blocks.PINK_WOOL,
+                                                            ConcreteSlabBlock::new,
+                                                            Configs.MAIN.addSlabs.get());
+
     public static Block registerSlab(String name, Block baseBlock) {
         return registerSlab(name, baseBlock, true);
     }
