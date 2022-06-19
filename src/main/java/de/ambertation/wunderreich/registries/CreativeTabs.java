@@ -1,18 +1,19 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.SlabBlock;
 
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
+
+import java.util.Comparator;
 
 public class CreativeTabs {
     public static final CreativeModeTab TAB_BLOCKS;
@@ -27,7 +28,32 @@ public class CreativeTabs {
                                                                               .filter(block -> block != WunderreichBlocks.WUNDER_KISTE)
                                                                               .map(ItemStack::new).toList());
                                                WunderKisteItem.addAllVariants(stacks);
+
+                                               stacks.sort(Comparator.comparing(stack -> {
+                                                   String prefix = "";
+                                                   if (stack.getItem() instanceof BlockItem blockItem) {
+                                                       Block bl = blockItem.getBlock();
+                                                       if (bl instanceof WoodWallBlock)
+                                                           prefix = "wall_wood";
+                                                       else if (bl instanceof WoolWallBlock)
+                                                           prefix = "wall_wool";
+                                                       else if (bl instanceof AbstractWallBlock)
+                                                           prefix = "wall_a";
+                                                       else if (bl instanceof WoolStairBlock)
+                                                           prefix = "stair_wool";
+                                                       else if (bl instanceof AbstractStairBlock)
+                                                           prefix = "stair_a";
+                                                       else if (bl instanceof SlabBlock)
+                                                           prefix = "slab";
+                                                       else
+                                                           prefix = bl.getClass().getSimpleName();
+                                                   }
+                                                   if (stack.hasCustomHoverName())
+                                                       return prefix + stack.getHoverName().getString();
+                                                   else return prefix + stack.getItem().getName(stack).getString();
+                                               }));
                                            })
+
                                            .build();
 
 
@@ -39,6 +65,13 @@ public class CreativeTabs {
                                                                             .filter(item -> item != WunderreichItems.WHISPERER)
                                                                             .map(ItemStack::new).toList());
                                               TrainedVillagerWhisperer.addAllVariants(stacks);
+
+                                              stacks.sort(Comparator.comparing(stack -> {
+                                                  String prefix = stack.getItem().getClass().getSimpleName();
+                                                  if (stack.hasCustomHoverName())
+                                                      return prefix + stack.getHoverName().getString();
+                                                  else return prefix + stack.getItem().getName(stack).getString();
+                                              }));
                                           })
                                           .build();
 
