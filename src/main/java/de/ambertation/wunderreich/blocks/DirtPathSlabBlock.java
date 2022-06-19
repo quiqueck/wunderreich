@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,7 +48,7 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
 
     @Override
     public void tick(BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
-        final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichBlocks.DIRT_SLAB, blockState);
+        final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichSlabBlocks.DIRT_SLAB, blockState);
         level.setBlockAndUpdate(blockPos, pushEntitiesUp(blockState, newState, level, blockPos));
     }
 

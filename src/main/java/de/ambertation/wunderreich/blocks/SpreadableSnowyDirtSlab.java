@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -116,7 +116,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             if (me instanceof SpreadableSnowyDirtSlab) {
                 level.setBlockAndUpdate(
                         blockPos,
-                        WunderreichBlocks.DIRT_SLAB
+                        WunderreichSlabBlocks.DIRT_SLAB
                                 .defaultBlockState()
                                 .setValue(WATERLOGGED, testState.getValue(WATERLOGGED))
                                 .setValue(TYPE, testState.getValue(TYPE))
@@ -131,7 +131,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         }
 
         if (level.getMaxLocalRawBrightness(blockPos.above()) >= 9) {
-            final BlockState grassSlabBlockState = WunderreichBlocks.GRASS_SLAB.defaultBlockState();
+            final BlockState grassSlabBlockState = WunderreichSlabBlocks.GRASS_SLAB.defaultBlockState();
             final BlockState grassBlockState = Blocks.GRASS_BLOCK.defaultBlockState();
             BlockState testState;
 
@@ -147,7 +147,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                             grassBlockState.setValue(SNOWY,
                                     level.getBlockState(testPos.above())
                                          .is(Blocks.SNOW)));
-                } else if (testState.is(WunderreichBlocks.DIRT_SLAB)) {
+                } else if (testState.is(WunderreichSlabBlocks.DIRT_SLAB)) {
                     final BlockState newState = grassSlabBlockState.setValue(SNOWY,
                                                                            level.getBlockState(testPos.above())
                                                                                 .is(Blocks.SNOW))
