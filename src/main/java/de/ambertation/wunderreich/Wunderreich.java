@@ -1,5 +1,10 @@
 package de.ambertation.wunderreich;
 
+import net.minecraft.resources.ResourceLocation;
+
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
@@ -9,14 +14,6 @@ import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
 import de.ambertation.wunderreich.utils.Version;
-
-import net.minecraft.resources.ResourceLocation;
-
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-
-import java.util.Optional;
 
 public class Wunderreich implements ModInitializer {
     public static final String MOD_ID = "wunderreich";
@@ -28,12 +25,9 @@ public class Wunderreich implements ModInitializer {
     }
 
     @Override
-    public void onInitialize() {
-        Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
-        if (optional.isPresent()) {
-            ModContainer modContainer = optional.get();
-            VERSION = new Version(modContainer.getMetadata().getVersion().toString());
-        }
+    public void onInitialize(ModContainer modContainer) {
+        VERSION = new Version(modContainer.metadata().version().toString());
+
 
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.

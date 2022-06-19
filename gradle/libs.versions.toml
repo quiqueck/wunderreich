@@ -2,9 +2,12 @@
 # The latest versions are available at https://lambdaurora.dev/tools/import_quilt.html
 minecraft = "1.19"
 quilt_mappings = "1.19+build.1"
-quilt_loader = "0.16.1"
+quilt_loader = "0.17.1-beta.2"
 
-quilted_fabric_api = "2.0.0-alpha.2+0.55.3-1.19"
+quilted_fabric_api = "2.0.0-alpha.3+0.55.3-1.19"
+
+rei_version = "9.0.472"
+modmenu_version = "4.0.0"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -13,6 +16,9 @@ quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loade
 
 quilted_fabric_api = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilted_fabric_api" }
 quilted_fabric_api_deprecated = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api-deprecated", version.ref = "quilted_fabric_api" }
+rei = { module = "me.shedaniel:RoughlyEnoughItems-fabric", version.ref = "rei_version" }
+rei_api = { module = "me.shedaniel:RoughlyEnoughItems-api-fabric", version.ref = "rei_version" }
+modmenu = { module = "com.terraformersmc:modmenu", version.ref = "modmenu_version" }
 
 # If you have multiple similar dependencies, you can declare a dependency bundle and reference it on the build script with "libs.bundles.example".
 [bundles]

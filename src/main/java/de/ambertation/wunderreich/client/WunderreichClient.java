@@ -1,5 +1,18 @@
 package de.ambertation.wunderreich.client;
 
+import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.resources.model.Material;
+import net.minecraft.core.Registry;
+import net.minecraft.world.level.GrassColor;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+
+import com.google.common.collect.Maps;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
@@ -8,21 +21,8 @@ import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
-
-import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.Registry;
-import net.minecraft.world.level.GrassColor;
-
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
-
-import com.google.common.collect.Maps;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -54,7 +54,7 @@ public class WunderreichClient implements ClientModInitializer {
     }
 
     @Override
-    public void onInitializeClient() {
+    public void onInitializeClient(ModContainer modContainer) {
         WunderreichParticles.register();
         WunderreichScreens.registerScreens();
 
@@ -64,8 +64,9 @@ public class WunderreichClient implements ClientModInitializer {
             }
 
             if (block instanceof BlockEntityProvider view) {
-                BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                                                     view.getBlockEntityRenderProvider()
+                BlockEntityRendererRegistry.register(
+                        view.getBlockEntityType(),
+                        view.getBlockEntityRenderProvider()
                 );
             }
         });
@@ -79,8 +80,9 @@ public class WunderreichClient implements ClientModInitializer {
                 return 0xffffffff;
             }, WunderreichSlabBlocks.GRASS_SLAB);
 
-            ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                                WunderreichSlabBlocks.GRASS_SLAB
+            ColorProviderRegistry.ITEM.register(
+                    (item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
+                    WunderreichSlabBlocks.GRASS_SLAB
             );
         }
     }

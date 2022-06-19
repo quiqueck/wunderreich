@@ -1,51 +1,77 @@
 {
-  "schemaVersion": 1,
-  "id": "wunderreich",
-  "version": "${version}",
-  "name": "Wunderreich",
-  "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
-  "authors": [
-    "Quiqueck (Frank)"
-  ],
-  "contact": {
-    "homepage": "https://wunderreich.ambertation.de",
-    "sources": "https://github.com/quiqueck/wunderreich"
-  },
-  "license": "MIT",
-  "icon": "assets/wunderreich/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "de.ambertation.wunderreich.Wunderreich"
-    ],
-    "client": [
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "de.ambertation",
+    "id": "wunderreich",
+    "version": "${version}",
+    "metadata": {
+      "name": "Wunderreich",
+      "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
+      "contributors": {
+        "Quiqueck (Frank)": "Owner"
+      },
+      "contact": {
+        "homepage": "https://wunderreich.ambertation.de",
+        "issues": "https://github.com/quiqueck/wunderreich/issues",
+        "sources": "https://github.com/quiqueck/wunderreich"
+      },
+      "icon": "assets/wunderreich/icon.png",
+      "license": "MIT"
+    },
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        {
+          "adapter": "default",
+          "value": "de.ambertation.wunderreich.Wunderreich"
+        }
+      ],
+      "client_init": [
+        {
+          "adapter": "default",
+          "value": "de.ambertation.wunderreich.client.WunderreichClient"
+        }
+      ],
+      "rei_server": [
+        {
+          "adapter": "default",
+          "value": "de.ambertation.wunderreich.rei.ServerPlugin"
+        }
+      ],
+      "rei_client": [
+        {
+          "adapter": "default",
+          "value": "de.ambertation.wunderreich.rei.ClientPlugin"
+        }
+      ],
+      "modmenu": [
+        {
+          "adapter": "default",
+          "value": "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
+        }
+      ]
+    },
+    "depends": [
       {
-        "value": "de.ambertation.wunderreich.client.WunderreichClient"
+        "id": "quilt_loader",
+        "versions": ">=0.17.0-"
+      },
+      {
+        "id": "quilted_fabric_api",
+        "versions": ">=2.0.0-"
+      },
+      {
+        "id": "minecraft",
+        "versions": ">=1.19"
       }
-    ],
-    "rei_server": [
-      "de.ambertation.wunderreich.rei.ServerPlugin"
-    ],
-    "rei_client": [
-      "de.ambertation.wunderreich.rei.ClientPlugin"
-    ],
-    "modmenu": [
-      "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
     ]
   },
-  "accessWidener": "wunderreich.accesswidener",
-  "mixins": [
+  "minecraft": {
+    "environment": "*"
+  },
+  "access_widener": "wunderreich.accesswidener",
+  "mixin": [
     "wunderreich.mixins.client.json",
     "wunderreich.mixins.common.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.14.6",
-    "fabric": ">=0.55.1",
-    "minecraft": "1.19",
-    "java": ">=17"
-  },
-  "suggests": {
-    "modmenu": "4.0.x",
-    "rei": "9.x"
-  }
+  ]
 }

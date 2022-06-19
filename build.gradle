@@ -12,8 +12,8 @@ group = project.maven_group
 
 
 repositories {
-    //maven { url "https://maven.shedaniel.me" }
-    // maven { url 'https://maven.terraformersmc.com/releases' }
+    maven { url "https://maven.shedaniel.me" }
+    maven { url 'https://maven.terraformersmc.com/releases' }
 }
 
 loom {
@@ -21,7 +21,6 @@ loom {
 }
 
 dependencies {
-    implementation(libs.groovy.core)
     minecraft libs.minecraft
     mappings loom.layered {
         addLayer quiltMappings.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:v2")
@@ -34,6 +33,9 @@ dependencies {
     // Quilted Fabric API will automatically pull in the correct QSL version.
     modImplementation libs.quilted.fabric.api
 
+    modCompileOnly libs.rei.api
+    modRuntimeOnly libs.rei
+    modCompileOnly libs.modmenu
     // modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
     // modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     // modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
