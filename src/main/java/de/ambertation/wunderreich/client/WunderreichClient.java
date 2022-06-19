@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.client;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -64,19 +65,23 @@ public class WunderreichClient implements ClientModInitializer {
 
             if (block instanceof BlockEntityProvider view) {
                 BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                        view.getBlockEntityRenderProvider());
+                                                     view.getBlockEntityRenderProvider()
+                );
             }
         });
 
-        ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-            if (tintIndex == 0) return view != null && pos != null
-                    ? BiomeColors.getAverageGrassColor(view, pos)
-                    : GrassColor.get(0.5D, 1.0D);
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)) {
+            ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
+                if (tintIndex == 0) return view != null && pos != null
+                        ? BiomeColors.getAverageGrassColor(view, pos)
+                        : GrassColor.get(0.5D, 1.0D);
 
-            return 0xffffffff;
-        }, WunderreichSlabBlocks.GRASS_SLAB);
+                return 0xffffffff;
+            }, WunderreichSlabBlocks.GRASS_SLAB);
 
-        ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                            WunderreichSlabBlocks.GRASS_SLAB);
+            ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
+                                                WunderreichSlabBlocks.GRASS_SLAB
+            );
+        }
     }
 }

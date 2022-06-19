@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -36,7 +37,8 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                                       BlockPos pos,
                                       BlockState aboveState,
                                       BlockPos abovePos,
-                                      Direction direction) {
+                                      Direction direction
+    ) {
 
 
         if (!aboveState.canOcclude()) {
@@ -62,7 +64,8 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
 
     private static boolean canBeGrassNewSlab(BlockState state,
                                              LevelReader reader,
-                                             BlockPos pos) {
+                                             BlockPos pos
+    ) {
         if (state.getValue(TYPE) == SlabType.BOTTOM) {
             return true;
         }
@@ -72,7 +75,8 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
 
     private static boolean canBeGrassNew(BlockState state,
                                          LevelReader reader,
-                                         BlockPos pos) {
+                                         BlockPos pos
+    ) {
 
         BlockPos abovePos = pos.above();
         BlockState aboveState = reader.getBlockState(abovePos);
@@ -83,11 +87,12 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             return false;
         }
         return !doesOcclude(reader,
-                state,
-                pos,
-                aboveState,
-                abovePos,
-                Direction.UP);
+                            state,
+                            pos,
+                            aboveState,
+                            abovePos,
+                            Direction.UP
+        );
     }
 
     public static boolean canBeGrass(BlockState blockState, LevelReader levelReader, BlockPos blockPos) {
@@ -110,7 +115,11 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                                      BlockState blockState,
                                      ServerLevel level,
                                      BlockPos blockPos,
-                                     RandomSource random) {
+                                     RandomSource random
+    ) {
+        if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_SLAB)
+                || !Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB))
+            return;
         if (!canBeGrass(blockState, level, blockPos)) {
             final BlockState testState = level.getBlockState(blockPos);
             if (me instanceof SpreadableSnowyDirtSlab) {
@@ -137,22 +146,27 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
 
             for (int i = 0; i < 2; ++i) {
                 BlockPos testPos = blockPos.offset(random.nextInt(3) - 1,
-                        random.nextInt(5) - 3,
-                        random.nextInt(3) - 1);
+                                                   random.nextInt(5) - 3,
+                                                   random.nextInt(3) - 1
+                );
                 testState = level.getBlockState(testPos);
                 if (!canPropagate(testState, level, testPos)) continue;
 
                 if (testState.is(Blocks.DIRT)) {
                     level.setBlockAndUpdate(testPos,
-                            grassBlockState.setValue(SNOWY,
-                                    level.getBlockState(testPos.above())
-                                         .is(Blocks.SNOW)));
+                                            grassBlockState.setValue(SNOWY,
+                                                                     level.getBlockState(testPos.above())
+                                                                          .is(Blocks.SNOW)
+                                            )
+                    );
                 } else if (testState.is(WunderreichSlabBlocks.DIRT_SLAB)) {
                     final BlockState newState = grassSlabBlockState.setValue(SNOWY,
-                                                                           level.getBlockState(testPos.above())
-                                                                                .is(Blocks.SNOW))
+                                                                             level.getBlockState(testPos.above())
+                                                                                  .is(Blocks.SNOW)
+                                                                   )
                                                                    .setValue(WATERLOGGED,
-                                                                           testState.getValue(WATERLOGGED))
+                                                                             testState.getValue(WATERLOGGED)
+                                                                   )
                                                                    .setValue(TYPE, testState.getValue(TYPE));
                     level.setBlockAndUpdate(testPos, newState);
                 }

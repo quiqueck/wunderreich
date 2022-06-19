@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.blocks.DirtSlabBlock;
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -22,14 +23,25 @@ public class ShovelItemMixin {
     @Inject(method = "useOn", at = @At("HEAD"), cancellable = true)
     public void wunderreich_useOn(UseOnContext useOnContext, CallbackInfoReturnable<InteractionResult> cir) {
         if (useOnContext.getClickedFace() != Direction.DOWN) {
+            if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_PATH_SLAB))
+                return;
             final Level level = useOnContext.getLevel();
             final BlockPos pos = useOnContext.getClickedPos();
             final BlockState currentState = level.getBlockState(pos);
-            if (WunderreichSlabBlocks.DIRT_SLAB.equals(currentState.getBlock()) || WunderreichSlabBlocks.GRASS_SLAB.equals(
-                    currentState.getBlock())) {
+            if (
+                    (
+                            Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_SLAB)
+                                    && WunderreichSlabBlocks.DIRT_SLAB.equals(currentState.getBlock())
+                    )
+                            || (
+                            Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)
+                                    && WunderreichSlabBlocks.GRASS_SLAB.equals(currentState.getBlock())
+                    )
+            ) {
 
                 final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichSlabBlocks.DIRT_PATH_SLAB,
-                                                                          currentState);
+                                                                          currentState
+                );
                 final Player player = useOnContext.getPlayer();
                 if (!level.isClientSide) {
                     level.setBlock(pos, newState, 11);

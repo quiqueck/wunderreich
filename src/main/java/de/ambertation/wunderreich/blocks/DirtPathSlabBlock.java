@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -42,12 +43,14 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     public boolean isPathfindable(BlockState blockState,
                                   BlockGetter blockGetter,
                                   BlockPos blockPos,
-                                  PathComputationType pathComputationType) {
+                                  PathComputationType pathComputationType
+    ) {
         return false;
     }
 
     @Override
     public void tick(BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
+        if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_SLAB)) return;
         final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichSlabBlocks.DIRT_SLAB, blockState);
         level.setBlockAndUpdate(blockPos, pushEntitiesUp(blockState, newState, level, blockPos));
     }
@@ -66,7 +69,8 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
                                   BlockState blockState2,
                                   LevelAccessor levelAccessor,
                                   BlockPos blockPos,
-                                  BlockPos blockPos2) {
+                                  BlockPos blockPos2
+    ) {
         if (direction == Direction.UP && !blockState.canSurvive(levelAccessor, blockPos)) {
             levelAccessor.scheduleTick(blockPos, this, 1);
         }
@@ -77,7 +81,8 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     public VoxelShape getShape(BlockState blockState,
                                BlockGetter blockGetter,
                                BlockPos blockPos,
-                               CollisionContext collisionContext) {
+                               CollisionContext collisionContext
+    ) {
         SlabType slabType = blockState.getValue(TYPE);
         switch (slabType) {
             case DOUBLE:
