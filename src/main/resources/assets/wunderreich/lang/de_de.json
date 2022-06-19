@@ -193,6 +193,8 @@
   "title.config.wunderreich.main.features.addImprintedWhispers": "Geprägte Flüsterer erzeugen",
   "title.config.wunderreich.main.features.allowBuilderTools": "Baumeister Werkzeuge erlauben",
   "title.config.wunderreich.main.features.addSlabs": "Zusätzliche Stufen",
+  "title.config.wunderreich.main.features.addStairs": "Zusätzlich Treppen",
+  "title.config.wunderreich.main.features.addWalls": "Zusätzlich Mauern",
   "title.config.wunderreich.main.display.multiTexturedWunderkiste": "Lade alle Texturen für Wunderkiste (mehr Speicher, langsameres Laden)",
   "enchantment.type.ARMOR": "Rüstungen",
   "enchantment.type.ARMOR_FEET": "Fußrüstungen",
