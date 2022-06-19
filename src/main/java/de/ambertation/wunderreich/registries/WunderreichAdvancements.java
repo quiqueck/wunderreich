@@ -9,6 +9,7 @@ import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.block.Blocks;
 
 import com.google.gson.JsonElement;
 
@@ -27,21 +28,28 @@ public class WunderreichAdvancements {
         OPEN_WUNDERKISTE = CriteriaTriggers.register(new PlayerTrigger(Wunderreich.ID("open_wunderkiste")));
         COLOR_WUNDERKISTE = CriteriaTriggers.register(new PlayerTrigger(Wunderreich.ID("color_wunderkiste")));
 
-        Item mainIcon = CreativeTabs.getBlockIcon().asItem();
+        Item rootItem = CreativeTabs.getBlockIcon().asItem();
+        if (rootItem == Blocks.LAPIS_BLOCK.asItem()) rootItem = CreativeTabs.getItemIcon();
+
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WHISPER_IMPRINTER))
-            mainIcon = WunderreichBlocks.WHISPER_IMPRINTER.asItem();
-        
+            rootItem = WunderreichBlocks.WHISPER_IMPRINTER.asItem();
+        else if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL))
+            rootItem = WunderreichItems.BUILDERS_TROWEL;
+        else if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.DIAMOND_BUILDERS_TROWEL))
+            rootItem = WunderreichItems.DIAMOND_BUILDERS_TROWEL;
+
+
         ResourceLocation root = AdvancementsJsonBuilder
                 .create("root")
                 .startDisplay(
-                        mainIcon,
+                        rootItem,
                         b -> b
                                 .background("minecraft:textures/gui/advancements/backgrounds/stone.png")
                                 .showToast()
                                 .visible()
                                 .announceToChat()
                 )
-                .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem())
+                .inventoryChangedCriteria("has_imprinter", rootItem)
                 .register();
 
         ResourceLocation whisper_blank = root;
