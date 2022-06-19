@@ -11,6 +11,7 @@ public class ItemConfig extends DynamicConfig<Item> {
     }
 
     public boolean isEnabled(Item item) {
+        if (item == null) return false;
         ResourceLocation id = Registry.ITEM.getKey(item);
         return id != null;
     }
