@@ -1,8 +1,5 @@
 package de.ambertation.wunderreich.utils;
 
-import de.ambertation.wunderreich.client.WunderreichClient;
-import de.ambertation.wunderreich.config.Configs;
-
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.StringRepresentable;
@@ -11,7 +8,10 @@ import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
+import org.quiltmc.loader.api.minecraft.MinecraftQuiltLoader;
+
+import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.config.Configs;
 
 public enum WunderKisteDomain implements StringRepresentable {
     WHITE("white", Items.WHITE_DYE, 0xFFFFFF, false, "wunder_kiste"),
@@ -52,7 +52,8 @@ public enum WunderKisteDomain implements StringRepresentable {
         } else {
             overlayColor = color;
         }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+
+        if (MinecraftQuiltLoader.getEnvironmentType() == EnvType.CLIENT) {
             if (Configs.MAIN.multiTexturedWunderkiste.get()) {
                 this.texture = WunderreichClient.getWunderkisteColor(texture);
             } else {

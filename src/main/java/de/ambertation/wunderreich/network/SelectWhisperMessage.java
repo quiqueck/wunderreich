@@ -1,17 +1,19 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import org.quiltmc.qsl.networking.api.PacketSender;
+
+import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 
 public class SelectWhisperMessage extends ServerBoundPacketHandler<SelectWhisperMessage.Content> {
-    public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register("select_whisper",
-            new SelectWhisperMessage());
+    public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register(
+            "select_whisper",
+            new SelectWhisperMessage()
+    );
 
     protected SelectWhisperMessage() {
     }

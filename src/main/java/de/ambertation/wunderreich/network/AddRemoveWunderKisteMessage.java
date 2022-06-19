@@ -1,11 +1,5 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.utils.LiveBlockManager.LiveBlock;
-import de.ambertation.wunderreich.utils.WunderKisteDomain;
-import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
@@ -13,7 +7,13 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import org.quiltmc.qsl.networking.api.PacketSender;
+
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.utils.LiveBlockManager.LiveBlock;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 
 public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRemoveWunderKisteMessage.Content> {

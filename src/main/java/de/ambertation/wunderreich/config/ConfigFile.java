@@ -1,12 +1,11 @@
 package de.ambertation.wunderreich.config;
 
 
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.utils.Version;
-
-import net.fabricmc.loader.api.FabricLoader;
+import org.quiltmc.loader.api.QuiltLoader;
 
 import com.google.gson.*;
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.utils.Version;
 
 import java.io.*;
 import java.nio.file.Path;
@@ -34,7 +33,7 @@ public class ConfigFile {
     }
 
     public ConfigFile(String basePath, String category) {
-        final Path dir = FabricLoader.getInstance().getConfigDir().resolve(basePath);
+        final Path dir = QuiltLoader.getConfigDir().resolve(basePath);
         path = dir.resolve(category + ".json").toFile();
         this.category = basePath + "." + category;
 

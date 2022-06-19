@@ -1,13 +1,5 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.interfaces.IMerchantMenu;
-import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
-import de.ambertation.wunderreich.items.VillagerWhisperer;
-import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.registries.WunderreichRules;
-
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
@@ -28,7 +20,15 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
+import org.quiltmc.qsl.networking.api.PacketSender;
+
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.interfaces.IMerchantMenu;
+import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.items.VillagerWhisperer;
+import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import java.util.Objects;
 
@@ -38,8 +38,9 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
         if (this == o) return true;
         if (!(o instanceof ClosestWhisperer)) return false;
         ClosestWhisperer that = (ClosestWhisperer) o;
-        return Objects.equals(stack, that.stack) && Objects.equals(player,
-                                                                   that.player
+        return Objects.equals(stack, that.stack) && Objects.equals(
+                player,
+                that.player
         ) && slot == that.slot;
     }
 
@@ -59,8 +60,9 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
 }
 
 public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMessage.Content> {
-    public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register("cycle_trades",
-                                                                                        new CycleTradesMessage()
+    public static final CycleTradesMessage INSTANCE = ServerBoundPacketHandler.register(
+            "cycle_trades",
+            new CycleTradesMessage()
     );
 
     protected CycleTradesMessage() {
@@ -167,16 +169,18 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
                     final int duraCost = WunderreichRules.Whispers.cyclingNeedsWhisperer() ? 1 : 2;
                     if (whisperer instanceof TrainedVillagerWhisperer trained) {
                         if (type.equals(trained.getEnchantmentID(whispererStack.stack()))) {
-                            whispererStack.stack().hurtAndBreak(duraCost,
-                                                                whispererStack.player(),
-                                                                player -> player.broadcastBreakEvent(whispererStack.slot())
+                            whispererStack.stack().hurtAndBreak(
+                                    duraCost,
+                                    whispererStack.player(),
+                                    player -> player.broadcastBreakEvent(whispererStack.slot())
                             );
                             return true;
                         }
                     } else {
-                        whispererStack.stack().hurtAndBreak(duraCost,
-                                                            whispererStack.player(),
-                                                            player -> player.broadcastBreakEvent(whispererStack.slot())
+                        whispererStack.stack().hurtAndBreak(
+                                duraCost,
+                                whispererStack.player(),
+                                player -> player.broadcastBreakEvent(whispererStack.slot())
                         );
                         return true;
                     }
@@ -206,11 +210,12 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
             if (WunderreichRules.Whispers.cyclingNeedsWhisperer()) {
                 ItemStack whisp = containsWhisperer(player);
                 if (whisp == null) return;
-                whisp.hurtAndBreak(1,
-                                   player,
-                                   pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
-                                                                        ? InteractionHand.MAIN_HAND
-                                                                        : InteractionHand.OFF_HAND)
+                whisp.hurtAndBreak(
+                        1,
+                        player,
+                        pp -> pp.broadcastBreakEvent(player.getMainHandItem().is(whisp.getItem())
+                                ? InteractionHand.MAIN_HAND
+                                : InteractionHand.OFF_HAND)
                 );
             }
 
@@ -228,12 +233,13 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
 //			}
 //		}
 
-            player.sendMerchantOffers(menu.containerId,
-                                      villager.getOffers(),
-                                      villager.getVillagerData().getLevel(),
-                                      villager.getVillagerXp(),
-                                      villager.showProgressBar(),
-                                      villager.canRestock()
+            player.sendMerchantOffers(
+                    menu.containerId,
+                    villager.getOffers(),
+                    villager.getVillagerData().getLevel(),
+                    villager.getVillagerXp(),
+                    villager.showProgressBar(),
+                    villager.canRestock()
             );
         }
     }

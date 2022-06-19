@@ -1,8 +1,5 @@
 package de.ambertation.wunderreich.blocks;
 
-import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
-import de.ambertation.wunderreich.interfaces.CanDropLoot;
-
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -12,13 +9,16 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import org.quiltmc.qsl.block.extensions.api.QuiltBlockSettings;
+
+import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
+import de.ambertation.wunderreich.interfaces.CanDropLoot;
 
 import java.util.function.Consumer;
 
 public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDropLoot {
     public DirtSlabBlock(Block baseBlock) {
-        super(FabricBlockSettings.copyOf(baseBlock));
+        super(QuiltBlockSettings.copyOf(baseBlock));
     }
 
     public static BlockState createStateFrom(Block baseBlock, BlockState currentState) {

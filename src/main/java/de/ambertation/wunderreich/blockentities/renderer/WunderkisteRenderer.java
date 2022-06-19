@@ -1,13 +1,11 @@
 package de.ambertation.wunderreich.blockentities.renderer;
 
-import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
-import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.client.WunderreichClient;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
-import de.ambertation.wunderreich.registries.WunderreichRules;
-import de.ambertation.wunderreich.utils.WunderKisteDomain;
-import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
-
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Matrix3f;
+import com.mojang.math.Matrix4f;
+import com.mojang.math.Vector3f;
+import com.mojang.math.Vector4f;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -28,12 +26,13 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.WunderreichRules;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
 
 import org.jetbrains.annotations.NotNull;
@@ -70,12 +69,14 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
     }
 
     @Override
-    public void render(WunderKisteBlockEntity blockEntity,
-                       float f,
-                       @NotNull PoseStack poseStack,
-                       @NotNull MultiBufferSource multiBufferSource,
-                       int i,
-                       int overlayCoords) {
+    public void render(
+            WunderKisteBlockEntity blockEntity,
+            float f,
+            @NotNull PoseStack poseStack,
+            @NotNull MultiBufferSource multiBufferSource,
+            int i,
+            int overlayCoords
+    ) {
         final Level level = blockEntity.getLevel();
         final boolean renderInWorld = level != null;
 
@@ -104,7 +105,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
             Material material = d.getMaterial();
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
-            this.render(poseStack,
+            this.render(
+                    poseStack,
                     vertexConsumer,
                     this.lid,
                     this.lock,
@@ -120,7 +122,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             if (openness > 0) {
                 material = getTopMaterial(d);
                 vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
-                this.renderAnimTop(poseStack,
+                this.renderAnimTop(
+                        poseStack,
                         vertexConsumer,
                         this.bottom,
                         uv2,
@@ -134,17 +137,18 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         }
     }
 
-    private void render(PoseStack poseStack,
-                        VertexConsumer vertexConsumer,
-                        ModelPart lidPart,
-                        ModelPart lockPart,
-                        ModelPart bottomPart,
-                        float f,
-                        int uv2,
-                        int overlayCoord,
-                        float r,
-                        float g,
-                        float b
+    private void render(
+            PoseStack poseStack,
+            VertexConsumer vertexConsumer,
+            ModelPart lidPart,
+            ModelPart lockPart,
+            ModelPart bottomPart,
+            float f,
+            int uv2,
+            int overlayCoord,
+            float r,
+            float g,
+            float b
     ) {
         lockPart.xRot = lidPart.xRot = -(f * 1.5707964f);
 
@@ -153,14 +157,15 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         bottomPart.render(poseStack, vertexConsumer, uv2, overlayCoord, r, g, b, 1.0f);
     }
 
-    private void renderAnimTop(PoseStack poseStack,
-                               VertexConsumer vertexConsumer,
-                               ModelPart bottomPart,
-                               int uv2,
-                               int overlayCords,
-                               float r,
-                               float g,
-                               float b
+    private void renderAnimTop(
+            PoseStack poseStack,
+            VertexConsumer vertexConsumer,
+            ModelPart bottomPart,
+            int uv2,
+            int overlayCords,
+            float r,
+            float g,
+            float b
     ) {
 
         poseStack.pushPose();
@@ -175,7 +180,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         for (Vertex v : TOP_PLANE) {
             Vector4f vector4f = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f);
             vector4f.transform(pose);
-            vertexConsumer.vertex(vector4f.x(),
+            vertexConsumer.vertex(
+                    vector4f.x(),
                     vector4f.y(),
                     vector4f.z(),
                     r,
@@ -188,7 +194,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                     uv2,
                     normal.x(),
                     normal.y(),
-                    normal.z());
+                    normal.z()
+            );
         }
 
         poseStack.popPose();

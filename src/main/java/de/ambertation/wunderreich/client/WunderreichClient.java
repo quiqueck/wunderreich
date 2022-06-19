@@ -8,9 +8,11 @@ import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.block.extensions.api.client.BlockRenderLayerMap;
 
 import com.google.common.collect.Maps;
 import de.ambertation.wunderreich.Wunderreich;
@@ -21,8 +23,6 @@ import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -60,7 +60,7 @@ public class WunderreichClient implements ClientModInitializer {
 
         Registry.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {
-                BlockRenderLayerMap.INSTANCE.putBlock(block, view.getRenderType());
+                BlockRenderLayerMap.put(view.getRenderType(), block);
             }
 
             if (block instanceof BlockEntityProvider view) {
