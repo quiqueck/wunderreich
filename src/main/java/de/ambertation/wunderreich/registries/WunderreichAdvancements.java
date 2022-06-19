@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.config.Configs;
 import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.advancements.critereon.PlayerTrigger;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
 import com.google.gson.JsonElement;
@@ -26,10 +27,14 @@ public class WunderreichAdvancements {
         OPEN_WUNDERKISTE = CriteriaTriggers.register(new PlayerTrigger(Wunderreich.ID("open_wunderkiste")));
         COLOR_WUNDERKISTE = CriteriaTriggers.register(new PlayerTrigger(Wunderreich.ID("color_wunderkiste")));
 
+        Item mainIcon = CreativeTabs.getBlockIcon().asItem();
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WHISPER_IMPRINTER))
+            mainIcon = WunderreichBlocks.WHISPER_IMPRINTER.asItem();
+        
         ResourceLocation root = AdvancementsJsonBuilder
                 .create("root")
                 .startDisplay(
-                        WunderreichBlocks.WHISPER_IMPRINTER.asItem(),
+                        mainIcon,
                         b -> b
                                 .background("minecraft:textures/gui/advancements/backgrounds/stone.png")
                                 .showToast()
@@ -39,31 +44,39 @@ public class WunderreichAdvancements {
                 .inventoryChangedCriteria("has_imprinter", WunderreichBlocks.WHISPER_IMPRINTER.asItem())
                 .register();
 
-        ResourceLocation whisper_blank = AdvancementsJsonBuilder
-                .create(WunderreichItems.BLANK_WHISPERER, b -> b.showToast().visible().announceToChat())
-                .parent(root)
-                .inventoryChangedCriteria("has_blank", WunderreichItems.BLANK_WHISPERER)
-                .register();
+        ResourceLocation whisper_blank = root;
+        if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BLANK_WHISPERER)) {
+            whisper_blank = AdvancementsJsonBuilder
+                    .create(WunderreichItems.BLANK_WHISPERER, b -> b.showToast().visible().announceToChat())
+                    .parent(root)
+                    .inventoryChangedCriteria("has_blank", WunderreichItems.BLANK_WHISPERER)
+                    .register();
+        }
+        if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.WHISPERER)) {
+            ResourceLocation whisperer = AdvancementsJsonBuilder
+                    .create(WunderreichItems.WHISPERER, b -> b.showToast().visible().announceToChat().goal())
+                    .parent(whisper_blank)
+                    .inventoryChangedCriteria("has_whisper", WunderreichItems.WHISPERER)
+                    .register();
+        }
 
-        ResourceLocation whisperer = AdvancementsJsonBuilder
-                .create(WunderreichItems.WHISPERER, b -> b.showToast().visible().announceToChat().goal())
-                .parent(whisper_blank)
-                .inventoryChangedCriteria("has_whisper", WunderreichItems.WHISPERER)
-                .register();
 
-        ResourceLocation builders_trowel = AdvancementsJsonBuilder
-                .create("used_trowel")
-                .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
-                .parent(root)
-                .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {
-                }).register();
+        if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL)) {
+            ResourceLocation builders_trowel = AdvancementsJsonBuilder
+                    .create("used_trowel")
+                    .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
+                    .parent(root)
+                    .startCriteria("use_trowel", USE_TROWEL.getId().toString(), b -> {
+                    }).register();
+        }
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE)) {
             assert WunderreichBlocks.WUNDER_KISTE != null;
             ResourceLocation opened_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_open")
                     .startDisplay(WunderreichBlocks.WUNDER_KISTE.asItem(),
-                            b -> b.showToast().visible().announceToChat())
+                                  b -> b.showToast().visible().announceToChat()
+                    )
                     .parent(root)
                     .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> {
                     }).register();
@@ -71,7 +84,8 @@ public class WunderreichAdvancements {
             ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
                     .startDisplay(Items.RED_DYE,
-                            b -> b.showToast().visible().announceToChat().goal())
+                                  b -> b.showToast().visible().announceToChat().goal()
+                    )
                     .parent(opened_wunderkiste)
                     .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> {
                     }).register();
