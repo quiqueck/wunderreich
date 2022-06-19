@@ -14,9 +14,9 @@ const colorsDE = [
     'Weiße', 'Hellgraue', 'Graue', 'Schwarze', 
     'Braune', 
     'Rote', 'Orange', 'Gelbe', 'Hellgrüne', 'Grüne', 'Türkise', 'Hellblaue', 'Blaue', 'Violette', 'Magenta', 'Pinke']
-const type = "stained_glass"
-const nameEN = "Stained Glass Slab"
-const nameDE = "Glasstufe"
+const type = "wool"
+const nameEN = "Wool Slab"
+const nameDE = "Wollstufe"
 colors.forEach(color => {
     const blockName = color+'_'+type
     const basePath = "./src/main/resources/assets/wunderreich";
@@ -40,7 +40,7 @@ colors.forEach(color => {
         "textures": {
             "bottom": "minecraft:block/${blockName}",
             "top": "minecraft:block/${blockName}",
-            "side": "wunderreich:block/${blockName}"
+            "side": "minecraft:block/${blockName}"
         }
     }`
 
@@ -50,7 +50,7 @@ colors.forEach(color => {
             "particle": "block/${blockName}",        
             "bottom": "minecraft:block/${blockName}",
             "top": "minecraft:block/${blockName}",
-            "side": "wunderreich:block/${blockName}"
+            "side": "minecraft:block/${blockName}"
         }    
     }`
 
@@ -60,8 +60,8 @@ colors.forEach(color => {
     const BLOCK_NAME = blockName.toUpperCase();
     const register = `public static final Block ${BLOCK_NAME}_SLAB = registerSlab("${blockName}_slab",
     Blocks.${BLOCK_NAME},
-    StainedGlassSlabBlock::new,
-    Configs.MAIN.addDirtSlabs.get());`
+    ConcreteSlabBlock::new,
+    Configs.MAIN.addSlabs.get());`
 
     fs.writeFileSync(path.join(basePath, "blockstates", blockName+"_slab.json"), blockState);
     fs.writeFileSync(path.join(basePath, "models/block", blockName+"_slab.json"), modelBottom);

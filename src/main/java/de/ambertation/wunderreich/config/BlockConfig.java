@@ -10,6 +10,7 @@ public class BlockConfig extends DynamicConfig<Block> {
     }
 
     public boolean isEnabled(Block block) {
+        if (block == null) return false;
         ResourceLocation id = Registry.BLOCK.getKey(block);
         return id != null;
     }
