@@ -6,17 +6,18 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Consumer;
 
-public class WallBlock extends AbstractWallBlock implements BlockTagSupplier {
+public class AbstractWallBlock extends net.minecraft.world.level.block.WallBlock implements BlockTagSupplier {
 
-    public WallBlock(Block baseBlock) {
-        super(baseBlock);
+    public AbstractWallBlock(Block baseBlock) {
+        super(BlockBehaviour.Properties.copy(baseBlock));
     }
 
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
-        blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
+        blockTags.accept(BlockTags.WALLS);
     }
 }
