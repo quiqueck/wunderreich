@@ -152,4 +152,23 @@ public class WunderreichRecipes {
                 .count(1)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
     }
+
+
+    public static void createWoodWallRecipe(String name, Block baseBlock, Block fenceBlock, Block block) {
+        RecipeJsonBuilder
+                .create(name)
+                .result(block)
+                .pattern("* *", "|||")
+                .material('*', new ItemStack(baseBlock, 1))
+                .material('|', new ItemStack(fenceBlock, 1))
+                .count(6)
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
+
+        StonecutterJsonBuilder
+                .create(name)
+                .result(block)
+                .ingredient(baseBlock)
+                .count(1)
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
+    }
 }

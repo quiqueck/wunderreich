@@ -17,6 +17,7 @@ public class WoodWallBlock extends AbstractWallBlock implements BlockTagSupplier
 
     @Override
     public void supplyTags(Consumer<Tag.Named<Block>> blockTags, Consumer<Tag.Named<Item>> itemTags) {
+        super.supplyTags(blockTags, itemTags);
         blockTags.accept(BlockTags.MINEABLE_WITH_AXE);
     }
 }
