@@ -16,6 +16,7 @@ public class WoolWallBlock extends AbstractWallBlock {
 
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+        super.supplyTags(blockTags, itemTags);
         blockTags.accept(BlockTags.WOOL);
         blockTags.accept(WunderreichTags.MINEABLE_SHEARS);
     }

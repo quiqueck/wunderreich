@@ -17,6 +17,7 @@ public class WallBlock extends AbstractWallBlock implements BlockTagSupplier {
 
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+        super.supplyTags(blockTags, itemTags);
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 }
