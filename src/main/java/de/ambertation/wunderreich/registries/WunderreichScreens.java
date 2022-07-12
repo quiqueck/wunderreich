@@ -15,6 +15,6 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 @Environment(EnvType.CLIENT)
 public final class WunderreichScreens {
     public static void registerScreens() {
-        MenuScreens.register(WunderreichMenuTypes.WHISPERER, WhispererScreen::new);
+        ScreenRegistry.register(WunderreichMenuTypes.WHISPERER, WhispererScreen::new);
     }
 }
