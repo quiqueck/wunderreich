@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.gui.whisperer.WhispererScreen;
 
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.inventory.MenuType;
 
 import net.fabricmc.api.EnvType;
@@ -14,11 +15,6 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 @Environment(EnvType.CLIENT)
 public final class WunderreichScreens {
     public static void registerScreens() {
-        ScreenRegistry.register(WHISPERER, WhispererScreen::new);
+        MenuScreens.register(WunderreichMenuTypes.WHISPERER, WhispererScreen::new);
     }
-
-    public static final MenuType<WhispererMenu> WHISPERER = ScreenHandlerRegistry.registerSimple(Wunderreich.ID(
-            "whisperer"), WhispererMenu::new);
-
-
 }

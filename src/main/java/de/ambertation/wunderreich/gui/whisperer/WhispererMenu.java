@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import de.ambertation.wunderreich.registries.WunderreichScreens;
+import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -37,7 +37,7 @@ public class WhispererMenu
     }
 
     public WhispererMenu(int containerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
-        super(WunderreichScreens.WHISPERER, containerId);
+        super(WunderreichMenuTypes.WHISPERER, containerId);
         container = new WhisperContainer();
         access = containerLevelAccess;
 
