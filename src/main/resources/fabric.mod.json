@@ -50,5 +50,10 @@
   "suggests": {
     "modmenu": "4.0.x",
     "rei": "9.x"
+  },
+  "custom": {
+    "bclib": {
+      "updater_icon": "icon_updater.png"
+    }
   }
 }
