@@ -107,8 +107,16 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
                         if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
                             enchants.add(e);
                     });
-            enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
-                                                               .getString()));
+            enchants.sort(Comparator.comparing(a -> {
+                String s = "";
+                try {
+                    s = WhisperRule.getFullname(a).getString();
+                } catch (Exception e){
+                    Wunderreich.LOGGER.error("Unable to get serialized name '"+a.getDescriptionId()+"': " + e.getMessage());
+
+                }
+                return s;
+            }));
 
             enchants.forEach(e -> {
                 ImprinterRecipe r = new ImprinterRecipe(e);
