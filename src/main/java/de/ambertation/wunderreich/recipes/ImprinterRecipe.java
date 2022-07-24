@@ -26,6 +26,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import com.google.gson.*;
+import org.quiltmc.qsl.recipe.api.serializer.QuiltRecipeSerializer;
 
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -193,7 +194,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
         }
     }
 
-    private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
+    private static class Serializer implements RecipeSerializer<ImprinterRecipe>, QuiltRecipeSerializer<ImprinterRecipe> {
         public final static ResourceLocation ID = Type.ID;
         public final static Serializer INSTANCE = new Serializer(); //Registry.register(Registry.RECIPE_SERIALIZER, Wunderreich.makeID(Type.ID), new Serializer());
 
@@ -238,7 +239,8 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             buf.writeResourceLocation(EnchantmentHelper.getEnchantmentId(recipe.enchantment));
         }
 
-        public JsonElement toJson(ImprinterRecipe r) {
+        @Override
+        public JsonObject toJson(ImprinterRecipe r) {
             ImprinterRecipeJsonFormat recipeJson = new ImprinterRecipeJsonFormat();
             recipeJson.enchantment = Registry.ENCHANTMENT.getKey(r.enchantment).toString();
             recipeJson.xp = r.baseXP;
