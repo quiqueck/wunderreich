@@ -11,7 +11,7 @@
     "homepage": "https://wunderreich.ambertation.de",
     "sources": "https://github.com/quiqueck/wunderreich"
   },
-  "license": "MIT",
+  "license": "MIT (CC BY-NC-SA 4.0 for Assets)",
   "icon": "assets/wunderreich/icon.png",
   "environment": "*",
   "entrypoints": {
