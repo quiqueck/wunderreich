@@ -23,36 +23,54 @@ public class MainConfig extends ConfigFile {
             true
     ).and(enableWhispers);
 
-    public final BooleanValue allowBuilderTools = new BooleanValue(FEATURE_CATEGORY,
+    public final BooleanValue allowBuilderTools = new BooleanValue(
+            FEATURE_CATEGORY,
             "allowBuilderTools",
-            true);
+            true
+    );
 
-    public final BooleanValue addSlabs = new BooleanValue(FEATURE_CATEGORY,
+    public final BooleanValue allowConstructionTools = new BooleanValue(
+            FEATURE_CATEGORY,
+            "allowConstructionTools",
+            true
+    ).and(allowBuilderTools);
+
+    public final BooleanValue addSlabs = new BooleanValue(
+            FEATURE_CATEGORY,
             "addSlabs",
-            true);
+            true
+    );
 
-    public final BooleanValue addStairs = new BooleanValue(FEATURE_CATEGORY,
-                                                          "addStairs",
-                                                          true);
+    public final BooleanValue addStairs = new BooleanValue(
+            FEATURE_CATEGORY,
+            "addStairs",
+            true
+    );
 
-    public final BooleanValue addWalls = new BooleanValue(FEATURE_CATEGORY,
-                                                           "addWalls",
-                                                           true);
+    public final BooleanValue addWalls = new BooleanValue(
+            FEATURE_CATEGORY,
+            "addWalls",
+            true
+    );
 
-    public final BooleanValue multiTexturedWunderkiste = new BooleanValue(DISPLAY_CATEGORY,
+    public final BooleanValue multiTexturedWunderkiste = new BooleanValue(
+            DISPLAY_CATEGORY,
             "multiTexturedWunderkiste",
-            true);
+            true
+    );
 
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
             "doNotDespawnWithNameTag",
-            true, true);
+            true, true
+    );
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowTradesCycling = new BooleanValue(FEATURE_CATEGORY,
             "allowTradesCycling",
-            true, true);
+            true, true
+    );
 
     @Deprecated(forRemoval = true)
     public final BooleanValue deprecated_allowLibrarianSelection = new BooleanValue(

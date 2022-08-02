@@ -1,11 +1,5 @@
 package de.ambertation.wunderreich.registries;
 
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.items.BuildersTrowel;
-import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
-import de.ambertation.wunderreich.items.VillagerWhisperer;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -13,6 +7,13 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.Tiers;
 
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.items.BuildersTrowel;
+import de.ambertation.wunderreich.items.Ruler;
+import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.items.VillagerWhisperer;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,23 +24,33 @@ import org.jetbrains.annotations.NotNull;
 public class WunderreichItems {
     private static final List<Item> ITEMS = new ArrayList<>(3);
 
-    public static Item WHISPERER = registerItem("whisperer",
-                                                TrainedVillagerWhisperer::new,
-                                                Configs.MAIN.addImprintedWhispers.get()
+    public static Item WHISPERER = registerItem(
+            "whisperer",
+            TrainedVillagerWhisperer::new,
+            Configs.MAIN.addImprintedWhispers.get()
     );
-    public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
-                                                      VillagerWhisperer::new,
-                                                      Configs.MAIN.addBlankWhispere.get()
-    );
-
-    public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
-                                                      () -> new BuildersTrowel(Tiers.IRON),
-                                                      Configs.MAIN.allowBuilderTools.get()
+    public static Item BLANK_WHISPERER = registerItem(
+            "whisperer_blank",
+            VillagerWhisperer::new,
+            Configs.MAIN.addBlankWhispere.get()
     );
 
-    public static Item DIAMOND_BUILDERS_TROWEL = registerItem("diamond_builders_trowel",
-                                                              () -> new BuildersTrowel(Tiers.DIAMOND),
-                                                              Configs.MAIN.allowBuilderTools.get()
+    public static Item BUILDERS_TROWEL = registerItem(
+            "builders_trowel",
+            () -> new BuildersTrowel(Tiers.IRON),
+            Configs.MAIN.allowBuilderTools.get()
+    );
+
+    public static Item DIAMOND_BUILDERS_TROWEL = registerItem(
+            "diamond_builders_trowel",
+            () -> new BuildersTrowel(Tiers.DIAMOND),
+            Configs.MAIN.allowBuilderTools.get()
+    );
+
+    public static Item RULER = registerItem(
+            "ruler",
+            Ruler::new,
+            Configs.MAIN.allowConstructionTools.get()
     );
 
     @NotNull

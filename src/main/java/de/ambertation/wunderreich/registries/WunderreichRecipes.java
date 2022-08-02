@@ -31,7 +31,7 @@ public class WunderreichRecipes {
                 .material('#', Blocks.QUARTZ_BRICKS)
                 .material('N', Items.NETHERITE_INGOT)
                 .material('L', Blocks.LAPIS_BLOCK)
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS, List.of(
                         Items.QUARTZ,
                         Items.ANCIENT_DEBRIS,
                         Items.LAPIS_LAZULI
