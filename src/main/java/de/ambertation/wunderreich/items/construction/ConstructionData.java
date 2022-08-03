@@ -7,8 +7,6 @@ import net.minecraft.world.item.ItemStack;
 
 import de.ambertation.wunderreich.utils.math.Bounds;
 import de.ambertation.wunderreich.utils.math.Pos;
-import de.ambertation.wunderreich.utils.math.sdf.SDFUnion;
-import de.ambertation.wunderreich.utils.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
@@ -29,12 +27,6 @@ public class ConstructionData {
 
 
     public ConstructionData(CompoundTag baseTag) {
-        ItemStack test = BluePrintData.bluePrintWithSDF(new SDFUnion(
-                new Sphere(new Pos(0, 0, 0), 3),
-                new Sphere(new Pos(0, 2, 0), 2)
-        ));
-
-        BluePrintData bpd = BluePrintData.getBluePrintData(test);
         BOUNDING_BOX = new CachedNBTValue<>(
                 baseTag,
                 BOUNDING_BOX_TAG,
