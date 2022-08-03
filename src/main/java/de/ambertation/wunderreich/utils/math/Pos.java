@@ -1,10 +1,22 @@
-package de.ambertation.wunderreich.utils.sdf;
+package de.ambertation.wunderreich.utils.math;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.Objects;
+
 public class Pos {
+    public static final Codec<Pos> CODEC = RecordCodecBuilder.create(instance -> instance
+            .group(
+                    Codec.FLOAT.fieldOf("x").forGetter(o -> (float) o.x),
+                    Codec.FLOAT.fieldOf("y").forGetter(o -> (float) o.y),
+                    Codec.FLOAT.fieldOf("z").forGetter(o -> (float) o.z)
+            )
+            .apply(instance, Pos::new)
+    );
     public final double x;
     public final double y;
     public final double z;
@@ -25,6 +37,10 @@ public class Pos {
         this.x = pos.x();
         this.y = pos.y();
         this.z = pos.z();
+    }
+
+    public static Pos blockAligned(double x, double y, double z) {
+        return new Pos(toBlockPos(x), toBlockPos(y), toBlockPos(z));
     }
 
     public Pos div(Pos p) {
@@ -116,6 +132,25 @@ public class Pos {
                 Math.pow(z - b.getZ(), 2);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Pos pos = (Pos) o;
+        return Double.compare(pos.x, x) == 0
+                && Double.compare(pos.y, y) == 0
+                && Double.compare(pos.z, z) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y, z);
+    }
+
+    public static double toBlockPos(double d) {
+        return (int) Math.round(d + 0.5) - 1;
+    }
+
     public static BlockPos toBlockPos(Vec3 vec) {
         return toBlockPos(vec.x, vec.y, vec.z);
     }
@@ -127,4 +162,5 @@ public class Pos {
                 (int) Math.round(z + 0.5) - 1
         );
     }
+
 }

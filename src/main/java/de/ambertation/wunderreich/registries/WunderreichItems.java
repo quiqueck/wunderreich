@@ -11,9 +11,10 @@ import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.BuildersTrowel;
-import de.ambertation.wunderreich.items.Ruler;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
+import de.ambertation.wunderreich.items.construction.BluePrint;
+import de.ambertation.wunderreich.items.construction.Ruler;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,12 @@ public class WunderreichItems {
     public static Item RULER = registerItem(
             "ruler",
             Ruler::new,
+            Configs.MAIN.allowConstructionTools.get()
+    );
+
+    public static Item BLUE_PRINT = registerItem(
+            "blueprint",
+            BluePrint::new,
             Configs.MAIN.allowConstructionTools.get()
     );
 

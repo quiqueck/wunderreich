@@ -13,127 +13,173 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import de.ambertation.wunderreich.items.Ruler;
-import de.ambertation.wunderreich.items.data.ConstructionData;
+import de.ambertation.wunderreich.items.construction.ConstructionData;
+import de.ambertation.wunderreich.items.construction.Ruler;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.utils.sdf.Bounds;
-import de.ambertation.wunderreich.utils.sdf.Pos;
-import de.ambertation.wunderreich.utils.sdf.Shape;
+import de.ambertation.wunderreich.utils.math.Bounds;
+import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.sdf.SDF;
+import de.ambertation.wunderreich.utils.math.sdf.SDFUnion;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
-    public static final OverlayRenderer INSTANCE = new OverlayRenderer();
-    private final List<Pos> positions = new ArrayList<>(64);
-
-    public void renderBlocks(PoseStack poseStack, Matrix4f matrix, Camera camera) {
-        ItemStack ruler = null;
-        for (ItemStack stack : Minecraft.getInstance().player.getHandSlots()) {
-            {
-                if (stack.is(WunderreichItems.RULER)) ruler = stack;
-                break;
-            }
-        }
-        if (ruler == null) return;
-
-        //Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        if (camera.isInitialized()) {
-            ConstructionData constructionData = Ruler.getConstructionData(ruler);
-
-            if (constructionData != null) {
-                Vec3 camPos = camera.getPosition().reverse();
-                Bounds box = constructionData.getBoundingBox();
-                if (box != null) {
-                    Pos pos = new Pos(camera.getPosition());
-                    if (constructionData.inReach(pos)) {
-                        renderPositions(poseStack, matrix, camPos);
-                    }
-                }
-            }
-        }
+    record RenderInfo(Pos pos, float deflate, int color, float alpha, int outlineColor, float outlineAlpha) {
     }
 
+    public static final int COLOR_MINION_YELLOW = 0xFFFFE74C;
+    public static final int COLOR_FIERY_ROSE = 0xFFFF5964;
+    public static final int COLOR_PURPLE = 0xFF5F00BA;
+    public static final int COLOR_MEDIUM_PURPLE = 0xFFAB69F2;
+    public static final int COLOR_RICH_BLACK = 0xFF090909;
+    public static final int COLOR_BLUE_JEANS = 0xFF35A7FF;
+    public static final int COLOR_MAUVE = 0xFFD9BBF9;
+    public static final int COLOR_DARK_MAUVE = 0xFFCBA2F6;
+    public static final int COLOR_DARK_GREEN_MOSS = 0xFF3F612D;
+
+    public static final int COLOR_SELECTION = COLOR_MINION_YELLOW;
+    public static final int COLOR_OUT_OF_REACH = COLOR_FIERY_ROSE;
+    public static final int COLOR_BOUNDING_BOX = COLOR_BLUE_JEANS;
+    public static final int COLOR_BLOCK_PREVIEW_FILL = COLOR_MAUVE;
+    public static final int COLOR_BLOCK_PREVIEW_OUTLINE = COLOR_DARK_MAUVE;
+
+    public static final OverlayRenderer INSTANCE = new OverlayRenderer();
+    private final List<RenderInfo> positions = new ArrayList<>(64);
+
+    float time = 0;
+
+    @ApiStatus.Internal
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, double x, double y, double z) {
-        ItemStack ruler = null;
-        for (ItemStack stack : Minecraft.getInstance().player.getHandSlots()) {
-            {
-                if (stack.is(WunderreichItems.RULER)) ruler = stack;
-                break;
-            }
-        }
-        if (ruler == null) return;
+        positions.clear();
+        final Player player = Minecraft.getInstance().player;
 
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+
+        ItemStack ruler = player.getMainHandItem();
+        if (ruler == null || !ruler.is(WunderreichItems.RULER)) ruler = player.getOffhandItem();
+        if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
+
+        final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
         if (camera.isInitialized()) {
             Pos pos = new Pos(camera.getPosition());
-            ConstructionData constructionData = Ruler.getConstructionData(ruler);
-            ConstructionData.lastTarget = getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 3);
+
+            ConstructionData.lastTarget = getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5);
             Vec3 camPos = camera.getPosition().reverse();
-            AABB boxOutline = new AABB(ConstructionData.lastTarget).move(camPos);
 
             VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
-
-
-            LevelRenderer.renderLineBox(
-                    poseStack, vertexConsumer,
-                    boxOutline.minX, boxOutline.minY, boxOutline.minZ,
-                    boxOutline.maxX, boxOutline.maxY, boxOutline.maxZ,
-                    255f / 0xFF, 231f / 0xFF, 76f / 0xFF, 1
+            renderBlockOutline(vertexConsumer, poseStack,
+                    ConstructionData.lastTarget, camPos, .01f, COLOR_SELECTION, 1
             );
 
+            ConstructionData constructionData = Ruler.getConstructionData(ruler);
             if (constructionData != null) {
                 Bounds box = constructionData.getBoundingBox();
                 if (box != null) {
-                    boxOutline = box.toAABB().move(camPos);
+                    final Pos targetPos = new Pos(ConstructionData.lastTarget);
+                    final Bounds.Interpolate targetCorner = box.isCornerOrCenter(targetPos);
+
+                    time += Minecraft.getInstance().getDeltaFrameTime();
+                    if (time > 10000) time -= 10000;
+                    double scaledTime = time * 0.02;
+                    float phase = (float) (Math.sin(Math.PI * 2 * (scaledTime - Math.floor(scaledTime))) + 1) / 2;
+
 
                     if (constructionData.inReach(pos)) {
-                        renderBlockOutline(
-                                vertexConsumer,
-                                poseStack,
-                                boxOutline,
-                                53f / 0xFF,
-                                167f / 0xFF,
-                                255f / 0xFF,
-                                1
+                        if (constructionData.getSelectedCorner() != null) {
+                            Bounds.Interpolate selectedCorner = constructionData.getSelectedCorner();
+
+                            box = constructionData.getNewBoundsForSelectedCorner();
+                            renderBlockOutline(
+                                    vertexConsumer, poseStack,
+                                    box.get(selectedCorner), camPos, 0.1f,
+                                    COLOR_PURPLE, 1
+                            );
+                        }
+                        Bounds bbb = new Bounds(
+                                new Pos(box.getCenter().sub(new Pos(3, 3, 10)).toBlockPos()),
+                                new Pos(box.getCenter().add(new Pos(3, 3, 10)).toBlockPos())
                         );
 
+                        renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_BOUNDING_BOX, 1);
+                        renderBlockOutline(vertexConsumer, poseStack, bbb, camPos, 0, COLOR_BOUNDING_BOX, 1);
+                        if (constructionData.getSelectedCorner() == null) {
+                            for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS_AND_CENTER) {
+                                if ((targetCorner != null && targetCorner.idx == corner.idx)) {
+                                    positions.add(new RenderInfo(
+                                            box.get(corner), 0.1f,
+                                            COLOR_FIERY_ROSE, 0.5f,
+                                            COLOR_FIERY_ROSE, 0.8f
+                                    ));
+                                } else {
+                                    positions.add(new RenderInfo(
+                                            box.get(corner), 0.1f,
+                                            blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
+                                            COLOR_SELECTION, phase
+                                    ));
+                                    renderBlockOutline(
+                                            vertexConsumer, poseStack, box.get(corner), camPos, 0.1f,
+                                            blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 1
+                                    );
+                                }
+                            }
 
-                        Shape e = box.innerBox();
-                        positions.clear();
+                            for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS) {
+                                positions.add(new RenderInfo(
+                                        bbb.get(corner), 0.1f,
+                                        blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
+                                        COLOR_SELECTION, phase
+                                ));
+                                renderBlockOutline(
+                                        vertexConsumer, poseStack, bbb.get(corner), camPos, 0.1f,
+                                        blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 1
+                                );
+                            }
+                        }
+                        SDF e = new SDFUnion(
+                                box.innerSphere(),
+                                bbb.innerBox()
+                        );
+
+                        box = box.encapsulate(bbb);
                         for (double xx = box.min.x; xx <= box.max.x; xx++) {
                             for (double xy = box.min.y; xy <= box.max.y; xy++) {
                                 for (double xz = box.min.z; xz <= box.max.z; xz++) {
                                     final Pos p = new Pos(xx, xy, xz);
                                     double dist = e.dist(p);
-                                    if (dist < 0 && dist > -1) positions.add(p);
+                                    if (dist < 0 && dist > -1) {
+                                        positions.add(new RenderInfo(
+                                                p, 0.2f,
+                                                COLOR_BLOCK_PREVIEW_FILL, 0.95f,
+                                                COLOR_BLOCK_PREVIEW_OUTLINE, 1
+                                        ));
+                                    }
+//                                    DebugRenderer.renderFloatingText(
+//                                            "" + (Math.round(4 * dist) / 4.0),
+//                                            p.x, p.y, p.z,
+//                                            dist < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
+//                                    );
+
                                 }
                             }
                         }
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
                     } else
-                        renderBlockOutline(
-                                vertexConsumer,
-                                poseStack,
-                                boxOutline,
-                                255f / 0xFF,
-                                89f / 0xFF,
-                                100f / 0xFF,
-                                0.5f
-                        );
+                        renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_OUT_OF_REACH, 1);
                 }
             }
         } else {
@@ -141,76 +187,142 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         }
     }
 
-    private void renderPositions(
-            PoseStack poseStack, Matrix4f matrix,
-            Vec3 camPos
-    ) {
-        Tesselator tesselator = RenderSystem.renderThreadTesselator();
-
-        RenderSystem.enableBlend();
-        RenderSystem.disableTexture();
-        RenderSystem.setShaderColor(1, 1, 1, 1);
-        RenderSystem.blendFunc(
-                GlStateManager.SourceFactor.SRC_ALPHA,
-                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
-        );
-        RenderSystem.enableDepthTest();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
-
-        //render alpha components without depth-write
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-        for (Pos p : positions) {
-            renderBlock(bufferBuilder, poseStack, matrix, p, camPos, 217f / 0xff, 187f / 0xff, 249f / 0xff, 0.85f);
+    @ApiStatus.Internal
+    public void renderBlocks(PoseStack poseStack, Camera camera) {
+        if (camera.isInitialized()) {
+            Vec3 camPos = camera.getPosition().reverse();
+            renderPositions(poseStack, camPos);
         }
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        RenderSystem.depthMask(false);
-        RenderSystem.colorMask(true, true, true, true);
-        BufferUploader.drawWithShader(bufferBuilder.end());
-
-
-        //render to depth Buffer
-        bufferBuilder = tesselator.getBuilder();
-        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
-        for (Pos p : positions) {
-            renderBlock(bufferBuilder, poseStack, matrix, p, camPos, 1, 1, 1, 0.5f);
-        }
-        RenderSystem.depthMask(true);
-        RenderSystem.colorMask(false, false, false, false);
-        BufferUploader.drawWithShader(bufferBuilder.end());
-
-
-        //reset rendering system
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableBlend();
-        RenderSystem.enableTexture();
-        RenderSystem.colorMask(true, true, true, true);
-        RenderSystem.depthMask(true);
     }
 
-    private void renderPositionOutlines(
-            VertexConsumer vertexConsumer,
-            PoseStack poseStack,
-            Vec3 camPos
+    private int blendColors(float t, int c1, int c2) {
+        int r = (int) (t * FastColor.ARGB32.red(c2) + (1 - t) * FastColor.ARGB32.red(c1));
+        int g = (int) (t * FastColor.ARGB32.green(c2) + (1 - t) * FastColor.ARGB32.green(c1));
+        int b = (int) (t * FastColor.ARGB32.blue(c2) + (1 - t) * FastColor.ARGB32.blue(c1));
+        int a = (int) (t * FastColor.ARGB32.alpha(c2) + (1 - t) * FastColor.ARGB32.alpha(c1));
+        return FastColor.ARGB32.color(a, r, g, b);
+    }
+
+
+    private void renderBlockOutline(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            BlockPos pos, Vec3 camPos, float deflate,
+            int color, float alpha
     ) {
-        for (Pos pos : positions) {
-            renderBlockOutline(vertexConsumer, poseStack, pos, camPos, 99f / 0xff, 42f / 0xff, 80f / 0xff, 1f);
-        }
+        final float x = (float) (pos.getX() + camPos.x);
+        final float y = (float) (pos.getY() + camPos.y);
+        final float z = (float) (pos.getZ() + camPos.z);
+        renderLineBox(vertexConsumer, poseStack,
+                x + deflate, y + deflate, z + deflate,
+                1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
+                FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    private void renderBlockOutline(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            Pos pos, Vec3 camPos, float deflate,
+            int color,
+            float alpha
+    ) {
+        final float x = (float) (Pos.toBlockPos(pos.x) + camPos.x);
+        final float y = (float) (Pos.toBlockPos(pos.y) + camPos.y);
+        final float z = (float) (Pos.toBlockPos(pos.z) + camPos.z);
+        renderLineBox(vertexConsumer, poseStack,
+                x + deflate, y + deflate, z + deflate,
+                1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
+                FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    private void renderBlockOutline(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            Bounds bounds, Vec3 camPos, float deflate,
+            int color,
+            float alpha
+    ) {
+        renderLineBox(
+                vertexConsumer, poseStack,
+                (float) (bounds.min.x + camPos.x) + deflate,
+                (float) (bounds.min.y + camPos.y) + deflate,
+                (float) (bounds.min.z + camPos.z) + deflate,
+                (float) (1 + bounds.max.x + camPos.x) - deflate,
+                (float) (1 + bounds.max.y + camPos.y) - deflate,
+                (float) (1 + bounds.max.z + camPos.z) - deflate,
+                FastColor.ARGB32.red(color),
+                FastColor.ARGB32.green(color),
+                FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    private static void renderLineBox(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            float lx, float ly, float lz,
+            float hx, float hy, float hz,
+            int r, int g, int b, int a
+    ) {
+        Matrix4f pose = poseStack.last().pose();
+        Matrix3f normal = poseStack.last().normal();
+
+        vertexConsumer.vertex(pose, lx, ly, lz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, lz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, ly, lz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, lz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, ly, lz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, ly, hz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, lz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, lz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, lz).color(r, g, b, a).normal(normal, -1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, lz).color(r, g, b, a).normal(normal, -1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, lz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, hz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, hz).color(r, g, b, a).normal(normal, 0.0F, -1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, ly, hz).color(r, g, b, a).normal(normal, 0.0F, -1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, ly, hz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, hz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, hz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, -1.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, lz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, -1.0F).endVertex();
+        vertexConsumer.vertex(pose, lx, hy, hz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, hz).color(r, g, b, a).normal(normal, 1.0F, 0.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, ly, hz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, hz).color(r, g, b, a).normal(normal, 0.0F, 1.0F, 0.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, lz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+        vertexConsumer.vertex(pose, hx, hy, hz).color(r, g, b, a).normal(normal, 0.0F, 0.0F, 1.0F).endVertex();
+    }
+
+
+    private void renderBlock(
+            BufferBuilder builder, PoseStack poseStack,
+            Pos pos, Vec3 camPos, float deflate,
+            int color, float alpha
+    ) {
+        renderBlock(
+                builder, poseStack, pos, camPos, deflate,
+                FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
     }
 
     private void renderBlock(
             BufferBuilder builder,
-            PoseStack poseStack, Matrix4f matrix,
-            Pos pos, Vec3 camPos,
-            float r, float g, float b, float a
+            PoseStack poseStack,
+            Pos pos, Vec3 camPos, float deflate,
+            int r, int g, int b, int a
     ) {
         Matrix4f m = poseStack.last().pose();
         Matrix3f rotation = poseStack.last().normal();
-        float lx = (float) ((int) pos.x + camPos.x + 0.2);
-        float ly = (float) ((int) pos.y + camPos.y + 0.2);
-        float lz = (float) ((int) pos.z + camPos.z + 0.2);
-        float hx = (float) ((int) pos.x + camPos.x + 1 - 0.2);
-        float hy = (float) ((int) pos.y + camPos.y + 1 - 0.2);
-        float hz = (float) ((int) pos.z + camPos.z + 1 - 0.2);
+        float lx = (float) (Pos.toBlockPos(pos.x) + camPos.x);
+        float ly = (float) (Pos.toBlockPos(pos.y) + camPos.y);
+        float lz = (float) (Pos.toBlockPos(pos.z) + camPos.z);
+        float hx = lx + 1 - deflate;
+        float hy = ly + 1 - deflate;
+        float hz = lz + 1 - deflate;
+        lx += deflate;
+        ly += deflate;
+        lz += deflate;
         builder.vertex(m, lx, ly, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
         builder.vertex(m, lx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
         builder.vertex(m, hx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
@@ -243,119 +355,72 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     }
 
     private void renderBlockOutline(
-            BufferBuilder builder,
-            PoseStack poseStack, Matrix4f matrix,
-            Pos pos, Vec3 camPos,
-            float r, float g, float b, float a
-    ) {
-        Matrix4f m = poseStack.last().pose();
-        Matrix3f rotation = poseStack.last().normal();
-
-        final float nLen = (float) (1 / Math.sqrt(2));
-        float lx = (float) ((int) pos.x + camPos.x + 0.1999);
-        float ly = (float) ((int) pos.y + camPos.y + 0.1999);
-        float lz = (float) ((int) pos.z + camPos.z + 0.1999);
-        float hx = (float) ((int) pos.x + camPos.x + 1 - 0.1999);
-        float hy = (float) ((int) pos.y + camPos.y + 1 - 0.1999);
-        float hz = (float) ((int) pos.z + camPos.z + 1 - 0.1999);
-        builder.vertex(m, lx, ly, lz).color(r, g, b, a).normal(rotation, -nLen, 0, -nLen).endVertex();
-        builder.vertex(m, lx, hy, lz).color(r, g, b, a).normal(rotation, -nLen, 0, -nLen).endVertex();
-
-
-//        builder.vertex(m, lx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//        builder.vertex(m, hx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//
-//        builder.vertex(m, hx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//        builder.vertex(m, hx, ly, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//
-//        builder.vertex(m, hx, ly, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//        builder.vertex(m, lx, ly, lz).color(r, g, b, a).normal(rotation, 0, 0, -1).endVertex();
-//
-//
-//        builder.vertex(m, lx, ly, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, hx, ly, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//        builder.vertex(m, hx, ly, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, hx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//        builder.vertex(m, hx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, lx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//        builder.vertex(m, lx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, lx, ly, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//
-//        builder.vertex(m, lx, ly, hz).color(r, g, b, a).normal(rotation, 0, 1, 0).endVertex();
-//        builder.vertex(m, lx, ly, lz).color(r, g, b, a).normal(rotation, 0, 1, 0).endVertex();
-//
-//        builder.vertex(m, hx, ly, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, hx, ly, lz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//        builder.vertex(m, hx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, hx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//
-//        builder.vertex(m, lx, hy, hz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-//        builder.vertex(m, lx, hy, lz).color(r, g, b, a).normal(rotation, 0, 0, 1).endVertex();
-
-    }
-
-    public static void renderFilledBox(
-            double d,
-            double e,
-            double f,
-            double g,
-            double h,
-            double i,
-            float j,
-            float k,
-            float l,
-            float m
-    ) {
-        Tesselator tesselator = Tesselator.getInstance();
-        BufferBuilder bufferBuilder = tesselator.getBuilder();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
-        bufferBuilder.begin(VertexFormat.Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_COLOR);
-        LevelRenderer.addChainedFilledBoxVertices(bufferBuilder, d, e, f, g, h, i, j, k, l, m);
-        tesselator.end();
-    }
-
-    private void renderBlockOutline(
             VertexConsumer vertexConsumer,
             PoseStack poseStack,
             Pos pos, Vec3 camPos,
             float r, float g, float b, float a
     ) {
-//        LevelRenderer.renderVoxelShape(
-//                poseStack, vertexConsumer, Blocks.STONE.defaultBlockState().getShape(null, pos.toBlockPos()),
-//                (int) pos.x + camPos.x, (int) pos.y + camPos.y, (int) pos.z + camPos.z,
-//                r, g, b, a
-//        );
         LevelRenderer.renderLineBox(
                 poseStack, vertexConsumer,
                 (int) pos.x + camPos.x + 0.2, (int) pos.y + camPos.y + 0.2, (int) pos.z + camPos.z + 0.2,
                 (int) pos.x + camPos.x + 1 - 0.2, (int) pos.y + camPos.y + 1 - 0.2, (int) pos.z + camPos.z + 1 - 0.2,
                 r, g, b, a
         );
-//        renderFilledBox(
-//                (int) pos.x + camPos.x + 0.2, (int) pos.y + camPos.y + 0.2, (int) pos.z + camPos.z + 0.2,
-//                (int) pos.x + camPos.x + 1 - 0.2, (int) pos.y + camPos.y + 1 - 0.2, (int) pos.z + camPos.z + 1 - 0.2,
-//                r, g, b, a
-//        );
-
     }
 
-    private void renderBlockOutline(
-            VertexConsumer vertexConsumer,
-            PoseStack poseStack,
-            AABB boxOutline,
-            float r, float g, float b, float a
-    ) {
-        LevelRenderer.renderLineBox(
-                poseStack, vertexConsumer,
-                boxOutline.minX, boxOutline.minY, boxOutline.minZ,
-                boxOutline.maxX, boxOutline.maxY, boxOutline.maxZ,
-                r, g, b, a
+    private void renderPositionOutlines(VertexConsumer vertexConsumer, PoseStack poseStack, Vec3 camPos) {
+        for (RenderInfo pos : positions) {
+            if (pos.outlineAlpha > 0) {
+                renderBlockOutline(
+                        vertexConsumer, poseStack,
+                        pos.pos, camPos, pos.deflate - 0.0001f,
+                        pos.outlineColor, pos.outlineAlpha
+                );
+            }
+        }
+    }
+
+    private void renderPositions(PoseStack poseStack, Vec3 camPos) {
+        Tesselator tesselator = RenderSystem.renderThreadTesselator();
+
+        RenderSystem.enableBlend();
+        RenderSystem.disableTexture();
+        RenderSystem.setShaderColor(1, 1, 1, 1);
+        RenderSystem.blendFunc(
+                GlStateManager.SourceFactor.SRC_ALPHA,
+                GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA
         );
+        RenderSystem.enableDepthTest();
+        BufferBuilder bufferBuilder = tesselator.getBuilder();
+
+        //render alpha components without depth-write
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+        for (RenderInfo p : positions) {
+            renderBlock(bufferBuilder, poseStack, p.pos, camPos, p.deflate, p.color, p.alpha);
+        }
+        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.depthMask(false);
+        RenderSystem.colorMask(true, true, true, true);
+        BufferUploader.drawWithShader(bufferBuilder.end());
+
+
+        //render to depth Buffer
+        bufferBuilder = tesselator.getBuilder();
+        bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+        for (RenderInfo p : positions) {
+            renderBlock(bufferBuilder, poseStack, p.pos, camPos, p.deflate, 0, 0, 0, 1);
+        }
+        RenderSystem.depthMask(true);
+        RenderSystem.colorMask(false, false, false, false);
+        BufferUploader.drawWithShader(bufferBuilder.end());
+
+
+        //reset rendering system
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.enableBlend();
+        RenderSystem.enableTexture();
+        RenderSystem.colorMask(true, true, true, true);
+        RenderSystem.depthMask(true);
     }
 
     @NotNull

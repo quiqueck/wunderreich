@@ -29,7 +29,7 @@ public class LevelRendererMixin {
             CallbackInfo ci
     ) {
         if (Configs.MAIN.allowConstructionTools.get()) {
-            OverlayRenderer.INSTANCE.renderBlocks(poseStack, matrix4f, camera);
+            OverlayRenderer.INSTANCE.renderBlocks(poseStack, camera);
         }
     }
 }

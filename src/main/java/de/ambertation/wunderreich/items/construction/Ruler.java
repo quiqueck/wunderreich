@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.items;
+package de.ambertation.wunderreich.items.construction;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
@@ -9,8 +9,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 
-import de.ambertation.wunderreich.items.data.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.utils.math.Bounds;
+import de.ambertation.wunderreich.utils.math.Pos;
 
 public class Ruler extends Item {
     private static final String CONSTRUCTION_DATA_TAG = "construction";
@@ -42,6 +43,24 @@ public class Ruler extends Item {
             ItemStack ruler = player.getItemInHand(interactionHand);
             ConstructionData cd = getConstructionData(ruler);
             if (cd != null) {
+                Pos highlightedBlock = new Pos(ConstructionData.lastTarget);
+
+                //deselect Corner
+                if (cd.getSelectedCorner() != null) {
+                    cd.setBoundingBox(cd.getNewBoundsForSelectedCorner());
+                    cd.setSelectedCorner(null);
+                    return InteractionResultHolder.pass(ruler);
+                }
+
+                Bounds.Interpolate corner = cd.getBoundingBox() == null
+                        ? null
+                        : cd.getBoundingBox().isCornerOrCenter(highlightedBlock);
+
+                if (corner != null) {
+                    cd.setSelectedCorner(corner);
+                    return InteractionResultHolder.pass(ruler);
+                }
+
                 if (player.isShiftKeyDown()) {
                     cd.shrink(ConstructionData.lastTarget);
                 } else {

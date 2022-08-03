@@ -1,28 +1,14 @@
-package de.ambertation.wunderreich.items.data;
+package de.ambertation.wunderreich.utils.nbt;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
-import de.ambertation.wunderreich.utils.sdf.Bounds;
-import de.ambertation.wunderreich.utils.sdf.Pos;
+import de.ambertation.wunderreich.utils.math.Bounds;
+import de.ambertation.wunderreich.utils.math.Pos;
 
-import org.jetbrains.annotations.ApiStatus;
-
-public class ConstructionData {
-    private static final String BOUNDING_BOX_TAG = "bb";
-    private static final int VALID_RADIUS_SQUARE = 32 * 32;
-    private final CompoundTag baseTag;
-    private Bounds cacheBoundingBox;
-
-    @ApiStatus.Internal
-    public static BlockPos lastTarget;
-
-
-    public ConstructionData(CompoundTag baseTag) {
-        this.baseTag = baseTag;
-    }
-
+public class NbtTagHelper {
     public static BlockPos readBlockPos(CompoundTag tag) {
         if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
         return new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
@@ -33,6 +19,19 @@ public class ConstructionData {
         bp.putInt("x", pos.getX());
         bp.putInt("y", pos.getY());
         bp.putInt("z", pos.getZ());
+        return bp;
+    }
+
+    public static Pos readPos(CompoundTag tag) {
+        if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
+        return new Pos(tag.getFloat("x"), tag.getFloat("y"), tag.getFloat("z"));
+    }
+
+    public static CompoundTag writePos(Pos pos) {
+        CompoundTag bp = new CompoundTag();
+        bp.putFloat("x", (float) pos.x);
+        bp.putFloat("y", (float) pos.y);
+        bp.putFloat("z", (float) pos.z);
         return bp;
     }
 
@@ -84,58 +83,14 @@ public class ConstructionData {
         return bp;
     }
 
-    public Bounds getBoundingBox() {
-        if (cacheBoundingBox != null) return cacheBoundingBox;
-
-        if (!baseTag.contains(BOUNDING_BOX_TAG)) {
-            return null;
-        } else {
-            cacheBoundingBox = readBounds(baseTag.getCompound(BOUNDING_BOX_TAG));
-            return cacheBoundingBox;
-        }
+    public static Bounds.Interpolate readInterpolated(ByteTag in) {
+        int idx = in.getAsByte();
+        if (idx >= 0 && idx < Bounds.Interpolate.CORNERS_AND_CENTER.length)
+            return Bounds.Interpolate.CORNERS_AND_CENTER[idx];
+        return null;
     }
 
-    public void setBoundingBox(Bounds bb) {
-        cacheBoundingBox = bb;
-        if (bb == null) {
-            if (baseTag.contains(BOUNDING_BOX_TAG)) {
-                baseTag.remove(BOUNDING_BOX_TAG);
-            }
-        } else {
-            baseTag.put(BOUNDING_BOX_TAG, writeBounds(bb));
-        }
-    }
-
-    public Bounds addToBounds(BlockPos pos) {
-        Bounds bb = getBoundingBox();
-        if (bb == null) {
-            bb = new Bounds(pos);
-        } else {
-            bb = bb.encapsulate(pos);
-        }
-        setBoundingBox(bb);
-        return bb;
-    }
-
-    public Bounds shrink(BlockPos pos) {
-        Bounds bb = getBoundingBox().shrink(pos);
-        setBoundingBox(bb);
-        return bb;
-    }
-
-    public static double distSquare(BlockPos a, BlockPos b) {
-        return Math.pow(a.getX() - b.getX(), 2) +
-                Math.pow(a.getY() - b.getY(), 2) +
-                Math.pow(a.getZ() - b.getZ(), 2);
-    }
-
-    public double distToCenterSquare(Pos pos) {
-        Bounds bb = getBoundingBox();
-        if (bb == null) return Double.MAX_VALUE;
-        return bb.getCenter().distSquare(pos);
-    }
-
-    public boolean inReach(Pos pos) {
-        return distToCenterSquare(pos) < VALID_RADIUS_SQUARE;
+    public static ByteTag writeInterpolated(Bounds.Interpolate p) {
+        return ByteTag.valueOf(p.idx);
     }
 }
