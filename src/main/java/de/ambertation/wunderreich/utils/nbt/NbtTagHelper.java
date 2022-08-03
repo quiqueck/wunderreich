@@ -1,12 +1,18 @@
 package de.ambertation.wunderreich.utils.nbt;
 
+import com.mojang.serialization.DataResult;
+import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.utils.math.Bounds;
 import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.sdf.SDF;
 
 public class NbtTagHelper {
     public static BlockPos readBlockPos(CompoundTag tag) {
@@ -92,5 +98,28 @@ public class NbtTagHelper {
 
     public static ByteTag writeInterpolated(Bounds.Interpolate p) {
         return ByteTag.valueOf(p.idx);
+    }
+
+
+    public static Tag writeSDF(SDF sdf) {
+        DataResult<Tag> result = SDF.CODEC.encode(sdf, NbtOps.INSTANCE, null);
+        if (result.result().isPresent()) {
+            return result.result().get();
+        } else {
+            Wunderreich.LOGGER.error(result.error().toString());
+        }
+        return null;
+    }
+
+    public static SDF readSDF(Tag in) {
+        var result = SDF.CODEC
+                .parse(new Dynamic<>(NbtOps.INSTANCE, in))
+                .resultOrPartial(Wunderreich.LOGGER::error);
+        if (result.isPresent()) {
+            return result.get();
+        } else {
+            Wunderreich.LOGGER.error("Unable to decode SDF");
+        }
+        return null;
     }
 }

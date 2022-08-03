@@ -23,7 +23,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import de.ambertation.wunderreich.items.construction.ConstructionData;
-import de.ambertation.wunderreich.items.construction.Ruler;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.math.Bounds;
 import de.ambertation.wunderreich.utils.math.Pos;
@@ -85,7 +84,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     ConstructionData.lastTarget, camPos, .01f, COLOR_SELECTION, 1
             );
 
-            ConstructionData constructionData = Ruler.getConstructionData(ruler);
+            ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
                 Bounds box = constructionData.getBoundingBox();
                 if (box != null) {

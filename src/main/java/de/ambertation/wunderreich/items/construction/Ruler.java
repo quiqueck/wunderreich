@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.items.construction;
 
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
@@ -14,7 +13,6 @@ import de.ambertation.wunderreich.utils.math.Bounds;
 import de.ambertation.wunderreich.utils.math.Pos;
 
 public class Ruler extends Item {
-    private static final String CONSTRUCTION_DATA_TAG = "construction";
 
     public Ruler() {
         super(WunderreichItems
@@ -22,26 +20,12 @@ public class Ruler extends Item {
                 .rarity(Rarity.UNCOMMON)
                 .durability(1000));
     }
-
-    public static ConstructionData getConstructionData(ItemStack itemStack) {
-        if (itemStack.getItem() instanceof Ruler) {
-
-            CompoundTag tag = itemStack.getOrCreateTag();
-
-            if (!tag.contains(CONSTRUCTION_DATA_TAG)) {
-                tag.put(CONSTRUCTION_DATA_TAG, new CompoundTag());
-            }
-            return new ConstructionData(tag.getCompound(CONSTRUCTION_DATA_TAG));
-        }
-        return null;
-    }
-
-
+    
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         if (level.isClientSide) {
             ItemStack ruler = player.getItemInHand(interactionHand);
-            ConstructionData cd = getConstructionData(ruler);
+            ConstructionData cd = ConstructionData.getConstructionData(ruler);
             if (cd != null) {
                 Pos highlightedBlock = new Pos(ConstructionData.lastTarget);
 

@@ -3,9 +3,12 @@ package de.ambertation.wunderreich.items.construction;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.item.ItemStack;
 
 import de.ambertation.wunderreich.utils.math.Bounds;
 import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.sdf.SDFUnion;
+import de.ambertation.wunderreich.utils.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
@@ -14,7 +17,8 @@ import org.jetbrains.annotations.ApiStatus;
 public class ConstructionData {
     private static final String BOUNDING_BOX_TAG = "bb";
     private static final String SELECTED_CORNER_TAG = "sc";
-    private static final int VALID_RADIUS_SQUARE = 32 * 32;
+    private static final int VALID_RADIUS_SQUARE = 64 * 64;
+    private static final String CONSTRUCTION_DATA_TAG = "construction";
 
     public final CachedNBTValue<Bounds, CompoundTag> BOUNDING_BOX;
     public final CachedNBTValue<Bounds.Interpolate, ByteTag> SELECTED_CORNER;
@@ -25,6 +29,12 @@ public class ConstructionData {
 
 
     public ConstructionData(CompoundTag baseTag) {
+        ItemStack test = BluePrintData.bluePrintWithSDF(new SDFUnion(
+                new Sphere(new Pos(0, 0, 0), 3),
+                new Sphere(new Pos(0, 2, 0), 2)
+        ));
+
+        BluePrintData bpd = BluePrintData.getBluePrintData(test);
         BOUNDING_BOX = new CachedNBTValue<>(
                 baseTag,
                 BOUNDING_BOX_TAG,
@@ -37,6 +47,19 @@ public class ConstructionData {
                 NbtTagHelper::readInterpolated,
                 NbtTagHelper::writeInterpolated
         );
+    }
+
+    public static ConstructionData getConstructionData(ItemStack itemStack) {
+        if (itemStack.getItem() instanceof Ruler) {
+
+            CompoundTag tag = itemStack.getOrCreateTag();
+
+            if (!tag.contains(CONSTRUCTION_DATA_TAG)) {
+                tag.put(CONSTRUCTION_DATA_TAG, new CompoundTag());
+            }
+            return new ConstructionData(tag.getCompound(CONSTRUCTION_DATA_TAG));
+        }
+        return null;
     }
 
     public Bounds.Interpolate getSelectedCorner() {
