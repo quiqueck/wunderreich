@@ -1,11 +1,7 @@
 package de.ambertation.wunderreich;
 
-import net.minecraft.resources.ResourceLocation;
-
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
-
+import de.ambertation.lib.general.Logger;
+import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
@@ -13,9 +9,13 @@ import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
-import de.ambertation.wunderreich.utils.Logger;
 import de.ambertation.wunderreich.utils.Version;
-import de.ambertation.wunderreich.utils.math.sdf.SDF;
+
+import net.minecraft.resources.ResourceLocation;
+
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 
 import java.util.Optional;
 
@@ -46,7 +46,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichAdvancements.register();
         WunderreichRules.register();
         WunderreichMenuTypes.ensureStaticallyLoaded();
-        
+
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();
 

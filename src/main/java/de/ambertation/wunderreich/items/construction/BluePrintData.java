@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.items.construction;
 
+import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.utils.math.sdf.SDF;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 

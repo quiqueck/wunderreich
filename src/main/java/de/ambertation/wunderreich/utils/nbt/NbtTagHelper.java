@@ -1,5 +1,10 @@
 package de.ambertation.wunderreich.utils.nbt;
 
+import de.ambertation.lib.math.Bounds;
+import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.wunderreich.Wunderreich;
+
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
@@ -8,11 +13,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
-
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Float3;
-import de.ambertation.wunderreich.utils.math.sdf.SDF;
 
 public class NbtTagHelper {
     public static BlockPos readBlockPos(CompoundTag tag) {

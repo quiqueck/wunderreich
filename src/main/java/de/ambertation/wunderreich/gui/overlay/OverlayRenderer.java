@@ -1,5 +1,12 @@
 package de.ambertation.wunderreich.gui.overlay;
 
+import de.ambertation.lib.math.Bounds;
+import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.SDFUnion;
+import de.ambertation.wunderreich.items.construction.ConstructionData;
+import de.ambertation.wunderreich.registries.WunderreichItems;
+
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -21,13 +28,6 @@ import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import de.ambertation.wunderreich.items.construction.ConstructionData;
-import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Float3;
-import de.ambertation.wunderreich.utils.math.sdf.SDF;
-import de.ambertation.wunderreich.utils.math.sdf.SDFUnion;
 
 import java.util.ArrayList;
 import java.util.List;

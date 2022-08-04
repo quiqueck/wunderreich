@@ -1,5 +1,8 @@
 package de.ambertation.wunderreich.items.construction;
 
+import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.wunderreich.registries.WunderreichItems;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -7,9 +10,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-
-import de.ambertation.wunderreich.registries.WunderreichItems;
-import de.ambertation.wunderreich.utils.math.sdf.SDF;
 
 import java.util.List;
 import java.util.function.Supplier;

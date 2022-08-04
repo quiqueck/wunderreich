@@ -1,13 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tiers;
-
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-
+import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.BuildersTrowel;
@@ -15,8 +9,14 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 import de.ambertation.wunderreich.items.construction.BluePrint;
 import de.ambertation.wunderreich.items.construction.Ruler;
-import de.ambertation.wunderreich.utils.math.Float3;
-import de.ambertation.wunderreich.utils.math.sdf.shapes.Sphere;
+
+import net.minecraft.core.Registry;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.Tiers;
+
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 
 import java.util.ArrayList;
 import java.util.Collection;
