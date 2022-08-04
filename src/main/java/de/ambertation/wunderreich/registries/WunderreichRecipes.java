@@ -1,9 +1,5 @@
 package de.ambertation.wunderreich.registries;
 
-import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
-import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
-import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
-
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -11,6 +7,9 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import com.google.gson.JsonElement;
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
+import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
+import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +19,19 @@ public class WunderreichRecipes {
     public static final Map<ResourceLocation, JsonElement> RECIPES = new HashMap<>();
 
     public static void register() {
+        RecipeJsonBuilder
+                .create("blueprint_sphere")
+                .result(WunderreichItems.BLUE_PRINT_SPHERE)
+                .pattern("E", "P")
+                .material('E', Items.APPLE)
+                .material('P', Items.PAPER)
+                .group("blueprint_sphere")
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS, List.of(
+                        Items.PAPER,
+                        Items.APPLE
+                ));
+
+
         RecipeJsonBuilder
                 .create("wunder_kiste")
                 .result(WunderreichBlocks.WUNDER_KISTE)

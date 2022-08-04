@@ -28,11 +28,11 @@ public class Bounds {
                 MAX_MAX_MAX, MAX_MAX_MIN, MAX_MIN_MAX, MAX_MIN_MIN, CENTER
         };
 
-        private final Pos t;
+        private final Float3 t;
         public final Byte idx;
 
         private Interpolate(byte idx, float tx, float ty, float tz) {
-            t = new Pos(tx, ty, tz);
+            t = Float3.of(tx, ty, tz);
             this.idx = idx;
         }
 
@@ -46,32 +46,32 @@ public class Bounds {
             return new Interpolate((byte) -1, (float) (1 - t.x), (float) (1 - t.y), (float) (1 - t.z));
         }
 
-        public Pos lerp(Pos min, Pos max) {
+        public Float3 lerp(Float3 min, Float3 max) {
             return lerp(t, min, max);
         }
 
-        public Pos blockAlignedLerp(Pos min, Pos max) {
+        public Float3 blockAlignedLerp(Float3 min, Float3 max) {
             return blockAlignedLerp(t, min, max);
         }
 
-        public static Pos lerp(Pos t, Pos min, Pos max) {
-            return new Pos(
+        public static Float3 lerp(Float3 t, Float3 min, Float3 max) {
+            return Float3.of(
                     lerp(t.x, min.x, max.x),
                     lerp(t.y, min.y, max.y),
                     lerp(t.z, min.z, max.z)
             );
         }
 
-        public static Pos blockAlignedLerp(Pos t, Pos min, Pos max) {
-            return Pos.blockAligned(
+        public static Float3 blockAlignedLerp(Float3 t, Float3 min, Float3 max) {
+            return Float3.blockAligned(
                     lerp(t.x, min.x, max.x),
                     lerp(t.y, min.y, max.y),
                     lerp(t.z, min.z, max.z)
             );
         }
 
-        public static Pos lerp(double t, Pos min, Pos max) {
-            return new Pos(
+        public static Float3 lerp(double t, Float3 min, Float3 max) {
+            return Float3.of(
                     lerp(t, min.x, max.x),
                     lerp(t, min.y, max.y),
                     lerp(t, min.z, max.z)
@@ -83,8 +83,8 @@ public class Bounds {
         }
     }
 
-    public final Pos min;
-    public final Pos max;
+    public final Float3 min;
+    public final Float3 max;
 
     public Bounds(BoundingBox box) {
         this(box.minX(), box.minY(), box.minZ(), box.maxX(), box.maxY(), box.maxZ());
@@ -94,20 +94,20 @@ public class Bounds {
         this(pos.getX(), pos.getY(), pos.getZ(), pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public Bounds(Pos min, Pos max) {
+    public Bounds(Float3 min, Float3 max) {
         this(min.x, min.y, min.z, max.x, max.y, max.z);
     }
 
     public Bounds(double lx, double ly, double lz, double hx, double hy, double hz) {
-        this.min = new Pos(Math.min(lx, hx), Math.min(ly, hy), Math.min(lz, hz));
-        this.max = new Pos(Math.max(lx, hx), Math.max(ly, hy), Math.max(lz, hz));
+        this.min = Float3.of(Math.min(lx, hx), Math.min(ly, hy), Math.min(lz, hz));
+        this.max = Float3.of(Math.max(lx, hx), Math.max(ly, hy), Math.max(lz, hz));
     }
 
-    public Pos getSize() {
-        return new Pos(max.x - min.x + 1, max.y - min.y + 1, max.z - min.z + 1);
+    public Float3 getSize() {
+        return Float3.of(max.x - min.x + 1, max.y - min.y + 1, max.z - min.z + 1);
     }
 
-    public boolean isInside(Pos p) {
+    public boolean isInside(Float3 p) {
         return p.x >= this.min.x && p.x <= this.max.x && p.z >= this.min.z && p.z <= this.max.z && p.y >= this.min.y && p.y <= this.max.y;
     }
 
@@ -137,7 +137,7 @@ public class Bounds {
         );
     }
 
-    public Bounds encapsulate(Pos p) {
+    public Bounds encapsulate(Float3 p) {
         return new Bounds(
                 Math.min(this.min.x, p.x),
                 Math.min(this.min.y, p.y),
@@ -148,31 +148,31 @@ public class Bounds {
         );
     }
 
-    public Pos get(Interpolate p) {
+    public Float3 get(Interpolate p) {
         return p.lerp(min, max);
     }
 
-    public Pos getBlockAligned(Interpolate p) {
+    public Float3 getBlockAligned(Interpolate p) {
         return p.blockAlignedLerp(min, max);
     }
 
-    public Pos getCenter() {
+    public Float3 getCenter() {
         return get(Interpolate.CENTER);
     }
 
-    public Bounds moveToCenter(Pos newCenter) {
+    public Bounds moveToCenter(Float3 newCenter) {
         newCenter = newCenter.sub(getCenter());
         return new Bounds(min.add(newCenter), max.add(newCenter));
     }
 
-    public Interpolate isCorner(Pos p) {
+    public Interpolate isCorner(Float3 p) {
         for (Interpolate i : Interpolate.CORNERS) {
             if (getBlockAligned(i).equals(p)) return i;
         }
         return null;
     }
 
-    public Interpolate isCornerOrCenter(Pos p) {
+    public Interpolate isCornerOrCenter(Float3 p) {
         for (Interpolate i : Interpolate.CORNERS_AND_CENTER) {
             if (getBlockAligned(i).equals(p)) return i;
         }

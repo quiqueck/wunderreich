@@ -6,7 +6,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 
 import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.Float3;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
@@ -73,11 +73,11 @@ public class ConstructionData {
     public Bounds getNewBoundsForSelectedCorner() {
         Bounds.Interpolate selectedCorner = getSelectedCorner();
         if (selectedCorner.idx == Bounds.Interpolate.CENTER.idx) {
-            return getBoundingBox().moveToCenter(new Pos(ConstructionData.lastTarget));
+            return getBoundingBox().moveToCenter(Float3.of(ConstructionData.lastTarget));
         }
 
         Bounds.Interpolate oppositeCorner = selectedCorner.opposite();
-        return new Bounds(getBoundingBox().get(oppositeCorner), new Pos(ConstructionData.lastTarget));
+        return new Bounds(getBoundingBox().get(oppositeCorner), Float3.of(ConstructionData.lastTarget));
     }
 
     public Bounds addToBounds(BlockPos pos) {
@@ -97,13 +97,13 @@ public class ConstructionData {
         return bb;
     }
 
-    public double distToCenterSquare(Pos pos) {
+    public double distToCenterSquare(Float3 pos) {
         Bounds bb = getBoundingBox();
         if (bb == null) return Double.MAX_VALUE;
         return bb.getCenter().distSquare(pos);
     }
 
-    public boolean inReach(Pos pos) {
+    public boolean inReach(Float3 pos) {
         return distToCenterSquare(pos) < VALID_RADIUS_SQUARE;
     }
 }

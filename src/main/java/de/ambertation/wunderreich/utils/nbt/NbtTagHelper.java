@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.Float3;
 import de.ambertation.wunderreich.utils.math.sdf.SDF;
 
 public class NbtTagHelper {
@@ -28,12 +28,12 @@ public class NbtTagHelper {
         return bp;
     }
 
-    public static Pos readPos(CompoundTag tag) {
+    public static Float3 readPos(CompoundTag tag) {
         if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
-        return new Pos(tag.getFloat("x"), tag.getFloat("y"), tag.getFloat("z"));
+        return Float3.of(tag.getFloat("x"), tag.getFloat("y"), tag.getFloat("z"));
     }
 
-    public static CompoundTag writePos(Pos pos) {
+    public static CompoundTag writePos(Float3 pos) {
         CompoundTag bp = new CompoundTag();
         bp.putFloat("x", (float) pos.x);
         bp.putFloat("y", (float) pos.y);
@@ -117,8 +117,6 @@ public class NbtTagHelper {
                 .resultOrPartial(Wunderreich.LOGGER::error);
         if (result.isPresent()) {
             return result.get();
-        } else {
-            Wunderreich.LOGGER.error("Unable to decode SDF");
         }
         return null;
     }

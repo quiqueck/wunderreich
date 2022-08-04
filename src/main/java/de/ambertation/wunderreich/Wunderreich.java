@@ -36,9 +36,8 @@ public class Wunderreich implements ModInitializer {
             VERSION = new Version(modContainer.getMetadata().getVersion().toString());
         }
 
-        // This code runs as soon as Minecraft is in a mod-load-ready state.
-        // However, some things (like resources) may still be uninitialized.
-        // Proceed with mild caution.
+        SDF.ensureStaticallyLoaded();
+
         WunderreichBlockEntities.register();
         WunderreichBlocks.register();
         WunderreichItems.register();
@@ -47,8 +46,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichAdvancements.register();
         WunderreichRules.register();
         WunderreichMenuTypes.ensureStaticallyLoaded();
-        SDF.ensureStaticallyLoaded();
-
+        
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();
 

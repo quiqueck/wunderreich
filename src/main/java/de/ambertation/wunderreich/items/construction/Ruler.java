@@ -10,7 +10,7 @@ import net.minecraft.world.level.Level;
 
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.Float3;
 
 public class Ruler extends Item {
 
@@ -20,14 +20,14 @@ public class Ruler extends Item {
                 .rarity(Rarity.UNCOMMON)
                 .durability(1000));
     }
-    
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
         if (level.isClientSide) {
             ItemStack ruler = player.getItemInHand(interactionHand);
             ConstructionData cd = ConstructionData.getConstructionData(ruler);
             if (cd != null) {
-                Pos highlightedBlock = new Pos(ConstructionData.lastTarget);
+                Float3 highlightedBlock = Float3.of(ConstructionData.lastTarget);
 
                 //deselect Corner
                 if (cd.getSelectedCorner() != null) {

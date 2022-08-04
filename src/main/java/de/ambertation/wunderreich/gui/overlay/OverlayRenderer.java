@@ -25,7 +25,7 @@ import net.fabricmc.api.Environment;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.math.Bounds;
-import de.ambertation.wunderreich.utils.math.Pos;
+import de.ambertation.wunderreich.utils.math.Float3;
 import de.ambertation.wunderreich.utils.math.sdf.SDF;
 import de.ambertation.wunderreich.utils.math.sdf.SDFUnion;
 
@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
-    record RenderInfo(Pos pos, float deflate, int color, float alpha, int outlineColor, float outlineAlpha) {
+    record RenderInfo(Float3 pos, float deflate, int color, float alpha, int outlineColor, float outlineAlpha) {
     }
 
     public static final int COLOR_MINION_YELLOW = 0xFFFFE74C;
@@ -74,7 +74,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
         if (camera.isInitialized()) {
-            Pos pos = new Pos(camera.getPosition());
+            Float3 pos = Float3.of(camera.getPosition());
 
             ConstructionData.lastTarget = getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5);
             Vec3 camPos = camera.getPosition().reverse();
@@ -88,7 +88,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             if (constructionData != null) {
                 Bounds box = constructionData.getBoundingBox();
                 if (box != null) {
-                    final Pos targetPos = new Pos(ConstructionData.lastTarget);
+                    final Float3 targetPos = Float3.of(ConstructionData.lastTarget);
                     final Bounds.Interpolate targetCorner = box.isCornerOrCenter(targetPos);
 
                     time += Minecraft.getInstance().getDeltaFrameTime();
@@ -109,8 +109,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             );
                         }
                         Bounds bbb = new Bounds(
-                                new Pos(box.getCenter().sub(new Pos(3, 3, 10)).toBlockPos()),
-                                new Pos(box.getCenter().add(new Pos(3, 3, 10)).toBlockPos())
+                                Float3.of(box.getCenter().sub(Float3.of(3, 3, 10)).toBlockPos()),
+                                Float3.of(box.getCenter().add(Float3.of(3, 3, 10)).toBlockPos())
                         );
 
                         renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_BOUNDING_BOX, 1);
@@ -157,7 +157,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         for (double xx = box.min.x; xx <= box.max.x; xx++) {
                             for (double xy = box.min.y; xy <= box.max.y; xy++) {
                                 for (double xz = box.min.z; xz <= box.max.z; xz++) {
-                                    final Pos p = new Pos(xx, xy, xz);
+                                    final Float3 p = Float3.of(xx, xy, xz);
                                     double dist = e.dist(p);
                                     if (dist < 0 && dist > -1) {
                                         positions.add(new RenderInfo(
@@ -221,13 +221,13 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
     private void renderBlockOutline(
             VertexConsumer vertexConsumer, PoseStack poseStack,
-            Pos pos, Vec3 camPos, float deflate,
+            Float3 pos, Vec3 camPos, float deflate,
             int color,
             float alpha
     ) {
-        final float x = (float) (Pos.toBlockPos(pos.x) + camPos.x);
-        final float y = (float) (Pos.toBlockPos(pos.y) + camPos.y);
-        final float z = (float) (Pos.toBlockPos(pos.z) + camPos.z);
+        final float x = (float) (Float3.toBlockPos(pos.x) + camPos.x);
+        final float y = (float) (Float3.toBlockPos(pos.y) + camPos.y);
+        final float z = (float) (Float3.toBlockPos(pos.z) + camPos.z);
         renderLineBox(vertexConsumer, poseStack,
                 x + deflate, y + deflate, z + deflate,
                 1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
@@ -295,7 +295,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
     private void renderBlock(
             BufferBuilder builder, PoseStack poseStack,
-            Pos pos, Vec3 camPos, float deflate,
+            Float3 pos, Vec3 camPos, float deflate,
             int color, float alpha
     ) {
         renderBlock(
@@ -308,14 +308,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     private void renderBlock(
             BufferBuilder builder,
             PoseStack poseStack,
-            Pos pos, Vec3 camPos, float deflate,
+            Float3 pos, Vec3 camPos, float deflate,
             int r, int g, int b, int a
     ) {
         Matrix4f m = poseStack.last().pose();
         Matrix3f rotation = poseStack.last().normal();
-        float lx = (float) (Pos.toBlockPos(pos.x) + camPos.x);
-        float ly = (float) (Pos.toBlockPos(pos.y) + camPos.y);
-        float lz = (float) (Pos.toBlockPos(pos.z) + camPos.z);
+        float lx = (float) (Float3.toBlockPos(pos.x) + camPos.x);
+        float ly = (float) (Float3.toBlockPos(pos.y) + camPos.y);
+        float lz = (float) (Float3.toBlockPos(pos.z) + camPos.z);
         float hx = lx + 1 - deflate;
         float hy = ly + 1 - deflate;
         float hz = lz + 1 - deflate;
@@ -356,7 +356,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     private void renderBlockOutline(
             VertexConsumer vertexConsumer,
             PoseStack poseStack,
-            Pos pos, Vec3 camPos,
+            Float3 pos, Vec3 camPos,
             float r, float g, float b, float a
     ) {
         LevelRenderer.renderLineBox(
@@ -430,7 +430,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 //        hitResult = cameraEntity.pick(reach, 0.0f, true);
 //        if (hitResult.getType() == HitResult.Type.BLOCK) return ((BlockHitResult) hitResult).getBlockPos();
 
-        return Pos.toBlockPos(cameraEntity.getEyePosition()
-                                          .add(cameraEntity.getViewVector(1.0F).scale(emptyDist)));
+        return Float3.toBlockPos(cameraEntity.getEyePosition()
+                                             .add(cameraEntity.getViewVector(1.0F).scale(emptyDist)));
     }
 }

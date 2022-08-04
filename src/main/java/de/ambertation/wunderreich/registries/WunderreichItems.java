@@ -15,6 +15,8 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 import de.ambertation.wunderreich.items.construction.BluePrint;
 import de.ambertation.wunderreich.items.construction.Ruler;
+import de.ambertation.wunderreich.utils.math.Float3;
+import de.ambertation.wunderreich.utils.math.sdf.shapes.Sphere;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -55,8 +57,14 @@ public class WunderreichItems {
     );
 
     public static Item BLUE_PRINT = registerItem(
-            "blueprint",
-            BluePrint::new,
+            "blueprint_empty",
+            () -> new BluePrint(null),
+            Configs.MAIN.allowConstructionTools.get()
+    );
+
+    public static Item BLUE_PRINT_SPHERE = registerItem(
+            "blueprint_sphere",
+            () -> new BluePrint(() -> new Sphere(Float3.of(0, 0, 0), 8)),
             Configs.MAIN.allowConstructionTools.get()
     );
 

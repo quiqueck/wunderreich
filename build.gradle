@@ -20,6 +20,7 @@ loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
 }
 
+def local_wunderlib = findProject(':WunderLib') != null
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings loom.officialMojangMappings()
@@ -29,6 +30,16 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 //    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    println "Using local WunderLib: ${local_wunderlib}"
+    if (local_wunderlib) {
+        implementation project(path: ":WunderLib", configuration: 'dev')
+        include project(path: ":WunderLib", configuration: 'dev')
+    } else {
+        modApi "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
+        include "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
+    }
+
 }
 
 processResources {

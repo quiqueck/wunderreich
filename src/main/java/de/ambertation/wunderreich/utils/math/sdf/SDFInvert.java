@@ -1,15 +1,15 @@
 package de.ambertation.wunderreich.utils.math.sdf;
 
+import de.ambertation.wunderreich.utils.math.Float3;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.util.KeyDispatchDataCodec;
 
-import de.ambertation.wunderreich.utils.math.Pos;
-
 public class SDFInvert extends SDFOperation {
     public static final Codec<SDFInvert> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance
             .group(
-                    SDF.CODEC.fieldOf("sdf").forGetter(b -> b.a)
+                    SDF.CODEC.fieldOf("sdf").forGetter(b -> b.getFirst())
             )
             .apply(instance, SDFInvert::new)
     );
@@ -28,7 +28,12 @@ public class SDFInvert extends SDFOperation {
     }
 
     @Override
-    public double dist(Pos pos) {
-        return -a.dist(pos);
+    public double dist(Float3 pos) {
+        return -getFirst().dist(pos);
+    }
+
+    @Override
+    public String toString() {
+        return "!" + getFirst();
     }
 }

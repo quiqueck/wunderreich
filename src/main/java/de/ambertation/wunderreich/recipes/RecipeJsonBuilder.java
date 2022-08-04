@@ -1,10 +1,5 @@
 package de.ambertation.wunderreich.recipes;
 
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.registries.WunderreichRecipes;
-
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -16,6 +11,10 @@ import net.minecraft.world.level.block.Block;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import java.util.*;
 
@@ -26,6 +25,7 @@ public class RecipeJsonBuilder {
     boolean canBuild;
     ItemLike resultItem;
     String[] pattern;
+    String group = "";
     int count;
 
     private RecipeJsonBuilder() {
@@ -112,6 +112,11 @@ public class RecipeJsonBuilder {
 
     public RecipeJsonBuilder count(int count) {
         this.count = count;
+        return this;
+    }
+
+    public RecipeJsonBuilder group(String grp) {
+        this.group = grp;
         return this;
     }
 
@@ -218,6 +223,10 @@ public class RecipeJsonBuilder {
         result.addProperty("item", resItem.toString());
         result.addProperty("count", count);
         json.add("result", result);
+
+        if (group != null && !group.isBlank()) {
+            json.addProperty("group", group);
+        }
 
         //System.out.println(json);
         return json;
