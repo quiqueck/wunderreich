@@ -53,6 +53,7 @@ public class WunderreichClient implements ClientModInitializer {
         }
     }
 
+
     @Override
     public void onInitializeClient() {
         WunderreichParticles.register();
@@ -64,8 +65,9 @@ public class WunderreichClient implements ClientModInitializer {
             }
 
             if (block instanceof BlockEntityProvider view) {
-                BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                                                     view.getBlockEntityRenderProvider()
+                BlockEntityRendererRegistry.register(
+                        view.getBlockEntityType(),
+                        view.getBlockEntityRenderProvider()
                 );
             }
         });
@@ -79,8 +81,9 @@ public class WunderreichClient implements ClientModInitializer {
                 return 0xffffffff;
             }, WunderreichSlabBlocks.GRASS_SLAB);
 
-            ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                                WunderreichSlabBlocks.GRASS_SLAB
+            ColorProviderRegistry.ITEM.register(
+                    (item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
+                    WunderreichSlabBlocks.GRASS_SLAB
             );
         }
     }
