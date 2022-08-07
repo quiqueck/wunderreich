@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.construction;
 
-import de.ambertation.lib.ui.layout.components.Container;
+import de.ambertation.lib.ui.layout.values.Rectangle;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -34,9 +34,26 @@ public class RulerContainerMenu extends AbstractContainerMenu {
         this(synchronizationID, inventory, (ItemStack) null);
     }
 
-    void addMaterialSlots(Container materialContainer) {
-        final int INV_SLOT_X = materialContainer.getScreenBounds().left + 6;
-        final int INV_SLOT_Y = materialContainer.getScreenBounds().top + 16;
+    SDFSlot addSDFSlots(Rectangle screenBounds) {
+//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 1, screenBounds.top + 7, 0));
+//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 0, screenBounds.top + 32, 0));
+//
+//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 12, screenBounds.top + 19, 0));
+//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 36, screenBounds.top + 20, 0));
+        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 28, screenBounds.top + 1, 0));
+        SDFSlot slot = new SDFSlot(
+                container,
+                RulerContainer.SDF_SLOT_START,
+                screenBounds.left + 12,
+                screenBounds.top + 19
+        );
+        this.addSlot(slot);
+        return slot;
+    }
+
+    void addMaterialSlots(Rectangle screenBounds) {
+        final int INV_SLOT_X = screenBounds.left + 6;
+        final int INV_SLOT_Y = screenBounds.top + 16;
         final int INV_SLOT_WIDTH = 18;
         final int INV_SLOT_HEIGHT = INV_SLOT_WIDTH;
         final int INV_SLOT_PAD = 1;
@@ -51,15 +68,15 @@ public class RulerContainerMenu extends AbstractContainerMenu {
         }
     }
 
-    void addInventorySlots(Container inventoryContainer) {
-        final int INV_SLOT_X = inventoryContainer.getScreenBounds().left + 6;
-        final int INV_SLOT_Y = inventoryContainer.getScreenBounds().top + 6;
+    void addInventorySlots(Rectangle screenBounds) {
+        final int INV_SLOT_X = screenBounds.left + 6;
+        final int INV_SLOT_Y = screenBounds.top + 6;
         final int INV_SLOT_WIDTH = 18;
         final int INV_SLOT_HEIGHT = INV_SLOT_WIDTH;
         final int INV_SLOT_PAD = 1;
 
         final int HOTBAR_SLOT_X = INV_SLOT_X;
-        final int HOTBAR_SLOT_Y = inventoryContainer.getScreenBounds().bottom() - 5 - INV_SLOT_HEIGHT;
+        final int HOTBAR_SLOT_Y = screenBounds.bottom() - 5 - INV_SLOT_HEIGHT;
 
         for (int i = RulerContainer.INV_SLOT_START; i < RulerContainer.INV_SLOT_END; i++) {
             int idx = i - RulerContainer.INV_SLOT_START;

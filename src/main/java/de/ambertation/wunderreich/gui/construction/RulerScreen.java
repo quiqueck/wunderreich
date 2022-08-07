@@ -13,6 +13,8 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -21,6 +23,9 @@ import net.fabricmc.api.Environment;
 public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     public static final ResourceLocation SDF_TEXTURE = Wunderreich.ID("textures/gui/sdf.png");
     public static final Size SDF_TEXTURE_SIZE = new Size(256, 256);
+    public static final Rectangle SMALL_DIAMOND = new Rectangle(77, 30, 15, 15);
+    public static final Rectangle LARGE_DIAMOND = new Rectangle(95, 31, 33, 33);
+    public static final Rectangle INVENTORY_SLOT = new Rectangle(129, 0, 17, 17);
     private final RulerContainerMenu menu;
 
     public RulerScreen(RulerContainerMenu menu, Inventory inventory, Component component) {
@@ -41,6 +46,9 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         Panel materialPanel = createMaterialPanel();
         this.addRenderableWidget(materialPanel);
+
+        Panel sdfPanel = createSDFPanel();
+        this.addRenderableWidget(sdfPanel);
     }
 
     Button selectedPageButton;
@@ -74,7 +82,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         materialPanel.setChild(materialStack);
         materialPanel.calculateLayout();
-        menu.addMaterialSlots(materialContainer);
+        menu.addMaterialSlots(materialContainer.getScreenBounds());
 
         return materialPanel;
     }
@@ -94,7 +102,49 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         inventoryPanel.setChild(inventoryStack);
         inventoryPanel.calculateLayout();
-        menu.addInventorySlots(inventoryContainer);
+        menu.addInventorySlots(inventoryContainer.getScreenBounds());
+
+        return inventoryPanel;
+    }
+
+    private Panel createSDFPanel() {
+
+        Panel inventoryPanel = new Panel(301, 67, 51, 47);
+
+        Container inventoryContainer = new Container(Value.fit(), Value.fit());
+        Image inputSlotA = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(SMALL_DIAMOND);
+        inventoryContainer.addChild(0, 8, inputSlotA);
+
+        Item stackTest = new Item(Value.fit(), Value.fit())
+                .setItem(new ItemStack(Items.AMETHYST_SHARD, 3));
+        inventoryContainer.addChild(0, 8, stackTest);
+
+        Image inputSlotB = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(SMALL_DIAMOND);
+        inventoryContainer.addChild(0, 32, inputSlotB);
+
+        Image parentSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(SMALL_DIAMOND);
+        inventoryContainer.addChild(36, 20, parentSlot);
+
+        Image SDFSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(LARGE_DIAMOND);
+        inventoryContainer.addChild(3, 11, SDFSlot);
+
+        Image materialSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(INVENTORY_SLOT);
+        inventoryContainer.addChild(27, 0, materialSlot);
+
+
+        inventoryPanel.setChild(inventoryContainer);
+        inventoryPanel.calculateLayout();
+        SDFSlot slot = menu.addSDFSlots(inventoryContainer.getScreenBounds());
 
         return inventoryPanel;
     }
