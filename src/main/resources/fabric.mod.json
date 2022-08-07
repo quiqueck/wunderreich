@@ -45,7 +45,7 @@
     "java": ">=17"
   },
   "breaks": {
-    "minecraft": ">1.19.1"
+    "minecraft": ">1.19.2"
   },
   "suggests": {
     "modmenu": "4.0.x",
