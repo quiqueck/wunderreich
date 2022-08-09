@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -26,6 +27,14 @@ public class BluePrint extends Item {
         this.builder = builder == null ? () -> null : builder;
     }
 
+    @Override
+    public void verifyTagAfterLoad(CompoundTag compoundTag) {
+        super.verifyTagAfterLoad(compoundTag);
+        BluePrintData bpd = BluePrintData.getBluePrintData(compoundTag);
+        if (bpd.SDF_DATA.get() == null) {
+            bpd.SDF_DATA.set(builder.get());
+        }
+    }
 
     @Override
     public void onCraftedBy(ItemStack itemStack, Level level, Player player) {

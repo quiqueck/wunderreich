@@ -15,7 +15,7 @@ public class BluePrintData {
 
     public final CachedNBTValue<SDF, Tag> SDF_DATA;
 
-    public BluePrintData(CompoundTag baseTag) {
+    protected BluePrintData(CompoundTag baseTag) {
         SDF_DATA = new CachedNBTValue<>(
                 baseTag,
                 SDF_TAG,
@@ -40,15 +40,19 @@ public class BluePrintData {
 
     public static BluePrintData getBluePrintData(ItemStack itemStack) {
         if (itemStack.getItem() instanceof BluePrint) {
-
             CompoundTag tag = itemStack.getOrCreateTag();
-
-            if (!tag.contains(BLUEPRINT_DATA_TAG)) {
-                tag.put(BLUEPRINT_DATA_TAG, new CompoundTag());
-            }
-            return new BluePrintData(tag.getCompound(BLUEPRINT_DATA_TAG));
+            return getBluePrintData(tag);
         }
         return null;
+    }
+
+    public static BluePrintData getBluePrintData(CompoundTag tag) {
+        if (tag == null) return null;
+
+        if (!tag.contains(BLUEPRINT_DATA_TAG)) {
+            tag.put(BLUEPRINT_DATA_TAG, new CompoundTag());
+        }
+        return new BluePrintData(tag.getCompound(BLUEPRINT_DATA_TAG));
     }
 
     public static ItemStack bluePrintWithSDF(SDF sdf) {

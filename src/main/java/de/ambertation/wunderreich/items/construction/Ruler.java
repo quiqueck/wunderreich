@@ -2,9 +2,12 @@ package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.sdf.shapes.Empty;
+import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,17 +21,18 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.level.Level;
 
+import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 
 import org.jetbrains.annotations.Nullable;
 
-public class Ruler extends Item {
+public class Ruler extends Item implements FabricItem {
 
     public Ruler() {
         super(WunderreichItems
                 .makeItemSettings()
                 .rarity(Rarity.UNCOMMON)
-                .durability(1000));
+                .maxCount(1));
     }
 
     @Override
@@ -56,7 +60,8 @@ public class Ruler extends Item {
                 }
 
                 if (player.isShiftKeyDown()) {
-                    InteractionResultHolder.success(ruler);
+                    player.startUsingItem(interactionHand);
+                    return InteractionResultHolder.success(ruler);
                 } else {
                     cd.addToBounds(ConstructionData.lastTarget);
                 }
@@ -65,14 +70,28 @@ public class Ruler extends Item {
             return InteractionResultHolder.fail(ruler);
         } else {
             if (player.isShiftKeyDown()) {
-                openScreen(player, ruler);
+                player.startUsingItem(interactionHand);
+                openScreen(player, ruler, interactionHand);
                 return InteractionResultHolder.success(ruler);
             }
         }
-        return super.use(level, player, interactionHand);
+        return InteractionResultHolder.pass(ruler);
     }
 
-    public static void openScreen(Player player, ItemStack rulerStack) {
+    @Override
+    public void verifyTagAfterLoad(CompoundTag compoundTag) {
+        super.verifyTagAfterLoad(compoundTag);
+        ConstructionData data = ConstructionData.getConstructionData(compoundTag);
+        if (data.SDF_DATA.get() == null) {
+            data.SDF_DATA.set(Empty.INSTANCE);
+        }
+
+        if (data.MATERIAL_DATA.get() == null) {
+            data.MATERIAL_DATA.set(new RulerContainer());
+        }
+    }
+
+    public static void openScreen(Player player, ItemStack rulerStack, InteractionHand interactionHand) {
         if (player != null && player.level != null && !player.level.isClientSide) {
             System.out.println("open");
             player.openMenu(new ExtendedScreenHandlerFactory() {

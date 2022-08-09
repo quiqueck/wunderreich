@@ -54,7 +54,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     Button selectedPageButton;
 
     private Panel createMaterialPanel() {
-        Panel materialPanel = new Panel(5, 52, 177, 70);
+        Panel materialPanel = new Panel(RulerContainerMenu.MATERIAL_PANEL);
 
         Container materialContainer = new Container(Value.fit(), Value.fit());
         Image inventoryBackground = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -82,13 +82,12 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         materialPanel.setChild(materialStack);
         materialPanel.calculateLayout();
-        menu.addMaterialSlots(materialContainer.getScreenBounds());
 
         return materialPanel;
     }
 
     private Panel createInventoryPanel() {
-        Panel inventoryPanel = new Panel(6, 132, 174, 96);
+        Panel inventoryPanel = new Panel(RulerContainerMenu.INVENTORY_PANEL);
 
         Container inventoryContainer = new Container(Value.fit(), Value.fit());
         Image inventoryBackground = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -102,14 +101,13 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         inventoryPanel.setChild(inventoryStack);
         inventoryPanel.calculateLayout();
-        menu.addInventorySlots(inventoryContainer.getScreenBounds());
 
         return inventoryPanel;
     }
 
     private Panel createSDFPanel() {
 
-        Panel inventoryPanel = new Panel(301, 67, 51, 47);
+        Panel inventoryPanel = new Panel(RulerContainerMenu.SDF_PANEL);
 
         Container inventoryContainer = new Container(Value.fit(), Value.fit());
         Image inputSlotA = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -118,7 +116,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         inventoryContainer.addChild(0, 8, inputSlotA);
 
         Item stackTest = new Item(Value.fit(), Value.fit())
-                .setItem(new ItemStack(Items.AMETHYST_SHARD, 3));
+                .setItem(new ItemStack(Items.AMETHYST_SHARD, 1));
         inventoryContainer.addChild(0, 8, stackTest);
 
         Image inputSlotB = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -144,9 +142,13 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         inventoryPanel.setChild(inventoryContainer);
         inventoryPanel.calculateLayout();
-        SDFSlot slot = menu.addSDFSlots(inventoryContainer.getScreenBounds());
+        menu.sdfSlot.callOnChange(this::slotChanged);
 
         return inventoryPanel;
+    }
+
+    void slotChanged(SDFSlot slot) {
+
     }
 
 
@@ -156,8 +158,8 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     }
 
     @Override
-    public void render(PoseStack poseStack, int i, int j, float f) {
-        super.render(poseStack, i, j, f);
+    public void render(PoseStack poseStack, int mouseX, int mouseY, float f) {
+        super.render(poseStack, mouseX, mouseY, f);
 
         if (selectedPageButton != null) {
             RenderHelper.renderImage(
@@ -170,5 +172,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                     1
             );
         }
+
+        this.renderTooltip(poseStack, mouseX, mouseY);
     }
 }

@@ -35,7 +35,7 @@ public class WunderreichRecipes {
         RecipeJsonBuilder
                 .create("blueprint_union")
                 .result(WunderreichItems.BLUE_PRINT_UNION)
-                .pattern("E E", "P")
+                .pattern("E E", " P ")
                 .material('E', Items.APPLE)
                 .material('P', Items.PAPER)
                 .group("blueprint_sphere")

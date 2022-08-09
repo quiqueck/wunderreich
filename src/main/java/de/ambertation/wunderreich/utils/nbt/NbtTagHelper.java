@@ -8,16 +8,64 @@ import de.ambertation.wunderreich.Wunderreich;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtOps;
-import net.minecraft.nbt.Tag;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.*;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
+import java.util.List;
+
 public class NbtTagHelper {
-    public static BlockPos readBlockPos(CompoundTag tag) {
-        if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
-        return new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
+    public static ListTag writeContainer(SimpleContainer container) {
+        ListTag listTag = new ListTag();
+        for (int i = 0; i < container.getContainerSize(); ++i) {
+            ItemStack itemStack = container.getItem(i);
+            if (!itemStack.isEmpty()) {
+                CompoundTag compoundTag = new CompoundTag();
+                compoundTag.putShort("Slot", (short) i);
+                itemStack.save(compoundTag);
+                listTag.add(compoundTag);
+            }
+        }
+        return listTag;
+    }
+
+    public static void readContainer(ListTag listTag, SimpleContainer container) {
+        container.clearContent();
+        for (int j = 0; j < listTag.size(); ++j) {
+            CompoundTag compoundTag = listTag.getCompound(j);
+            int k = compoundTag.getShort("Slot") & 0xFFFF;
+            if (k < container.getContainerSize()) {
+                container.setItem(k, ItemStack.of(compoundTag));
+            }
+        }
+    }
+
+    public static ListTag writeItems(List<ItemStack> items) {
+        ListTag listTag = new ListTag();
+        for (int i = 0; i < items.size(); ++i) {
+            ItemStack itemStack = items.get(i);
+            if (!itemStack.isEmpty()) {
+                CompoundTag compoundTag = new CompoundTag();
+                compoundTag.putByte("Slot", (byte) i);
+                itemStack.save(compoundTag);
+                listTag.add(compoundTag);
+            }
+        }
+        return listTag;
+    }
+
+    public static NonNullList<ItemStack> readItems(ListTag listTag, int size) {
+        NonNullList<ItemStack> list = NonNullList.withSize(size, ItemStack.EMPTY);
+        for (int j = 0; j < listTag.size(); ++j) {
+            CompoundTag compoundTag = listTag.getCompound(j);
+            int k = compoundTag.getByte("Slot") & 255;
+            if (k < list.size()) {
+                list.set(k, ItemStack.of(compoundTag));
+            }
+        }
+        return list;
     }
 
     public static CompoundTag writeBlockPos(BlockPos pos) {

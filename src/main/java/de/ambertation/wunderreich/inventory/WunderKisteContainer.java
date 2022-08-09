@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
 import net.minecraft.world.entity.player.Player;
@@ -33,7 +34,7 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
             items = new ListTag();
             global.put("items", items);
         } else {
-            items = global.getList("items", 10);
+            items = global.getList("items", Tag.TAG_COMPOUND);
         }
         fromTag(items);
     }
@@ -61,6 +62,7 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
     }
 
     public ListTag createTag() {
+        //TODO: use NbtTagHelper.writeContainer
         ListTag listTag = new ListTag();
 
         for (int i = 0; i < this.getContainerSize(); ++i) {
