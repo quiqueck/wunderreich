@@ -9,6 +9,7 @@ import java.util.function.Function;
 public class CachedNBTValue<D, T extends Tag> {
     private final CompoundTag baseTag;
     private D cachedValue;
+    private final D defaultValue;
     public final String tagName;
     private final Function<T, D> getter;
     private final Function<D, Tag> setter;
@@ -27,12 +28,34 @@ public class CachedNBTValue<D, T extends Tag> {
     public CachedNBTValue(
             CompoundTag baseTag,
             String tagName,
+            D defaultValue,
+            Function<T, D> getter,
+            Function<D, Tag> setter
+    ) {
+        this(baseTag, tagName, defaultValue, getter, setter, (old, fresh) -> {
+        });
+    }
+
+    public CachedNBTValue(
+            CompoundTag baseTag,
+            String tagName,
+            Function<T, D> getter,
+            Function<D, Tag> setter,
+            BiConsumer<D, D> changed
+    ) {
+        this(baseTag, tagName, null, getter, setter, changed);
+    }
+
+    public CachedNBTValue(
+            CompoundTag baseTag,
+            String tagName,
+            D defaultValue,
             Function<T, D> getter,
             Function<D, Tag> setter,
             BiConsumer<D, D> changed
     ) {
         cachedValue = null;
-
+        this.defaultValue = defaultValue;
         this.baseTag = baseTag;
         this.tagName = tagName;
         this.getter = getter;
@@ -44,9 +67,10 @@ public class CachedNBTValue<D, T extends Tag> {
         if (cachedValue != null) return cachedValue;
 
         if (!baseTag.contains(tagName)) {
-            return null;
+            return defaultValue;
         } else {
             cachedValue = getter.apply((T) baseTag.get(tagName));
+            if (cachedValue == null) cachedValue = defaultValue;
             changed.accept(null, cachedValue);
             return cachedValue;
         }

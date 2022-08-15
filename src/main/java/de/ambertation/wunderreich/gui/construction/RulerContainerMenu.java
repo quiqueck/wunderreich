@@ -1,9 +1,7 @@
 package de.ambertation.wunderreich.gui.construction;
 
 import de.ambertation.lib.ui.layout.values.Rectangle;
-import de.ambertation.wunderreich.items.construction.BluePrintData;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
-import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 
 import net.minecraft.network.FriendlyByteBuf;
@@ -30,7 +28,7 @@ public class RulerContainerMenu extends AbstractContainerMenu {
 
     static final Rectangle MATERIAL_PANEL = new Rectangle(5, 52, 177, 70);
     static final Rectangle INVENTORY_PANEL = new Rectangle(6, 132, 174, 96);
-    static final Rectangle SDF_PANEL = new Rectangle(301, 67, 51, 47);
+    static final Rectangle SDF_PANEL = new Rectangle(301, 67, 51 + 20, 47 + 20);
 
     public RulerContainerMenu(int synchronizationID, Inventory inventory, FriendlyByteBuf packetByteBuf) {
         this(synchronizationID, inventory, packetByteBuf.readItem());
@@ -53,29 +51,27 @@ public class RulerContainerMenu extends AbstractContainerMenu {
         this.inventory = inventory;
         dataContainer = new RulerDataContainer(this);
         data = ConstructionData.getConstructionData(rulerStack);
-        RulerContainer rc = data.MATERIAL_DATA.get();
+        RulerContainer rc = data == null ? null : data.MATERIAL_DATA.get();
         if (rc == null) {
             rc = new RulerContainer();
-            data.MATERIAL_DATA.set(rc);
+            if (data != null)
+                data.MATERIAL_DATA.set(rc);
         }
         container = rc;
-        this.dataContainer.setItem(RulerDataContainer.RULER_SLOT, rulerStack);
         if (data != null && data.SDF_DATA.get() != null) {
-            ItemStack bp = new ItemStack(WunderreichItems.BLUE_PRINT, 1);
-            BluePrintData bData = BluePrintData.getBluePrintData(bp);
-            bData.SDF_DATA.set(data.SDF_DATA.get());
-            this.dataContainer.setItem(
-                    RulerDataContainer.SDF_SLOT_START,
-                    bp
-            );
+            this.dataContainer.addRecursive(data.SDF_DATA.get());
         }
+
         this.rulerStack = rulerStack;
         container.callOnChange((c) -> {
-            data.MATERIAL_DATA.set(c);
-            System.out.println("---DIRTY");
-            printInfo();
+            if (data != null) {
+                data.MATERIAL_DATA.set(c);
+                System.out.println("---DIRTY");
+                printInfo();
+            }
         });
         System.out.println("---INIT");
+
 
         addInventorySlots(INVENTORY_PANEL);
         addMaterialSlots(MATERIAL_PANEL);
@@ -86,20 +82,32 @@ public class RulerContainerMenu extends AbstractContainerMenu {
     SDFSlot addSDFSlots(Rectangle screenBounds) {
         System.out.println("---SLOTS");
         printInfo();
-//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 1, screenBounds.top + 7, 0));
-//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 0, screenBounds.top + 32, 0));
-//
-//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 12, screenBounds.top + 19, 0));
-//        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 36, screenBounds.top + 20, 0));
+        SDFSlot inp0 = new SDFSlot(
+                dataContainer,
+                this,
+                screenBounds.left + 1,
+                screenBounds.top + 7
+        );
+        SDFSlot inp1 = new SDFSlot(
+                dataContainer,
+                this,
+                screenBounds.left + 0,
+                screenBounds.top + 32
+
+        );
         this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 28, screenBounds.top + 1, 0));
         SDFSlot slot = new SDFSlot(
                 dataContainer,
                 this,
-                RulerDataContainer.SDF_SLOT_START,
                 screenBounds.left + 12,
-                screenBounds.top + 19
+                screenBounds.top + 19,
+                inp0,
+                inp1,
+                data.ACTIVE_SLOT.get()
         );
         this.addSlot(slot);
+        this.addSlot(inp0);
+        this.addSlot(inp1);
         return slot;
     }
 

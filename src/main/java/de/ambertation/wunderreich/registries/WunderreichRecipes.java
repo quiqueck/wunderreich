@@ -28,7 +28,19 @@ public class WunderreichRecipes {
                 .material('P', Items.PAPER)
                 .group("blueprint_sphere")
                 .registerAndCreateAdvancement(
-                        AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS,
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL,
+                        List.of(WunderreichItems.RULER)
+                );
+
+        RecipeJsonBuilder
+                .create("blueprint_box")
+                .result(WunderreichItems.BLUE_PRINT_BOX)
+                .pattern("E", "P")
+                .material('E', Blocks.COBBLESTONE)
+                .material('P', Items.PAPER)
+                .group("blueprint_box")
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL,
                         List.of(WunderreichItems.RULER)
                 );
 
@@ -40,7 +52,7 @@ public class WunderreichRecipes {
                 .material('P', Items.PAPER)
                 .group("blueprint_sphere")
                 .registerAndCreateAdvancement(
-                        AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS,
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL,
                         List.of(WunderreichItems.RULER)
                 );
 

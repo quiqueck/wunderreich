@@ -13,8 +13,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -110,19 +108,32 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         Panel inventoryPanel = new Panel(RulerContainerMenu.SDF_PANEL);
 
         Container inventoryContainer = new Container(Value.fit(), Value.fit());
+
+        Button btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
+                .onPress(bt -> menu.sdfSlot.selectInput(0));
+        inventoryContainer.addChild(0, 0, btSelectInputA);
+
         Image inputSlotA = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(0, 8, inputSlotA);
 
-        Item stackTest = new Item(Value.fit(), Value.fit())
-                .setItem(new ItemStack(Items.AMETHYST_SHARD, 1));
-        inventoryContainer.addChild(0, 8, stackTest);
+//        Item stackTest = new Item(Value.fit(), Value.fit())
+//                .setItem(new ItemStack(Items.AMETHYST_SHARD, 1));
+//        inventoryContainer.addChild(0, 8, stackTest);
+
+        Button btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
+                .onPress(bt -> menu.sdfSlot.selectInput(1));
+        inventoryContainer.addChild(0, 47, btSelectInputB);
 
         Image inputSlotB = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(0, 32, inputSlotB);
+
+        Button btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
+                .onPress(bt -> menu.sdfSlot.selectParent());
+        inventoryContainer.addChild(47, 20, btSelectParent);
 
         Image parentSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
@@ -142,6 +153,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         inventoryPanel.setChild(inventoryContainer);
         inventoryPanel.calculateLayout();
+
         menu.sdfSlot.callOnChange(this::slotChanged);
 
         return inventoryPanel;

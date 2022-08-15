@@ -68,14 +68,6 @@ public class NbtTagHelper {
         return list;
     }
 
-    public static CompoundTag writeBlockPos(BlockPos pos) {
-        CompoundTag bp = new CompoundTag();
-        bp.putInt("x", pos.getX());
-        bp.putInt("y", pos.getY());
-        bp.putInt("z", pos.getZ());
-        return bp;
-    }
-
     public static Float3 readPos(CompoundTag tag) {
         if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
         return Float3.of(tag.getFloat("x"), tag.getFloat("y"), tag.getFloat("z"));
@@ -86,6 +78,19 @@ public class NbtTagHelper {
         bp.putFloat("x", (float) pos.x);
         bp.putFloat("y", (float) pos.y);
         bp.putFloat("z", (float) pos.z);
+        return bp;
+    }
+
+    public static BlockPos readBlockPos(CompoundTag tag) {
+        if (!tag.contains("x") || !tag.contains("y") || !tag.contains("z")) return null;
+        return new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
+    }
+
+    public static CompoundTag writeBlockPos(BlockPos pos) {
+        CompoundTag bp = new CompoundTag();
+        bp.putInt("x", pos.getX());
+        bp.putInt("y", pos.getY());
+        bp.putInt("z", pos.getZ());
         return bp;
     }
 
@@ -116,7 +121,7 @@ public class NbtTagHelper {
     public static Bounds readBounds(CompoundTag tag) {
         if (!tag.contains("lx") || !tag.contains("ly") || !tag.contains("lz") || !tag.contains("hx") || !tag.contains(
                 "hy") || !tag.contains("hz")) return null;
-        return new Bounds(
+        return Bounds.of(
                 tag.getFloat("lx"),
                 tag.getFloat("ly"),
                 tag.getFloat("lz"),

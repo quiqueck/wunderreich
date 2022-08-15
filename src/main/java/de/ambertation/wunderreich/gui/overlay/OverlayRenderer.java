@@ -3,7 +3,9 @@ package de.ambertation.wunderreich.gui.overlay;
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.SDFUnion;
+import de.ambertation.lib.math.sdf.SDFMove;
+import de.ambertation.lib.math.sdf.shapes.BaseShape;
+import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -63,32 +65,46 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     @ApiStatus.Internal
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, double x, double y, double z) {
-        positions.clear();
         final Player player = Minecraft.getInstance().player;
 
 
         ItemStack ruler = player.getMainHandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) ruler = player.getOffhandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
+        positions.clear();
 
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
         if (camera.isInitialized()) {
             Float3 pos = Float3.of(camera.getPosition());
 
-            ConstructionData.lastTarget = getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5);
+            ConstructionData.setLastTargetOnClient(getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5));
             Vec3 camPos = camera.getPosition().reverse();
 
             VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
             renderBlockOutline(vertexConsumer, poseStack,
-                    ConstructionData.lastTarget, camPos, .01f, COLOR_SELECTION, 1
+                    ConstructionData.getLastTarget(), camPos, .01f, COLOR_SELECTION, 1
             );
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
-                Bounds box = constructionData.getBoundingBox();
-                if (box != null) {
-                    final Float3 targetPos = Float3.of(ConstructionData.lastTarget);
+                SDF sdf_active = constructionData.getActiveSDF();
+                SDF sdf_root = sdf_active.getRoot();
+                SDF sdf = sdf_active;
+                SDF sdf_moved_root = sdf_root;
+
+
+                if (sdf != null && !(sdf instanceof Empty)) {
+                    Float3 offset = constructionData.CENTER.get();
+                    if (offset != null) {
+                        sdf = new SDFMove(sdf, offset);
+                        sdf_moved_root = new SDFMove(sdf_root, offset);
+                    }
+
+
+                    Bounds box = sdf.getBoundingBox();
+                    Bounds rootBox = sdf_moved_root.getBoundingBox();
+                    final Float3 targetPos = Float3.of(ConstructionData.getLastTarget());
                     final Bounds.Interpolate targetCorner = box.isCornerOrCenter(targetPos);
 
                     time += Minecraft.getInstance().getDeltaFrameTime();
@@ -98,6 +114,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
 
                     if (constructionData.inReach(pos)) {
+                        //resize/move bounding Box
                         if (constructionData.getSelectedCorner() != null) {
                             Bounds.Interpolate selectedCorner = constructionData.getSelectedCorner();
 
@@ -107,14 +124,21 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     box.get(selectedCorner), camPos, 0.1f,
                                     COLOR_PURPLE, 1
                             );
+
+                            if (sdf_active instanceof BaseShape bs) {
+                                if (offset != null) {
+                                    bs.setFromBoundingBox(box.move(offset.mul(-1)));
+                                } else {
+                                    bs.setFromBoundingBox(box);
+                                }
+                                constructionData.SDF_DATA.set(sdf_root);
+                            }
                         }
-                        Bounds bbb = new Bounds(
-                                Float3.of(box.getCenter().sub(Float3.of(3, 3, 10)).toBlockPos()),
-                                Float3.of(box.getCenter().add(Float3.of(3, 3, 10)).toBlockPos())
-                        );
 
                         renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_BOUNDING_BOX, 1);
-                        renderBlockOutline(vertexConsumer, poseStack, bbb, camPos, 0, COLOR_BOUNDING_BOX, 1);
+                        renderBlockOutline(vertexConsumer, poseStack, rootBox, camPos, 0, COLOR_BOUNDING_BOX, .25f);
+
+
                         if (constructionData.getSelectedCorner() == null) {
                             for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS_AND_CENTER) {
                                 if ((targetCorner != null && targetCorner.idx == corner.idx)) {
@@ -135,46 +159,11 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     );
                                 }
                             }
-
-                            for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS) {
-                                positions.add(new RenderInfo(
-                                        bbb.get(corner), 0.1f,
-                                        blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
-                                        COLOR_SELECTION, phase
-                                ));
-                                renderBlockOutline(
-                                        vertexConsumer, poseStack, bbb.get(corner), camPos, 0.1f,
-                                        blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 1
-                                );
-                            }
                         }
-                        SDF e = new SDFUnion(
-                                box.innerSphere(),
-                                bbb.innerBox()
-                        );
 
-                        box = box.encapsulate(bbb);
-                        for (double xx = box.min.x; xx <= box.max.x; xx++) {
-                            for (double xy = box.min.y; xy <= box.max.y; xy++) {
-                                for (double xz = box.min.z; xz <= box.max.z; xz++) {
-                                    final Float3 p = Float3.of(xx, xy, xz);
-                                    double dist = e.dist(p);
-                                    if (dist < 0 && dist > -1) {
-                                        positions.add(new RenderInfo(
-                                                p, 0.2f,
-                                                COLOR_BLOCK_PREVIEW_FILL, 0.95f,
-                                                COLOR_BLOCK_PREVIEW_OUTLINE, 1
-                                        ));
-                                    }
-//                                    DebugRenderer.renderFloatingText(
-//                                            "" + (Math.round(4 * dist) / 4.0),
-//                                            p.x, p.y, p.z,
-//                                            dist < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
-//                                    );
+                        renderSDF(sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.25f, 0, false);
+                        renderSDF(sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
 
-                                }
-                            }
-                        }
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
                     } else
@@ -182,7 +171,33 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                 }
             }
         } else {
-            ConstructionData.lastTarget = null;
+            ConstructionData.setLastTargetOnClient(null);
+        }
+    }
+
+    private void renderSDF(SDF sdf, Bounds box, float deflate, float alpha, float lineAlpha, boolean debugDist) {
+        for (double xx = box.min.x; xx <= box.max.x; xx++) {
+            for (double xy = box.min.y; xy <= box.max.y; xy++) {
+                for (double xz = box.min.z; xz <= box.max.z; xz++) {
+                    final Float3 p = Float3.of(xx, xy, xz);
+                    double dist = sdf.dist(p);
+                    if (dist < 0 && dist > -1) {
+                        positions.add(new RenderInfo(
+                                p, deflate,
+                                COLOR_BLOCK_PREVIEW_FILL, alpha,
+                                COLOR_BLOCK_PREVIEW_OUTLINE, lineAlpha
+                        ));
+                    }
+                    if (debugDist) {
+                        DebugRenderer.renderFloatingText(
+                                "" + (Math.round(4 * dist) / 4.0),
+                                p.x, p.y, p.z,
+                                dist < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
+                        );
+                    }
+
+                }
+            }
         }
     }
 

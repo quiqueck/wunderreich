@@ -4,42 +4,45 @@ import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
+import de.ambertation.wunderreich.network.ChangedTargetBlockMessage;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.ByteTag;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.*;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
 import org.jetbrains.annotations.ApiStatus;
 
 public class ConstructionData {
     private static final String SDF_TAG = "sdf";
-    private static final String BOUNDING_BOX_TAG = "bb";
+    private static final String CENTER_TAG = "c";
     private static final String SELECTED_CORNER_TAG = "sc";
     private static final String MATERIAL_TAG = "material";
+    private static final String ACTIVE_SLOT_TAG = "a";
     private static final int VALID_RADIUS_SQUARE = 64 * 64;
     private static final String CONSTRUCTION_DATA_TAG = "construction";
 
-    public final CachedNBTValue<Bounds, CompoundTag> BOUNDING_BOX;
+    public final CachedNBTValue<Float3, CompoundTag> CENTER;
     public final CachedNBTValue<Bounds.Interpolate, ByteTag> SELECTED_CORNER;
 
     public final CachedNBTValue<SDF, Tag> SDF_DATA;
+    public final CachedNBTValue<Integer, IntTag> ACTIVE_SLOT;
 
     public final CachedNBTValue<RulerContainer, ListTag> MATERIAL_DATA;
     @ApiStatus.Internal
-    public static BlockPos lastTarget;
+    private static BlockPos lastTarget;
 
 
     public ConstructionData(CompoundTag baseTag) {
-        BOUNDING_BOX = new CachedNBTValue<>(
+
+        CENTER = new CachedNBTValue<>(
                 baseTag,
-                BOUNDING_BOX_TAG,
-                NbtTagHelper::readBounds,
-                NbtTagHelper::writeBounds
+                CENTER_TAG,
+                Float3.ZERO,
+                NbtTagHelper::readPos,
+                NbtTagHelper::writePos
         );
         SELECTED_CORNER = new CachedNBTValue<>(
                 baseTag,
@@ -64,6 +67,31 @@ public class ConstructionData {
                 },
                 NbtTagHelper::writeContainer
         );
+
+        ACTIVE_SLOT = new CachedNBTValue<>(
+                baseTag,
+                ACTIVE_SLOT_TAG,
+                0,
+                IntTag::getAsInt,
+                IntTag::valueOf
+        );
+    }
+
+    public static BlockPos getLastTarget() {
+        return lastTarget;
+    }
+
+    public static void setLastTargetOnClient(BlockPos newTarget) {
+        if (lastTarget == newTarget) return;
+
+        if (lastTarget == null || newTarget == null || lastTarget.getX() != newTarget.getX() || lastTarget.getY() != newTarget.getY() || lastTarget.getZ() != newTarget.getZ()) {
+            lastTarget = newTarget;
+            ChangedTargetBlockMessage.INSTANCE.send(newTarget);
+        }
+    }
+
+    public static void setLastTargetOnServer(BlockPos lastTarget) {
+        ConstructionData.lastTarget = lastTarget;
     }
 
     public void sdfObjectDidChange(SDF old, SDF fresh) {
@@ -90,6 +118,19 @@ public class ConstructionData {
         return new ConstructionData(tag.getCompound(CONSTRUCTION_DATA_TAG));
     }
 
+    public SDF getRootSDF() {
+        SDF s = SDF_DATA.get();
+        return s;
+    }
+
+    public SDF getActiveSDF() {
+        SDF s = SDF_DATA.get();
+        if (s == null) return null;
+
+        s = s.getChildWithGraphIndex(ACTIVE_SLOT.get());
+        return s;
+    }
+
     public Bounds.Interpolate getSelectedCorner() {
         return SELECTED_CORNER.get();
     }
@@ -99,38 +140,32 @@ public class ConstructionData {
     }
 
     public Bounds getBoundingBox() {
-        return BOUNDING_BOX.get();
+        return getBoundingBox(getRootSDF());
     }
 
-    public void setBoundingBox(Bounds bb) {
-        BOUNDING_BOX.set(bb);
+    public Bounds getActiveBoundingBox() {
+        return getBoundingBox(getActiveSDF());
+    }
+
+    public Bounds getBoundingBox(SDF sdf) {
+        if (sdf != null) {
+            Float3 offset = CENTER.get();
+            Bounds box = sdf.getBoundingBox();
+            if (offset != null) box = box.move(offset);
+            return box;
+        }
+        return Bounds.EMPTY;
     }
 
     public Bounds getNewBoundsForSelectedCorner() {
         Bounds.Interpolate selectedCorner = getSelectedCorner();
-        if (selectedCorner.idx == Bounds.Interpolate.CENTER.idx) {
-            return getBoundingBox().moveToCenter(Float3.of(ConstructionData.lastTarget));
+        if (Objects.equals(selectedCorner.idx, Bounds.Interpolate.CENTER.idx)) {
+            System.out.println("New Center:" + Float3.of(ConstructionData.getLastTarget()));
+            return getBoundingBox().moveToCenter(Float3.of(ConstructionData.getLastTarget()));
         }
 
         Bounds.Interpolate oppositeCorner = selectedCorner.opposite();
-        return new Bounds(getBoundingBox().get(oppositeCorner), Float3.of(ConstructionData.lastTarget));
-    }
-
-    public Bounds addToBounds(BlockPos pos) {
-        Bounds bb = getBoundingBox();
-        if (bb == null) {
-            bb = new Bounds(pos);
-        } else {
-            bb = bb.encapsulate(pos);
-        }
-        setBoundingBox(bb);
-        return bb;
-    }
-
-    public Bounds shrink(BlockPos pos) {
-        Bounds bb = getBoundingBox().shrink(pos);
-        setBoundingBox(bb);
-        return bb;
+        return Bounds.of(getBoundingBox().get(oppositeCorner), Float3.of(ConstructionData.getLastTarget()));
     }
 
     public double distToCenterSquare(Float3 pos) {

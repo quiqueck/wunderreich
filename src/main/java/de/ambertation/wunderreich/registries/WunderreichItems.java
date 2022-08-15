@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.registries;
 
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDFUnion;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
@@ -68,11 +69,18 @@ public class WunderreichItems {
             () -> new BluePrint(() -> new Sphere(Float3.of(0, 0, 0), 8)),
             Configs.MAIN.allowConstructionTools.get()
     );
+
+    public static Item BLUE_PRINT_BOX = registerItem(
+            "blueprint_box",
+            () -> new BluePrint(() -> new Box(Float3.of(0, 0, 0), Float3.of(9, 5, 5))),
+            Configs.MAIN.allowConstructionTools.get()
+    );
     public static Item BLUE_PRINT_UNION = registerItem(
             "blueprint_union",
             () -> new BluePrint(() -> new SDFUnion(null, null)),
             Configs.MAIN.allowConstructionTools.get()
     );
+
 
     @NotNull
     public static FabricItemSettings makeItemSettings() {
