@@ -38,9 +38,47 @@ import org.jetbrains.annotations.NotNull;
 
 @Environment(EnvType.CLIENT)
 public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
-    record RenderInfo(Float3 pos, float deflate, int color, float alpha, int outlineColor, float outlineAlpha) {
+    record RenderInfo(Float3 pos, double camDistSquare, float deflate,
+                      int color, float alpha,
+                      int outlineColor, float outlineAlpha) {
+        public static RenderInfo withCamPos(
+                Float3 pos, Float3 camPos, float deflate,
+                int color, float alpha,
+                int outlineColor, float outlineAlpha
+        ) {
+            return new RenderInfo(
+                    pos,
+                    pos.sub(camPos).lengthSquare(),
+                    deflate,
+                    color,
+                    alpha,
+                    outlineColor,
+                    outlineAlpha
+            );
+        }
     }
 
+    public static final int[] FILL_COLORS = {
+            0xFFAA574A,
+            0xFFBE647D,
+            0xFFB381B3,
+            0xFF84A5D7,
+            0xFF39C6DC,
+            0xFF30E0BF,
+            0xFF8BF28F,
+            0xFFE8F966
+    };
+
+    public static final int[] OUTLINE_COLORS = {
+            0xFF331E2A,
+            0xFF44374C,
+            0xFF4A546E,
+            0xFF45748C,
+            0xFF3896A0,
+            0xFF39B8A9,
+            0xFF5ED9A5,
+            0xFF97F799
+    };
     public static final int COLOR_MINION_YELLOW = 0xFFFFE74C;
     public static final int COLOR_FIERY_ROSE = 0xFFFF5964;
     public static final int COLOR_PURPLE = 0xFF5F00BA;
@@ -80,6 +118,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
             ConstructionData.setLastTargetOnClient(getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5));
             Vec3 camPos = camera.getPosition().reverse();
+            final Float3 camP = pos;
 
             VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
             renderBlockOutline(vertexConsumer, poseStack,
@@ -142,14 +181,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         if (constructionData.getSelectedCorner() == null) {
                             for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS_AND_CENTER) {
                                 if ((targetCorner != null && targetCorner.idx == corner.idx)) {
-                                    positions.add(new RenderInfo(
-                                            box.get(corner), 0.1f,
+                                    positions.add(RenderInfo.withCamPos(
+                                            box.get(corner), camP, 0.1f,
                                             COLOR_FIERY_ROSE, 0.5f,
                                             COLOR_FIERY_ROSE, 0.8f
                                     ));
                                 } else {
-                                    positions.add(new RenderInfo(
-                                            box.get(corner), 0.1f,
+                                    positions.add(RenderInfo.withCamPos(
+                                            box.get(corner), camP, 0.1f,
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
                                             COLOR_SELECTION, phase
                                     ));
@@ -161,8 +200,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             }
                         }
 
-                        renderSDF(sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.25f, 0, false);
-                        renderSDF(sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
+                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.25f, 0, false);
+                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
@@ -170,27 +209,52 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_OUT_OF_REACH, 1);
                 }
             }
+
+            positions.sort((a, b) -> {
+                if (Math.abs(b.camDistSquare - a.camDistSquare) < 0.001) return 0;
+                if (b.camDistSquare > a.camDistSquare) return 1;
+                return -1;
+            });
         } else {
             ConstructionData.setLastTargetOnClient(null);
         }
+
+
     }
 
-    private void renderSDF(SDF sdf, Bounds box, float deflate, float alpha, float lineAlpha, boolean debugDist) {
+    private void renderSDF(
+            Float3 camP,
+            SDF sdf,
+            Bounds box,
+            float deflate,
+            float alpha,
+            float lineAlpha,
+            boolean debugDist
+    ) {
+        SDF.EvaluationData ed = new SDF.EvaluationData();
+        double dist = 0;
         for (double xx = box.min.x; xx <= box.max.x; xx++) {
             for (double xy = box.min.y; xy <= box.max.y; xy++) {
                 for (double xz = box.min.z; xz <= box.max.z; xz++) {
                     final Float3 p = Float3.of(xx, xy, xz);
-                    double dist = sdf.dist(p);
+                    sdf.dist(ed, p);
+                    dist = ed.dist();
+
                     if (dist < 0 && dist > -1) {
-                        positions.add(new RenderInfo(
-                                p, deflate,
-                                COLOR_BLOCK_PREVIEW_FILL, alpha,
-                                COLOR_BLOCK_PREVIEW_OUTLINE, lineAlpha
+                        positions.add(RenderInfo.withCamPos(
+                                p,
+                                camP,
+                                deflate,
+                                FILL_COLORS[ed.source().getGraphIndex() % FILL_COLORS.length],
+                                alpha,
+                                OUTLINE_COLORS[ed.source().getGraphIndex() % OUTLINE_COLORS.length],
+                                lineAlpha
                         ));
                     }
+                    
                     if (debugDist) {
                         DebugRenderer.renderFloatingText(
-                                "" + (Math.round(4 * dist) / 4.0),
+                                ed.source().getGraphIndex() + ":" + (Math.round(4 * dist) / 4.0),
                                 p.x, p.y, p.z,
                                 dist < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
                         );
