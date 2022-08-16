@@ -1,7 +1,10 @@
 package de.ambertation.wunderreich.utils;
 
+import de.ambertation.lib.math.Float3;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,10 +48,14 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
     }
 
     public int getRandomIndex(Supplier<Float> rnd) {
+        return getRandomIndexAt(null, p -> rnd.get());
+    }
+
+    public int getRandomIndexAt(Float3 pos, Function<Float3, Float> rnd) {
         final int CYCLES = 3;
         final int count = list.size();
         float sum = 0;
-        final float r = rnd.get();
+        final float r = rnd.apply(pos);
         float random = r * weightSum * CYCLES;
         for (int i = 0; i < count * CYCLES; i++) {
             Entry<T> e = list.get(i % count);
@@ -65,6 +72,12 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
 
     public T getRandom(Supplier<Float> rnd) {
         int idx = getRandomIndex(rnd);
+        if (idx < 0 || idx >= list.size()) return null;
+        return get(idx);
+    }
+
+    public T getRandomAt(Float3 pos, Function<Float3, Float> rnd) {
+        int idx = getRandomIndexAt(pos, rnd);
         if (idx < 0 || idx >= list.size()) return null;
         return get(idx);
     }

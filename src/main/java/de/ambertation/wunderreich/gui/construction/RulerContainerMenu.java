@@ -28,7 +28,7 @@ public class RulerContainerMenu extends AbstractContainerMenu {
 
     static final Rectangle MATERIAL_PANEL = new Rectangle(5, 52, 177, 70);
     static final Rectangle INVENTORY_PANEL = new Rectangle(6, 132, 174, 96);
-    static final Rectangle SDF_PANEL = new Rectangle(301, 67, 51 + 20, 47 + 20);
+    static final Rectangle SDF_PANEL = new Rectangle(301, 67, 51 + 20, 47 + 40);
 
     public RulerContainerMenu(int synchronizationID, Inventory inventory, FriendlyByteBuf packetByteBuf) {
         this(synchronizationID, inventory, packetByteBuf.readItem());
@@ -95,7 +95,7 @@ public class RulerContainerMenu extends AbstractContainerMenu {
                 screenBounds.top + 32
 
         );
-        this.addSlot(new MaterialSlot(container, 0, screenBounds.left + 28, screenBounds.top + 1, 0));
+
         SDFSlot slot = new SDFSlot(
                 dataContainer,
                 this,
@@ -120,8 +120,8 @@ public class RulerContainerMenu extends AbstractContainerMenu {
 
         for (int i = RulerContainer.CATEGORIES_SLOT_START; i < RulerContainer.CATEGORIES_SLOT_END; i++) {
             int idx = i - RulerContainer.CATEGORIES_SLOT_START;
-            int page = idx / RulerContainer.ITEMS_PER_CATEGORY;
-            int pageIdx = idx % RulerContainer.ITEMS_PER_CATEGORY;
+            int page = container.pageForIndex(idx);
+            int pageIdx = container.indexOnPage(idx);
             int x = INV_SLOT_X + (pageIdx % ROW_SIZE) * INV_SLOT_WIDTH + INV_SLOT_PAD;
             int y = INV_SLOT_Y + (pageIdx / ROW_SIZE) * INV_SLOT_HEIGHT + INV_SLOT_PAD;
             this.addSlot(new MaterialSlot(container, idx, x, y, page));

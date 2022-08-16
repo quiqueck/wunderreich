@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.gui.construction;
 
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.BluePrint;
 import de.ambertation.wunderreich.items.construction.BluePrintData;
 import de.ambertation.wunderreich.network.ChangedSDFMessage;
@@ -78,7 +79,17 @@ public class SDFSlot extends Slot {
         }
     }
 
+    public boolean isEmpty() {
+        RulerDataContainer.SDFMap m = ((RulerDataContainer) container).getSDF(getContainerSlot());
+        if (m != null && m.sdf() != null) {
+            return m.sdf() instanceof Empty;
+        }
+        return true;
+    }
+
     public void selectInput(int inputIndex) {
+        if (inputs[inputIndex].isEmpty()) return;
+
         setCurrentSlot(inputs[inputIndex].currentSlot);
         updateInputSlots();
         setChanged();
@@ -105,7 +116,7 @@ public class SDFSlot extends Slot {
             setChanged();
             return mIdx;
         }
-        return 0;
+        return -1;
     }
 
     public int getMaterialIndex() {
@@ -113,7 +124,7 @@ public class SDFSlot extends Slot {
         if (m != null && m.sdf() != null && m.sdf() instanceof MaterialProvider mp) {
             return mp.getMaterialIndex();
         }
-        return 0;
+        return -1;
     }
 
 
@@ -135,6 +146,8 @@ public class SDFSlot extends Slot {
             for (int i = 0; i < inputs.length; i++) {
                 if (m.sdf().getInputSlotCount() > i) {
                     inputs[i].setSDF(m.sdf().getSlot(i));
+                } else {
+                    inputs[i].setSDF(new Empty());
                 }
             }
         }

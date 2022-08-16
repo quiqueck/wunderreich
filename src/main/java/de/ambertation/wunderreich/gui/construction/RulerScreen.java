@@ -6,6 +6,7 @@ import de.ambertation.lib.ui.layout.values.Rectangle;
 import de.ambertation.lib.ui.layout.values.Size;
 import de.ambertation.lib.ui.layout.values.Value;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.network.ChangedSDFMessage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiComponent;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -103,23 +105,36 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         return inventoryPanel;
     }
 
+    Text materialText;
+    Item materialItem;
+    Button btSelectMat;
+
     private Panel createSDFPanel() {
 
         Panel inventoryPanel = new Panel(RulerContainerMenu.SDF_PANEL);
 
         Container inventoryContainer = new Container(Value.fit(), Value.fit());
-
-        Text materialText = new Text(
+        materialText = new Text(
                 Value.fixed(INVENTORY_SLOT.width),
                 Value.fixed(INVENTORY_SLOT.height),
                 Component.literal("-")
-        ).centerHorizontal().centerVertical();
+        ).alignTop();
 
+        materialItem = new Item(Value.fit(), Value.fit())
+                .setItem(ItemStack.EMPTY);
+
+
+        Button btRealize = new Button(
+                Value.fit(),
+                Value.fit(),
+                Component.literal("Realize")
+        ).onPress(bt -> ChangedSDFMessage.INSTANCE.sendRealize());
+        inventoryContainer.addChild(0, 70, btRealize);
 
         Button btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectInput(0);
-                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                    updateMaterialDisplay();
                 });
         inventoryContainer.addChild(0, 0, btSelectInputA);
 
@@ -135,7 +150,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         Button btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("B"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectInput(1);
-                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                    updateMaterialDisplay();
                 });
         inventoryContainer.addChild(0, 47, btSelectInputB);
 
@@ -147,7 +162,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         Button btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("P"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectParent();
-                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                    updateMaterialDisplay();
                 });
         inventoryContainer.addChild(47, 20, btSelectParent);
 
@@ -161,18 +176,18 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setUvRect(LARGE_DIAMOND);
         inventoryContainer.addChild(3, 11, SDFSlot);
 
-        Image materialSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
-                .setResourceSize(SDF_TEXTURE_SIZE)
-                .setUvRect(INVENTORY_SLOT);
-        inventoryContainer.addChild(27, 0, materialSlot);
+
+        inventoryContainer.addChild(27, 0, materialItem);
+        //inventoryContainer.addChild(27, 0, materialText);
+//        Image materialSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
+//                .setResourceSize(SDF_TEXTURE_SIZE)
+//                .setUvRect(INVENTORY_SLOT);
+//        inventoryContainer.addChild(27, 0, materialSlot);
 
 
-        inventoryContainer.addChild(27, 0, materialText);
-
-        Button btSelectMat = new Button(Value.fixed(18), Value.fit(), Component.literal("M"))
+        btSelectMat = new Button(Value.fixed(18), Value.fit(), Component.literal("M"))
                 .onPress(bt -> {
-                    int mIdx = menu.sdfSlot.selectNextMaterial();
-                    materialText.setText(Component.literal("" + (mIdx + 1)));
+                    updateMaterialDisplay(menu.sdfSlot.selectNextMaterial());
                 });
         inventoryContainer.addChild(27 + 15, 0, btSelectMat);
 
@@ -181,8 +196,26 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         inventoryPanel.calculateLayout();
 
         menu.sdfSlot.callOnChange(this::slotChanged);
-
+        updateMaterialDisplay();
         return inventoryPanel;
+    }
+
+    private void updateMaterialDisplay() {
+        updateMaterialDisplay(menu.sdfSlot.getMaterialIndex());
+    }
+
+    private void updateMaterialDisplay(int mIdx) {
+        if (mIdx < 0 || mIdx >= RulerContainer.MAX_CATEGORIES) {
+            //materialText.setText(Component.literal(""));
+            materialItem.setItem(ItemStack.EMPTY);
+            materialItem.setDecoration("");
+            if (btSelectMat != null) btSelectMat.setEnabled(false);
+        } else {
+            //materialText.setText(Component.literal("" + (mIdx + 1)));
+            materialItem.setItem(menu.container.getPageItem(mIdx, 0));
+            materialItem.setDecoration("" + (mIdx + 1));
+            if (btSelectMat != null) btSelectMat.setEnabled(true);
+        }
     }
 
     void slotChanged(SDFSlot slot) {

@@ -3,16 +3,24 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.SDFMove;
+import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.network.ChangedTargetBlockMessage;
+import de.ambertation.wunderreich.noise.OpenSimplex2;
+import de.ambertation.wunderreich.utils.RandomList;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
+import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
 public class ConstructionData {
@@ -184,5 +192,53 @@ public class ConstructionData {
 
     public boolean inReach(Float3 pos) {
         return distToCenterSquare(pos) < VALID_RADIUS_SQUARE;
+    }
+
+    public void realize(MinecraftServer server, ServerPlayer player) {
+        SDF sdf = getRootSDF();
+        if (sdf != null) {
+            Float3 offset = CENTER.get();
+            if (offset != null) {
+                sdf = new SDFMove(sdf, offset);
+            }
+
+            final Function<Float3, Float>
+                    noise = (cPos) -> (1 + OpenSimplex2.noise3_ImproveXZ(
+                    20688,
+                    cPos.x * 0.15,
+                    cPos.y * 0.2,
+                    cPos.z * 0.15
+            )) / 2;
+            //noise = (p) -> RandomList.random();
+
+            final RandomList<ItemStack>[] materials = new RandomList[RulerContainer.MAX_CATEGORIES];
+            for (int i = 0; i < materials.length; i++)
+                materials[i] = new RandomList<>(RulerContainer.ITEMS_PER_CATEGORY);
+
+            RulerContainer materialContainer = MATERIAL_DATA.get();
+            for (int page = 0; page < RulerContainer.MAX_CATEGORIES; page++) {
+                for (int pageIndex = 0; pageIndex < RulerContainer.ITEMS_PER_CATEGORY; pageIndex++) {
+                    final int slot = materialContainer.getCategorySlotIndex(page, pageIndex)
+                            + RulerContainer.CATEGORIES_SLOT_START;
+                    ItemStack stack = materialContainer.getItem(slot);
+                    if (stack == null || stack.isEmpty()) continue;
+                    if (!(stack.getItem() instanceof BlockItem)) continue;
+
+
+                    materials[page].add(stack, stack.getCount());
+                }
+            }
+
+            sdf.evaluate((p, ed) -> {
+                int mIdx = 0;
+                if (ed.source() instanceof MaterialProvider mp) mIdx = mp.getMaterialIndex();
+                ItemStack stack = materials[mIdx % materials.length].getRandomAt(p, noise);
+                player.level.setBlock(
+                        p.toBlockPos(),
+                        ((BlockItem) (stack.getItem())).getBlock().defaultBlockState(),
+                        2
+                );
+            }, null);
+        }
     }
 }

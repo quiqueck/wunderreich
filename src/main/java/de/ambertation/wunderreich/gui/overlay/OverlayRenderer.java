@@ -105,12 +105,12 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, double x, double y, double z) {
         final Player player = Minecraft.getInstance().player;
-
+        positions.clear();
 
         ItemStack ruler = player.getMainHandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) ruler = player.getOffhandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
-        positions.clear();
+
 
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
@@ -129,6 +129,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
                 SDF sdf_active = constructionData.getActiveSDF();
+                if (sdf_active == null) return;
                 SDF sdf_root = sdf_active.getRoot();
                 SDF sdf = sdf_active;
                 SDF sdf_moved_root = sdf_root;
@@ -201,7 +202,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             }
                         }
 
-                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.25f, 0, false);
+                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.75f, 0, false);
                         renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);

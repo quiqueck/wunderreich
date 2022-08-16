@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.gui.construction;
 
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.function.Consumer;
 
@@ -15,7 +16,7 @@ public class RulerContainer extends SimpleContainer {
     static final int HOTBAR_SLOT_START = INV_SLOT_END;
     static final int HOTBAR_SLOT_END = HOTBAR_SLOT_START + HOTBAR_SIZE;
 
-    static final int CATEGORIES_SLOT_START = 0;
+    public static final int CATEGORIES_SLOT_START = 0;
     static final int CATEGORIES_SLOT_END = CATEGORIES_SLOT_START + (MAX_CATEGORIES * ITEMS_PER_CATEGORY);
 
     public static final int SIZE = CATEGORIES_SLOT_END;
@@ -46,5 +47,21 @@ public class RulerContainer extends SimpleContainer {
             onChange.accept(this);
         }
         super.setChanged();
+    }
+
+    public int pageForIndex(int categorySlotsIndex) {
+        return categorySlotsIndex / RulerContainer.ITEMS_PER_CATEGORY;
+    }
+
+    public int indexOnPage(int categorySlotsIndex) {
+        return categorySlotsIndex % RulerContainer.ITEMS_PER_CATEGORY;
+    }
+
+    public int getCategorySlotIndex(int page, int pageIdx) {
+        return page * RulerContainer.ITEMS_PER_CATEGORY + pageIdx;
+    }
+
+    public ItemStack getPageItem(int page, int pageIdx) {
+        return getItem(getCategorySlotIndex(page, pageIdx) + CATEGORIES_SLOT_START);
     }
 }

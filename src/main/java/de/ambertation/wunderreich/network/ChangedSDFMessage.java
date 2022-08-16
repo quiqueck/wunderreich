@@ -29,6 +29,10 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
         this.sendToServer(new Content(Content.CHANGE_MATERIAL, -1, id));
     }
 
+    public void sendRealize() {
+        this.sendToServer(new Content(Content.REALIZE, -1, -1));
+    }
+
     @Override
     protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
         buf.writeVarInt(content.stateFlag);
@@ -81,12 +85,17 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
                 constructionData.SDF_DATA.set(s.getRoot());
             }
         }
+
+        if ((content.stateFlag & Content.REALIZE) == Content.REALIZE) {
+            constructionData.realize(server, player);
+        }
     }
 
 
     protected record Content(int stateFlag, int active, int material) {
         public static final int CHANGE_ACTIVE = 1 << 0;
         public static final int CHANGE_MATERIAL = 1 << 1;
+        public static final int REALIZE = 1 << 2;
     }
 }
 
