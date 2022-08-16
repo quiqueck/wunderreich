@@ -26,7 +26,7 @@ import net.minecraft.world.level.Level;
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 
-import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 
 public class Ruler extends Item implements FabricItem {
 
@@ -38,16 +38,17 @@ public class Ruler extends Item implements FabricItem {
     }
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+    public InteractionResultHolder<ItemStack> use(
+            @NotNull Level level,
+            Player player,
+            @NotNull InteractionHand interactionHand
+    ) {
         ItemStack ruler = player.getItemInHand(interactionHand);
         ConstructionData cd = ConstructionData.getConstructionData(ruler);
         //if (!level.isClientSide) return InteractionResultHolder.pass(ruler);
         if (cd != null) {
             Float3 highlightedBlock = Float3.of(ConstructionData.getLastTarget());
-            System.out.println(level.isClientSide ? "CLIENT---" : "SERVER---");
-            System.out.println("Click: " + ConstructionData.getLastTarget());
-            System.out.println("Corner: " + cd.getSelectedCorner());
-            System.out.println("Bounds: " + cd.getActiveBoundingBox());
+
             //deselect Corner
             if (cd.getSelectedCorner() != null) {
                 if (level.isClientSide) {
@@ -63,7 +64,7 @@ public class Ruler extends Item implements FabricItem {
                     ? null
                     : cd.getActiveBoundingBox()
                         .isCornerOrCenter(highlightedBlock);
-            System.out.println("Corner: " + corner);
+
             if (corner != null) {
                 cd.setSelectedCorner(corner);
                 return InteractionResultHolder.success(ruler);
@@ -71,19 +72,18 @@ public class Ruler extends Item implements FabricItem {
 
 
             if (player.isShiftKeyDown()) {
-                player.startUsingItem(interactionHand);
-                openScreen(player, ruler, interactionHand);
-                return InteractionResultHolder.success(ruler);
-            } else {
                 cd.CENTER.set(Float3.of(ConstructionData.getLastTarget()).blockAligned());
-                return InteractionResultHolder.success(ruler);
+            } else {
+                player.startUsingItem(interactionHand);
+                openScreen(player, ruler);
             }
+            return InteractionResultHolder.success(ruler);
         }
         return InteractionResultHolder.pass(ruler);
     }
 
     @Override
-    public void verifyTagAfterLoad(CompoundTag compoundTag) {
+    public void verifyTagAfterLoad(@NotNull CompoundTag compoundTag) {
         super.verifyTagAfterLoad(compoundTag);
         ConstructionData data = ConstructionData.getConstructionData(compoundTag);
         if (data.SDF_DATA.get() == null) {
@@ -95,13 +95,16 @@ public class Ruler extends Item implements FabricItem {
         }
     }
 
-    public static void openScreen(Player player, ItemStack rulerStack, InteractionHand interactionHand) {
+    public static void openScreen(Player player, ItemStack rulerStack) {
         if (player != null && player.level != null && !player.level.isClientSide) {
             System.out.println("open");
             player.openMenu(new ExtendedScreenHandlerFactory() {
-                @Nullable
                 @Override
-                public AbstractContainerMenu createMenu(int syncID, Inventory inventory, Player player) {
+                public @NotNull AbstractContainerMenu createMenu(
+                        int syncID,
+                        @NotNull Inventory inventory,
+                        @NotNull Player player
+                ) {
                     return new RulerContainerMenu(syncID, inventory, rulerStack);
                 }
 

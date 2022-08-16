@@ -4,7 +4,8 @@ import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFMove;
-import de.ambertation.lib.math.sdf.shapes.BaseShape;
+import de.ambertation.lib.math.sdf.interfaces.BoundedShape;
+import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -164,7 +165,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     COLOR_PURPLE, 1
                             );
 
-                            if (sdf_active instanceof BaseShape bs) {
+                            if (sdf_active instanceof BoundedShape bs) {
                                 if (offset != null) {
                                     bs.setFromBoundingBox(box.move(offset.mul(-1)));
                                 } else {
@@ -231,38 +232,27 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             float lineAlpha,
             boolean debugDist
     ) {
-        SDF.EvaluationData ed = new SDF.EvaluationData();
-        double dist = 0;
-        for (double xx = box.min.x; xx <= box.max.x; xx++) {
-            for (double xy = box.min.y; xy <= box.max.y; xy++) {
-                for (double xz = box.min.z; xz <= box.max.z; xz++) {
-                    final Float3 p = Float3.of(xx, xy, xz);
-                    sdf.dist(ed, p);
-                    dist = ed.dist();
+        sdf.evaluate(box, (p, ed) -> {
+            int mIdx = 0;
+            if (ed.source() instanceof MaterialProvider mp)
+                mIdx = mp.getMaterialIndex();
 
-                    if (dist < 0 && dist > -1) {
-                        positions.add(RenderInfo.withCamPos(
-                                p,
-                                camP,
-                                deflate,
-                                FILL_COLORS[ed.source().getGraphIndex() % FILL_COLORS.length],
-                                alpha,
-                                OUTLINE_COLORS[ed.source().getGraphIndex() % OUTLINE_COLORS.length],
-                                lineAlpha
-                        ));
-                    }
-                    
-                    if (debugDist) {
-                        DebugRenderer.renderFloatingText(
-                                ed.source().getGraphIndex() + ":" + (Math.round(4 * dist) / 4.0),
-                                p.x, p.y, p.z,
-                                dist < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
-                        );
-                    }
-
-                }
-            }
-        }
+            positions.add(RenderInfo.withCamPos(
+                    p,
+                    camP,
+                    deflate,
+                    FILL_COLORS[mIdx % FILL_COLORS.length],
+                    alpha,
+                    OUTLINE_COLORS[mIdx % OUTLINE_COLORS.length],
+                    lineAlpha
+            ));
+        }, debugDist ? (p, ed, didPlace) -> {
+            DebugRenderer.renderFloatingText(
+                    ed.source().getGraphIndex() + ":" + (Math.round(4 * ed.dist()) / 4.0),
+                    p.x, p.y, p.z,
+                    ed.dist() < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
+            );
+        } : null);
     }
 
     @ApiStatus.Internal

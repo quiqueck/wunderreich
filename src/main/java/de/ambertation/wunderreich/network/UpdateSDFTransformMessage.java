@@ -2,7 +2,7 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.shapes.BaseShape;
+import de.ambertation.lib.math.sdf.interfaces.BoundedShape;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -40,7 +40,7 @@ public class UpdateSDFTransformMessage extends ServerBoundPacketHandler<UpdateSD
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
         ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
         SDF sdf = constructionData.getActiveSDF();
-        if (sdf instanceof BaseShape bs) {
+        if (sdf instanceof BoundedShape bs) {
             bs.setFromBoundingBox(content.bounds);
         }
         constructionData.SDF_DATA.set(sdf.getRoot());

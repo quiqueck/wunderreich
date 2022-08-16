@@ -48,7 +48,7 @@ public abstract class ServerBoundPacketHandler<D> {
         AddRemoveWunderKisteMessage.INSTANCE.onRegister();
         CycleTradesMessage.INSTANCE.onRegister();
         SelectWhisperMessage.INSTANCE.onRegister();
-        ChangedActiveSDFMessage.INSTANCE.onRegister();
+        ChangedSDFMessage.INSTANCE.onRegister();
         ChangedTargetBlockMessage.INSTANCE.onRegister();
         UpdateSDFTransformMessage.INSTANCE.onRegister();
     }

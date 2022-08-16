@@ -1,9 +1,10 @@
 package de.ambertation.wunderreich.gui.construction;
 
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.wunderreich.items.construction.BluePrint;
 import de.ambertation.wunderreich.items.construction.BluePrintData;
-import de.ambertation.wunderreich.network.ChangedActiveSDFMessage;
+import de.ambertation.wunderreich.network.ChangedSDFMessage;
 
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -72,7 +73,7 @@ public class SDFSlot extends Slot {
             if (m != null && m.sdf() != null) {
                 int newIdx = m.sdf().getGraphIndex();
                 menu.data.ACTIVE_SLOT.set(newIdx);
-                ChangedActiveSDFMessage.INSTANCE.send(newIdx);
+                ChangedSDFMessage.INSTANCE.sendActive(newIdx);
             }
         }
     }
@@ -93,6 +94,26 @@ public class SDFSlot extends Slot {
                 setChanged();
             }
         }
+    }
+
+    public int selectNextMaterial() {
+        RulerDataContainer.SDFMap m = ((RulerDataContainer) container).getSDF(getContainerSlot());
+        if (m != null && m.sdf() != null && m.sdf() instanceof MaterialProvider mp) {
+            int mIdx = (mp.getMaterialIndex() + 1) % RulerContainer.MAX_CATEGORIES;
+            mp.setMaterialIndex(mIdx);
+            ChangedSDFMessage.INSTANCE.sendMaterial(mIdx);
+            setChanged();
+            return mIdx;
+        }
+        return 0;
+    }
+
+    public int getMaterialIndex() {
+        RulerDataContainer.SDFMap m = ((RulerDataContainer) container).getSDF(getContainerSlot());
+        if (m != null && m.sdf() != null && m.sdf() instanceof MaterialProvider mp) {
+            return mp.getMaterialIndex();
+        }
+        return 0;
     }
 
 

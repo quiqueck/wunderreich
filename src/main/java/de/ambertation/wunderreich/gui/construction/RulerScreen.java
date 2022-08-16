@@ -109,8 +109,18 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         Container inventoryContainer = new Container(Value.fit(), Value.fit());
 
+        Text materialText = new Text(
+                Value.fixed(INVENTORY_SLOT.width),
+                Value.fixed(INVENTORY_SLOT.height),
+                Component.literal("-")
+        ).centerHorizontal().centerVertical();
+
+
         Button btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
-                .onPress(bt -> menu.sdfSlot.selectInput(0));
+                .onPress(bt -> {
+                    menu.sdfSlot.selectInput(0);
+                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                });
         inventoryContainer.addChild(0, 0, btSelectInputA);
 
         Image inputSlotA = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -122,8 +132,11 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 //                .setItem(new ItemStack(Items.AMETHYST_SHARD, 1));
 //        inventoryContainer.addChild(0, 8, stackTest);
 
-        Button btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
-                .onPress(bt -> menu.sdfSlot.selectInput(1));
+        Button btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("B"))
+                .onPress(bt -> {
+                    menu.sdfSlot.selectInput(1);
+                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                });
         inventoryContainer.addChild(0, 47, btSelectInputB);
 
         Image inputSlotB = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -131,8 +144,11 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(0, 32, inputSlotB);
 
-        Button btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
-                .onPress(bt -> menu.sdfSlot.selectParent());
+        Button btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("P"))
+                .onPress(bt -> {
+                    menu.sdfSlot.selectParent();
+                    materialText.setText(Component.literal("" + (menu.sdfSlot.getMaterialIndex() + 1)));
+                });
         inventoryContainer.addChild(47, 20, btSelectParent);
 
         Image parentSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
@@ -149,6 +165,16 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(INVENTORY_SLOT);
         inventoryContainer.addChild(27, 0, materialSlot);
+
+
+        inventoryContainer.addChild(27, 0, materialText);
+
+        Button btSelectMat = new Button(Value.fixed(18), Value.fit(), Component.literal("M"))
+                .onPress(bt -> {
+                    int mIdx = menu.sdfSlot.selectNextMaterial();
+                    materialText.setText(Component.literal("" + (mIdx + 1)));
+                });
+        inventoryContainer.addChild(27 + 15, 0, btSelectMat);
 
 
         inventoryPanel.setChild(inventoryContainer);

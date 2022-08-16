@@ -82,16 +82,24 @@ public class ConstructionData {
     }
 
     public static void setLastTargetOnClient(BlockPos newTarget) {
-        if (lastTarget == newTarget) return;
-
-        if (lastTarget == null || newTarget == null || lastTarget.getX() != newTarget.getX() || lastTarget.getY() != newTarget.getY() || lastTarget.getZ() != newTarget.getZ()) {
-            lastTarget = newTarget;
+        if (setLastTargetCommon(newTarget)) {
             ChangedTargetBlockMessage.INSTANCE.send(newTarget);
         }
     }
 
     public static void setLastTargetOnServer(BlockPos lastTarget) {
-        ConstructionData.lastTarget = lastTarget;
+        setLastTargetCommon(lastTarget);
+    }
+
+    private static boolean setLastTargetCommon(BlockPos newTarget) {
+        if (lastTarget == newTarget) return false;
+
+        if (lastTarget == null || newTarget == null || lastTarget.getX() != newTarget.getX() || lastTarget.getY() != newTarget.getY() || lastTarget.getZ() != newTarget.getZ()) {
+            lastTarget = newTarget;
+            return true;
+        }
+
+        return false;
     }
 
     public void sdfObjectDidChange(SDF old, SDF fresh) {
