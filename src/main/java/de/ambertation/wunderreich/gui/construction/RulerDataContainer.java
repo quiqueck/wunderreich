@@ -102,19 +102,29 @@ public class RulerDataContainer implements Container {
         }
 
         BluePrintData bData = BluePrintData.getBluePrintData(itemStack);
+        SDF newSDF;
+        boolean doAdd = false;
         if (bData != null) {
-            SDF newSDF = bData.SDF_DATA.get();
-            if (currentSDF != null) {
-                SDF parent = currentSDF.sdf.getParent();
+            newSDF = bData.SDF_DATA.get();
+            doAdd = true;
+        } else {
+            newSDF = new Empty();
+        }
 
-                if (parent != null) {
-                    int oldSlot = parent.inputSlotIndex(currentSDF.sdf);
-                    parent.setSlot(oldSlot, newSDF);
-                }
+        if (currentSDF != null) {
+            SDF parent = currentSDF.sdf.getParent();
+
+            if (parent != null) {
+                int oldSlot = parent.inputSlotIndex(currentSDF.sdf);
+                parent.setSlot(oldSlot, newSDF);
+                doAdd = true;
             }
+        }
 
+        if (doAdd) {
             _addRecursive(newSDF);
         }
+
 
         setChanged();
     }
@@ -166,6 +176,17 @@ public class RulerDataContainer implements Container {
         if (currentSDF != null) {
             removeRecursive(currentSDF);
         }
+
+        if (currentSDF != null) {
+            SDF parent = currentSDF.sdf.getParent();
+
+            if (parent != null) {
+                int oldSlot = parent.inputSlotIndex(currentSDF.sdf);
+                SDF newSDF = new Empty();
+                parent.setSlot(oldSlot, newSDF);
+                addRecursive(newSDF);
+            }
+        }
         return currentSDF.wrapper;
     }
 
@@ -174,6 +195,16 @@ public class RulerDataContainer implements Container {
         SDFMap currentSDF = getSDF(idx);
         if (currentSDF != null) {
             _removeRecursive(currentSDF);
+        }
+        if (currentSDF != null) {
+            SDF parent = currentSDF.sdf.getParent();
+
+            if (parent != null) {
+                int oldSlot = parent.inputSlotIndex(currentSDF.sdf);
+                SDF newSDF = new Empty();
+                parent.setSlot(oldSlot, newSDF);
+                _addRecursive(newSDF);
+            }
         }
         return currentSDF.wrapper;
     }
