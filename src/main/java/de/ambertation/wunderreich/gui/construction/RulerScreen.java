@@ -1,11 +1,13 @@
 package de.ambertation.wunderreich.gui.construction;
 
+import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.ui.layout.components.*;
 import de.ambertation.lib.ui.layout.components.render.RenderHelper;
 import de.ambertation.lib.ui.layout.values.Rectangle;
 import de.ambertation.lib.ui.layout.values.Size;
 import de.ambertation.lib.ui.layout.values.Value;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.items.construction.BluePrintData;
 import de.ambertation.wunderreich.network.ChangedSDFMessage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -27,6 +29,13 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     public static final Rectangle LARGE_DIAMOND = new Rectangle(95, 31, 33, 33);
     public static final Rectangle INVENTORY_SLOT = new Rectangle(129, 0, 17, 17);
     private final RulerContainerMenu menu;
+    Text materialText;
+    Item materialItem;
+    Button btSelectMat;
+    private Button btSelectParent;
+    private Button btSelectInputB;
+    private Button btSelectInputA;
+    private Item parentStack;
 
     public RulerScreen(RulerContainerMenu menu, Inventory inventory, Component component) {
         super(menu, inventory, component);
@@ -105,9 +114,6 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         return inventoryPanel;
     }
 
-    Text materialText;
-    Item materialItem;
-    Button btSelectMat;
 
     private Panel createSDFPanel() {
 
@@ -131,10 +137,10 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         ).onPress(bt -> ChangedSDFMessage.INSTANCE.sendRealize());
         inventoryContainer.addChild(0, 70, btRealize);
 
-        Button btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
+        btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectInput(0);
-                    updateMaterialDisplay();
+                    updateSDFDisplay();
                 });
         inventoryContainer.addChild(0, 0, btSelectInputA);
 
@@ -143,14 +149,11 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(0, 8, inputSlotA);
 
-//        Item stackTest = new Item(Value.fit(), Value.fit())
-//                .setItem(new ItemStack(Items.AMETHYST_SHARD, 1));
-//        inventoryContainer.addChild(0, 8, stackTest);
 
-        Button btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("B"))
+        btSelectInputB = new Button(Value.fixed(18), Value.fit(), Component.literal("B"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectInput(1);
-                    updateMaterialDisplay();
+                    updateSDFDisplay();
                 });
         inventoryContainer.addChild(0, 47, btSelectInputB);
 
@@ -159,10 +162,10 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(0, 32, inputSlotB);
 
-        Button btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("P"))
+        btSelectParent = new Button(Value.fixed(18), Value.fit(), Component.literal("P"))
                 .onPress(bt -> {
                     menu.sdfSlot.selectParent();
-                    updateMaterialDisplay();
+                    updateSDFDisplay();
                 });
         inventoryContainer.addChild(47, 20, btSelectParent);
 
@@ -170,6 +173,11 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(SMALL_DIAMOND);
         inventoryContainer.addChild(36, 20, parentSlot);
+
+        parentStack = new Item(Value.fit(), Value.fit())
+                .setItem(ItemStack.EMPTY);
+        inventoryContainer.addChild(36, 20, parentStack);
+
 
         Image SDFSlot = new Image(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
@@ -187,7 +195,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         btSelectMat = new Button(Value.fixed(18), Value.fit(), Component.literal("M"))
                 .onPress(bt -> {
-                    updateMaterialDisplay(menu.sdfSlot.selectNextMaterial());
+                    updateMaterialDisplay(menu.sdfSlot.selectNextMaterialOnClient());
                 });
         inventoryContainer.addChild(27 + 15, 0, btSelectMat);
 
@@ -195,13 +203,23 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         inventoryPanel.setChild(inventoryContainer);
         inventoryPanel.calculateLayout();
 
-        menu.sdfSlot.callOnChange(this::slotChanged);
-        updateMaterialDisplay();
+        menu.sdfSlot.setOnActiveGraphIndexChange(this::activeGraphIndexChanged);
+        updateSDFDisplay();
         return inventoryPanel;
     }
 
-    private void updateMaterialDisplay() {
+    private void updateSDFDisplay() {
         updateMaterialDisplay(menu.sdfSlot.getMaterialIndex());
+        SDF active = menu.sdfSlot.getActiveSdf();
+        btSelectParent.setEnabled(active != null && active.getParent() != null);
+        btSelectInputA.setEnabled(active != null && active.getInputSlotCount() > 0);
+        btSelectInputB.setEnabled(active != null && active.getInputSlotCount() > 1);
+
+        if (btSelectParent.isEnabled()) {
+            parentStack.setItem(BluePrintData.bluePrintWithSDF(active.getParent()));
+        } else {
+            parentStack.setItem(ItemStack.EMPTY);
+        }
     }
 
     private void updateMaterialDisplay(int mIdx) {
@@ -218,8 +236,8 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         }
     }
 
-    void slotChanged(SDFSlot slot) {
-
+    void activeGraphIndexChanged(int activeGraphIndex) {
+        ChangedSDFMessage.INSTANCE.sendActive(activeGraphIndex);
     }
 
 

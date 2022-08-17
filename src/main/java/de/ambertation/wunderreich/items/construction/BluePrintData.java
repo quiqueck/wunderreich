@@ -1,12 +1,16 @@
 package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.SDFUnion;
+import de.ambertation.lib.math.sdf.shapes.Box;
+import de.ambertation.lib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class BluePrintData {
@@ -39,6 +43,7 @@ public class BluePrintData {
     }
 
     public static BluePrintData getBluePrintData(ItemStack itemStack) {
+        if (itemStack == null) return null;
         if (itemStack.getItem() instanceof BluePrint) {
             CompoundTag tag = itemStack.getOrCreateTag();
             return getBluePrintData(tag);
@@ -56,7 +61,13 @@ public class BluePrintData {
     }
 
     public static ItemStack bluePrintWithSDF(SDF sdf) {
-        ItemStack stack = new ItemStack(WunderreichItems.BLUE_PRINT);
+        Item baseBluePrint = WunderreichItems.BLUE_PRINT;
+
+        if (sdf instanceof Sphere) baseBluePrint = WunderreichItems.BLUE_PRINT_SPHERE;
+        else if (sdf instanceof Box) baseBluePrint = WunderreichItems.BLUE_PRINT_BOX;
+        else if (sdf instanceof SDFUnion) baseBluePrint = WunderreichItems.BLUE_PRINT_UNION;
+
+        ItemStack stack = new ItemStack(baseBluePrint);
         BluePrintData d = getBluePrintData(stack);
         d.SDF_DATA.set(sdf);
 

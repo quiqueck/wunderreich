@@ -58,9 +58,6 @@ public class RulerContainerMenu extends AbstractContainerMenu {
                 data.MATERIAL_DATA.set(rc);
         }
         container = rc;
-        if (data != null && data.SDF_DATA.get() != null) {
-            this.dataContainer.addRecursive(data.SDF_DATA.get());
-        }
 
         this.rulerStack = rulerStack;
         container.callOnChange((c) -> {
