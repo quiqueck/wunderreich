@@ -134,7 +134,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 Value.fit(),
                 Value.fit(),
                 Component.literal("Realize")
-        ).onPress(bt -> ChangedSDFMessage.INSTANCE.sendRealize());
+        ).onPress(bt -> ChangedSDFMessage.INSTANCE.sendRealize(menu));
         inventoryContainer.addChild(0, 70, btRealize);
 
         btSelectInputA = new Button(Value.fixed(18), Value.fit(), Component.literal("A"))
@@ -199,13 +199,22 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 });
         inventoryContainer.addChild(27 + 15, 0, btSelectMat);
 
+        Button btDebug = new Button(Value.fit(), Value.fit(), Component.literal("D")).onPress(this::debugPressed);
+        inventoryContainer.addChild(47, 44, btDebug);
+
 
         inventoryPanel.setChild(inventoryContainer);
         inventoryPanel.calculateLayout();
 
+
         menu.sdfSlot.setOnActiveGraphIndexChange(this::activeGraphIndexChanged);
+        menu.sdfSlot.setOnChangedContent(this::changedSlotContents);
         updateSDFDisplay();
         return inventoryPanel;
+    }
+
+    private void debugPressed(Button bt) {
+        menu.sdfSlot.printDebugInfo();
     }
 
     private void updateSDFDisplay() {
@@ -220,6 +229,10 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         } else {
             parentStack.setItem(ItemStack.EMPTY);
         }
+    }
+
+    private void changedSlotContents() {
+        updateSDFDisplay();
     }
 
     private void updateMaterialDisplay(int mIdx) {
@@ -237,7 +250,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     }
 
     void activeGraphIndexChanged(int activeGraphIndex) {
-        ChangedSDFMessage.INSTANCE.sendActive(activeGraphIndex);
+        ChangedSDFMessage.INSTANCE.sendActive(menu, activeGraphIndex);
     }
 
 

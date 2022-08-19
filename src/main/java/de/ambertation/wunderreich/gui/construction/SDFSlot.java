@@ -19,7 +19,13 @@ public class SDFSlot extends Slot {
         void didChange(int newIndex);
     }
 
+    @FunctionalInterface
+    interface ChangedContent {
+        void didChange();
+    }
+
     private ChangedActiveGraphIndex onActiveGraphIndexChange;
+    private ChangedContent onChangedContent;
     public final RulerContainerMenu menu;
     private final SDFSlot[] inputs;
     private SDFSlot parentSlot;
@@ -67,13 +73,20 @@ public class SDFSlot extends Slot {
         this.onActiveGraphIndexChange = callback;
     }
 
+    public void setOnChangedContent(ChangedContent onChangedContent) {
+        this.onChangedContent = onChangedContent;
+    }
+
     private void setActiveGraphIndex(int newIdx) {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [CHG ACTIVE] ------------------");
         int oldIdx = menu.data.ACTIVE_SLOT.get();
+        System.out.println(oldIdx + " -> " + newIdx);
         if (newIdx != oldIdx) {
             menu.data.ACTIVE_SLOT.set(newIdx);
             if (onActiveGraphIndexChange != null) {
                 onActiveGraphIndexChange.didChange(newIdx);
             }
+            System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         }
     }
 
@@ -89,9 +102,14 @@ public class SDFSlot extends Slot {
 
     @Override
     public void set(@NotNull ItemStack itemStack) {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [SET] ------------------");
+        System.out.println(getContainerSlot() + ": " + itemStack + ", master:" + isMaster());
+        System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         int idx = this.container().setItemAndGet(getContainerSlot(), itemStack);
+        System.out.println(this.menu.data.SDF_DATA.get() + ", idx=" + idx + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         if (isMaster()) {
             setActiveGraphIndex(idx);
+            System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         }
         this.setChanged();
     }
@@ -104,9 +122,14 @@ public class SDFSlot extends Slot {
 
     @Override
     public ItemStack remove(int i) {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [REMOVE] ------------------");
+        System.out.println(i);
+        System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         RulerDataContainer.RemoveData res = this.container().removeItemAndGet(getContainerSlot());
+        System.out.println(this.menu.data.SDF_DATA.get() + ", idx=" + res.graphIdx() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         if (isMaster()) {
             setActiveGraphIndex(res.graphIdx());
+            System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + getContainerSlot() + " - " + this.menu.data.ACTIVE_SLOT.get());
         }
         this.setChanged();
         return res.stack();
@@ -127,6 +150,17 @@ public class SDFSlot extends Slot {
     @Override
     public boolean isActive() {
         return getContainerSlot() >= 0;
+    }
+
+    @Override
+    public void setChanged() {
+
+        if (isMaster()) {
+            super.setChanged();
+            if (onChangedContent != null) onChangedContent.didChange();
+        } else if (parentSlot != null) {
+            parentSlot.setChanged();
+        }
     }
 
     @Override
@@ -161,6 +195,8 @@ public class SDFSlot extends Slot {
     }
 
     public void selectInput(int inputSlot) {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [SELECT INPUT] ------------------");
+        System.out.println(inputSlot + "  " + hasInput(inputSlot) + ", act=" + getContainerSlot());
         if (hasInput(inputSlot))
             setActiveGraphIndex(inputs[inputSlot].getContainerSlot());
     }
@@ -169,7 +205,19 @@ public class SDFSlot extends Slot {
         return container().getSDF(getContainerSlot());
     }
 
+    public void printDebugInfo() {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [DEBUG] ------------------");
+        System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + this.menu.data.ACTIVE_SLOT.get());
+        System.out.println("slot=" + getContainerSlot() + ", master:" + isMaster());
+        for (int i = 0; i < inputs.length; i++)
+            System.out.println("slot=" + inputs[i].getContainerSlot() + ", input:" + i);
+        System.out.println("--------------------------------");
+    }
+
     public void selectParent() {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [SELECT PARENT] ------------------");
+        System.out.println("act=" + getContainerSlot());
+
         SDF s = getActiveSdf();
         if (s != null && s.getParent() != null) {
             setActiveGraphIndex(s.getParent().getGraphIndex());
@@ -181,7 +229,7 @@ public class SDFSlot extends Slot {
         if (s != null && s instanceof MaterialProvider mp) {
             int idx = (mp.getMaterialIndex() + 1) % RulerContainer.MAX_CATEGORIES;
             mp.setMaterialIndex(idx);
-            ChangedSDFMessage.INSTANCE.sendMaterial(idx);
+            ChangedSDFMessage.INSTANCE.sendMaterial(menu, idx);
             return idx;
         }
         return -1;

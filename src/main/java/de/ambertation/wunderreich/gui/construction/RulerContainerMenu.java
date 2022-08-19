@@ -11,10 +11,8 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
-import net.fabricmc.loader.api.FabricLoader;
-
 public class RulerContainerMenu extends AbstractContainerMenu {
-    final ItemStack rulerStack;
+    public final ItemStack rulerStack;
 
     final int INVENTORY_OFFSET = 9;
     final int ROW_SIZE = 9;
@@ -22,7 +20,7 @@ public class RulerContainerMenu extends AbstractContainerMenu {
     private final Inventory inventory;
     final RulerContainer container;
     final RulerDataContainer dataContainer;
-    final ConstructionData data;
+    public final ConstructionData data;
 
     final SDFSlot sdfSlot;
 
@@ -35,14 +33,14 @@ public class RulerContainerMenu extends AbstractContainerMenu {
     }
 
     void printInfo() {
-        System.out.println(FabricLoader.getInstance().getEnvironmentType());
-        if (rulerStack != null) {
-            System.out.println("RulerStack :" + rulerStack + "(" + Integer.toHexString(rulerStack.hashCode()) + ")");
-            System.out.println("            " + rulerStack.getTag());
-        }
-        System.out.println("Inventory 5:" + inventory.getItem(5) + "(" + Integer.toHexString(inventory.getItem(5)
-                                                                                                      .hashCode()) + ")");
-        System.out.println("            " + inventory.getItem(5).getTag());
+//        System.out.println(FabricLoader.getInstance().getEnvironmentType());
+//        if (rulerStack != null) {
+//            System.out.println("RulerStack :" + rulerStack + "(" + Integer.toHexString(rulerStack.hashCode()) + ")");
+//            System.out.println("            " + rulerStack.getTag());
+//        }
+//        System.out.println("Inventory 5:" + inventory.getItem(5) + "(" + Integer.toHexString(inventory.getItem(5)
+//                                                                                                      .hashCode()) + ")");
+//        System.out.println("            " + inventory.getItem(5).getTag());
     }
 
     public RulerContainerMenu(int synchronizationID, Inventory inventory, ItemStack rulerStack) {
@@ -61,11 +59,11 @@ public class RulerContainerMenu extends AbstractContainerMenu {
 
         this.rulerStack = rulerStack;
         container.callOnChange((c) -> {
-            if (data != null) {
-                data.MATERIAL_DATA.set(c);
-                System.out.println("---DIRTY");
-                printInfo();
-            }
+//            if (data != null) {
+//                data.MATERIAL_DATA.set(c);
+//                System.out.println("---DIRTY");
+//                printInfo();
+//            }
         });
         System.out.println("---INIT");
 
@@ -74,6 +72,8 @@ public class RulerContainerMenu extends AbstractContainerMenu {
         addMaterialSlots(MATERIAL_PANEL);
         sdfSlot = addSDFSlots(SDF_PANEL);
         printInfo();
+
+        System.out.println(this.data.SDF_DATA.get() + ", act=" + sdfSlot.getContainerSlot() + " - " + this.data.ACTIVE_SLOT.get());
     }
 
     SDFSlot addSDFSlots(Rectangle screenBounds) {

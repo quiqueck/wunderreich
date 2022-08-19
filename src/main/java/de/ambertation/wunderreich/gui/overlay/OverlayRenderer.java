@@ -107,6 +107,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         final Player player = Minecraft.getInstance().player;
         positions.clear();
 
+        //-4, 63, -24
+
+
         ItemStack ruler = player.getMainHandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) ruler = player.getOffhandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
@@ -124,6 +127,13 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
             renderBlockOutline(vertexConsumer, poseStack,
                     ConstructionData.getLastTarget(), camPos, .01f, COLOR_SELECTION, 1
+            );
+            renderBlockOutline(vertexConsumer, poseStack,
+                    new Float3(-4, 63, -24), camPos, .01f, COLOR_SELECTION, 1
+            );
+
+            renderBlockOutline(vertexConsumer, poseStack,
+                    Bounds.of(Float3.of(-4, 63, -24), Float3.of(-7, 66, -27)), camPos, .01f, COLOR_SELECTION, 1
             );
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
@@ -250,7 +260,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         }, debugDist ? (p, ed, didPlace) -> {
             DebugRenderer.renderFloatingText(
                     ed.source().getGraphIndex() + ":" + (Math.round(4 * ed.dist()) / 4.0),
-                    p.x, p.y, p.z,
+                    p.x + 0.5, p.y + 0.5, p.z + 0.5,
                     ed.dist() < 0 ? COLOR_FIERY_ROSE : COLOR_BLUE_JEANS
             );
         } : null);
@@ -295,9 +305,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             int color,
             float alpha
     ) {
-        final float x = (float) (Float3.toBlockPos(pos.x) + camPos.x);
-        final float y = (float) (Float3.toBlockPos(pos.y) + camPos.y);
-        final float z = (float) (Float3.toBlockPos(pos.z) + camPos.z);
+        final float x = (float) (pos.x + camPos.x);
+        final float y = (float) (pos.y + camPos.y);
+        final float z = (float) (pos.z + camPos.z);
         renderLineBox(vertexConsumer, poseStack,
                 x + deflate, y + deflate, z + deflate,
                 1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
@@ -383,9 +393,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     ) {
         Matrix4f m = poseStack.last().pose();
         Matrix3f rotation = poseStack.last().normal();
-        float lx = (float) (Float3.toBlockPos(pos.x) + camPos.x);
-        float ly = (float) (Float3.toBlockPos(pos.y) + camPos.y);
-        float lz = (float) (Float3.toBlockPos(pos.z) + camPos.z);
+        float lx = (float) (pos.x + camPos.x);
+        float ly = (float) (pos.y + camPos.y);
+        float lz = (float) (pos.z + camPos.z);
         float hx = lx + 1 - deflate;
         float hy = ly + 1 - deflate;
         float hz = lz + 1 - deflate;

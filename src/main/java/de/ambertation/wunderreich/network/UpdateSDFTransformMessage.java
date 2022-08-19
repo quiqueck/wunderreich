@@ -43,7 +43,11 @@ public class UpdateSDFTransformMessage extends ServerBoundPacketHandler<UpdateSD
         if (sdf instanceof BoundedShape bs) {
             bs.setFromBoundingBox(content.bounds);
         }
+        System.out.println("---- [NEW SDF] ------------------");
+        System.out.println(constructionData.SDF_DATA.get() + ", act=" + constructionData.ACTIVE_SLOT.get());
         constructionData.SDF_DATA.set(sdf.getRoot());
+        System.out.println(constructionData.SDF_DATA.get() + ", act=" + constructionData.ACTIVE_SLOT.get());
+        System.out.println("-------------------------------------");
     }
 
     protected record Content(Bounds bounds) {

@@ -54,8 +54,12 @@ public class RulerDataContainer implements Container {
     }
 
     public int setItemAndGet(int slotIndex, @NotNull ItemStack itemStack) {
+        System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [SET CONTAINER] ------------------");
+        System.out.println("slot: " + slotIndex + ", " + itemStack);
+        System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + this.menu.data.ACTIVE_SLOT.get());
+
         //we need to return the graphID to ensure the correct one stays selected
-        SDF currentSDF = getSDF(slotIndex);
+        SDF currentSDF = slotIndex < 0 ? null : getSDF(slotIndex);
         if (currentSDF != null) {
             BluePrintData bd = BluePrintData.getBluePrintData(itemStack);
             SDF newSDF = null;
@@ -72,9 +76,12 @@ public class RulerDataContainer implements Container {
                 menu.data.SDF_DATA.set(newSDF);
             }
 
+            System.out.println(this.menu.data.SDF_DATA.get() + ", act=" + this.menu.data.ACTIVE_SLOT.get());
+            System.out.println("---------------------------------");
             return newSDF.getGraphIndex();
         }
 
+        System.out.println("---------------------------------");
         return -1;
     }
 

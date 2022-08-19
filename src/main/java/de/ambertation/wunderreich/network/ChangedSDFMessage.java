@@ -2,15 +2,17 @@ package de.ambertation.wunderreich.network;
 
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
-import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
+
+import java.util.Objects;
 
 public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessage.Content> {
     public static final ChangedSDFMessage INSTANCE = ServerBoundPacketHandler.register(
@@ -21,20 +23,21 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
     protected ChangedSDFMessage() {
     }
 
-    public void sendActive(int id) {
-        this.sendToServer(new Content(Content.CHANGE_ACTIVE, id, -1));
+    public void sendActive(AbstractContainerMenu menu, int id) {
+        this.sendToServer(new Content(menu.containerId, Content.CHANGE_ACTIVE, id, -1));
     }
 
-    public void sendMaterial(int id) {
-        this.sendToServer(new Content(Content.CHANGE_MATERIAL, -1, id));
+    public void sendMaterial(AbstractContainerMenu menu, int id) {
+        this.sendToServer(new Content(menu.containerId, Content.CHANGE_MATERIAL, -1, id));
     }
 
-    public void sendRealize() {
-        this.sendToServer(new Content(Content.REALIZE, -1, -1));
+    public void sendRealize(AbstractContainerMenu menu) {
+        this.sendToServer(new Content(menu.containerId, Content.REALIZE, -1, -1));
     }
 
     @Override
     protected void serializeOnClient(FriendlyByteBuf buf, Content content) {
+        buf.writeByte(content.containerId);
         buf.writeVarInt(content.stateFlag);
 
         if ((content.stateFlag & Content.CHANGE_ACTIVE) == Content.CHANGE_ACTIVE)
@@ -50,17 +53,7 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
             ServerPlayer player,
             PacketSender responseSender
     ) {
-        int stateFlag = buf.readVarInt();
-        int activeId = -1;
-        int matID = -1;
-
-        if ((stateFlag & Content.CHANGE_ACTIVE) == Content.CHANGE_ACTIVE)
-            activeId = buf.readVarInt();
-
-        if ((stateFlag & Content.CHANGE_MATERIAL) == Content.CHANGE_MATERIAL)
-            matID = buf.readVarInt();
-
-        return new Content(stateFlag, activeId, matID);
+        return new Content(buf, player);
     }
 
     @Override
@@ -69,33 +62,90 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
             ServerPlayer player,
             Content content
     ) {
+        if (content.containerId == player.containerMenu.containerId) {
+            if (player.containerMenu instanceof RulerContainerMenu menu) {
+                ConstructionData constructionData = menu.data;
+                if (constructionData == null) return;
+                if ((content.stateFlag & Content.CHANGE_ACTIVE) == Content.CHANGE_ACTIVE) {
+                    constructionData.ACTIVE_SLOT.set(content.active);
+                    System.out.println(Integer.toHexString(menu.data.hashCode()) + "---- [ACTIVE_SLOT] ------------------");
+                    System.out.println(constructionData.SDF_DATA.get() + ", act=" + constructionData.ACTIVE_SLOT.get());
+                    System.out.println("-------------------------------------");
+                }
 
-        ItemStack ruler = player.getMainHandItem();
-        if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
-        ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
+                if ((content.stateFlag & Content.CHANGE_MATERIAL) == Content.CHANGE_MATERIAL) {
+                    SDF s = constructionData.getActiveSDF();
+                    if (s != null) {
+                        if (s instanceof MaterialProvider mp) mp.setMaterialIndex(content.material);
+                        constructionData.SDF_DATA.set(s.getRoot());
+                    }
+                }
 
-        if ((content.stateFlag & Content.CHANGE_ACTIVE) == Content.CHANGE_ACTIVE) {
-            constructionData.ACTIVE_SLOT.set(content.active);
-        }
-
-        if ((content.stateFlag & Content.CHANGE_MATERIAL) == Content.CHANGE_MATERIAL) {
-            SDF s = constructionData.getActiveSDF();
-            if (s != null) {
-                if (s instanceof MaterialProvider mp) mp.setMaterialIndex(content.material);
-                constructionData.SDF_DATA.set(s.getRoot());
+                if ((content.stateFlag & Content.REALIZE) == Content.REALIZE) {
+                    constructionData.realize(server, player);
+                }
             }
-        }
-
-        if ((content.stateFlag & Content.REALIZE) == Content.REALIZE) {
-            constructionData.realize(server, player);
         }
     }
 
 
-    protected record Content(int stateFlag, int active, int material) {
+    protected static final class Content {
         public static final int CHANGE_ACTIVE = 1 << 0;
         public static final int CHANGE_MATERIAL = 1 << 1;
         public static final int REALIZE = 1 << 2;
+
+        public final int containerId;
+        public final int stateFlag;
+        public final int active;
+        public final int material;
+
+        private Content(int containerId, int stateFlag, int active, int material) {
+            this.containerId = containerId;
+            this.stateFlag = stateFlag;
+            this.active = active;
+            this.material = material;
+        }
+
+        private Content(FriendlyByteBuf buf, ServerPlayer player) {
+            this.containerId = buf.readUnsignedByte();
+            this.stateFlag = buf.readVarInt();
+
+
+            if ((stateFlag & Content.CHANGE_ACTIVE) == Content.CHANGE_ACTIVE)
+                this.active = buf.readVarInt();
+            else
+                this.active = -1;
+
+            if ((stateFlag & Content.CHANGE_MATERIAL) == Content.CHANGE_MATERIAL)
+                this.material = buf.readVarInt();
+            else
+                this.material = -1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == this) return true;
+            if (obj == null || obj.getClass() != this.getClass()) return false;
+            var that = (Content) obj;
+            return this.containerId == that.containerId &&
+                    this.stateFlag == that.stateFlag &&
+                    this.active == that.active &&
+                    this.material == that.material;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(containerId, stateFlag, active, material);
+        }
+
+        @Override
+        public String toString() {
+            return "Content[" +
+                    "containerId=" + containerId + ", " +
+                    "stateFlag=" + stateFlag + ", " +
+                    "active=" + active + ", " +
+                    "material=" + material + ']';
+        }
     }
 }
 

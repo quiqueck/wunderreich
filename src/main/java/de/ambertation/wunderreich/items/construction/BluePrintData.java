@@ -38,8 +38,8 @@ public class BluePrintData {
     }
 
     void sdfContentDidChange(SDF sdf) {
-        System.out.println("SDF did change: " + sdf);
-        SDF_DATA.set(sdf);
+        //System.out.println("SDF did change: " + sdf);
+        //SDF_DATA.set(sdf);
     }
 
     public static BluePrintData getBluePrintData(ItemStack itemStack) {
