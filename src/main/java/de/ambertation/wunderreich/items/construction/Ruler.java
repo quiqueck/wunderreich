@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
@@ -72,7 +73,8 @@ public class Ruler extends Item implements FabricItem {
 
 
             if (player.isShiftKeyDown()) {
-                cd.CENTER.set(Float3.of(ConstructionData.getLastTarget()).blockAligned());
+                //cd.CENTER.set(Float3.of(ConstructionData.getLastTarget()).blockAligned());
+                Box.angle += Math.toRadians(0.5);
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);

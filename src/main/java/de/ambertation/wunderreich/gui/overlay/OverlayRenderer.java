@@ -128,13 +128,6 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             renderBlockOutline(vertexConsumer, poseStack,
                     ConstructionData.getLastTarget(), camPos, .01f, COLOR_SELECTION, 1
             );
-            renderBlockOutline(vertexConsumer, poseStack,
-                    new Float3(-4, 63, -24), camPos, .01f, COLOR_SELECTION, 1
-            );
-
-            renderBlockOutline(vertexConsumer, poseStack,
-                    Bounds.of(Float3.of(-4, 63, -24), Float3.of(-7, 66, -27)), camPos, .01f, COLOR_SELECTION, 1
-            );
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
@@ -213,7 +206,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         }
 
                         renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.75f, 0, false);
-                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
+                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, true);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
