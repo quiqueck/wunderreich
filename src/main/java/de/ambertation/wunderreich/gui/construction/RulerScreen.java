@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.gui.construction;
 
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.ui.layout.components.*;
 import de.ambertation.lib.ui.layout.components.render.RenderHelper;
 import de.ambertation.lib.ui.layout.values.Rectangle;
@@ -28,6 +29,15 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     public static final Rectangle SMALL_DIAMOND = new Rectangle(77, 30, 15, 15);
     public static final Rectangle LARGE_DIAMOND = new Rectangle(95, 31, 33, 33);
     public static final Rectangle INVENTORY_SLOT = new Rectangle(129, 0, 17, 17);
+
+    public static final Rectangle ROT_Y_CW = new Rectangle(76, 0, 13, 17);
+    public static final Rectangle ROT_Y_CCW = new Rectangle(89, 0, 13, 17);
+    public static final Rectangle ROT_X_CW = new Rectangle(102, 0, 13, 15);
+    public static final Rectangle ROT_X_CCW = new Rectangle(115, 0, 13, 15);
+    public static final Rectangle ROT_Z_CW = new Rectangle(76, 17, 17, 13);
+    public static final Rectangle ROT_Z_CCW = new Rectangle(93, 17, 17, 13);
+
+
     private final RulerContainerMenu menu;
     Text materialText;
     Item materialItem;
@@ -58,6 +68,9 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         Panel sdfPanel = createSDFPanel();
         this.addRenderableWidget(sdfPanel);
+
+        Panel widgetPanel = createWidgetPanel();
+        this.addRenderableWidget(widgetPanel);
     }
 
     Button selectedPageButton;
@@ -112,6 +125,32 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         inventoryPanel.calculateLayout();
 
         return inventoryPanel;
+    }
+
+    private Panel createWidgetPanel() {
+        Panel panel = new Panel(RulerContainerMenu.WIDGET_PANEL);
+        Container container = new Container(Value.fit(), Value.fit());
+
+        ImageButton rotY_CW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(ROT_Y_CW)
+                .onPress(bt -> {
+                    Box.angle += Math.toRadians(15);
+                });
+        container.addChild(20, 10, rotY_CW);
+
+        ImageButton rotY_CCW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
+                .setResourceSize(SDF_TEXTURE_SIZE)
+                .setUvRect(ROT_Y_CCW)
+                .onPress(bt -> {
+                    Box.angle += Math.toRadians(-15);
+                });
+        container.addChild(40, 10, rotY_CCW);
+
+        panel.setChild(container);
+        panel.calculateLayout();
+
+        return panel;
     }
 
 

@@ -27,6 +27,7 @@ public class RulerContainerMenu extends AbstractContainerMenu {
     static final Rectangle MATERIAL_PANEL = new Rectangle(5, 52, 177, 70);
     static final Rectangle INVENTORY_PANEL = new Rectangle(6, 132, 174, 96);
     static final Rectangle SDF_PANEL = new Rectangle(301, 67, 51 + 20, 47 + 40);
+    static final Rectangle WIDGET_PANEL = new Rectangle(0, 0, 400, 40);
 
     public RulerContainerMenu(int synchronizationID, Inventory inventory, FriendlyByteBuf packetByteBuf) {
         this(synchronizationID, inventory, packetByteBuf.readItem());
