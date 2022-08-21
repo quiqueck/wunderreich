@@ -118,15 +118,15 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
 
         if (camera.isInitialized()) {
-            Float3 pos = Float3.of(camera.getPosition());
+            final Float3 camPosWorldSpace = Float3.of(camera.getPosition());
 
-            ConstructionData.setLastTargetOnClient(getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 4));
+            ConstructionData.setLastTargetInWorldSpaceOnClient(getTargetedBlock(Minecraft.getInstance()
+                                                                                         .getCameraEntity(), 8, 4));
             Vec3 camPos = camera.getPosition().reverse();
-            final Float3 camP = pos;
 
             VertexConsumer vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
             renderBlockOutline(vertexConsumer, poseStack,
-                    ConstructionData.getLastTarget(), camPos, .01f, COLOR_SELECTION, 1
+                    ConstructionData.getLastTargetInWorldSpace(), camPos, .01f, COLOR_SELECTION, 1
             );
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
@@ -139,17 +139,17 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
 
                 if (sdf != null && !(sdf instanceof Empty)) {
-                    Float3 offset = constructionData.CENTER.get();
-                    if (offset != null) {
-                        sdf = new SDFMove(sdf, offset);
-                        sdf_moved_root = new SDFMove(sdf_root, offset);
+                    Float3 offsetToWorldSpace = constructionData.CENTER.get();
+                    if (offsetToWorldSpace != null) {
+                        sdf = new SDFMove(sdf, offsetToWorldSpace);
+                        sdf_moved_root = new SDFMove(sdf_root, offsetToWorldSpace);
                     }
 
 
-                    Bounds box = sdf.getBoundingBox();
-                    Bounds rootBox = sdf_moved_root.getBoundingBox();
-                    final Float3 targetPos = Float3.of(ConstructionData.getLastTarget());
-                    final Bounds.Interpolate targetCorner = box.isCornerOrCenter(targetPos);
+                    Bounds worldSpaceBox = sdf.getBoundingBox();
+                    Bounds worldSpaceRootBox = sdf_moved_root.getBoundingBox();
+                    final Float3 worldSpaceTargetPos = Float3.of(ConstructionData.getLastTargetInWorldSpace());
+                    final Bounds.Interpolate targetCorner = worldSpaceBox.isCornerOrCenter(worldSpaceTargetPos);
 
                     time += Minecraft.getInstance().getDeltaFrameTime();
                     if (time > 10000) time -= 10000;
@@ -157,61 +157,85 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     float phase = (float) (Math.sin(Math.PI * 2 * (scaledTime - Math.floor(scaledTime))) + 1) / 2;
 
 
-                    if (constructionData.inReach(pos)) {
+                    if (constructionData.inReach(camPosWorldSpace)) {
                         //resize/move bounding Box
                         if (constructionData.getSelectedCorner() != null) {
                             Bounds.Interpolate selectedCorner = constructionData.getSelectedCorner();
 
-                            box = constructionData.getNewBoundsForSelectedCorner();
+                            worldSpaceBox = ConstructionData.getNewBoundsForSelectedCorner(
+                                    worldSpaceBox,
+                                    selectedCorner,
+                                    worldSpaceTargetPos
+                            );
                             renderBlockOutline(
                                     vertexConsumer, poseStack,
-                                    box.get(selectedCorner), camPos, 0.1f,
+                                    worldSpaceBox.get(selectedCorner), camPos, 0.1f,
                                     COLOR_PURPLE, 1
                             );
 
                             if (sdf_active instanceof BoundedShape bs) {
-                                if (offset != null) {
-                                    bs.setFromBoundingBox(box.move(offset.mul(-1)));
+                                if (offsetToWorldSpace != null) {
+                                    Bounds bb = worldSpaceBox.move(offsetToWorldSpace.mul(-1));
+                                    System.out.println("new BBox: " + bb + "\n" + worldSpaceBox);
+                                    if (bb.maxExtension() < 24)
+                                        bs.setFromBoundingBox(bb);
                                 } else {
-                                    bs.setFromBoundingBox(box);
+                                    System.out.println("new BBox: " + worldSpaceBox);
+                                    //bs.setFromBoundingBox(worldSpaceBox);
                                 }
                                 constructionData.SDF_DATA.set(sdf_root);
                             }
                         }
 
-                        renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_BOUNDING_BOX, 1);
-                        renderBlockOutline(vertexConsumer, poseStack, rootBox, camPos, 0, COLOR_BOUNDING_BOX, .25f);
+                        renderBlockOutline(vertexConsumer, poseStack, worldSpaceBox, camPos, 0, COLOR_BOUNDING_BOX, 1);
+                        renderBlockOutline(
+                                vertexConsumer,
+                                poseStack,
+                                worldSpaceRootBox,
+                                camPos,
+                                0,
+                                COLOR_BOUNDING_BOX,
+                                .25f
+                        );
 
 
                         if (constructionData.getSelectedCorner() == null) {
                             for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS_AND_CENTER) {
                                 if ((targetCorner != null && targetCorner.idx == corner.idx)) {
                                     positions.add(RenderInfo.withCamPos(
-                                            box.get(corner), camP, 0.1f,
+                                            worldSpaceBox.get(corner), camPosWorldSpace, 0.1f,
                                             COLOR_FIERY_ROSE, 0.5f,
                                             COLOR_FIERY_ROSE, 0.8f
                                     ));
                                 } else {
                                     positions.add(RenderInfo.withCamPos(
-                                            box.get(corner), camP, 0.1f,
+                                            worldSpaceBox.get(corner), camPosWorldSpace, 0.1f,
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
                                             COLOR_SELECTION, phase
                                     ));
                                     renderBlockOutline(
-                                            vertexConsumer, poseStack, box.get(corner), camPos, 0.1f,
+                                            vertexConsumer, poseStack, worldSpaceBox.get(corner), camPos, 0.1f,
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 1
                                     );
                                 }
                             }
                         }
 
-                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.15f, 0, false);
-                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
+                        renderSDF(
+                                camPosWorldSpace,
+                                sdf_moved_root,
+                                worldSpaceRootBox.blockAligned(),
+                                0.3f,
+                                0.15f,
+                                0,
+                                false
+                        );
+                        renderSDF(camPosWorldSpace, sdf, worldSpaceBox.blockAligned(), 0.2f, 0.95f, 1, false);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
                     } else
-                        renderBlockOutline(vertexConsumer, poseStack, box, camPos, 0, COLOR_OUT_OF_REACH, 1);
+                        renderBlockOutline(vertexConsumer, poseStack, worldSpaceBox, camPos, 0, COLOR_OUT_OF_REACH, 1);
                 }
             }
 
@@ -221,7 +245,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                 return -1;
             });
         } else {
-            ConstructionData.setLastTargetOnClient(null);
+            ConstructionData.setLastTargetInWorldSpaceOnClient(null);
         }
 
 

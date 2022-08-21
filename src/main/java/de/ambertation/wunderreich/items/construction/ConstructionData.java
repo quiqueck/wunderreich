@@ -85,21 +85,21 @@ public class ConstructionData {
         );
     }
 
-    public static BlockPos getLastTarget() {
+    public static BlockPos getLastTargetInWorldSpace() {
         return lastTarget;
     }
 
-    public static void setLastTargetOnClient(BlockPos newTarget) {
-        if (setLastTargetCommon(newTarget)) {
+    public static void setLastTargetInWorldSpaceOnClient(BlockPos newTarget) {
+        if (setLastTargetInWorldSpaceCommon(newTarget)) {
             ChangedTargetBlockMessage.INSTANCE.send(newTarget);
         }
     }
 
-    public static void setLastTargetOnServer(BlockPos lastTarget) {
-        setLastTargetCommon(lastTarget);
+    public static void setLastTargetInWorldSpaceOnServer(BlockPos lastTarget) {
+        setLastTargetInWorldSpaceCommon(lastTarget);
     }
 
-    private static boolean setLastTargetCommon(BlockPos newTarget) {
+    private static boolean setLastTargetInWorldSpaceCommon(BlockPos newTarget) {
         if (lastTarget == newTarget) return false;
 
         if (lastTarget == null || newTarget == null || lastTarget.getX() != newTarget.getX() || lastTarget.getY() != newTarget.getY() || lastTarget.getZ() != newTarget.getZ()) {
@@ -155,15 +155,15 @@ public class ConstructionData {
         SELECTED_CORNER.set(bb);
     }
 
-    public Bounds getBoundingBox() {
-        return getBoundingBox(getRootSDF());
+    public Bounds getBoundingBoxInWorldSpace() {
+        return getBoundingBoxInWorldSpace(getRootSDF());
     }
 
-    public Bounds getActiveBoundingBox() {
-        return getBoundingBox(getActiveSDF());
+    public Bounds getActiveBoundingBoxInWorldSpace() {
+        return getBoundingBoxInWorldSpace(getActiveSDF());
     }
 
-    public Bounds getBoundingBox(SDF sdf) {
+    public Bounds getBoundingBoxInWorldSpace(SDF sdf) {
         if (sdf != null) {
             Float3 offset = CENTER.get();
             Bounds box = sdf.getBoundingBox();
@@ -173,25 +173,28 @@ public class ConstructionData {
         return Bounds.EMPTY;
     }
 
-    public Bounds getNewBoundsForSelectedCorner() {
-        Bounds.Interpolate selectedCorner = getSelectedCorner();
+    public static Bounds getNewBoundsForSelectedCorner(
+            Bounds bounds,
+            Bounds.Interpolate selectedCorner,
+            Float3 newCornerPos
+    ) {
         if (Objects.equals(selectedCorner.idx, Bounds.Interpolate.CENTER.idx)) {
-            System.out.println("New Center:" + Float3.of(ConstructionData.getLastTarget()));
-            return getBoundingBox().moveToCenter(Float3.of(ConstructionData.getLastTarget()));
+            System.out.println("New Center:" + newCornerPos);
+            return bounds.moveToCenter(newCornerPos);
         }
 
         Bounds.Interpolate oppositeCorner = selectedCorner.opposite();
-        return Bounds.of(getBoundingBox().get(oppositeCorner), Float3.of(ConstructionData.getLastTarget()));
+        return Bounds.of(bounds.get(oppositeCorner), newCornerPos);
     }
 
-    public double distToCenterSquare(Float3 pos) {
-        Bounds bb = getBoundingBox();
+    public double distToCenterSquare(Float3 worldPos) {
+        Bounds bb = getBoundingBoxInWorldSpace();
         if (bb == null) return Double.MAX_VALUE;
-        return bb.getCenter().distSquare(pos);
+        return bb.getCenter().distSquare(worldPos);
     }
 
-    public boolean inReach(Float3 pos) {
-        return distToCenterSquare(pos) < VALID_RADIUS_SQUARE;
+    public boolean inReach(Float3 worldPos) {
+        return distToCenterSquare(worldPos) < VALID_RADIUS_SQUARE;
     }
 
     public void realize(MinecraftServer server, ServerPlayer player) {

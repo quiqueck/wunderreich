@@ -32,9 +32,6 @@ public class BluePrintData {
 
     public void sdfObjectDidChange(SDF old, SDF fresh) {
         if (old == fresh) return;
-
-        if (old != null) old.removeChangeListener(this::sdfContentDidChange);
-        if (fresh != null) fresh.addChangeListener(this::sdfContentDidChange);
     }
 
     void sdfContentDidChange(SDF sdf) {

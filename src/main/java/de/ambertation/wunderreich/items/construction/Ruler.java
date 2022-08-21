@@ -48,7 +48,7 @@ public class Ruler extends Item implements FabricItem {
         ConstructionData cd = ConstructionData.getConstructionData(ruler);
         //if (!level.isClientSide) return InteractionResultHolder.pass(ruler);
         if (cd != null) {
-            Float3 highlightedBlock = Float3.of(ConstructionData.getLastTarget());
+            Float3 highlightedBlock = Float3.of(ConstructionData.getLastTargetInWorldSpace());
 
             //deselect Corner
             if (cd.getSelectedCorner() != null) {
@@ -61,9 +61,9 @@ public class Ruler extends Item implements FabricItem {
                 return InteractionResultHolder.success(ruler);
             }
 
-            Bounds.Interpolate corner = cd.getBoundingBox() == null
+            Bounds.Interpolate corner = cd.getBoundingBoxInWorldSpace() == null
                     ? null
-                    : cd.getActiveBoundingBox()
+                    : cd.getActiveBoundingBoxInWorldSpace()
                         .isCornerOrCenter(highlightedBlock);
 
             if (corner != null) {

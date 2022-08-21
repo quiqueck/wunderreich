@@ -35,7 +35,7 @@ public class ChangedTargetBlockMessage extends ServerBoundPacketHandler<ChangedT
 
     @Override
     protected void processOnGameThread(MinecraftServer server, ServerPlayer player, Content content) {
-        ConstructionData.setLastTargetOnServer(content.newTarget);
+        ConstructionData.setLastTargetInWorldSpaceOnServer(content.newTarget);
     }
 
 
