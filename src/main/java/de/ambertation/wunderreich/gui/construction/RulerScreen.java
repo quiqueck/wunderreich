@@ -135,7 +135,10 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(ROT_Y_CW)
                 .onPress(bt -> {
-                    Box.angle += Math.toRadians(15);
+                    if (menu.sdfSlot.getActiveSdf() instanceof Box box) {
+                        box.rotate(Math.toRadians(15));
+                        menu.data.SDF_DATA.set(box.getRoot());
+                    }
                 });
         container.addChild(20, 10, rotY_CW);
 
@@ -143,7 +146,10 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(ROT_Y_CCW)
                 .onPress(bt -> {
-                    Box.angle += Math.toRadians(-15);
+                    if (menu.sdfSlot.getActiveSdf() instanceof Box box) {
+                        box.rotate(Math.toRadians(-15));
+                        menu.data.SDF_DATA.set(box.getRoot());
+                    }
                 });
         container.addChild(40, 10, rotY_CCW);
 

@@ -74,7 +74,15 @@ public class Ruler extends Item implements FabricItem {
 
             if (player.isShiftKeyDown()) {
                 //cd.CENTER.set(Float3.of(ConstructionData.getLastTarget()).blockAligned());
-                Box.angle += Math.toRadians(0.5);
+                if (cd.getActiveSDF() instanceof Box box) {
+                    System.out.println("Bounds: " + box.getBoundingBox());
+                    box.rotate(Math.toRadians(15));
+                    cd.SDF_DATA.set(box.getRoot());
+
+                    System.out.println("new Bounds: " + box.transform);
+                    System.out.println("new Bounds: " + box.getBoundingBox());
+                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
+                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);

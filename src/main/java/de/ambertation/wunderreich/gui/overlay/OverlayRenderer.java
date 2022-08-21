@@ -2,10 +2,12 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Transform;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.BoundedShape;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -129,6 +131,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     ConstructionData.getLastTargetInWorldSpace(), camPos, .01f, COLOR_SELECTION, 1
             );
 
+            DebugRenderer.renderFloatingText(
+                    Float3.of(ConstructionData.getLastTargetInWorldSpace()).toString(),
+                    ConstructionData.getLastTargetInWorldSpace().getX(),
+                    ConstructionData.getLastTargetInWorldSpace().getY(),
+                    ConstructionData.getLastTargetInWorldSpace().getZ(),
+                    COLOR_FIERY_ROSE
+            );
+
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
                 SDF sdf_active = constructionData.getActiveSDF();
@@ -144,7 +154,6 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         sdf = new SDFMove(sdf, offsetToWorldSpace);
                         sdf_moved_root = new SDFMove(sdf_root, offsetToWorldSpace);
                     }
-
 
                     Bounds worldSpaceBox = sdf.getBoundingBox();
                     Bounds worldSpaceRootBox = sdf_moved_root.getBoundingBox();
@@ -176,12 +185,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             if (sdf_active instanceof BoundedShape bs) {
                                 if (offsetToWorldSpace != null) {
                                     Bounds bb = worldSpaceBox.move(offsetToWorldSpace.mul(-1));
-                                    System.out.println("new BBox: " + bb + "\n" + worldSpaceBox);
-                                    if (bb.maxExtension() < 24)
-                                        bs.setFromBoundingBox(bb);
+                                    bs.setFromBoundingBox(bb);
                                 } else {
-                                    System.out.println("new BBox: " + worldSpaceBox);
-                                    //bs.setFromBoundingBox(worldSpaceBox);
+                                    bs.setFromBoundingBox(worldSpaceBox);
                                 }
                                 constructionData.SDF_DATA.set(sdf_root);
                             }
@@ -197,6 +203,27 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 COLOR_BOUNDING_BOX,
                                 .25f
                         );
+
+                        if (sdf_active instanceof Box boxSDF) {
+                            renderLineBox(
+                                    vertexConsumer,
+                                    poseStack,
+                                    boxSDF.transform.translate(offsetToWorldSpace),
+                                    camPos,
+                                    COLOR_BOUNDING_BOX,
+                                    1
+                            );
+
+                            renderLineBox(
+                                    vertexConsumer,
+                                    poseStack,
+                                    Transform.of(boxSDF.transform.center, boxSDF.transform.size)
+                                             .translate(offsetToWorldSpace),
+                                    camPos,
+                                    COLOR_BOUNDING_BOX,
+                                    1
+                            );
+                        }
 
 
                         if (constructionData.getSelectedCorner() == null) {
@@ -218,6 +245,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 1
                                     );
                                 }
+
+                                DebugRenderer.renderFloatingText(
+                                        worldSpaceBox.get(corner).toString(),
+                                        worldSpaceBox.get(corner).x,
+                                        worldSpaceBox.get(corner).y,
+                                        worldSpaceBox.get(corner).z,
+                                        COLOR_FIERY_ROSE
+                                );
                             }
                         }
 
@@ -352,6 +387,118 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                 FastColor.ARGB32.blue(color),
                 (int) (alpha * 0xFF)
         );
+    }
+
+    private static void renderLineBox(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            Transform t, Vec3 camPos, int color, float alpha
+    ) {
+        renderLineBox(vertexConsumer, poseStack, t, camPos, FastColor.ARGB32.red(color),
+                FastColor.ARGB32.green(color),
+                FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    private static void renderLineBox(
+            VertexConsumer vertexConsumer, PoseStack poseStack,
+            Transform t, Vec3 camPos,
+            int r, int g, int b, int a
+    ) {
+        Matrix4f pose = poseStack.last().pose();
+        Matrix3f normal = poseStack.last().normal();
+        Float3[] corners = t.translate(camPos).getCornersInWorldSpace(false);
+
+
+        DebugRenderer.renderFloatingText(
+                t.toString(),
+                corners[0].x - camPos.x,
+                corners[0].y - 0.1 - camPos.y,
+                corners[0].z - camPos.z,
+                COLOR_BOUNDING_BOX
+        );
+
+        addLine(
+                Bounds.Interpolate.MIN_MIN_MIN,
+                Bounds.Interpolate.MAX_MIN_MIN,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MAX_MIN_MIN,
+                Bounds.Interpolate.MAX_MIN_MAX,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MAX_MIN_MAX,
+                Bounds.Interpolate.MIN_MIN_MAX,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MIN_MIN_MAX,
+                Bounds.Interpolate.MIN_MIN_MIN,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+
+
+        addLine(
+                Bounds.Interpolate.MIN_MAX_MIN,
+                Bounds.Interpolate.MAX_MAX_MIN,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MAX_MAX_MIN,
+                Bounds.Interpolate.MAX_MAX_MAX,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MAX_MAX_MAX,
+                Bounds.Interpolate.MIN_MAX_MAX,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+        addLine(
+                Bounds.Interpolate.MIN_MAX_MAX,
+                Bounds.Interpolate.MIN_MAX_MIN,
+                vertexConsumer, r, g, b, a, pose, normal, corners
+        );
+
+
+    }
+
+    private static void addVertex(
+            Float3 p,
+            float nx, float ny, float nz,
+            VertexConsumer vertexConsumer,
+            int r, int g, int b, int a,
+            Matrix4f pose, Matrix3f normal
+    ) {
+        vertexConsumer.vertex(pose, (float) p.x, (float) p.y, (float) p.z)
+                      .color(r, g, b, a)
+                      .normal(normal, nx, ny, nz)
+                      .endVertex();
+    }
+
+    private static void addVertex(
+            int corner,
+            float nx, float ny, float nz,
+            VertexConsumer vertexConsumer,
+            int r, int g, int b, int a,
+            Matrix4f pose, Matrix3f normal, Float3[] corners
+    ) {
+        addVertex(corners[corner], nx, ny, nz, vertexConsumer, r, g, b, a, pose, normal);
+    }
+
+    private static void addLine(
+            Bounds.Interpolate cornerStart, Bounds.Interpolate cornerEnd,
+            VertexConsumer vertexConsumer,
+            int r, int g, int b, int a,
+            Matrix4f pose, Matrix3f normal, Float3[] corners
+    ) {
+        Float3 start = corners[cornerStart.idx];
+        Float3 end = corners[cornerEnd.idx];
+        Float3 n = end.sub(start).normalized();
+
+        addVertex(start, (float) n.x, (float) n.y, (float) n.z, vertexConsumer, r, g, b, a, pose, normal);
+        addVertex(end, (float) n.x, (float) n.y, (float) n.z, vertexConsumer, r, g, b, a, pose, normal);
     }
 
     private static void renderLineBox(
