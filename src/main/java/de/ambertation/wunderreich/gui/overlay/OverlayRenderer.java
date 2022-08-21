@@ -106,7 +106,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, double x, double y, double z) {
         final Player player = Minecraft.getInstance().player;
         positions.clear();
-
+        //Box.angle += Math.toRadians(0.5);
         //-4, 63, -24
 
 
@@ -120,7 +120,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         if (camera.isInitialized()) {
             Float3 pos = Float3.of(camera.getPosition());
 
-            ConstructionData.setLastTargetOnClient(getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 5));
+            ConstructionData.setLastTargetOnClient(getTargetedBlock(Minecraft.getInstance().getCameraEntity(), 8, 4));
             Vec3 camPos = camera.getPosition().reverse();
             final Float3 camP = pos;
 
@@ -205,7 +205,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             }
                         }
 
-                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.75f, 0, false);
+                        renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.15f, 0, false);
                         renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, true);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
