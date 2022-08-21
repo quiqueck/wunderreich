@@ -206,7 +206,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         }
 
                         renderSDF(camP, sdf_moved_root, rootBox.blockAligned(), 0.3f, 0.15f, 0, false);
-                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, true);
+                        renderSDF(camP, sdf, box.blockAligned(), 0.2f, 0.95f, 1, false);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
