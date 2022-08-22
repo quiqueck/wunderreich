@@ -5,14 +5,15 @@ import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
+import de.ambertation.wunderreich.gui.overlay.TransformWidget;
 import de.ambertation.wunderreich.network.ChangedTargetBlockMessage;
 import de.ambertation.wunderreich.noise.OpenSimplex2;
 import de.ambertation.wunderreich.utils.RandomList;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;
 
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,8 +28,9 @@ public class ConstructionData {
     private static final String SDF_TAG = "sdf";
     private static final String CENTER_TAG = "c";
     private static final String SELECTED_CORNER_TAG = "sc";
-    private static final String MATERIAL_TAG = "material";
+    private static final String MATERIAL_TAG = "m";
     private static final String ACTIVE_SLOT_TAG = "a";
+    private static final String TRANSFORM_STATE_TAG = "ts";
     private static final int VALID_RADIUS_SQUARE = 64 * 64;
     private static final String CONSTRUCTION_DATA_TAG = "construction";
 
@@ -44,7 +46,6 @@ public class ConstructionData {
 
 
     public ConstructionData(CompoundTag baseTag) {
-
         CENTER = new CachedNBTValue<>(
                 baseTag,
                 CENTER_TAG,
@@ -75,36 +76,64 @@ public class ConstructionData {
                 },
                 NbtTagHelper::writeContainer
         );
-
         ACTIVE_SLOT = new CachedNBTValue<>(
                 baseTag,
                 ACTIVE_SLOT_TAG,
                 0,
                 IntTag::getAsInt,
-                IntTag::valueOf
+                IntTag::valueOf,
+                this::changedActiveSlot
         );
+
+        updateActiveTransformWidget();
+        if (getActiveTransformWidget() != null) {
+            if (!baseTag.contains(TRANSFORM_STATE_TAG, Tag.TAG_COMPOUND)) {
+                baseTag.put(TRANSFORM_STATE_TAG, new CompoundTag());
+            }
+            getActiveTransformWidget().setDataTag(baseTag.getCompound(TRANSFORM_STATE_TAG));
+            getActiveTransformWidget().readState();
+        }
     }
 
-    public static Float3 getLastTargetInWorldSpace() {
+    private TransformWidget activeTransformWidget;
+
+    public void changedActiveSlot(int oldValue, int newValue) {
+        if (oldValue != newValue)
+            updateActiveTransformWidget();
+    }
+
+    public TransformWidget getActiveTransformWidget() {
+        return activeTransformWidget;
+    }
+
+    public void updateActiveTransformWidget() {
+        SDF sdf = getActiveSDF();
+        if (sdf instanceof Box boxSDF) {
+            Float3 offsetToWorldSpace = CENTER.get();
+            activeTransformWidget = new TransformWidget(boxSDF.transform.translate(offsetToWorldSpace));
+        } else activeTransformWidget = null;
+    }
+
+    public static Float3 getCursorPos() {
         return lastTarget;
     }
 
-    public static void setLastTargetInWorldSpaceOnClient(BlockPos newTarget) {
-        if (setLastTargetInWorldSpaceCommon(newTarget)) {
+    public static void setCursorPosOnClient(Float3 newTarget) {
+        if (setCursorPosCommon(newTarget)) {
             ChangedTargetBlockMessage.INSTANCE.send(newTarget);
         }
     }
 
-    public static void setLastTargetInWorldSpaceOnServer(BlockPos lastTarget) {
-        setLastTargetInWorldSpaceCommon(lastTarget);
+    public static void setCursorPosOnServer(Float3 lastTarget) {
+        setCursorPosCommon(lastTarget);
     }
 
-    private static boolean setLastTargetInWorldSpaceCommon(BlockPos _newTarget) {
-        Float3 newTarget = Float3.of(_newTarget);
+    private static boolean setCursorPosCommon(Float3 newTarget) {
         if (lastTarget == newTarget) return false;
 
         if (lastTarget == null || newTarget == null || !lastTarget.equals(newTarget)) {
             lastTarget = newTarget;
+
             return true;
         }
 

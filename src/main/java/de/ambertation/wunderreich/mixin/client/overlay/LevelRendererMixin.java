@@ -1,5 +1,8 @@
 package de.ambertation.wunderreich.mixin.client.overlay;
 
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.gui.overlay.OverlayRenderer;
+
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Matrix4f;
 import net.minecraft.client.Camera;
@@ -7,8 +10,6 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.LightTexture;
 
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.gui.overlay.OverlayRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +30,7 @@ public class LevelRendererMixin {
             CallbackInfo ci
     ) {
         if (Configs.MAIN.allowConstructionTools.get()) {
-            OverlayRenderer.INSTANCE.renderBlocks(poseStack, camera);
+            OverlayRenderer.INSTANCE.renderPositionBlocks(poseStack, camera);
         }
     }
 }

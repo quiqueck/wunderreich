@@ -47,7 +47,16 @@ public class Ruler extends Item implements FabricItem {
         ConstructionData cd = ConstructionData.getConstructionData(ruler);
         //if (!level.isClientSide) return InteractionResultHolder.pass(ruler);
         if (cd != null) {
-            Float3 highlightedBlock = ConstructionData.getLastTargetInWorldSpace();
+            Float3 cursorPos = ConstructionData.getCursorPos();
+            System.out.println("Cursor: " + cursorPos);
+            System.out.println("ATrans: " + cd.getActiveTransformWidget());
+            if (cd.getActiveTransformWidget() != null) {
+                cd.getActiveTransformWidget().cursorOver(cursorPos);
+                if (cd.getActiveTransformWidget().click()) {
+                    return InteractionResultHolder.success(ruler);
+                }
+            }
+
 
             //deselect Corner
             if (cd.getSelectedCorner() != null) {
@@ -63,7 +72,7 @@ public class Ruler extends Item implements FabricItem {
             Bounds.Interpolate corner = cd.getActiveBoundingBoxInWorldSpace() == null
                     ? null
                     : cd.getActiveBoundingBoxInWorldSpace().blockAligned()
-                        .isCornerOrCenter(highlightedBlock);
+                        .isCornerOrCenter(cursorPos);
 
             if (corner != null) {
                 cd.setSelectedCorner(corner);
@@ -72,7 +81,7 @@ public class Ruler extends Item implements FabricItem {
 
 
             if (player.isShiftKeyDown()) {
-                cd.CENTER.set(ConstructionData.getLastTargetInWorldSpace());
+                cd.CENTER.set(ConstructionData.getCursorPos());
 //                if (cd.getActiveSDF() instanceof Box box) {
 //                    System.out.println("Bounds: " + box.getBoundingBox());
 //                    box.rotate(Math.toRadians(15));
