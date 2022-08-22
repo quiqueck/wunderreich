@@ -72,7 +72,7 @@ public class WunderreichItems {
 
     public static Item BLUE_PRINT_BOX = registerItem(
             "blueprint_box",
-            () -> new BluePrint(() -> new Box(Float3.of(0, 0, 0), Float3.of(9, 5, 5))),
+            () -> new BluePrint(() -> new Box(Float3.of(0, 0, 0), Float3.of(8, 5, 5))),
             Configs.MAIN.allowConstructionTools.get()
     );
     public static Item BLUE_PRINT_UNION = registerItem(

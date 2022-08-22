@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
@@ -73,16 +72,16 @@ public class Ruler extends Item implements FabricItem {
 
 
             if (player.isShiftKeyDown()) {
-                //cd.CENTER.set(Float3.of(ConstructionData.getLastTarget()).blockAligned());
-                if (cd.getActiveSDF() instanceof Box box) {
-                    System.out.println("Bounds: " + box.getBoundingBox());
-                    box.rotate(Math.toRadians(15));
-                    cd.SDF_DATA.set(box.getRoot());
-
-                    System.out.println("new Bounds: " + box.transform);
-                    System.out.println("new Bounds: " + box.getBoundingBox());
-                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
-                }
+                cd.CENTER.set(Float3.of(ConstructionData.getLastTargetInWorldSpace()));
+//                if (cd.getActiveSDF() instanceof Box box) {
+//                    System.out.println("Bounds: " + box.getBoundingBox());
+//                    box.rotate(Math.toRadians(15));
+//                    cd.SDF_DATA.set(box.getRoot());
+//
+//                    System.out.println("new Bounds: " + box.transform);
+//                    System.out.println("new Bounds: " + box.getBoundingBox());
+//                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
+//                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);
