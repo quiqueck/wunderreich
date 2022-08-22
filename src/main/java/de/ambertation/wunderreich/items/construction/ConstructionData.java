@@ -40,7 +40,7 @@ public class ConstructionData {
 
     public final CachedNBTValue<RulerContainer, ListTag> MATERIAL_DATA;
     @ApiStatus.Internal
-    private static BlockPos lastTarget;
+    private static Float3 lastTarget;
 
 
     public ConstructionData(CompoundTag baseTag) {
@@ -85,7 +85,7 @@ public class ConstructionData {
         );
     }
 
-    public static BlockPos getLastTargetInWorldSpace() {
+    public static Float3 getLastTargetInWorldSpace() {
         return lastTarget;
     }
 
@@ -99,10 +99,11 @@ public class ConstructionData {
         setLastTargetInWorldSpaceCommon(lastTarget);
     }
 
-    private static boolean setLastTargetInWorldSpaceCommon(BlockPos newTarget) {
+    private static boolean setLastTargetInWorldSpaceCommon(BlockPos _newTarget) {
+        Float3 newTarget = Float3.of(_newTarget);
         if (lastTarget == newTarget) return false;
 
-        if (lastTarget == null || newTarget == null || lastTarget.getX() != newTarget.getX() || lastTarget.getY() != newTarget.getY() || lastTarget.getZ() != newTarget.getZ()) {
+        if (lastTarget == null || newTarget == null || !lastTarget.equals(newTarget)) {
             lastTarget = newTarget;
             return true;
         }

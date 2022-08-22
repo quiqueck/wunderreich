@@ -132,10 +132,10 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             );
 
             DebugRenderer.renderFloatingText(
-                    Float3.of(ConstructionData.getLastTargetInWorldSpace()).toString(),
-                    ConstructionData.getLastTargetInWorldSpace().getX() + .5,
-                    ConstructionData.getLastTargetInWorldSpace().getY(),
-                    ConstructionData.getLastTargetInWorldSpace().getZ() + .5,
+                    ConstructionData.getLastTargetInWorldSpace().toString(),
+                    ConstructionData.getLastTargetInWorldSpace().x,
+                    ConstructionData.getLastTargetInWorldSpace().y,
+                    ConstructionData.getLastTargetInWorldSpace().z,
                     COLOR_SELECTION
             );
 
@@ -164,8 +164,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     Bounds worldSpaceBox = sdf.getBoundingBox();
                     Bounds worldSpaceBoxAligned = worldSpaceBox.blockAligned();
                     Bounds worldSpaceRootBox = sdf_moved_root.getBoundingBox();
-                    final Float3 worldSpaceTargetPos = Float3.of(ConstructionData.getLastTargetInWorldSpace());
-                    final Bounds.Interpolate targetCorner = worldSpaceBox.isCornerOrCenter(worldSpaceTargetPos);
+                    final Float3 worldSpaceTargetPos = ConstructionData.getLastTargetInWorldSpace();
+                    final Bounds.Interpolate targetCorner = worldSpaceBoxAligned.isCornerOrCenter(worldSpaceTargetPos);
 
                     time += Minecraft.getInstance().getDeltaFrameTime();
                     if (time > 10000) time -= 10000;
@@ -183,6 +183,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     selectedCorner,
                                     worldSpaceTargetPos
                             );
+                            worldSpaceBoxAligned = worldSpaceBox.blockAligned();
                             renderBlockOutline(
                                     vertexConsumer, poseStack,
                                     worldSpaceBox.get(selectedCorner), camPos, 0.1f,
@@ -209,13 +210,29 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 COLOR_BOUNDING_BOX,
                                 1
                         );
-                        renderBlockOutline(vertexConsumer, poseStack,
-                                worldSpaceRootBox, camPos, 0, COLOR_BOUNDING_BOX, .25f
+                        renderBlockOutline(
+                                vertexConsumer,
+                                poseStack,
+                                worldSpaceBox,
+                                camPos,
+                                0,
+                                COLOR_MAUVE,
+                                1
                         );
+//                        renderBlockOutline(vertexConsumer, poseStack,
+//                                worldSpaceRootBox, camPos, 0, COLOR_BOUNDING_BOX, .25f
+//                        );
                         DebugRenderer.renderFloatingText(
                                 worldSpaceBox.toString(),
                                 worldSpaceBox.min.x,
                                 worldSpaceBox.min.y - 0.4,
+                                worldSpaceBox.min.z,
+                                COLOR_MAUVE
+                        );
+                        DebugRenderer.renderFloatingText(
+                                worldSpaceBoxAligned.toString(),
+                                worldSpaceBox.min.x,
+                                worldSpaceBox.min.y - 0.6,
                                 worldSpaceBox.min.z,
                                 COLOR_BOUNDING_BOX
                         );
@@ -226,7 +243,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     poseStack,
                                     boxSDF.transform.translate(offsetToWorldSpace),
                                     camPos,
-                                    COLOR_BOUNDING_BOX,
+                                    COLOR_FIERY_ROSE,
                                     1
                             );
 
@@ -236,31 +253,39 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                     Transform.of(boxSDF.transform.center, boxSDF.transform.size)
                                              .translate(offsetToWorldSpace),
                                     camPos,
-                                    COLOR_BOUNDING_BOX,
+                                    COLOR_FIERY_ROSE,
                                     1
+                            );
+
+
+                            DebugRenderer.renderFloatingText(
+                                    boxSDF.transform.getBoundingBoxWorldSpace().toString(),
+                                    worldSpaceBox.min.x,
+                                    worldSpaceBox.min.y - 0.8,
+                                    worldSpaceBox.min.z,
+                                    COLOR_FIERY_ROSE
                             );
                         }
 
 
                         if (constructionData.getSelectedCorner() == null) {
-                            //worldSpaceBoxAligned = Bounds.of(worldSpaceBoxAligned.min, worldSpaceBoxAligned.max.sub(1));
                             for (Bounds.Interpolate corner : Bounds.Interpolate.CORNERS_AND_CENTER) {
                                 if ((targetCorner != null && targetCorner.idx == corner.idx)) {
                                     positions.add(RenderInfo.withCamPos(
-                                            worldSpaceBox.get(corner).blockAligned(), camPosWorldSpace, 0.1f,
+                                            worldSpaceBoxAligned.get(corner).blockAligned(), camPosWorldSpace, 0.1f,
                                             COLOR_FIERY_ROSE, 0.5f,
                                             COLOR_FIERY_ROSE, 0.8f
                                     ));
                                 } else {
                                     positions.add(RenderInfo.withCamPos(
-                                            worldSpaceBox.get(corner).blockAligned(), camPosWorldSpace, 0.1f,
+                                            worldSpaceBoxAligned.get(corner).blockAligned(), camPosWorldSpace, 0.1f,
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION), 0.8f,
                                             COLOR_SELECTION, phase
                                     ));
                                     renderBlockOutline(
                                             vertexConsumer,
                                             poseStack,
-                                            worldSpaceBox.get(corner).blockAligned(),
+                                            worldSpaceBoxAligned.get(corner).blockAligned(),
                                             camPos,
                                             0.1f,
                                             blendColors(phase, COLOR_BOUNDING_BOX, COLOR_SELECTION),
@@ -269,10 +294,10 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 }
 
                                 DebugRenderer.renderFloatingText(
-                                        worldSpaceBox.get(corner).toString(),
-                                        worldSpaceBox.get(corner).x,
-                                        worldSpaceBox.get(corner).y,
-                                        worldSpaceBox.get(corner).z,
+                                        worldSpaceBoxAligned.get(corner).toString(),
+                                        worldSpaceBoxAligned.get(corner).x,
+                                        worldSpaceBoxAligned.get(corner).y,
+                                        worldSpaceBoxAligned.get(corner).z,
                                         COLOR_SELECTION
                                 );
                             }
@@ -287,7 +312,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 0,
                                 false
                         );
-                        renderSDF(camPosWorldSpace, sdf, worldSpaceBox, 0.2f, 0.15f, .6f, true);
+                        renderSDF(camPosWorldSpace, sdf, worldSpaceBox, 0.2f, 0.95f, .6f, true);
 
                         renderPositionOutlines(vertexConsumer, poseStack, camPos);
 
@@ -309,7 +334,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     }
 
     private void printDist(SDF sdf, Float3 oo) {
-        Float3 oa = Float3.of(ConstructionData.getLastTargetInWorldSpace());
+        oo = oo.sub(0.5);
+        Float3 oa = ConstructionData.getLastTargetInWorldSpace();
         Float3 op = oa.add(oo);
         Float3 ot = oa.add(oo.mul(1.3).sub(0.15));
         double dist = sdf.dist(op);
@@ -391,9 +417,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             int color,
             float alpha
     ) {
-        final float x = (float) (pos.x + camPos.x);
-        final float y = (float) (pos.y + camPos.y);
-        final float z = (float) (pos.z + camPos.z);
+        final float x = (float) (pos.x + camPos.x) - 0.5f;
+        final float y = (float) (pos.y + camPos.y) - 0.5f;
+        final float z = (float) (pos.z + camPos.z) - 0.5f;
         renderLineBox(vertexConsumer, poseStack,
                 x + deflate, y + deflate, z + deflate,
                 1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
@@ -410,12 +436,12 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     ) {
         renderLineBox(
                 vertexConsumer, poseStack,
-                (float) (bounds.min.x + camPos.x) + deflate,
-                (float) (bounds.min.y + camPos.y) + deflate,
-                (float) (bounds.min.z + camPos.z) + deflate,
-                (float) (bounds.max.x + camPos.x) - deflate + 1,
-                (float) (bounds.max.y + camPos.y) - deflate + 1,
-                (float) (bounds.max.z + camPos.z) - deflate + 1,
+                (float) (bounds.min.x + camPos.x) + deflate - 0.5f,
+                (float) (bounds.min.y + camPos.y) + deflate - 0.5f,
+                (float) (bounds.min.z + camPos.z) + deflate - 0.5f,
+                (float) (bounds.max.x + camPos.x) - deflate + 0.5f,
+                (float) (bounds.max.y + camPos.y) - deflate + 0.5f,
+                (float) (bounds.max.z + camPos.z) - deflate + 0.5f,
                 FastColor.ARGB32.red(color),
                 FastColor.ARGB32.green(color),
                 FastColor.ARGB32.blue(color),
@@ -591,9 +617,9 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     ) {
         Matrix4f m = poseStack.last().pose();
         Matrix3f rotation = poseStack.last().normal();
-        float lx = (float) (pos.x + camPos.x);
-        float ly = (float) (pos.y + camPos.y);
-        float lz = (float) (pos.z + camPos.z);
+        float lx = (float) (pos.x + camPos.x) - 0.5f;
+        float ly = (float) (pos.y + camPos.y) - 0.5f;
+        float lz = (float) (pos.z + camPos.z) - 0.5f;
         float hx = lx + 1 - deflate;
         float hy = ly + 1 - deflate;
         float hz = lz + 1 - deflate;
