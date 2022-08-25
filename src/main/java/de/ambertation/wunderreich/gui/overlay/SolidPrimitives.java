@@ -40,9 +40,9 @@ public class SolidPrimitives {
     ) {
         Matrix4f m = ctx.pose();
         Matrix3f rotation = ctx.normal();
-        float lx = (float) (pos.x + ctx.camPos.x) - 0.5f;
-        float ly = (float) (pos.y + ctx.camPos.y) - 0.5f;
-        float lz = (float) (pos.z + ctx.camPos.z) - 0.5f;
+        float lx = (float) (pos.x + ctx.worldToCamSpace.x) - 0.5f;
+        float ly = (float) (pos.y + ctx.worldToCamSpace.y) - 0.5f;
+        float lz = (float) (pos.z + ctx.worldToCamSpace.z) - 0.5f;
         float hx = lx + 1 - deflate;
         float hy = ly + 1 - deflate;
         float hz = lz + 1 - deflate;

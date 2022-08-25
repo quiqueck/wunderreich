@@ -16,8 +16,8 @@ import net.fabricmc.api.Environment;
 public class RenderContext {
     private PoseStack poseStack;
     public VertexConsumer vertexConsumer;
-    public Vec3 camPos;
-    public Float3 camPosWorldSpace;
+    public Vec3 worldToCamSpace;
+    public Float3 camToWorldSpace;
     private Matrix4f pose;
     private Matrix3f normal;
 
@@ -38,8 +38,8 @@ public class RenderContext {
     }
 
     public void setCamera(Camera camera) {
-        camPos = camera.getPosition().reverse();
-        camPosWorldSpace = Float3.of(camera.getPosition());
+        worldToCamSpace = camera.getPosition().reverse();
+        camToWorldSpace = Float3.of(camera.getPosition());
     }
 
     public Matrix4f pose() {

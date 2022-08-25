@@ -5,6 +5,7 @@ import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -103,16 +104,15 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
                 SDF sdf_active = constructionData.getActiveSDF();
                 if (sdf_active == null) return;
-                SDF sdf_root = sdf_active.getRoot();
                 sdf = sdf_active;
-                SDF sdf_moved_root = sdf_root;
 
 
                 if (sdf != null && !(sdf instanceof Empty)) {
+                    var widget = constructionData.getActiveTransformWidget();
+
                     Float3 offsetToWorldSpace = constructionData.CENTER.get();
                     if (offsetToWorldSpace != null) {
                         sdf = new SDFMove(sdf, offsetToWorldSpace);
-                        sdf_moved_root = new SDFMove(sdf_root, offsetToWorldSpace);
                     }
 
 
@@ -123,11 +123,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
                     if (constructionData.getActiveTransformWidget() != null) {
                         LinePrimitives.renderSingleBlock(ctx, cursorPos, 0.4f, COLOR_SELECTION, 0.5f);
-                        constructionData.getActiveTransformWidget().cursorOver(cursorPos);
+                        constructionData.getActiveTransformWidget().cursorTick(cursorPos);
                         constructionData.getActiveTransformWidget().render(ctx, phase);
                         showTargetBlock = !constructionData.getActiveTransformWidget().hasSelection();
                     }
-
+                    if (sdf_active instanceof Box boxSDF && widget != null && widget.hasSelection()) {
+                        boxSDF.transform = widget.getChangedTransform()
+                                                 .translateInverted(constructionData.CENTER.get());
+                    }
 
                     renderSDF(ctx, sdf, sdf.getBoundingBox(), .2f, 0.8f, 1, false);
                 }
@@ -145,20 +148,20 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         }
 
         if (showTargetBlock && ctx.vertexConsumer != null) {
-            LinePrimitives.renderSingleBlock(
-                    ctx,
-                    ConstructionData.getCursorPos().toBlockPos(),
-                    .01f,
-                    COLOR_SELECTION,
-                    1
-            );
-            TextRenderer.render(ConstructionData.getCursorPos().blockAligned(), COLOR_SELECTION);
-
-            if (sdf != null) {
-                for (Bounds.Interpolate i : Bounds.Interpolate.CORNERS_AND_CENTER) {
-                    printDist(sdf, i.t);
-                }
-            }
+//            LinePrimitives.renderSingleBlock(
+//                    ctx,
+//                    ConstructionData.getCursorPos().toBlockPos(),
+//                    .01f,
+//                    COLOR_SELECTION,
+//                    1
+//            );
+//            TextRenderer.render(ConstructionData.getCursorPos().blockAligned(), COLOR_SELECTION);
+//
+//            if (sdf != null) {
+//                for (Bounds.Interpolate i : Bounds.Interpolate.CORNERS_AND_CENTER) {
+//                    printDist(sdf, i.t);
+//                }
+//            }
         }
 
         ctx.invalidate();
@@ -193,7 +196,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
             positions.add(BlockInfo.withCamPos(
                     p,
-                    ctx.camPosWorldSpace,
+                    ctx.camToWorldSpace,
                     deflate,
                     FILL_COLORS[mIdx % FILL_COLORS.length],
                     alpha,
@@ -213,7 +216,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     public void renderPositionBlocks(PoseStack poseStack, Camera camera) {
         if (camera.isInitialized()) {
             ctx.setPoseStack(poseStack);
-            ctx.camPos = camera.getPosition().reverse();
+            ctx.worldToCamSpace = camera.getPosition().reverse();
             BlockInfo.renderTransparentPositions(ctx, positions);
         }
     }

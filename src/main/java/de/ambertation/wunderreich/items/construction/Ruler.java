@@ -1,12 +1,11 @@
 package de.ambertation.wunderreich.items.construction;
 
-import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
+import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
-import de.ambertation.wunderreich.network.UpdateSDFTransformMessage;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import net.minecraft.nbt.CompoundTag;
@@ -47,50 +46,36 @@ public class Ruler extends Item implements FabricItem {
         ConstructionData cd = ConstructionData.getConstructionData(ruler);
         //if (!level.isClientSide) return InteractionResultHolder.pass(ruler);
         if (cd != null) {
+            var widget = cd.getActiveTransformWidget();
             Float3 cursorPos = ConstructionData.getCursorPos();
             System.out.println("Cursor: " + cursorPos);
-            System.out.println("ATrans: " + cd.getActiveTransformWidget());
-            if (cd.getActiveTransformWidget() != null) {
-                cd.getActiveTransformWidget().cursorOver(cursorPos);
-                if (cd.getActiveTransformWidget().click()) {
+            System.out.println("ATrans: " + widget);
+            if (widget != null) {
+                widget.cursorTick(cursorPos);
+                if (widget.hasSelection()) {
+                    SDF active = cd.getActiveSDF();
+                    if (active instanceof Box box) {
+                        box.transform = widget.getChangedTransform().translateInverted(cd.CENTER.get());
+                        cd.SDF_DATA.set(box.getRoot());
+                    }
+                }
+                if (widget.click()) {
                     return InteractionResultHolder.success(ruler);
                 }
             }
 
 
-            //deselect Corner
-            if (cd.getSelectedCorner() != null) {
-                if (level.isClientSide) {
-                    SDF sdf = cd.getActiveSDF();
-                    if (sdf != null)
-                        UpdateSDFTransformMessage.INSTANCE.send(sdf.getBoundingBox());
-                }
-                cd.setSelectedCorner(null);
-                return InteractionResultHolder.success(ruler);
-            }
-
-            Bounds.Interpolate corner = cd.getActiveBoundingBoxInWorldSpace() == null
-                    ? null
-                    : cd.getActiveBoundingBoxInWorldSpace().blockAligned()
-                        .isCornerOrCenter(cursorPos);
-
-            if (corner != null) {
-                cd.setSelectedCorner(corner);
-                return InteractionResultHolder.success(ruler);
-            }
-
-
             if (player.isShiftKeyDown()) {
-                cd.CENTER.set(ConstructionData.getCursorPos());
-//                if (cd.getActiveSDF() instanceof Box box) {
-//                    System.out.println("Bounds: " + box.getBoundingBox());
-//                    box.rotate(Math.toRadians(15));
-//                    cd.SDF_DATA.set(box.getRoot());
-//
-//                    System.out.println("new Bounds: " + box.transform);
-//                    System.out.println("new Bounds: " + box.getBoundingBox());
-//                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
-//                }
+//                cd.CENTER.set(ConstructionData.getCursorPos());
+                if (cd.getActiveSDF() instanceof Box box) {
+                    System.out.println("Bounds: " + box.getBoundingBox());
+                    box.rotate(Math.toRadians(15));
+                    cd.SDF_DATA.set(box.getRoot());
+
+                    System.out.println("new Bounds: " + box.transform);
+                    System.out.println("new Bounds: " + box.getBoundingBox());
+                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
+                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);
