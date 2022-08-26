@@ -20,12 +20,15 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
 import net.fabricmc.fabric.api.item.v1.FabricItem;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class Ruler extends Item implements FabricItem {
 
@@ -66,16 +69,16 @@ public class Ruler extends Item implements FabricItem {
 
 
             if (player.isShiftKeyDown()) {
-//                cd.CENTER.set(ConstructionData.getCursorPos());
-                if (cd.getActiveSDF() instanceof Box box) {
-                    System.out.println("Bounds: " + box.getBoundingBox());
-                    box.rotate(Math.toRadians(15));
-                    cd.SDF_DATA.set(box.getRoot());
-
-                    System.out.println("new Bounds: " + box.transform);
-                    System.out.println("new Bounds: " + box.getBoundingBox());
-                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
-                }
+                cd.CENTER.set(ConstructionData.getCursorPos());
+//                if (cd.getActiveSDF() instanceof Box box) {
+//                    System.out.println("Bounds: " + box.getBoundingBox());
+//                    box.rotate(Math.toRadians(15));
+//                    cd.SDF_DATA.set(box.getRoot());
+//
+//                    System.out.println("new Bounds: " + box.transform);
+//                    System.out.println("new Bounds: " + box.getBoundingBox());
+//                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
+//                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);
@@ -122,5 +125,17 @@ public class Ruler extends Item implements FabricItem {
                 }
             });
         }
+    }
+
+    @Override
+    public void appendHoverText(
+            ItemStack itemStack,
+            @Nullable Level level,
+            List<Component> list,
+            TooltipFlag tooltipFlag
+    ) {
+        list.add(Component.literal(ConstructionData.getConstructionData(itemStack).SDF_DATA.get().toString()));
+        list.add(Component.literal(ConstructionData.getConstructionData(itemStack).CENTER.get().toString()));
+        super.appendHoverText(itemStack, level, list, tooltipFlag);
     }
 }

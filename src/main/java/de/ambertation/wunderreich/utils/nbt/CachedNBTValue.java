@@ -44,6 +44,8 @@ public class CachedNBTValue<D, T extends Tag> {
             BiConsumer<D, D> changed
     ) {
         this(baseTag, tagName, null, getter, setter, changed);
+        if (changed == null) changed = (old, fresh) -> {
+        };
     }
 
     public CachedNBTValue(
@@ -86,6 +88,7 @@ public class CachedNBTValue<D, T extends Tag> {
         } else {
             baseTag.put(tagName, setter.apply(newValue));
         }
+        if (oldValue == null) oldValue = defaultValue;
         changed.accept(oldValue, cachedValue);
     }
 }
