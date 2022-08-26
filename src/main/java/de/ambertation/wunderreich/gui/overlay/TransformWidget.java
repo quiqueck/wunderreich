@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.Transform;
 import de.ambertation.lib.ui.ColorHelper;
 
@@ -17,6 +18,8 @@ import org.jetbrains.annotations.Nullable;
 public class TransformWidget {
     @NotNull
     private Transform transform;
+    @NotNull
+    private Matrix4 toWorldMatrix;
 
     @Nullable
     private Transform changedTransform;
@@ -29,7 +32,12 @@ public class TransformWidget {
     private Float3 cursorPos = Float3.ZERO;
 
     public TransformWidget(@NotNull Transform transform) {
+        this(transform, Matrix4.IDENTITY);
+    }
+
+    public TransformWidget(@NotNull Transform transform, @NotNull Matrix4 toWorldMatrix) {
         this.transform = transform;
+        this.toWorldMatrix = toWorldMatrix;
     }
 
     @Environment(EnvType.CLIENT)
@@ -52,8 +60,7 @@ public class TransformWidget {
             LinePrimitives.renderSingleBlock(ctx, corner, -0.05f, OverlayRenderer.COLOR_FIERY_ROSE, 1);
             TextRenderer.render(corner, OverlayRenderer.COLOR_FIERY_ROSE);
         } else {
-            LinePrimitives.renderTransform(ctx, transform, OverlayRenderer.COLOR_BOUNDING_BOX, 1);
-
+            LinePrimitives.renderCorners(ctx, corners, OverlayRenderer.COLOR_BOUNDING_BOX, 1);
             for (int idx = 0; idx < corners.length; idx++) {
                 corner = corners[idx];
                 if (hoveredCorner != null && hoveredCorner.idx == idx) {
@@ -95,7 +102,7 @@ public class TransformWidget {
 
     private void updateChangedTransform(Float3 selectedCornerPos) {
         if (selectedCorner != null && selectedCornerPos != null) {
-            Float3[] corners = transform.getCornersInWorldSpace(false);
+            Float3[] corners = transform.getCornersInWorldSpace(false, toWorldMatrix);
 
             corners[selectedCorner.idx] = selectedCornerPos;
             Float3 newSize = corners[selectedCorner.idx].sub(corners[selectedCorner.opposite().idx]);
@@ -107,9 +114,9 @@ public class TransformWidget {
 
     private Float3[] getCornersInWorldSpace() {
         if (selectedCorner != null && cursorPos != null && changedTransform != null) {
-            return changedTransform.getCornersInWorldSpace(false);
+            return changedTransform.getCornersInWorldSpace(false, toWorldMatrix);
         }
-        return transform.getCornersInWorldSpace(false);
+        return transform.getCornersInWorldSpace(false, toWorldMatrix);
     }
 
     public boolean click() {

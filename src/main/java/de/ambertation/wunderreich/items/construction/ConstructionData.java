@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
@@ -110,7 +111,7 @@ public class ConstructionData {
         SDF sdf = getActiveSDF();
         if (sdf instanceof Box boxSDF) {
             Float3 offsetToWorldSpace = CENTER.get();
-            activeTransformWidget = new TransformWidget(boxSDF.transform.translate(offsetToWorldSpace));
+            activeTransformWidget = new TransformWidget(boxSDF.transform, Matrix4.ofTranslation(offsetToWorldSpace));
         } else activeTransformWidget = null;
     }
 
