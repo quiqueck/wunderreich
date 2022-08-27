@@ -2,7 +2,6 @@ package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.SDFUnion;
 import de.ambertation.lib.math.sdf.interfaces.Rotatable;
 import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.lib.math.sdf.shapes.Empty;
@@ -60,10 +59,8 @@ public class Ruler extends Item implements FabricItem {
                 if (widget.hasSelection()) {
                     SDF active = cd.getActiveSDF();
                     if (active instanceof Transformable tf) {
-                        if (!(active instanceof SDFUnion)) {
-//                            tf.setLocalTransform(widget.getChangedTransform());
-//                            cd.SDF_DATA.set(active.getRoot());
-                        }
+                        tf.setLocalTransform(widget.getChangedTransform());
+                        cd.SDF_DATA.set(active.getRoot());
                     }
                 }
                 if (widget.click()) {
