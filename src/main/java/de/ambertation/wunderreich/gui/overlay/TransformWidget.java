@@ -95,13 +95,20 @@ public class TransformWidget {
 
     private void updateChangedTransform(Float3 selectedCornerPos) {
         if (selectedCorner != null && selectedCornerPos != null) {
-            Float3 A = selectedCornerPos;
-            Float3 B = source.getCornerInWorldSpace(selectedCorner.opposite(), false);
+            Float3 A = source.getParentTransformMatrix()
+                             .inverted()
+                             .transform(selectedCornerPos);
+
+            Float3 B = source.getParentTransformMatrix()
+                             .inverted()
+                             .transform(source.getCornerInWorldSpace(selectedCorner.opposite(), false));
 
             Float3 newSize = A.sub(B);
             Float3 newCenter = B.add(newSize.div(2));
             newSize = newSize.unRotate(source.getLocalTransform().rotation).abs();
             changedTransform = Transform.of(newCenter, newSize.abs(), source.getLocalTransform().rotation);
+
+            source.setLocalTransform(changedTransform);
         }
     }
 

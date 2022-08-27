@@ -2,7 +2,8 @@ package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.shapes.Box;
+import de.ambertation.lib.math.sdf.interfaces.Rotatable;
+import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
@@ -57,28 +58,22 @@ public class Ruler extends Item implements FabricItem {
                 widget.cursorTick(cursorPos);
                 if (widget.hasSelection()) {
                     SDF active = cd.getActiveSDF();
-                    if (active instanceof Box box) {
-                        box.transform = widget.getChangedTransform().translateInverted(cd.CENTER.get());
-                        cd.SDF_DATA.set(box.getRoot());
+                    if (active instanceof Transformable tf) {
+                        tf.setLocalTransform(widget.getChangedTransform());
+                        cd.SDF_DATA.set(active.getRoot());
                     }
                 }
                 if (widget.click()) {
                     return InteractionResultHolder.success(ruler);
                 }
             }
-
-
+            
             if (player.isShiftKeyDown()) {
-                cd.CENTER.set(ConstructionData.getCursorPos());
-//                if (cd.getActiveSDF() instanceof Box box) {
-//                    System.out.println("Bounds: " + box.getBoundingBox());
-//                    box.rotate(Math.toRadians(15));
-//                    cd.SDF_DATA.set(box.getRoot());
-//
-//                    System.out.println("new Bounds: " + box.transform);
-//                    System.out.println("new Bounds: " + box.getBoundingBox());
-//                    System.out.println("         -> " + box.getBoundingBox().rotate(box.transform.rotation.inverted()));
-//                }
+                //cd.CENTER.set(ConstructionData.getCursorPos());
+                if (cd.getActiveSDF() instanceof Rotatable rot) {
+                    rot.rotate(Math.toRadians(15));
+                    cd.SDF_DATA.set(rot.getRoot());
+                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);

@@ -5,7 +5,6 @@ import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
-import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.lib.ui.ColorHelper;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
@@ -142,10 +141,6 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         constructionData.getActiveTransformWidget().cursorTick(cursorPos);
                         constructionData.getActiveTransformWidget().render(ctx, phase);
                         showTargetBlock = !constructionData.getActiveTransformWidget().hasSelection();
-                    }
-                    if (sdf_active instanceof Box boxSDF && widget != null && widget.hasSelection()) {
-                        boxSDF.transform = widget.getChangedTransform()
-                                                 .translateInverted(constructionData.CENTER.get());
                     }
 
                     renderSDF(ctx, sdf, sdf.getBoundingBox(), .2f, 0.8f, 1, false);
