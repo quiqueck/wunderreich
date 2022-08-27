@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.Transform;
 import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.lib.ui.ColorHelper;
@@ -40,7 +41,31 @@ public class TransformWidget {
 
         if (selectedCorner != null) {
             LinePrimitives.renderCorners(ctx, corners, OverlayRenderer.COLOR_FIERY_ROSE, 1);
+            Float3[] corners2 = new Float3[corners.length];
+            for (int i = 0; i < corners.length; i++) {
+                corners2[i] = source.getLocalTransform()
+                                    .asInvertedMatrix()
+                                    .mul(source.getParentTransformMatrix().inverted())
+                                    .transform(corners[i]);
+            }
+            LinePrimitives.renderCorners(ctx, corners2, 0xFFFFFFFF, 1);
             corner = corners[selectedCorner.idx];
+            TextRenderer.render(
+                    cursorPos.add(0, -0.2, 0),
+                    source.getLocalTransform(),
+                    ColorHelper.WHITE
+            );
+
+            TextRenderer.render(
+                    cursorPos.add(0, -0.4, 0),
+                    changedTransform,
+                    ColorHelper.WHITE
+            );
+            TextRenderer.render(
+                    cursorPos.add(0, 0.2, 0),
+                    corners[selectedCorner.opposite().idx],
+                    ColorHelper.WHITE
+            );
             OverlayRenderer.INSTANCE.positions.add(BlockInfo.withCamPos(
                     corner, ctx.camToWorldSpace, 0.1f,
                     ColorHelper.blendColors(
@@ -95,18 +120,46 @@ public class TransformWidget {
 
     private void updateChangedTransform(Float3 selectedCornerPos) {
         if (selectedCorner != null && selectedCornerPos != null) {
-            Float3 A = source.getParentTransformMatrix()
-                             .inverted()
-                             .transform(selectedCornerPos);
+            if (source.isOperation()) {
+                final Matrix4 toLocal = source.getLocalTransform()
+                                              .asInvertedMatrix()
+                                              .mul(source.getParentTransformMatrix().inverted());
+                final Float3 A = toLocal.transform(selectedCornerPos);
+                final Float3 B = toLocal.transform(source.getCornerInWorldSpace(selectedCorner.opposite(), false));
 
-            Float3 B = source.getParentTransformMatrix()
-                             .inverted()
-                             .transform(source.getCornerInWorldSpace(selectedCorner.opposite(), false));
+                final Float3 oldCenter = toLocal.transform(source.getCornerInWorldSpace(
+                        Bounds.Interpolate.CENTER,
+                        false
+                ));
+                final Float3 oldA = toLocal.transform(source.getCornerInWorldSpace(selectedCorner, false));
 
-            Float3 newSize = A.sub(B);
-            Float3 newCenter = B.add(newSize.div(2));
-            newSize = newSize.unRotate(source.getLocalTransform().rotation).abs();
-            changedTransform = Transform.of(newCenter, newSize.abs(), source.getLocalTransform().rotation);
+                final Float3 newSize = A.sub(B);
+                final Float3 oldSize = oldA.sub(B);
+
+                final Float3 tSize = newSize.div(oldSize);
+                final Float3 newCenter = B.add(newSize.div(2));
+                final Float3 cc = source.getLocalTransform().rotation.rotate(newCenter.sub(oldCenter.mul(tSize)));
+                changedTransform = Transform.of(
+                        source.getLocalTransform().center.add(cc),
+                        source.getLocalTransform().size.mul(tSize),
+                        source.getLocalTransform().rotation
+                );
+            } else {
+                //this version has a better numerical stability, but it may only get used
+                //for geometry SDFs (non Operations)
+                Float3 A = source.getParentTransformMatrix()
+                                 .inverted()
+                                 .transform(selectedCornerPos);
+
+                Float3 B = source.getParentTransformMatrix()
+                                 .inverted()
+                                 .transform(source.getCornerInWorldSpace(selectedCorner.opposite(), false));
+
+                Float3 newSize = A.sub(B);
+                Float3 newCenter = B.add(newSize.div(2));
+                newSize = newSize.unRotate(source.getLocalTransform().rotation).abs();
+                changedTransform = Transform.of(newCenter, newSize, source.getLocalTransform().rotation);
+            }
 
             source.setLocalTransform(changedTransform);
         }
