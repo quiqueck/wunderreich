@@ -10,8 +10,10 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 public class SelectWhisperMessage extends ServerBoundPacketHandler<SelectWhisperMessage.Content> {
-    public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register("select_whisper",
-            new SelectWhisperMessage());
+    public static final SelectWhisperMessage INSTANCE = ServerBoundPacketHandler.register(
+            "select_whisper",
+            new SelectWhisperMessage()
+    );
 
     protected SelectWhisperMessage() {
     }
