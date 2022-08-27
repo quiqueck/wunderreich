@@ -143,7 +143,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         showTargetBlock = !constructionData.getActiveTransformWidget().hasSelection();
                     }
 
-                    renderSDF(ctx, sdf, sdf.getBoundingBox(), .2f, 0.8f, 1, false);
+                    renderSDF(ctx, sdf, sdf.getBoundingBox(), .1f, 0.8f, 1, false);
+                    renderSDF(ctx, sdf.getRoot(), sdf.getRoot().getBoundingBox(), .1f, 0.3f, 0.3f, false);
                 }
             }
 
