@@ -136,14 +136,16 @@ public class TransformWidget {
                 final Float3 newSize = A.sub(B);
                 final Float3 oldSize = oldA.sub(B);
 
-                final Float3 tSize = newSize.div(oldSize);
+                Float3 tSize = newSize.div(oldSize);
                 final Float3 newCenter = B.add(newSize.div(2));
-                final Float3 cc = source.getLocalTransform().rotation.rotate(newCenter.sub(oldCenter.mul(tSize)));
-                changedTransform = Transform.of(
-                        source.getLocalTransform().center.add(cc),
-                        source.getLocalTransform().size.mul(tSize),
-                        source.getLocalTransform().rotation
-                );
+                //final Float3 cc = source.getLocalTransform().rotation.rotate(newCenter.sub(oldCenter.mul(tSize)));
+                //
+                Float3 cc = newCenter.sub(oldCenter.mul(tSize));
+                //cc = cc.add(source.getLocalTransform().center);
+                cc = source.getLocalTransform().transform(cc);
+                //tSize = source.getLocalTransform().size.mul(tSize);
+                tSize = source.getLocalTransform().size.mul(tSize);
+                changedTransform = Transform.of(cc, tSize, source.getLocalTransform().rotation);
             } else {
                 //this version has a better numerical stability, but it may only get used
                 //for geometry SDFs (non Operations)
