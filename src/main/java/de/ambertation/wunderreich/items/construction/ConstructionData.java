@@ -4,9 +4,8 @@ import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
-import de.ambertation.lib.math.sdf.shapes.Box;
+import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.overlay.TransformWidget;
 import de.ambertation.wunderreich.network.ChangedTargetBlockMessage;
@@ -109,9 +108,10 @@ public class ConstructionData {
 
     public void updateActiveTransformWidget() {
         SDF sdf = getActiveSDF();
-        if (sdf instanceof Box boxSDF) {
-            Float3 offsetToWorldSpace = CENTER.get();
-            activeTransformWidget = new TransformWidget(boxSDF.transform, Matrix4.ofTranslation(offsetToWorldSpace));
+
+        if (sdf instanceof Transformable source) {
+            sdf.setRootTransform(Matrix4.ofTranslation(CENTER.get()));
+            activeTransformWidget = new TransformWidget(source);
         } else activeTransformWidget = null;
     }
 
@@ -231,10 +231,8 @@ public class ConstructionData {
     public void realize(MinecraftServer server, ServerPlayer player) {
         SDF sdf = getRootSDF();
         if (sdf != null) {
-            Float3 offset = CENTER.get();
-            if (offset != null) {
-                sdf = new SDFMove(sdf, offset);
-            }
+            sdf.setRootTransform(Matrix4.ofTranslation(CENTER.get()));
+
 
             final Function<Float3, Float>
                     noise = (cPos) -> (1 + OpenSimplex2.noise3_ImproveXZ(

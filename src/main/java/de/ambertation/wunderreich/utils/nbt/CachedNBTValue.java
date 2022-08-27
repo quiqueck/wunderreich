@@ -89,6 +89,7 @@ public class CachedNBTValue<D, T extends Tag> {
             baseTag.put(tagName, setter.apply(newValue));
         }
         if (oldValue == null) oldValue = defaultValue;
+        if (cachedValue == null) cachedValue = defaultValue;
         changed.accept(oldValue, cachedValue);
     }
 }

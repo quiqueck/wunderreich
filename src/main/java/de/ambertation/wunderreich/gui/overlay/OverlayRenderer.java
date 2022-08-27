@@ -2,11 +2,12 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.SDFMove;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.shapes.Box;
 import de.ambertation.lib.math.sdf.shapes.Empty;
+import de.ambertation.lib.ui.ColorHelper;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -108,14 +109,29 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
 
                 if (sdf != null && !(sdf instanceof Empty)) {
-                    var widget = constructionData.getActiveTransformWidget();
-
-                    Float3 offsetToWorldSpace = constructionData.CENTER.get();
-                    if (offsetToWorldSpace != null) {
-                        sdf = new SDFMove(sdf, offsetToWorldSpace);
-                    }
+                    TransformWidget widget = constructionData.getActiveTransformWidget();
+                    sdf.setRootTransform(Matrix4.ofTranslation(constructionData.CENTER.get()));
 
 
+                    TextRenderer.render(constructionData.CENTER.get(), COLOR_FIERY_ROSE);
+                    TextRenderer.render(
+                            constructionData.CENTER.get().add(0, -0.2, 0),
+                            sdf.getLocalTransform().getBoundingBoxWorldSpace(),
+                            COLOR_BOUNDING_BOX
+                    );
+                    TextRenderer.render(
+                            constructionData.CENTER.get().add(0, -0.4, 0),
+                            sdf.getBoundingBox(),
+                            COLOR_BOUNDING_BOX
+                    );
+
+
+                    TextRenderer.render(
+                            constructionData.CENTER.get().add(0, -0.6, 0),
+                            sdf.getLocalTransform(),
+                            ColorHelper.WHITE
+                    );
+                    LinePrimitives.renderBounds(ctx, sdf.getBoundingBox(), 0.1f, COLOR_BOUNDING_BOX, .25f);
                     time += Minecraft.getInstance().getDeltaFrameTime();
                     if (time > 10000) time -= 10000;
                     double scaledTime = time * 0.02;

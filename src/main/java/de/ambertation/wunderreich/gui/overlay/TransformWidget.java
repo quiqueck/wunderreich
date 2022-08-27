@@ -2,8 +2,8 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
-import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.Transform;
+import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.lib.ui.ColorHelper;
 
 import net.minecraft.nbt.CompoundTag;
@@ -17,9 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class TransformWidget {
     @NotNull
-    private Transform transform;
-    @NotNull
-    private Matrix4 toWorldMatrix;
+    private Transformable source;
 
     @Nullable
     private Transform changedTransform;
@@ -31,13 +29,8 @@ public class TransformWidget {
     @NotNull
     private Float3 cursorPos = Float3.ZERO;
 
-    public TransformWidget(@NotNull Transform transform) {
-        this(transform, Matrix4.IDENTITY);
-    }
-
-    public TransformWidget(@NotNull Transform transform, @NotNull Matrix4 toWorldMatrix) {
-        this.transform = transform;
-        this.toWorldMatrix = toWorldMatrix;
+    public TransformWidget(@NotNull Transformable source) {
+        this.source = source;
     }
 
     @Environment(EnvType.CLIENT)
@@ -96,27 +89,27 @@ public class TransformWidget {
     }
 
     public Transform getChangedTransform() {
-        if (changedTransform == null) return transform;
+        if (changedTransform == null) return source.getLocalTransform();
         return changedTransform;
     }
 
     private void updateChangedTransform(Float3 selectedCornerPos) {
         if (selectedCorner != null && selectedCornerPos != null) {
-            Float3[] corners = transform.getCornersInWorldSpace(false, toWorldMatrix);
+            Float3[] corners = source.getCornersInWorldSpace(false);
 
             corners[selectedCorner.idx] = selectedCornerPos;
             Float3 newSize = corners[selectedCorner.idx].sub(corners[selectedCorner.opposite().idx]);
             Float3 newCenter = corners[selectedCorner.opposite().idx].add(newSize.div(2));
-            newSize = newSize.unRotate(transform.rotation).abs();
-            changedTransform = Transform.of(newCenter, newSize.abs(), transform.rotation);
+            newSize = newSize.unRotate(source.getLocalTransform().rotation).abs();
+            changedTransform = Transform.of(newCenter, newSize.abs(), source.getLocalTransform().rotation);
         }
     }
 
     private Float3[] getCornersInWorldSpace() {
         if (selectedCorner != null && cursorPos != null && changedTransform != null) {
-            return changedTransform.getCornersInWorldSpace(false, toWorldMatrix);
+            return source.getCornersInWorldSpace(false, changedTransform);
         }
-        return transform.getCornersInWorldSpace(false, toWorldMatrix);
+        return source.getCornersInWorldSpace(false);
     }
 
     public boolean click() {
