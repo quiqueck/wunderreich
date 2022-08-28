@@ -1,8 +1,8 @@
 package de.ambertation.wunderreich.items.construction;
 
 import de.ambertation.lib.math.Float3;
+import de.ambertation.lib.math.Transform;
 import de.ambertation.lib.math.sdf.SDF;
-import de.ambertation.lib.math.sdf.interfaces.Rotatable;
 import de.ambertation.lib.math.sdf.interfaces.Transformable;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
@@ -59,7 +59,13 @@ public class Ruler extends Item implements FabricItem {
                 if (widget.hasSelection()) {
                     SDF active = cd.getActiveSDF();
                     if (active instanceof Transformable tf) {
-                        tf.setLocalTransform(widget.getChangedTransform());
+                        Transform newTransform = widget.getChangedTransform();
+                        //root level SDF => new center should be stored in CD
+                        if (active.getParent() == null) {
+                            cd.CENTER.set(active.getRootTransform().transform(newTransform.center));
+                            newTransform = newTransform.moveTo(Float3.ZERO);
+                        }
+                        tf.setLocalTransform(newTransform);
                         cd.SDF_DATA.set(active.getRoot());
                     }
                 }
@@ -69,11 +75,11 @@ public class Ruler extends Item implements FabricItem {
             }
 
             if (player.isShiftKeyDown()) {
-//                cd.CENTER.set(ConstructionData.getCursorPos());
-                if (cd.getActiveSDF() instanceof Rotatable rot) {
-                    rot.rotate(Math.toRadians(15));
-                    cd.SDF_DATA.set(rot.getRoot());
-                }
+                cd.CENTER.set(ConstructionData.getCursorPos());
+//                if (cd.getActiveSDF() instanceof Rotatable rot) {
+//                    rot.rotate(Math.toRadians(15));
+//                    cd.SDF_DATA.set(rot.getRoot());
+//                }
             } else {
                 player.startUsingItem(interactionHand);
                 openScreen(player, ruler);

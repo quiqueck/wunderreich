@@ -46,6 +46,8 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
     private Button btSelectInputB;
     private Button btSelectInputA;
     private Item parentStack;
+    private ImageButton rotY_CCW;
+    private ImageButton rotY_CW;
 
     public RulerScreen(RulerContainerMenu menu, Inventory inventory, Component component) {
         super(menu, inventory, component);
@@ -71,6 +73,8 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         Panel widgetPanel = createWidgetPanel();
         this.addRenderableWidget(widgetPanel);
+
+        updateSDFDisplay();
     }
 
     Button selectedPageButton;
@@ -124,6 +128,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         inventoryPanel.setChild(inventoryStack);
         inventoryPanel.calculateLayout();
 
+
         return inventoryPanel;
     }
 
@@ -131,7 +136,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         Panel panel = new Panel(RulerContainerMenu.WIDGET_PANEL);
         Container container = new Container(Value.fit(), Value.fit());
 
-        ImageButton rotY_CW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
+        rotY_CW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(ROT_Y_CW)
                 .onPress(bt -> {
@@ -142,7 +147,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 });
         container.addChild(20, 10, rotY_CW);
 
-        ImageButton rotY_CCW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
+        rotY_CCW = new ImageButton(Value.fit(), Value.fit(), SDF_TEXTURE)
                 .setResourceSize(SDF_TEXTURE_SIZE)
                 .setUvRect(ROT_Y_CCW)
                 .onPress(bt -> {
@@ -254,7 +259,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
         menu.sdfSlot.setOnActiveGraphIndexChange(this::activeGraphIndexChanged);
         menu.sdfSlot.setOnChangedContent(this::changedSlotContents);
-        updateSDFDisplay();
+
         return inventoryPanel;
     }
 
@@ -269,11 +274,18 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
         btSelectInputA.setEnabled(active != null && active.getInputSlotCount() > 0);
         btSelectInputB.setEnabled(active != null && active.getInputSlotCount() > 1);
 
+
         if (btSelectParent.isEnabled()) {
             parentStack.setItem(BluePrintData.bluePrintWithSDF(active.getParent()));
         } else {
             parentStack.setItem(ItemStack.EMPTY);
         }
+
+        if (rotY_CW != null)
+            rotY_CW.setEnabled(active instanceof Rotatable);
+
+        if (rotY_CCW != null)
+            rotY_CCW.setEnabled(active instanceof Rotatable);
     }
 
     private void changedSlotContents() {

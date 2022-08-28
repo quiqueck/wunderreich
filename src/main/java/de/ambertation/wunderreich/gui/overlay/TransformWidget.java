@@ -37,7 +37,7 @@ public class TransformWidget {
     @Environment(EnvType.CLIENT)
     public void render(@NotNull RenderContext ctx, float phase) {
         Float3 corner;
-        Float3[] corners = getCornersInWorldSpace();
+        Float3[] corners = getCornersAndCenterInWorldSpace();
 
         if (selectedCorner != null) {
             LinePrimitives.renderCorners(ctx, corners, OverlayRenderer.COLOR_FIERY_ROSE, 1);
@@ -120,7 +120,23 @@ public class TransformWidget {
 
     private void updateChangedTransform(Float3 selectedCornerPos) {
         if (selectedCorner != null && selectedCornerPos != null) {
-            if (source.isOperation()) {
+            if (selectedCorner.idx == Bounds.Interpolate.CENTER.idx) {
+                final Matrix4 toLocal = source.getLocalTransform()
+                                              .asInvertedMatrix()
+                                              .mul(source.getParentTransformMatrix().inverted());
+                final Float3 oldCenter = toLocal.transform(source.getCornerInWorldSpace(
+                        Bounds.Interpolate.CENTER,
+                        false
+                ));
+                Float3 newCenter = toLocal.transform(selectedCornerPos);
+                Float3 cc = newCenter.sub(oldCenter);
+                cc = source.getLocalTransform().transform(cc);
+                changedTransform = Transform.of(
+                        cc,
+                        source.getLocalTransform().size,
+                        source.getLocalTransform().rotation
+                );
+            } else if (source.isOperation()) {
                 final Matrix4 toLocal = source.getLocalTransform()
                                               .asInvertedMatrix()
                                               .mul(source.getParentTransformMatrix().inverted());
@@ -167,11 +183,11 @@ public class TransformWidget {
         }
     }
 
-    private Float3[] getCornersInWorldSpace() {
+    private Float3[] getCornersAndCenterInWorldSpace() {
         if (selectedCorner != null && cursorPos != null && changedTransform != null) {
-            return source.getCornersInWorldSpace(false, changedTransform);
+            return source.getCornersAndCenterInWorldSpace(false, changedTransform);
         }
-        return source.getCornersInWorldSpace(false);
+        return source.getCornersAndCenterInWorldSpace(false);
     }
 
     public boolean click() {
@@ -199,7 +215,7 @@ public class TransformWidget {
 
     private boolean cursorOver(Float3 mousePos) {
         //System.out.println("Selected:" + (selectedCorner == null ? "-1" : selectedCorner.idx));
-        Float3[] corners = getCornersInWorldSpace();
+        Float3[] corners = getCornersAndCenterInWorldSpace();
         for (int idx = 0; idx < corners.length; idx++) {
             if (corners[idx].sub(mousePos).length() <= 0.5) {
                 hoveredCorner = Bounds.Interpolate.CORNERS_AND_CENTER[idx];
