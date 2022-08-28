@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.gui.overlay;
 
+import de.ambertation.lib.math.Float2;
 import de.ambertation.lib.math.Float3;
 
 import com.mojang.blaze3d.platform.GlStateManager;
@@ -53,7 +54,7 @@ final class BlockInfo {
         );
     }
 
-    static void renderTransparentPositions(RenderContext ctx, List<BlockInfo> positions) {
+    static void renderTransparentPositions(RenderContext ctx, List<BlockInfo> positions, Float3 refPlanePosition) {
         Tesselator tesselator = RenderSystem.renderThreadTesselator();
 
         RenderSystem.enableBlend();
@@ -71,13 +72,13 @@ final class BlockInfo {
         RenderSystem.depthMask(false);
         RenderSystem.colorMask(true, true, true, true);
         drawAll(ctx, tesselator, positions);
-
+        drawRefPlane(ctx, tesselator, refPlanePosition);
 
         //render to depth Buffer
         RenderSystem.depthMask(true);
         RenderSystem.colorMask(false, false, false, false);
         drawAll(ctx, tesselator, positions);
-
+        //drawRefPlane(ctx, tesselator, refPlanePosition);
 
         //reset rendering system
         RenderSystem.defaultBlendFunc();
@@ -94,5 +95,23 @@ final class BlockInfo {
             SolidPrimitives.renderSingleBlock(ctx, bufferBuilder, nfo);
         }
         BufferUploader.drawWithShader(bufferBuilder.end());
+    }
+
+    static void drawRefPlane(RenderContext ctx, Tesselator tesselator, Float3 refPlanePosition) {
+        if (refPlanePosition != null) {
+            BufferBuilder bufferBuilder = tesselator.getBuilder();
+            bufferBuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_NORMAL);
+
+            SolidPrimitives.renderQuadXZ(
+                    ctx,
+                    bufferBuilder,
+                    refPlanePosition,
+                    Float2.IDENTITY,
+                    0xFFFFFFFF,
+                    .2f
+            );
+
+            BufferUploader.drawWithShader(bufferBuilder.end());
+        }
     }
 }

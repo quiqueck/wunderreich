@@ -1,12 +1,12 @@
 package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
+import de.ambertation.lib.math.Float2;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.shapes.Empty;
-import de.ambertation.lib.ui.ColorHelper;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -32,6 +32,7 @@ import org.jetbrains.annotations.NotNull;
 @Environment(EnvType.CLIENT)
 public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     private static final RenderContext ctx = new RenderContext();
+    private static Float3 refPlanePosition = null;
 
     public static final int[] FILL_COLORS = {
             0xFFAA574A,
@@ -81,6 +82,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         ctx.setPoseStack(poseStack);
         final Player player = Minecraft.getInstance().player;
         positions.clear();
+        refPlanePosition = null;
 
 
         ItemStack ruler = player.getMainHandItem();
@@ -89,10 +91,10 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
 
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
-        SDF sdf = null;
         boolean showTargetBlock = false;
         if (camera.isInitialized()) {
-            final Float3 cursorPos = getCursorPos(Minecraft.getInstance().getCameraEntity(), 8, 4);
+            Float3 cursorPos = getCursorPos(Minecraft.getInstance().getCameraEntity(), 8, 4);
+            //cursorPos = cursorPos.mul(2).round().div(2);
             ConstructionData.setCursorPosOnClient(cursorPos);
             ctx.setCamera(camera);
 
@@ -101,51 +103,46 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
             if (constructionData != null) {
+                SDF sdf = constructionData.getActiveSDF();
+                if (sdf == null && !(sdf instanceof Empty)) return;
 
-                SDF sdf_active = constructionData.getActiveSDF();
-                if (sdf_active == null) return;
-                sdf = sdf_active;
+                TransformWidget widget = constructionData.getActiveTransformWidget();
+                sdf.setRootTransform(Matrix4.ofTranslation(constructionData.CENTER.get()));
 
+                TextRenderer.render(constructionData.CENTER.get(), COLOR_FIERY_ROSE);
 
-                if (sdf != null && !(sdf instanceof Empty)) {
-                    TransformWidget widget = constructionData.getActiveTransformWidget();
-                    sdf.setRootTransform(Matrix4.ofTranslation(constructionData.CENTER.get()));
+                //LinePrimitives.renderBounds(ctx, sdf.getBoundingBox(), 0.1f, COLOR_BOUNDING_BOX, .25f);
 
+                time += Minecraft.getInstance().getDeltaFrameTime();
+                if (time > 10000) time -= 10000;
+                double scaledTime = time * 0.02;
+                float phase = (float) (Math.sin(Math.PI * 2 * (scaledTime - Math.floor(scaledTime))) + 1) / 2;
 
-                    TextRenderer.render(constructionData.CENTER.get(), COLOR_FIERY_ROSE);
-                    TextRenderer.render(
-                            constructionData.CENTER.get().add(0, -0.2, 0),
-                            sdf.getLocalTransform().getBoundingBoxWorldSpace(),
-                            COLOR_BOUNDING_BOX
-                    );
-                    TextRenderer.render(
-                            constructionData.CENTER.get().add(0, -0.4, 0),
-                            sdf.getBoundingBox(),
-                            COLOR_BOUNDING_BOX
-                    );
-
-
-                    TextRenderer.render(
-                            constructionData.CENTER.get().add(0, -0.6, 0),
-                            sdf.getLocalTransform(),
-                            ColorHelper.WHITE
-                    );
-                    LinePrimitives.renderBounds(ctx, sdf.getBoundingBox(), 0.1f, COLOR_BOUNDING_BOX, .25f);
-                    time += Minecraft.getInstance().getDeltaFrameTime();
-                    if (time > 10000) time -= 10000;
-                    double scaledTime = time * 0.02;
-                    float phase = (float) (Math.sin(Math.PI * 2 * (scaledTime - Math.floor(scaledTime))) + 1) / 2;
-
-                    if (constructionData.getActiveTransformWidget() != null) {
-                        LinePrimitives.renderSingleBlock(ctx, cursorPos, 0.4f, COLOR_SELECTION, 0.5f);
-                        constructionData.getActiveTransformWidget().cursorTick(cursorPos);
-                        constructionData.getActiveTransformWidget().render(ctx, phase);
-                        showTargetBlock = !constructionData.getActiveTransformWidget().hasSelection();
+                if (widget != null) {
+                    widget.cursorTick(cursorPos);
+                    //LinePrimitives.renderSingleBlock(ctx, cursorPos, 0.45f, COLOR_SELECTION, 0.5f);
+                    final Float3 bottom;
+                    if (widget.hasHovered()) {
+                        bottom = Float3.of(cursorPos.x, widget.hoveredCornerPos().y - 0.5, cursorPos.z);
+                    } else {
+                        bottom = Float3.of(cursorPos.x, Math.floor(cursorPos.y), cursorPos.z);
+                        refPlanePosition = Float3.of(
+                                Float3.toBlockPos(cursorPos.x),
+                                Math.floor(cursorPos.y),
+                                Float3.toBlockPos(cursorPos.z)
+                        );
+                        LinePrimitives.renderQuadXZ(ctx, refPlanePosition, Float2.IDENTITY, 0, .75f);
                     }
+                    LinePrimitives.renderLine(ctx, bottom, cursorPos, COLOR_SELECTION, 1);
+                    LinePrimitives.renderQuadXZ(ctx, bottom, Float2.of(.1, .1), 0, .75f);
 
-                    renderSDF(ctx, sdf, sdf.getBoundingBox(), .1f, 0.8f, 1, false);
-                    renderSDF(ctx, sdf.getRoot(), sdf.getRoot().getBoundingBox(), .1f, 0.3f, 0.3f, false);
+                    widget.render(ctx, phase);
+                    showTargetBlock = !widget.hasSelection();
                 }
+
+                renderSDF(ctx, sdf, sdf.getBoundingBox(), .1f, 0.8f, 1, false);
+                if (sdf.getParent() != null)
+                    renderSDF(ctx, sdf.getRoot(), sdf.getRoot().getBoundingBox(), .1f, 0.3f, 0.3f, false);
             }
 
             positions.sort((a, b) -> {
@@ -229,7 +226,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
         if (camera.isInitialized()) {
             ctx.setPoseStack(poseStack);
             ctx.worldToCamSpace = camera.getPosition().reverse();
-            BlockInfo.renderTransparentPositions(ctx, positions);
+            BlockInfo.renderTransparentPositions(ctx, positions, refPlanePosition);
         }
     }
 

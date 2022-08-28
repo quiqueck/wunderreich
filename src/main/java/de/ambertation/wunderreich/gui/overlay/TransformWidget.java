@@ -253,4 +253,16 @@ public class TransformWidget {
     public boolean hasSelection() {
         return selectedCorner != null;
     }
+
+    public boolean hasHovered() {
+        return hoveredCorner != null;
+    }
+
+    @Nullable
+    public Float3 hoveredCornerPos() {
+        if (hoveredCorner != null) {
+            return source.getCornerInWorldSpace(hoveredCorner, false);
+        }
+        return null;
+    }
 }

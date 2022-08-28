@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.lib.math.Bounds;
+import de.ambertation.lib.math.Float2;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.Transform;
 
@@ -41,7 +42,20 @@ public class LinePrimitives {
 
 
     //-------------------------------------- LINE --------------------------------------
-    public static void addLine(
+    public static void renderLine(
+            RenderContext ctx,
+            Float3 start, Float3 end,
+            int color, float alpha
+    ) {
+        addLine(ctx, start.add(ctx.worldToCamSpace), end.add(ctx.worldToCamSpace),
+                FastColor.ARGB32.red(color),
+                FastColor.ARGB32.green(color),
+                FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    private static void addLine(
             RenderContext ctx,
             Bounds.Interpolate cornerStart, Bounds.Interpolate cornerEnd,
             int r, int g, int b, int a, Float3[] corners
@@ -54,25 +68,76 @@ public class LinePrimitives {
         addVertex(ctx, end, (float) n.x, (float) n.y, (float) n.z, r, g, b, a);
     }
 
-    public static void addLine(
+
+    private static void addLine(
             RenderContext ctx,
             Float3 start, Float3 end,
-            int color, float alpha
+            int r, int g, int b, int a
     ) {
         Float3 n = end.sub(start).normalized();
 
-        addVertex(ctx, start, (float) n.x, (float) n.y, (float) n.z, FastColor.ARGB32.red(color),
-                FastColor.ARGB32.green(color),
-                FastColor.ARGB32.blue(color),
-                (int) (alpha * 0xFF)
-        );
-        addVertex(ctx, end, (float) n.x, (float) n.y, (float) n.z, FastColor.ARGB32.red(color),
+        addVertex(ctx, start, (float) n.x, (float) n.y, (float) n.z, r, g, b, a);
+        addVertex(ctx, end, (float) n.x, (float) n.y, (float) n.z, r, g, b, a);
+    }
+
+    //-------------------------------------- 2D Shapes --------------------------------------
+    public static void renderQuad(
+            RenderContext ctx,
+            Float3 p1, Float3 p2, Float3 p3, Float3 p4,
+            int color, float alpha
+    ) {
+        renderQuad(ctx, p1, p2, p3, p4,
+                FastColor.ARGB32.red(color),
                 FastColor.ARGB32.green(color),
                 FastColor.ARGB32.blue(color),
                 (int) (alpha * 0xFF)
         );
     }
 
+    public static void renderQuadXZ(
+            RenderContext ctx,
+            Float3 center, Float2 size,
+            int color, float alpha
+    ) {
+        Float3 sz = size.div(2).xxy();
+        renderQuad(
+                ctx,
+                center.add(sz.mul(Float3.XZ_PLANE)),
+                center.add(sz.mul(Float3.XmZ_PLANE)),
+                center.add(sz.mul(Float3.mXmZ_PLANE)),
+                center.add(sz.mul(Float3.mXZ_PLANE)),
+                FastColor.ARGB32.red(color),
+                FastColor.ARGB32.green(color),
+                FastColor.ARGB32.blue(color),
+                (int) (alpha * 0xFF)
+        );
+    }
+
+    public static void renderQuad(
+            RenderContext ctx,
+            Float3 p1, Float3 p2, Float3 p3, Float3 p4,
+            int r, int g, int b, int a
+    ) {
+        renderQuadCameraSpace(
+                ctx,
+                p1.add(ctx.worldToCamSpace),
+                p2.add(ctx.worldToCamSpace),
+                p3.add(ctx.worldToCamSpace),
+                p4.add(ctx.worldToCamSpace),
+                r, g, b, a
+        );
+    }
+
+    private static void renderQuadCameraSpace(
+            RenderContext ctx,
+            Float3 p1, Float3 p2, Float3 p3, Float3 p4,
+            int r, int g, int b, int a
+    ) {
+        addLine(ctx, p1, p2, r, g, b, a);
+        addLine(ctx, p2, p3, r, g, b, a);
+        addLine(ctx, p3, p4, r, g, b, a);
+        addLine(ctx, p4, p1, r, g, b, a);
+    }
 
     //-------------------------------------- SINGLE BLOCKS --------------------------------------
     public static void renderSingleBlock(
@@ -85,7 +150,7 @@ public class LinePrimitives {
         final float x = (float) (pos.getX() + ctx.worldToCamSpace.x);
         final float y = (float) (pos.getY() + ctx.worldToCamSpace.y);
         final float z = (float) (pos.getZ() + ctx.worldToCamSpace.z);
-        renderCubeOutline(ctx,
+        renderCubeOutlineCameraSpace(ctx,
                 x + deflate, y + deflate, z + deflate,
                 1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
                 FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
@@ -97,7 +162,7 @@ public class LinePrimitives {
         final float x = (float) (pos.x + ctx.worldToCamSpace.x) - 0.5f;
         final float y = (float) (pos.y + ctx.worldToCamSpace.y) - 0.5f;
         final float z = (float) (pos.z + ctx.worldToCamSpace.z) - 0.5f;
-        renderCubeOutline(ctx,
+        renderCubeOutlineCameraSpace(ctx,
                 x + deflate, y + deflate, z + deflate,
                 1 + x - deflate, 1 + y - deflate, 1 + z - deflate,
                 FastColor.ARGB32.red(color), FastColor.ARGB32.green(color), FastColor.ARGB32.blue(color),
@@ -107,7 +172,7 @@ public class LinePrimitives {
 
     //-------------------------------------- BoundingBox --------------------------------------
     public static void renderBounds(RenderContext ctx, Bounds bounds, float deflate, int color, float alpha) {
-        renderCubeOutline(
+        renderCubeOutlineCameraSpace(
                 ctx,
                 (float) (bounds.min.x + ctx.worldToCamSpace.x) + deflate - 0.5f,
                 (float) (bounds.min.y + ctx.worldToCamSpace.y) + deflate - 0.5f,
@@ -122,7 +187,7 @@ public class LinePrimitives {
         );
     }
 
-    private static void renderCubeOutline(
+    private static void renderCubeOutlineCameraSpace(
             RenderContext ctx,
             float lx, float ly, float lz,
             float hx, float hy, float hz,
