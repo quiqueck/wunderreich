@@ -7,16 +7,19 @@ import de.ambertation.lib.math.Matrix4;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.shapes.Empty;
+import de.ambertation.lib.ui.ColorHelper;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -79,22 +82,25 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     @ApiStatus.Internal
     @Override
     public void render(PoseStack poseStack, MultiBufferSource multiBufferSource, double x, double y, double z) {
+
         ctx.setPoseStack(poseStack);
         final Player player = Minecraft.getInstance().player;
         positions.clear();
         refPlanePosition = null;
 
 
-        ItemStack ruler = player.getMainHandItem();
+        ItemStack ruler;
+        if (InputManager.INSTANCE.inTransformMode()) ruler = InputManager.INSTANCE.getActiveRuler();
+        else ruler = player.getMainHandItem();
+
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) ruler = player.getOffhandItem();
         if (ruler == null || !ruler.is(WunderreichItems.RULER)) return;
-
 
         final Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
         boolean showTargetBlock = false;
         if (camera.isInitialized()) {
             Float3 cursorPos = getCursorPos(Minecraft.getInstance().getCameraEntity(), 8, 4);
-            //cursorPos = cursorPos.mul(2).round().div(2);
+            cursorPos = cursorPos.mul(2).round().div(2);
             ConstructionData.setCursorPosOnClient(cursorPos);
             ctx.setCamera(camera);
 
@@ -102,6 +108,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             showTargetBlock = true;
 
             ConstructionData constructionData = ConstructionData.getConstructionData(ruler);
+
             if (constructionData != null) {
                 SDF sdf = constructionData.getActiveSDF();
                 if (sdf == null && !(sdf instanceof Empty)) return;
@@ -133,6 +140,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         );
                         LinePrimitives.renderQuadXZ(ctx, refPlanePosition, Float2.IDENTITY, 0, .75f);
                     }
+                    LinePrimitives.renderQuadXZ(ctx, cursorPos, Float2.of(.1, .1), COLOR_SELECTION, .75f);
                     LinePrimitives.renderLine(ctx, bottom, cursorPos, COLOR_SELECTION, 1);
                     LinePrimitives.renderQuadXZ(ctx, bottom, Float2.of(.1, .1), 0, .75f);
 
@@ -227,6 +235,29 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             ctx.setPoseStack(poseStack);
             ctx.worldToCamSpace = camera.getPosition().reverse();
             BlockInfo.renderTransparentPositions(ctx, positions, refPlanePosition);
+        }
+    }
+
+    @ApiStatus.Internal
+    public void renderHUD(PoseStack poseStack) {
+        Font font = Minecraft.getInstance().font;
+        if (InputManager.INSTANCE.inTransformMode()) {
+            Component c = null;
+            if (InputManager.INSTANCE.getMode() == InputManager.Mode.NONE) {
+                c = Component.literal(
+                        "Transform Mode:\n  **g**: Move\n  **r**: Rotate\n  **s**: Scale\n  **ALT+g**,**ALT+r**,**ALT+s**: Reset");
+
+            }
+            if (c != null) {
+                TextRenderer.draw(
+                        poseStack,
+                        font,
+                        Float2.of(8),
+                        Minecraft.getInstance().getWindow().getWidth() - 16,
+                        c,
+                        ColorHelper.WHITE
+                );
+            }
         }
     }
 

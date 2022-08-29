@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.SDFUnion;
 import de.ambertation.lib.math.sdf.shapes.Box;
+import de.ambertation.lib.math.sdf.shapes.Cylinder;
 import de.ambertation.lib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
@@ -62,6 +63,7 @@ public class BluePrintData {
 
         if (sdf instanceof Sphere) baseBluePrint = WunderreichItems.BLUE_PRINT_SPHERE;
         else if (sdf instanceof Box) baseBluePrint = WunderreichItems.BLUE_PRINT_BOX;
+        else if (sdf instanceof Cylinder) baseBluePrint = WunderreichItems.BLUE_PRINT_CYLINDER;
         else if (sdf instanceof SDFUnion) baseBluePrint = WunderreichItems.BLUE_PRINT_UNION;
 
         ItemStack stack = new ItemStack(baseBluePrint);

@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.client;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.gui.overlay.InputManager;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
@@ -9,6 +10,8 @@ import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
@@ -19,10 +22,13 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
 import com.google.common.collect.Maps;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Map;
 import java.util.function.Consumer;
@@ -52,6 +58,8 @@ public class WunderreichClient implements ClientModInitializer {
             consumer.accept(entry.getValue());
         }
     }
+
+    private static KeyMapping transformKey;
 
 
     @Override
@@ -86,5 +94,19 @@ public class WunderreichClient implements ClientModInitializer {
                     WunderreichSlabBlocks.GRASS_SLAB
             );
         }
+
+        transformKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                "key.wunderreich.transform",
+                InputConstants.Type.KEYSYM,
+                GLFW.GLFW_KEY_PERIOD,
+                "category.wunderreich"
+        ));
+
+        ClientTickEvents.END_CLIENT_TICK.register(client -> {
+            while (transformKey.consumeClick()) {
+
+                InputManager.INSTANCE.startTransformMode();
+            }
+        });
     }
 }

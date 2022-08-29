@@ -45,6 +45,18 @@ public class WunderreichRecipes {
                 );
 
         RecipeJsonBuilder
+                .create("blueprint_cylinder")
+                .result(WunderreichItems.BLUE_PRINT_CYLINDER)
+                .pattern("E", "P")
+                .material('E', Items.STICK)
+                .material('P', Items.PAPER)
+                .group("blueprint_cylinder")
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL,
+                        List.of(WunderreichItems.RULER)
+                );
+
+        RecipeJsonBuilder
                 .create("blueprint_union")
                 .result(WunderreichItems.BLUE_PRINT_UNION)
                 .pattern("E E", " P ")

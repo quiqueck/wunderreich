@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.items.construction;
 import de.ambertation.lib.math.Bounds;
 import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.Matrix4;
+import de.ambertation.lib.math.Transform;
 import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.interfaces.Transformable;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -176,6 +178,17 @@ public class ConstructionData {
 
         s = s.getChildWithGraphIndex(ACTIVE_SLOT.get());
         return s;
+    }
+
+    public Transform updateActiveTransformOnClient(BiFunction<SDF, Transform, Transform> updater) {
+        SDF s = getActiveSDF();
+        if (s instanceof Transformable tSDF) {
+            Transform newTransform = updater.apply(s, tSDF.getLocalTransform());
+            tSDF.setLocalTransform(newTransform);
+            SDF_DATA.set(s.getRoot());
+            return newTransform;
+        }
+        return null;
     }
 
     public Bounds.Interpolate getSelectedCorner() {

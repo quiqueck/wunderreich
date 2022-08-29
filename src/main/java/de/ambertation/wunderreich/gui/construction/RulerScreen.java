@@ -142,6 +142,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .onPress(bt -> {
                     if (menu.sdfSlot.getActiveSdf() instanceof Rotatable rot) {
                         rot.rotate(Math.toRadians(15));
+                        ChangedSDFMessage.INSTANCE.sendTransform(menu, rot.getRoot().getLocalTransform());
                         menu.data.SDF_DATA.set(rot.getRoot());
                     }
                 });
@@ -153,6 +154,7 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
                 .onPress(bt -> {
                     if (menu.sdfSlot.getActiveSdf() instanceof Rotatable rot) {
                         rot.rotate(Math.toRadians(-15));
+                        ChangedSDFMessage.INSTANCE.sendTransform(menu, rot.getRoot().getLocalTransform());
                         menu.data.SDF_DATA.set(rot.getRoot());
                     }
                 });

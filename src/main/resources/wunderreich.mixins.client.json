@@ -11,7 +11,11 @@
     "MerchantScreenMixin",
     "SheetsMixin",
     "overlay.DebugRendererMixin",
-    "overlay.LevelRendererMixin"
+    "overlay.GuiMixin",
+    "overlay.KeyboardHandlerMixin",
+    "overlay.LevelRendererMixin",
+    "overlay.MouseHandlerAccessor",
+    "overlay.MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

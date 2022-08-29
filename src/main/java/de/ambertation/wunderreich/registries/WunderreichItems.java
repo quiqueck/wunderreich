@@ -1,8 +1,8 @@
 package de.ambertation.wunderreich.registries;
 
-import de.ambertation.lib.math.Float3;
 import de.ambertation.lib.math.sdf.SDFUnion;
 import de.ambertation.lib.math.sdf.shapes.Box;
+import de.ambertation.lib.math.sdf.shapes.Cylinder;
 import de.ambertation.lib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
@@ -66,13 +66,19 @@ public class WunderreichItems {
 
     public static Item BLUE_PRINT_SPHERE = registerItem(
             "blueprint_sphere",
-            () -> new BluePrint(() -> new Sphere(Float3.of(0, 0, 0), 8)),
+            () -> new BluePrint(() -> new Sphere(Sphere.DEFAULT_TRANSFORM, 0)),
             Configs.MAIN.allowConstructionTools.get()
     );
 
     public static Item BLUE_PRINT_BOX = registerItem(
             "blueprint_box",
-            () -> new BluePrint(() -> new Box(Float3.of(0, 0, 0), Float3.of(8, 5, 5))),
+            () -> new BluePrint(() -> new Box(Box.DEFAULT_TRANSFORM, 0)),
+            Configs.MAIN.allowConstructionTools.get()
+    );
+
+    public static Item BLUE_PRINT_CYLINDER = registerItem(
+            "blueprint_cylinder",
+            () -> new BluePrint(() -> new Cylinder(Cylinder.DEFAULT_TRANSFORM, 0)),
             Configs.MAIN.allowConstructionTools.get()
     );
     public static Item BLUE_PRINT_UNION = registerItem(
