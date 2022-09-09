@@ -41,7 +41,7 @@ public class TextRenderer {
     }
 
 
-    public static void draw(PoseStack stack, Font font, Float2 pos, int maxWidth, Component c, int color) {
+    public static float draw(PoseStack stack, Font font, Float2 pos, int maxWidth, Component c, int color) {
         c = MultiLineText.parse(c);
         ImmutableList<LineWithWidth> lines = font
                 .split(c, maxWidth)
@@ -56,5 +56,6 @@ public class TextRenderer {
             y += font.lineHeight;
         }
 
+        return y;
     }
 }

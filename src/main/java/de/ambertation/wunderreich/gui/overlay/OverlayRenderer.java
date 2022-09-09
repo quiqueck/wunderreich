@@ -8,6 +8,8 @@ import de.ambertation.lib.math.sdf.SDF;
 import de.ambertation.lib.math.sdf.interfaces.MaterialProvider;
 import de.ambertation.lib.math.sdf.shapes.Empty;
 import de.ambertation.lib.ui.ColorHelper;
+import de.ambertation.lib.ui.layout.components.render.RenderHelper;
+import de.ambertation.lib.ui.layout.values.Rectangle;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -15,6 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -103,6 +106,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             cursorPos = cursorPos.mul(2).round().div(2);
             ConstructionData.setCursorPosOnClient(cursorPos);
             ctx.setCamera(camera);
+            InputManager.INSTANCE.setCamera(camera);
 
             ctx.vertexConsumer = multiBufferSource.getBuffer(RenderType.lines());
             showTargetBlock = true;
@@ -240,16 +244,29 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
     @ApiStatus.Internal
     public void renderHUD(PoseStack poseStack) {
-        Font font = Minecraft.getInstance().font;
+        final Font font = Minecraft.getInstance().font;
         if (InputManager.INSTANCE.inTransformMode()) {
             Component c = null;
             if (InputManager.INSTANCE.getMode() == InputManager.Mode.NONE) {
                 c = Component.literal(
-                        "Transform Mode:\n  **g**: Move\n  **r**: Rotate\n  **s**: Scale\n  **ALT+g**,**ALT+r**,**ALT+s**: Reset");
+                        "Transform Mode:\n  **t**: Move\n  **r**: Rotate\n  **z**: Scale\n  **ALT+t**,**ALT+r**,**ALT+z**: Reset");
+
+            } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.TRANSLATE) {
+                c = Component.literal(
+                        "Transform Mode - Move:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
+
+            } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.ROTATE) {
+                c = Component.literal(
+                        "Transform Mode - Rotate:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
+
+            } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.SCALE) {
+                c = Component.literal(
+                        "Transform Mode - Scale:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
 
             }
+            float y = 8;
             if (c != null) {
-                TextRenderer.draw(
+                y = TextRenderer.draw(
                         poseStack,
                         font,
                         Float2.of(8),
@@ -257,6 +274,97 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                         c,
                         ColorHelper.WHITE
                 );
+            }
+
+            if (InputManager.INSTANCE.getMode() != InputManager.Mode.NONE) {
+                String axis = null;
+                String type = "axis";
+                String space = "world";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_X) != 0) axis = "x";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_Y) != 0) axis = "y";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_Z) != 0) axis = "z";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_INVERT) != 0) type = "inverted";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_LOCAL) != 0) space = "local";
+
+                if (axis != null) {
+                    y = TextRenderer.draw(
+                            poseStack,
+                            font,
+                            Float2.of(8, y),
+                            Minecraft.getInstance().getWindow().getWidth() - 16,
+                            Component.translatable("info.wunderreich." + space + "_" + axis + "_" + type),
+                            ColorHelper.YELLOW
+                    );
+                }
+            }
+
+            if (InputManager.INSTANCE.getMode() != InputManager.Mode.NONE) {
+                if (InputManager.INSTANCE.hasNumberString()) {
+                    y = TextRenderer.draw(
+                            poseStack,
+                            font,
+                            Float2.of(8, y),
+                            Minecraft.getInstance().getWindow().getWidth() - 16,
+                            Component.literal(InputManager.INSTANCE.getNumberString() + " [" + InputManager.INSTANCE.getDeltaString() + "]"),
+                            InputManager.INSTANCE.isValidNumberString() ? ColorHelper.YELLOW : ColorHelper.RED
+                    );
+                } else {
+                    y = TextRenderer.draw(
+                            poseStack,
+                            font,
+                            Float2.of(8, y),
+                            Minecraft.getInstance().getWindow().getWidth() - 16,
+                            Component.literal(InputManager.INSTANCE.getDeltaString()),
+                            ColorHelper.YELLOW
+                    );
+                }
+                if (Minecraft.getInstance().getWindow() != null) {
+                    final int widgetSize = 100;
+                    final Rectangle r = new Rectangle(
+                            8, Minecraft.getInstance().getWindow().getGuiScaledHeight() - 8 - widgetSize,
+                            widgetSize, widgetSize
+                    );
+                    final Float2 center = r.center();
+                    final Float2 offset = center.add(InputManager.INSTANCE.getMouseDelta());
+
+                    GuiComponent.fill(
+                            poseStack,
+                            (int) center.x - 2,
+                            (int) center.y - 2,
+                            (int) center.x + 2,
+                            (int) center.y + 2,
+                            0x77000000
+                    );
+                    GuiComponent.fill(
+                            poseStack,
+                            (int) center.x - 1,
+                            (int) center.y - 1,
+                            (int) center.x + 1,
+                            (int) center.y + 1,
+                            0x77FFFFFF
+                    );
+
+                    GuiComponent.fill(
+                            poseStack,
+                            (int) offset.x - 2,
+                            (int) offset.y - 2,
+                            (int) offset.x + 2,
+                            (int) offset.y + 2,
+                            ColorHelper.BLACK
+                    );
+
+                    GuiComponent.fill(
+                            poseStack,
+                            (int) offset.x - 1,
+                            (int) offset.y - 1,
+                            (int) offset.x + 1,
+                            (int) offset.y + 1,
+                            ColorHelper.YELLOW
+                    );
+
+
+                    RenderHelper.outline(poseStack, r.left, r.top, r.right(), r.bottom(), 0x77FFFFFF);
+                }
             }
         }
     }

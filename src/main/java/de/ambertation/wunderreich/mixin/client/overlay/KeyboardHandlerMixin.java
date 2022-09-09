@@ -7,6 +7,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyboardHandler;
 import net.minecraft.client.Minecraft;
 
+import org.lwjgl.glfw.GLFW;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +20,10 @@ public class KeyboardHandlerMixin {
         if (Configs.MAIN.allowConstructionTools.get()) {
             if (l == Minecraft.getInstance().getWindow().getWindow()) {
                 InputConstants.Key key = InputConstants.getKey(i, j);
-                if (InputManager.INSTANCE.handleKey(key, k)) {
+                String keyName = GLFW.glfwGetKeyName(i, j);
+                char keyChar = 0;
+                if (keyName != null && keyName.length() > 0) keyChar = keyName.charAt(0);
+                if (InputManager.INSTANCE.handleKey(keyChar, key, k)) {
                     ci.cancel();
                 }
             }
