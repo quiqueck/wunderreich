@@ -79,7 +79,7 @@ public class ChangedSDFMessage extends ServerBoundPacketHandler<ChangedSDFMessag
             if (player.containerMenu instanceof RulerContainerMenu menu) {
                 constructionData = menu.data;
             }
-        } else if (content.containerId == -1) {
+        } else if (content.containerId == -1 || content.containerId == 0xff) {
             ItemStack s = player.getMainHandItem();
             if (s.is(WunderreichItems.RULER)) {
                 constructionData = ConstructionData.getConstructionData(s);

@@ -253,15 +253,15 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
             } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.TRANSLATE) {
                 c = Component.literal(
-                        "Transform Mode - Move:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
+                        "Transform Mode - Move:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis\n **CTRL**: Round");
 
             } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.ROTATE) {
                 c = Component.literal(
-                        "Transform Mode - Rotate:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
+                        "Transform Mode - Rotate:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis\n **CTRL**: Round");
 
             } else if (InputManager.INSTANCE.getMode() == InputManager.Mode.SCALE) {
                 c = Component.literal(
-                        "Transform Mode - Scale:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis");
+                        "Transform Mode - Scale:\n  **x**, **y**, **z**: Transform along Axis\n **SHIFT**: Lock Axis\n **CTRL**: Round");
 
             }
             float y = 8;
@@ -280,11 +280,13 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                 String axis = null;
                 String type = "axis";
                 String space = "world";
+
                 if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_X) != 0) axis = "x";
                 if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_Y) != 0) axis = "y";
                 if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_Z) != 0) axis = "z";
                 if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_INVERT) != 0) type = "inverted";
-                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_LOCAL) != 0) space = "local";
+                if ((InputManager.INSTANCE.getLockFlag() & InputManager.LOCK_LOCAL) != 0 && !InputManager.INSTANCE.willWriteAbsolute())
+                    space = "local";
 
                 if (axis != null) {
                     y = TextRenderer.draw(
@@ -292,20 +294,25 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
-                            Component.translatable("info.wunderreich." + space + "_" + axis + "_" + type),
+                            Component.translatable("info.wunderreich." + space + "_" + axis + "_" + type)
+                            ,
                             ColorHelper.YELLOW
                     );
                 }
             }
 
             if (InputManager.INSTANCE.getMode() != InputManager.Mode.NONE) {
+                String write = "change";
+                if ((InputManager.INSTANCE.willWriteAbsolute())) write = "write";
+
                 if (InputManager.INSTANCE.hasNumberString()) {
                     y = TextRenderer.draw(
                             poseStack,
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
-                            Component.literal(InputManager.INSTANCE.getNumberString() + " [" + InputManager.INSTANCE.getDeltaString() + "]"),
+                            Component.literal(InputManager.INSTANCE.getNumberString() + " [" + InputManager.INSTANCE.getDeltaString() + "]")
+                                     .append(Component.translatable("info.wunderreich.transform_" + write)),
                             InputManager.INSTANCE.isValidNumberString() ? ColorHelper.YELLOW : ColorHelper.RED
                     );
                 } else {
@@ -314,7 +321,8 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
-                            Component.literal(InputManager.INSTANCE.getDeltaString()),
+                            Component.literal(InputManager.INSTANCE.getDeltaString())
+                                     .append(Component.translatable("info.wunderreich.transform_" + write)),
                             ColorHelper.YELLOW
                     );
                 }
@@ -364,6 +372,42 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
 
                     RenderHelper.outline(poseStack, r.left, r.top, r.right(), r.bottom(), 0x77FFFFFF);
+                }
+            }
+
+
+            ItemStack ruler = InputManager.INSTANCE.getActiveRuler();
+            if (ruler != null) {
+                ConstructionData cd = ConstructionData.getConstructionData(ruler);
+                if (cd != null) {
+                    SDF sdf = cd.getActiveSDF();
+                    if (sdf != null) {
+                        y += 8;
+                        y = TextRenderer.draw(
+                                poseStack,
+                                font,
+                                Float2.of(8, y),
+                                Minecraft.getInstance().getWindow().getWidth() - 16,
+                                Component.literal("c: " + sdf.getLocalTransform().center.toString()),
+                                ColorHelper.YELLOW
+                        );
+                        y = TextRenderer.draw(
+                                poseStack,
+                                font,
+                                Float2.of(8, y),
+                                Minecraft.getInstance().getWindow().getWidth() - 16,
+                                Component.literal("s: " + sdf.getLocalTransform().size.toString()),
+                                ColorHelper.YELLOW
+                        );
+                        y = TextRenderer.draw(
+                                poseStack,
+                                font,
+                                Float2.of(8, y),
+                                Minecraft.getInstance().getWindow().getWidth() - 16,
+                                Component.literal("r: " + sdf.getLocalTransform().rotation.toEuler().toString()),
+                                ColorHelper.YELLOW
+                        );
+                    }
                 }
             }
         }

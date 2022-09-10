@@ -14,7 +14,6 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 
 import java.util.function.BiFunction;
@@ -34,6 +33,7 @@ public class InputManager {
     public static final int LOCK_Z = 1 << 2;
     public static final int LOCK_LOCAL = 1 << 3;
     public static final int LOCK_INVERT = 1 << 4;
+    public static final int LOCK_SET = 1 << 5;
 
     private boolean transformMode = false;
     private ItemStack ruler = null;
@@ -69,6 +69,8 @@ public class InputManager {
             if (button == InputConstants.RELEASE) ctrlDown = false;
             else if (button == InputConstants.PRESS) ctrlDown = true;
         }
+        if (Minecraft.getInstance().screen != null) return false;
+
         if (inTransformMode()) {
             if (mode != Mode.NONE) {
                 if (keyValue == InputConstants.KEY_LSHIFT || keyValue == InputConstants.KEY_RSHIFT) {
@@ -136,23 +138,30 @@ public class InputManager {
                         case ',':
                             addToNumberString(keyValue, keyChar);
                             return true;
+                        case 'o':
+                            lockFlag ^= LOCK_SET;
+                            updateTransform();
+                            return true;
                         case 'x':
                             if ((lockFlag & LOCK_X) == 0) {
                                 lockFlag = LOCK_X;
                                 if (shiftDown) lockFlag |= LOCK_INVERT;
                             } else lockFlag ^= LOCK_LOCAL;
+                            updateTransform();
                             return true;
                         case 'y':
                             if ((lockFlag & LOCK_Y) == 0) {
                                 lockFlag = LOCK_Y;
                                 if (shiftDown) lockFlag |= LOCK_INVERT;
                             } else lockFlag ^= LOCK_LOCAL;
+                            updateTransform();
                             return true;
                         case 'z':
                             if ((lockFlag & LOCK_Z) == 0) {
                                 lockFlag = LOCK_Z;
                                 if (shiftDown) lockFlag |= LOCK_INVERT;
                             } else lockFlag ^= LOCK_LOCAL;
+                            updateTransform();
                             return true;
                         case 's':
                         case 'w':
@@ -181,6 +190,10 @@ public class InputManager {
             numberString += keyChar;
         }
 
+        updateTransform();
+    }
+
+    private void updateTransform() {
         if (mode == Mode.TRANSLATE) {
             updateTransform(this::getMouseTranslation);
         } else if (mode == Mode.SCALE) {
@@ -192,7 +205,26 @@ public class InputManager {
 
     private Transform getMouseScale(SDF sdf, Transform t) {
         double scale = getDelta().x;
-        if ((lockFlag & LOCK_LOCAL) == LOCK_LOCAL) {
+        if ((lockFlag & LOCK_SET) == LOCK_SET) {
+            Float3 size = t.size;
+            if ((lockFlag & LOCK_INVERT) == LOCK_INVERT) {
+                if ((lockFlag & LOCK_X) == LOCK_X) {
+                    return startTransform.setScale(Float3.of(size.x, scale, scale));
+                } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
+                    return startTransform.setScale(Float3.of(scale, size.y, scale));
+                } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
+                    return startTransform.setScale(Float3.of(scale, scale, size.z));
+                }
+            } else {
+                if ((lockFlag & LOCK_X) == LOCK_X) {
+                    return startTransform.setScale(Float3.of(scale, size.y, size.z));
+                } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
+                    return startTransform.setScale(Float3.of(size.x, scale, size.z));
+                } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
+                    return startTransform.setScale(Float3.of(size.x, size.y, scale));
+                }
+            }
+        } else if ((lockFlag & LOCK_LOCAL) == LOCK_LOCAL) {
             if ((lockFlag & LOCK_INVERT) == LOCK_INVERT) {
                 if ((lockFlag & LOCK_X) == LOCK_X) {
                     return startTransform.scaleBy(
@@ -255,47 +287,62 @@ public class InputManager {
 
     private Transform getMouseRotation(SDF sdf, Transform t) {
         double angle = getDelta().x;
+        Float3 axis = null;
         if ((lockFlag & LOCK_LOCAL) == LOCK_LOCAL) {
             if ((lockFlag & LOCK_X) == LOCK_X) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(
-                        sdf.getWorldTransformMatrix().getBasisX(),
-                        angle
-                ));
+                axis = sdf.getWorldTransformMatrix().getBasisX();
             } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(
-                        sdf.getWorldTransformMatrix().getBasisY(),
-                        angle
-                ));
+                axis = sdf.getWorldTransformMatrix().getBasisY();
             } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(
-                        sdf.getWorldTransformMatrix().getBasisZ(),
-                        angle
-                ));
+                axis = sdf.getWorldTransformMatrix().getBasisZ();
             }
         } else {
             if ((lockFlag & LOCK_X) == LOCK_X) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(Float3.X_AXIS, angle));
+                axis = Float3.X_AXIS;
             } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(Float3.Y_AXIS, angle));
+                axis = Float3.Y_AXIS;
             } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
-                return startTransform.rotateBy(Quaternion.ofAxisAngle(Float3.Z_AXIS, angle));
+                axis = Float3.Z_AXIS;
             }
         }
-        if (camera != null) {
-            return startTransform.rotateBy(Quaternion.ofAxisAngle(Float3.of(camera.getLookVector()), angle));
+        if (camera != null && axis == null) {
+            axis = Float3.of(camera.getLookVector());
         }
-        return startTransform;
+
+        if (axis == null) return t;
+        if ((lockFlag & LOCK_SET) == LOCK_SET) {
+            return startTransform.setRotation(Quaternion.ofAxisAngle(axis, angle));
+        } else {
+            return startTransform.rotateBy(Quaternion.ofAxisAngle(axis, angle));
+        }
     }
 
     private Transform getMouseTranslation(SDF sdf, Transform t) {
         Float2 delta = getDelta();
-        if ((lockFlag & LOCK_LOCAL) == LOCK_LOCAL) {
+        if ((lockFlag & LOCK_SET) == LOCK_SET) {
+            Float3 pos = t.center;
             if ((lockFlag & LOCK_INVERT) == LOCK_INVERT) {
                 if ((lockFlag & LOCK_X) == LOCK_X) {
-                    return startTransform.moveBy(
-                            sdf.getWorldTransformMatrix().getBasisY().mul(delta.y)
-                               .add(sdf.getWorldTransformMatrix().getBasisZ().mul(delta.x))
-                    );
+                    return startTransform.moveTo(Float3.of(pos.x, delta.y, delta.x));
+                } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
+                    return startTransform.moveTo(Float3.of(delta.x, pos.y, delta.y));
+                } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
+                    return startTransform.moveTo(Float3.of(delta.x, delta.y, pos.z));
+                }
+            } else {
+                if ((lockFlag & LOCK_X) == LOCK_X) {
+                    return startTransform.moveTo(Float3.of(delta.x, pos.y, pos.z));
+                } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
+                    return startTransform.moveTo(Float3.of(pos.x, delta.y, pos.z));
+                } else if ((lockFlag & LOCK_Z) == LOCK_Z) {
+                    return startTransform.moveTo(Float3.of(pos.x, pos.y, delta.x));
+                }
+            }
+        } else if ((lockFlag & LOCK_LOCAL) == LOCK_LOCAL) {
+            if ((lockFlag & LOCK_INVERT) == LOCK_INVERT) {
+                if ((lockFlag & LOCK_X) == LOCK_X) {
+                    return startTransform.moveBy(sdf.getWorldTransformMatrix().getBasisY().mul(delta.y)
+                                                    .add(sdf.getWorldTransformMatrix().getBasisZ().mul(delta.x)));
                 } else if ((lockFlag & LOCK_Y) == LOCK_Y) {
                     return startTransform.moveBy(
                             sdf.getWorldTransformMatrix().getBasisX().mul(delta.x)
@@ -370,7 +417,7 @@ public class InputManager {
     @ApiStatus.Internal
     public boolean onMove(MouseHandlerAccessor h, double mouseX, double mouseY) {
         boolean handled = false;
-        if (inTransformMode()) {
+        if (inTransformMode() && Minecraft.getInstance().screen == null) {
             if (mode != Mode.NONE) {
                 if (ruler != null) {
                     //makes sure the screen does not jump when ending transform mode
@@ -403,15 +450,18 @@ public class InputManager {
                     handled = true;
                 }
             }
+        } else {
+            lastX = mouseX;
+            lastY = mouseY;
         }
 
-        lastX = mouseX;
-        lastY = mouseY;
+
         return handled;
     }
 
     @ApiStatus.Internal
     public boolean onPress(int button, int state, int unk) {
+        if (Minecraft.getInstance().screen != null) return false;
         if (inTransformMode() && mode != Mode.NONE) {
             if (state == InputConstants.RELEASE) {
                 endTransformMode(true);
@@ -450,10 +500,10 @@ public class InputManager {
                 SDF sdf = constructionData.SDF_DATA.get();
                 if (sdf != null && !sdf.isEmpty()) {
                     ruler = stack;
-                    Minecraft.getInstance().player.displayClientMessage(
-                            Component.translatable("msg.wunderreich.start_transform_mode"),
-                            false
-                    );
+//                    Minecraft.getInstance().player.displayClientMessage(
+//                            Component.translatable("msg.wunderreich.start_transform_mode"),
+//                            false
+//                    );
                     transformMode = true;
                 }
             }
@@ -461,10 +511,10 @@ public class InputManager {
     }
 
     public void stopTransformMode() {
-        Minecraft.getInstance().player.displayClientMessage(
-                Component.translatable("msg.wunderreich.stop_transform_mode"),
-                false
-        );
+//        Minecraft.getInstance().player.displayClientMessage(
+//                Component.translatable("msg.wunderreich.stop_transform_mode"),
+//                false
+//        );
         transformMode = false;
     }
 
@@ -530,6 +580,14 @@ public class InputManager {
     }
 
     public Float2 getDelta() {
+        Float2 res = getDeltaInternal();
+        if (ctrlDown) {
+            res = res.round();
+        }
+        return res;
+    }
+
+    private Float2 getDeltaInternal() {
         if (isValidNumberString()) {
             if (mode == Mode.SCALE) {
                 return Float2.of(getNumberStringValue(), 0);
@@ -560,5 +618,13 @@ public class InputManager {
             return Float3.toString(Math.toDegrees(delta.x)) + "°";
         }
         return "dx=" + Float3.toString(delta.x) + ", dy=" + Float3.toString(delta.y);
+    }
+
+    public boolean willWriteAbsolute() {
+        if ((lockFlag & LOCK_SET) == LOCK_SET) {
+            if (mode == Mode.ROTATE) return true;
+            return (lockFlag & LOCK_X) + (lockFlag & LOCK_Y) + (lockFlag & LOCK_Z) != 0;
+        }
+        return false;
     }
 }
