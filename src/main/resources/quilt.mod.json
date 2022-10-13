@@ -16,7 +16,7 @@
         "sources": "https://github.com/quiqueck/wunderreich"
       },
       "icon": "assets/wunderreich/icon.png",
-      "license": "MIT (CC BY-NC-SA 4.0 for Assets)"
+      "license": "MIT"
     },
     "intermediate_mappings": "net.fabricmc:intermediary",
     "entrypoints": {
