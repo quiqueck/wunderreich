@@ -1,5 +1,8 @@
 package de.ambertation.wunderreich.loot;
 
+import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.block.state.properties.Property;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -13,14 +16,25 @@ interface EntryList {
 
 class EntryFunction {
     private final String function;
+    private List<EntryCondition> conditions;
 
     protected EntryFunction(String f) {
         this.function = f;
     }
 
+    void addCondition(EntryCondition f) {
+        if (conditions == null) conditions = new ArrayList<>(2);
+        conditions.add(f);
+    }
+
     JsonObject serialize() {
         JsonObject root = new JsonObject();
         root.add("function", new JsonPrimitive(function));
+        if (conditions != null && !conditions.isEmpty()) {
+            JsonArray f = new JsonArray();
+            conditions.stream().map(EntryCondition::serialize).forEach(f::add);
+            root.add("conditions", f);
+        }
         return root;
     }
 }
@@ -39,6 +53,15 @@ class SetCountFunction extends EntryFunction {
         super("minecraft:set_count");
         this.count = count;
         this.add = add;
+    }
+
+    <T extends Enum<T> & StringRepresentable> SetCountFunction addStateCondition(
+            String blockID,
+            Property<T> prop,
+            T value
+    ) {
+        this.addCondition(new BlockStateCondition<>(blockID, prop, value));
+        return this;
     }
 
 
@@ -74,6 +97,29 @@ class EntryCondition {
 class MatchToolCondition extends EntryCondition {
     MatchToolCondition(EntryPredicate p) {
         super("minecraft:match_tool", p);
+    }
+}
+
+class BlockStateCondition<T extends Enum<T> & StringRepresentable> extends EntryCondition {
+    private final String blockID;
+    private final Property<T> prop;
+    private final T value;
+
+    BlockStateCondition(String blockID, Property<T> prop, T value) {
+        super("minecraft:block_state_property", null);
+        this.blockID = blockID;
+        this.prop = prop;
+        this.value = value;
+    }
+
+    JsonObject serialize() {
+        JsonObject root = super.serialize();
+
+        root.add("block", new JsonPrimitive(blockID));
+        JsonObject props = new JsonObject();
+        props.add("type", new JsonPrimitive(prop.getName(value)));
+        root.add("properties", props);
+        return root;
     }
 }
 
@@ -167,6 +213,17 @@ class Entry {
     void addFunction(EntryFunction f) {
         functions.add(f);
     }
+
+    <T extends Enum<T> & StringRepresentable> void addCountForStateFunction(
+            int count,
+            boolean add,
+            Property<T> prop,
+            T value
+    ) {
+        addFunction(new SetCountFunction(count, add)
+                .addStateCondition(name, prop, value));
+    }
+
 
     void addCondition(EntryCondition f) {
         conditions.add(f);
