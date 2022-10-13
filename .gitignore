@@ -11,3 +11,4 @@ bin/
 .classpath
 .project
 *.blend1
+/CHANGES.md
