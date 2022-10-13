@@ -64,25 +64,29 @@ public class LootTableJsonBuilder {
         return new LootTableJsonBuilder(Wunderreich.ID(name), type);
     }
 
-    public LootTableJsonBuilder dropSelf() {
+    public LootTableJsonBuilder dropSelf(boolean silkTouch) {
         return this.startPool(
                 1,
                 0,
                 builder -> builder
                         .survivesExplosion()
-                        .addSelfEntry()
+                        .startSelfEntry(e -> {
+                            if (silkTouch) e.silkTouch();
+                        })
         );
     }
 
-    public LootTableJsonBuilder dropSelfSlab() {
+    public LootTableJsonBuilder dropSelfSlab(boolean silkTouch) {
         return this.startPool(
                 1,
                 0,
                 builder -> builder
                         .survivesExplosion()
-                        .startSelfEntry(e -> e
-                                .entry
-                                .addCountForStateFunction(2, false, SlabBlock.TYPE, SlabType.DOUBLE)
+                        .startSelfEntry(e -> {
+                                    if (silkTouch) e.silkTouch();
+                                    e.entry
+                                            .addCountForStateFunction(2, false, SlabBlock.TYPE, SlabType.DOUBLE);
+                                }
                         )
         );
     }
