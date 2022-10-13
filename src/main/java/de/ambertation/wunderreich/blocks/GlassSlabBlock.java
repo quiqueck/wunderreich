@@ -61,4 +61,9 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
     public boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
         return true;
     }
+
+    @Override
+    public boolean needsSilkTouch() {
+        return true;
+    }
 }
