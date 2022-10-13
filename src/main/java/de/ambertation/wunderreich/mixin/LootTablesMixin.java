@@ -19,11 +19,13 @@ import java.util.Map;
 @Mixin(value = LootTables.class, priority = 200)
 public class LootTablesMixin {
     @Inject(method = "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V", at = @At("HEAD"))
-    public void wunderreich_interceptApply(Map<ResourceLocation, JsonElement> map,
-                                           ResourceManager resourceManager,
-                                           ProfilerFiller profiler,
-                                           CallbackInfo info) {
-
+    public void wunderreich_interceptApply(
+            Map<ResourceLocation, JsonElement> map,
+            ResourceManager resourceManager,
+            ProfilerFiller profiler,
+            CallbackInfo info
+    ) {
+        map.forEach((l, j) -> System.out.println(j.toString()));
         LootTableJsonBuilder
                 .getAllBlocks()
                 .filter(e -> !map.containsKey(e.id()))
