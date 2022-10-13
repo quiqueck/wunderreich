@@ -25,7 +25,6 @@ public class LootTablesMixin {
             ProfilerFiller profiler,
             CallbackInfo info
     ) {
-        map.forEach((l, j) -> System.out.println(j.toString()));
         LootTableJsonBuilder
                 .getAllBlocks()
                 .filter(e -> !map.containsKey(e.id()))
