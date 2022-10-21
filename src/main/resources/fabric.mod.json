@@ -54,6 +54,10 @@
   "custom": {
     "bclib": {
       "updater_icon": "icon_updater.png"
+    },
+    "waila:plugins": {
+      "id": "wunderreich:global",
+      "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
     }
   }
 }

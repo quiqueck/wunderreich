@@ -13,6 +13,7 @@ group = project.maven_group
 
 repositories {
     maven { url "https://maven.shedaniel.me" }
+    maven { url "https://maven.bai.lol" }
     maven { url 'https://maven.terraformersmc.com/releases' }
     flatDir { dirs 'libs' }
 }
@@ -30,6 +31,9 @@ dependencies {
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 //    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    //modRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 }
 
 processResources {
@@ -170,6 +174,7 @@ modrinth {
     changelog = changes
     dependencies {
         required.project "fabric-api"
+        optional.project "wthit"
     }
     debugMode = false
 }
