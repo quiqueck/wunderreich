@@ -45,5 +45,11 @@
   "suggests": {
     "modmenu": "3.x",
     "rei": "8.x"
+  },
+  "custom": {
+    "waila:plugins": {
+      "id": "wunderreich:global",
+      "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
+    }
   }
 }
