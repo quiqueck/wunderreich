@@ -25,6 +25,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -52,6 +53,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -348,8 +350,10 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                             ? Component.translatable(
                                             "%s - %s",
                                             CONTAINER_TITLE,
-                                            WunderKisteItem.getDomainComponent(
-                                                    domain)
+                                            wunderKisteBlockEntity.hasCustomName()
+                                                    ? wunderKisteBlockEntity.getCustomName()
+                                                    : WunderKisteItem.getDomainComponent(
+                                                            domain)
                                     )
                                             : CONTAINER_TITLE
                             )
@@ -504,12 +508,55 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public List<ItemStack> getDrops(@NotNull BlockState blockState, LootContext.@NotNull Builder builder) {
+        BlockEntity entity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         return super.getDrops(blockState, builder).stream().map(stack -> {
             if (stack.getItem() instanceof WunderKisteItem item) {
-                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+                stack = WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+                if (entity instanceof WunderKisteBlockEntity wentity && wentity.hasCustomName()) {
+                    stack.setHoverName(wentity.getCustomName());
+                }
             }
             return stack;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void setPlacedBy(
+            Level level,
+            BlockPos blockPos,
+            BlockState blockState,
+            LivingEntity livingEntity,
+            ItemStack itemStack
+    ) {
+        if (itemStack.hasCustomHoverName() && level.getBlockEntity(blockPos) instanceof WunderKisteBlockEntity entity) {
+            entity.setNetworkName(itemStack.getHoverName());
+        }
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+//        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+//        if (blockEntity instanceof WunderKisteBlockEntity entity) {
+//            if (!level.isClientSide && player.isCreative()) {
+//                ItemStack itemStack = WunderKisteServerExtension.getDomain(blockState).createStack();
+//                blockEntity.saveToItem(itemStack);
+//                if (entity.hasCustomName()) {
+//                    itemStack.setHoverName(entity.getCustomName());
+//                }
+//                ItemEntity itemEntity = new ItemEntity(
+//                        level,
+//                        (double) blockPos.getX() + 0.5,
+//                        (double) blockPos.getY() + 0.5,
+//                        (double) blockPos.getZ() + 0.5,
+//                        itemStack
+//                );
+//                itemEntity.setDefaultPickUpDelay();
+//                level.addFreshEntity(itemEntity);
+//            } else {
+//                //entity.unpackLootTable(player);
+//            }
+//        }
+        super.playerWillDestroy(level, blockPos, blockState, player);
     }
 
     @Override

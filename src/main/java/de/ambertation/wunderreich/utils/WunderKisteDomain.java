@@ -2,11 +2,14 @@ package de.ambertation.wunderreich.utils;
 
 import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.items.WunderKisteItem;
+import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
@@ -80,5 +83,10 @@ public enum WunderKisteDomain implements StringRepresentable {
     @Override
     public String getSerializedName() {
         return this.name;
+    }
+
+    public ItemStack createStack() {
+        ItemStack stack = new ItemStack(WunderreichBlocks.WUNDER_KISTE.asItem(), 1);
+        return WunderKisteItem.setDomain(stack, this);
     }
 }

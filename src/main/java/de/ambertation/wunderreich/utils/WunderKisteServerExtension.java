@@ -34,12 +34,12 @@ public class WunderKisteServerExtension {
                 WunderreichRules.Wunderkiste.haveMultiple()
                         ? domain
                         : WunderKisteBlock.DEFAULT_DOMAIN,
-                this::loadOrCreate
+                d -> this.loadOrCreate(domain, null)
         );
     }
 
-    private WunderKisteContainer loadOrCreate(WunderKisteDomain wunderKisteDomain) {
-        WunderKisteContainer wunderKisteContainer = new WunderKisteContainer(wunderKisteDomain);
+    private WunderKisteContainer loadOrCreate(WunderKisteDomain wunderKisteDomain, String networkName) {
+        WunderKisteContainer wunderKisteContainer = new WunderKisteContainer(wunderKisteDomain, networkName);
         wunderKisteContainer.load();
         wunderKisteContainer.addListener((container) -> {
             WunderKisteBlock.updateAllBoxes(container, false, true);
