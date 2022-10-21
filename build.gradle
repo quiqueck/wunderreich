@@ -13,6 +13,7 @@ group = project.maven_group
 
 repositories {
     maven { url "https://maven.shedaniel.me" }
+    maven { url "https://maven.bai.lol" }
     maven { url 'https://maven.terraformersmc.com/releases' }
     flatDir { dirs 'libs' }
 }
@@ -41,6 +42,9 @@ dependencies {
         include "com.github.quiqueck:WunderLib:${project.wunderlib_version}"
     }
 
+
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    //modRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 }
 
 processResources {
@@ -181,6 +185,7 @@ modrinth {
     changelog = changes
     dependencies {
         required.project "fabric-api"
+        optional.project "wthit"
     }
     debugMode = false
 }

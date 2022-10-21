@@ -102,6 +102,9 @@ public class WunderreichRules {
         private static final BooleanRule ALLOW_WUNDERKISTE_DOMAINS =
                 new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowDomains);
 
+        private static final BooleanRule ALLOW_WUNDERKISTE_NAMED_DOMAINS =
+                new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowNamedDomains);
+
         private static final BooleanRule CAN_COLOR_WUNDERKISTE =
                 new BooleanRule(Category.PLAYER, Configs.DEFAULT_RULES.wunderkisteCanColor);
 
@@ -137,6 +140,10 @@ public class WunderreichRules {
 
         public static boolean haveMultiple() {
             return ALLOW_WUNDERKISTE_DOMAINS.get();
+        }
+
+        public static boolean namedNetworks() {
+            return haveMultiple() && ALLOW_WUNDERKISTE_NAMED_DOMAINS.get();
         }
 
         public static int recolorCost() {

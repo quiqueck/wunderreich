@@ -20,13 +20,11 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
     private static final int[] slots = {
             0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
     };
-    public final WunderKisteDomain domain;
-    public final String networkName;
+    public final WunderKisteDomain.ID domain;
 
-    public WunderKisteContainer(WunderKisteDomain domain, String networkName) {
+    public WunderKisteContainer(WunderKisteDomain.ID domain) {
         super(slots.length);
         this.domain = domain;
-        this.networkName = networkName;
     }
 
     public void load() {
@@ -44,7 +42,7 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
     public void save() {
         CompoundTag global = LevelData.getInstance().getWunderkisteInventory(domain);
         global.put("items", createTag());
-        LevelData.getInstance().saveLevelConfig();
+        LevelData.getInstance().saveWunderkisteInventory(domain);
     }
 
     public void fromTag(ListTag listTag) {
@@ -99,6 +97,7 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
         final ActiveChestStorage cPlayer = (ActiveChestStorage) player;
         final WunderKisteBlockEntity chest = cPlayer.getActiveWunderKiste();
         if (chest != null) {
+            save();
             chest.stopOpen(player);
         }
 
