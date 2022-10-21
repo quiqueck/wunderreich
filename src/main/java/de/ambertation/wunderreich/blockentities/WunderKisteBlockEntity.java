@@ -6,8 +6,12 @@ import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -16,9 +20,28 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import org.jetbrains.annotations.Nullable;
 
-public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity {
+
+public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity, Nameable {
     private final ChestLidController chestLidController = new ChestLidController();
+    private Component networkName;
+
+    @Override
+    public void load(CompoundTag compoundTag) {
+        super.load(compoundTag);
+        if (compoundTag.contains("NetworkName", 8)) {
+            this.networkName = Component.Serializer.fromJson(compoundTag.getString("CustomName"));
+        }
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag compoundTag) {
+        super.saveAdditional(compoundTag);
+        if (this.networkName != null) {
+            compoundTag.putString("NetworkName", Component.Serializer.toJson(this.networkName));
+        }
+    }
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
@@ -119,5 +142,42 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
     public float getOpenNess(float f) {
         return this.chestLidController.getOpenness(f);
+    }
+
+
+    public void setNetworkName(Component component) {
+        this.networkName = component;
+    }
+
+    public String getNetworkName() {
+        if (this.networkName == null) return null;
+        return this.networkName.getString();
+    }
+
+    protected Component getDefaultName() {
+        return new TranslatableComponent("container.wunderreich.wunder_kiste");
+    }
+
+    public void setCustomName(Component component) {
+        setNetworkName(component);
+    }
+
+    @Override
+    public Component getName() {
+        if (this.networkName != null) {
+            return this.networkName;
+        }
+        return this.getDefaultName();
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return this.getName();
+    }
+
+    @Override
+    @Nullable
+    public Component getCustomName() {
+        return this.networkName;
     }
 }
