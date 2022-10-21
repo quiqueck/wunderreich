@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.mixin;
 
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.datafixers.DataFixer;
@@ -51,6 +52,7 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
             ChunkProgressListenerFactory chunkProgressListenerFactory,
             CallbackInfo ci
     ) {
+        WunderKisteDomain.ID.loadNewLevel();
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
 
         wunderkiste.onStartServer(worldStem.registryAccess());

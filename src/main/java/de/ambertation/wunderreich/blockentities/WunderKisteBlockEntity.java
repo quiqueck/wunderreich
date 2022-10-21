@@ -4,9 +4,11 @@ import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -25,21 +27,21 @@ import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity, Nameable {
     private final ChestLidController chestLidController = new ChestLidController();
-    private Component networkName;
+    private Component domainName;
 
     @Override
     public void load(CompoundTag compoundTag) {
         super.load(compoundTag);
-        if (compoundTag.contains("NetworkName", 8)) {
-            this.networkName = Component.Serializer.fromJson(compoundTag.getString("CustomName"));
+        if (compoundTag.contains("CustomName", Tag.TAG_STRING)) {
+            this.domainName = Component.Serializer.fromJson(compoundTag.getString("CustomName"));
         }
     }
 
     @Override
     protected void saveAdditional(CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        if (this.networkName != null) {
-            compoundTag.putString("NetworkName", Component.Serializer.toJson(this.networkName));
+        if (this.domainName != null) {
+            compoundTag.putString("CustomName", Component.Serializer.toJson(this.domainName));
         }
     }
 
@@ -94,7 +96,7 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
         ) {
             assert WunderreichBlocks.WUNDER_KISTE != null;
             level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
-            WunderKisteBlock.updateAllBoxes(blockState, level.getServer(), true, false);
+            WunderKisteBlock.updateAllBoxes(blockState, level.getBlockEntity(blockPos), level.getServer(), true, false);
         }
 
         protected boolean isOwnContainer(@NotNull Player player) {
@@ -152,13 +154,13 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     }
 
 
-    public void setNetworkName(Component component) {
-        this.networkName = component;
+    public void setDomainName(Component component) {
+        this.domainName = component;
     }
 
-    public String getNetworkName() {
-        if (this.networkName == null) return null;
-        return this.networkName.getString();
+    public WunderKisteDomain.ID getDomainName() {
+        if (this.domainName == null) return null;
+        return WunderKisteDomain.ID.forString(domainName.getString());
     }
 
     protected Component getDefaultName() {
@@ -166,13 +168,13 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     }
 
     public void setCustomName(Component component) {
-        setNetworkName(component);
+        setDomainName(component);
     }
 
     @Override
     public Component getName() {
-        if (this.networkName != null) {
-            return this.networkName;
+        if (this.domainName != null) {
+            return this.domainName;
         }
         return this.getDefaultName();
     }
@@ -185,6 +187,12 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     @Override
     @Nullable
     public Component getCustomName() {
-        return this.networkName;
+        return this.domainName;
     }
+
+    @Override
+    public boolean hasCustomName() {
+        return this.getCustomName() != null && this.getDomainName() != null && !this.getDomainName().isEmpty();
+    }
+
 }
