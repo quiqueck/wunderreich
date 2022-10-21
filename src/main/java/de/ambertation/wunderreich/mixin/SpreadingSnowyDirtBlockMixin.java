@@ -13,20 +13,24 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value=SpreadingSnowyDirtBlock.class, priority = 2000)
+@Mixin(value = SpreadingSnowyDirtBlock.class, priority = 2000)
 public abstract class SpreadingSnowyDirtBlockMixin {
 
 
     @Inject(method = "randomTick", at = @At("HEAD"))
-    void wunderreich_randomTick(BlockState blockState,
-                                ServerLevel serverLevel,
-                                BlockPos blockPos,
-                                RandomSource random,
-                                CallbackInfo ci) {
-        SpreadableSnowyDirtSlab.spreadingTick((SpreadingSnowyDirtBlock) (Object) this,
+    void wunderreich_randomTick(
+            BlockState blockState,
+            ServerLevel serverLevel,
+            BlockPos blockPos,
+            RandomSource random,
+            CallbackInfo ci
+    ) {
+        SpreadableSnowyDirtSlab.spreadingTick(
+                (SpreadingSnowyDirtBlock) (Object) this,
                 blockState,
                 serverLevel,
                 blockPos,
-                random);
+                random
+        );
     }
 }

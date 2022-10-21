@@ -71,9 +71,11 @@ public class WunderreichGameRules {
             super(category, GameRuleFactory.createBooleanRule(config.get()), config);
         }
 
-        public BooleanRule(String name,
-                           Category category,
-                           ConfigFile.BooleanValue config) {
+        public BooleanRule(
+                String name,
+                Category category,
+                ConfigFile.BooleanValue config
+        ) {
             super(name, category, GameRuleFactory.createBooleanRule(config.get()), config);
         }
 
@@ -89,31 +91,39 @@ public class WunderreichGameRules {
             this(category, config, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
 
-        public IntRule(Category category,
-                       ConfigFile.IntValue config,
-                       int minValue,
-                       int maxValue, BiConsumer<MinecraftServer, GameRules.IntegerValue> callback) {
+        public IntRule(
+                Category category,
+                ConfigFile.IntValue config,
+                int minValue,
+                int maxValue, BiConsumer<MinecraftServer, GameRules.IntegerValue> callback
+        ) {
             super(category, GameRuleFactory.createIntRule(config.get(), minValue, maxValue, callback), config);
         }
 
-        public IntRule(Category category,
-                       ConfigFile.IntValue config,
-                       int minValue,
-                       int maxValue) {
+        public IntRule(
+                Category category,
+                ConfigFile.IntValue config,
+                int minValue,
+                int maxValue
+        ) {
             super(category, GameRuleFactory.createIntRule(config.get(), minValue, maxValue), config);
         }
 
-        public IntRule(String name,
-                       Category category,
-                       ConfigFile.IntValue config) {
+        public IntRule(
+                String name,
+                Category category,
+                ConfigFile.IntValue config
+        ) {
             this(name, category, config, Integer.MIN_VALUE, Integer.MAX_VALUE);
         }
 
-        public IntRule(String name,
-                       Category category,
-                       ConfigFile.IntValue config,
-                       int minValue,
-                       int maxValue) {
+        public IntRule(
+                String name,
+                Category category,
+                ConfigFile.IntValue config,
+                int minValue,
+                int maxValue
+        ) {
             super(name, category, GameRuleFactory.createIntRule(config.get(), minValue, maxValue), config);
         }
 

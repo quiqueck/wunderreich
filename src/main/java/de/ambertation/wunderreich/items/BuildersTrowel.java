@@ -64,10 +64,12 @@ public class BuildersTrowel extends DiggerItem {
         int maxTries = 100;
         final BlockPos cPos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
         final Supplier<Float> noise;
-        if (getTier() == Tiers.DIAMOND) noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(seed,
+        if (getTier() == Tiers.DIAMOND) noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(
+                seed,
                 cPos.getX() * 0.15,
                 cPos.getY() * 0.2,
-                cPos.getZ() * 0.15)) / 2;
+                cPos.getZ() * 0.15
+        )) / 2;
         else noise = RandomList::random;
 
         do {
@@ -85,13 +87,17 @@ public class BuildersTrowel extends DiggerItem {
 
     private InteractionResult getInteractionResult(UseOnContext ctx, Player p, ItemStack item) {
         BlockPlaceContext bctx;
-        bctx = new BlockPlaceContext(ctx.getPlayer(),
+        bctx = new BlockPlaceContext(
+                ctx.getPlayer(),
                 ctx.getHand(),
                 item,
-                new BlockHitResult(ctx.getClickLocation(),
+                new BlockHitResult(
+                        ctx.getClickLocation(),
                         ctx.getClickedFace(),
                         ctx.getClickedPos(),
-                        ctx.isInside()));
+                        ctx.isInside()
+                )
+        );
         BlockItem bi = (BlockItem) item.getItem();
 
         InteractionResult result = bi.place(bctx);

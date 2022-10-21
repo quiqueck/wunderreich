@@ -497,37 +497,43 @@ public class OpenSimplex2 {
                 float b = a + ax0 + ax0;
                 if (b > 1) {
                     b -= 1;
-                    value += (b * b) * (b * b) * grad(seed,
+                    value += (b * b) * (b * b) * grad(
+                            seed,
                             xrbp - xNSign * PRIME_X,
                             yrbp,
                             zrbp,
                             xri + xNSign,
                             yri,
-                            zri);
+                            zri
+                    );
                 }
             } else if (ay0 > ax0 && ay0 >= az0) {
                 float b = a + ay0 + ay0;
                 if (b > 1) {
                     b -= 1;
-                    value += (b * b) * (b * b) * grad(seed,
+                    value += (b * b) * (b * b) * grad(
+                            seed,
                             xrbp,
                             yrbp - yNSign * PRIME_Y,
                             zrbp,
                             xri,
                             yri + yNSign,
-                            zri);
+                            zri
+                    );
                 }
             } else {
                 float b = a + az0 + az0;
                 if (b > 1) {
                     b -= 1;
-                    value += (b * b) * (b * b) * grad(seed,
+                    value += (b * b) * (b * b) * grad(
+                            seed,
                             xrbp,
                             yrbp,
                             zrbp - zNSign * PRIME_Z,
                             xri,
                             yri,
-                            zri + zNSign);
+                            zri + zNSign
+                    );
                 }
             }
 
@@ -755,15 +761,17 @@ public class OpenSimplex2 {
         return GRADIENTS_3D[gi | 0] * dx + GRADIENTS_3D[gi | 1] * dy + GRADIENTS_3D[gi | 2] * dz;
     }
 
-    private static float grad(long seed,
-                              long xsvp,
-                              long ysvp,
-                              long zsvp,
-                              long wsvp,
-                              float dx,
-                              float dy,
-                              float dz,
-                              float dw) {
+    private static float grad(
+            long seed,
+            long xsvp,
+            long ysvp,
+            long zsvp,
+            long wsvp,
+            float dx,
+            float dy,
+            float dz,
+            float dw
+    ) {
         long hash = seed ^ (xsvp ^ ysvp) ^ (zsvp ^ wsvp);
         hash *= HASH_MULTIPLIER;
         hash ^= hash >> (64 - N_GRADS_4D_EXPONENT + 2);

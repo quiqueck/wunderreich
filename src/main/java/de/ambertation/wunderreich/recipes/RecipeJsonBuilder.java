@@ -1,5 +1,10 @@
 package de.ambertation.wunderreich.recipes;
 
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
+import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.registries.WunderreichRecipes;
+
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -11,10 +16,6 @@ import net.minecraft.world.level.block.Block;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
-import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import java.util.*;
 

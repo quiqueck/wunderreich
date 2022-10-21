@@ -54,12 +54,14 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     }
 
     @Override
-    public InteractionResult use(@NotNull BlockState blockState,
-                                 Level level,
-                                 @NotNull BlockPos blockPos,
-                                 @NotNull Player player,
-                                 @NotNull InteractionHand interactionHand,
-                                 @NotNull BlockHitResult blockHitResult) {
+    public InteractionResult use(
+            @NotNull BlockState blockState,
+            Level level,
+            @NotNull BlockPos blockPos,
+            @NotNull Player player,
+            @NotNull InteractionHand interactionHand,
+            @NotNull BlockHitResult blockHitResult
+    ) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -74,44 +76,60 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
 
     @Override
     @Nullable
-    public MenuProvider getMenuProvider(@NotNull BlockState blockState,
-                                        @NotNull Level level,
-                                        @NotNull BlockPos blockPos) {
-        return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
-                inventory,
-                ContainerLevelAccess.create(level,
-                        blockPos)),
-                Component.translatable("block.wunderreich.whisper_imprinter"));
+    public MenuProvider getMenuProvider(
+            @NotNull BlockState blockState,
+            @NotNull Level level,
+            @NotNull BlockPos blockPos
+    ) {
+        return new SimpleMenuProvider(
+                (i, inventory, player) -> new WhispererMenu(
+                        i,
+                        inventory,
+                        ContainerLevelAccess.create(
+                                level,
+                                blockPos
+                        )
+                ),
+                Component.translatable("block.wunderreich.whisper_imprinter")
+        );
     }
 
     @Override
-    public void onProjectileHit(Level level,
-                                @NotNull BlockState blockState,
-                                @NotNull BlockHitResult blockHitResult,
-                                @NotNull Projectile projectile) {
+    public void onProjectileHit(
+            Level level,
+            @NotNull BlockState blockState,
+            @NotNull BlockHitResult blockHitResult,
+            @NotNull Projectile projectile
+    ) {
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
-            level.playSound(null,
+            level.playSound(
+                    null,
                     blockPos,
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
-            level.playSound(null,
+                    0.5f + level.random.nextFloat() * 1.2f
+            );
+            level.playSound(
+                    null,
                     blockPos,
                     SoundEvents.AMETHYST_BLOCK_CHIME,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
+                    0.5f + level.random.nextFloat() * 1.2f
+            );
         }
     }
 
     @Override
     @Environment(EnvType.CLIENT)
-    public void animateTick(@NotNull BlockState blockState,
-                            @NotNull Level level,
-                            @NotNull BlockPos blockPos,
-                            @NotNull RandomSource random) {
+    public void animateTick(
+            @NotNull BlockState blockState,
+            @NotNull Level level,
+            @NotNull BlockPos blockPos,
+            @NotNull RandomSource random
+    ) {
         super.animateTick(blockState, level, blockPos, random);
 
 

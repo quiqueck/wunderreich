@@ -1600,13 +1600,15 @@ public class OpenSimplex2S {
         float y0 = yi + yNMask;
         float z0 = zi + zNMask;
         float a0 = RSQUARED_3D - x0 * x0 - y0 * y0 - z0 * z0;
-        float value = (a0 * a0) * (a0 * a0) * grad(seed,
+        float value = (a0 * a0) * (a0 * a0) * grad(
+                seed,
                 xrbp + (xNMask & PRIME_X),
                 yrbp + (yNMask & PRIME_Y),
                 zrbp + (zNMask & PRIME_Z),
                 x0,
                 y0,
-                z0);
+                z0
+        );
 
         // Second vertex.
         float x1 = xi - 0.5f;
@@ -1614,7 +1616,8 @@ public class OpenSimplex2S {
         float z1 = zi - 0.5f;
         float a1 = RSQUARED_3D - x1 * x1 - y1 * y1 - z1 * z1;
         value += (a1 * a1) * (a1 * a1) * grad(seed2,
-                xrbp + PRIME_X, yrbp + PRIME_Y, zrbp + PRIME_Z, x1, y1, z1);
+                xrbp + PRIME_X, yrbp + PRIME_Y, zrbp + PRIME_Z, x1, y1, z1
+        );
 
         // Shortcuts for building the remaining falloffs.
         // Derived by subtracting the polynomials with the offsets plugged in.
@@ -1631,26 +1634,30 @@ public class OpenSimplex2S {
             float x2 = x0 - (xNMask | 1);
             float y2 = y0;
             float z2 = z0;
-            value += (a2 * a2) * (a2 * a2) * grad(seed,
+            value += (a2 * a2) * (a2 * a2) * grad(
+                    seed,
                     xrbp + (~xNMask & PRIME_X),
                     yrbp + (yNMask & PRIME_Y),
                     zrbp + (zNMask & PRIME_Z),
                     x2,
                     y2,
-                    z2);
+                    z2
+            );
         } else {
             float a3 = yAFlipMask0 + zAFlipMask0 + a0;
             if (a3 > 0) {
                 float x3 = x0;
                 float y3 = y0 - (yNMask | 1);
                 float z3 = z0 - (zNMask | 1);
-                value += (a3 * a3) * (a3 * a3) * grad(seed,
+                value += (a3 * a3) * (a3 * a3) * grad(
+                        seed,
                         xrbp + (xNMask & PRIME_X),
                         yrbp + (~yNMask & PRIME_Y),
                         zrbp + (~zNMask & PRIME_Z),
                         x3,
                         y3,
-                        z3);
+                        z3
+                );
             }
 
             float a4 = xAFlipMask1 + a1;
@@ -1658,13 +1665,15 @@ public class OpenSimplex2S {
                 float x4 = (xNMask | 1) + x1;
                 float y4 = y1;
                 float z4 = z1;
-                value += (a4 * a4) * (a4 * a4) * grad(seed2,
+                value += (a4 * a4) * (a4 * a4) * grad(
+                        seed2,
                         xrbp + (xNMask & (PRIME_X * 2)),
                         yrbp + PRIME_Y,
                         zrbp + PRIME_Z,
                         x4,
                         y4,
-                        z4);
+                        z4
+                );
                 skip5 = true;
             }
         }
@@ -1675,26 +1684,30 @@ public class OpenSimplex2S {
             float x6 = x0;
             float y6 = y0 - (yNMask | 1);
             float z6 = z0;
-            value += (a6 * a6) * (a6 * a6) * grad(seed,
+            value += (a6 * a6) * (a6 * a6) * grad(
+                    seed,
                     xrbp + (xNMask & PRIME_X),
                     yrbp + (~yNMask & PRIME_Y),
                     zrbp + (zNMask & PRIME_Z),
                     x6,
                     y6,
-                    z6);
+                    z6
+            );
         } else {
             float a7 = xAFlipMask0 + zAFlipMask0 + a0;
             if (a7 > 0) {
                 float x7 = x0 - (xNMask | 1);
                 float y7 = y0;
                 float z7 = z0 - (zNMask | 1);
-                value += (a7 * a7) * (a7 * a7) * grad(seed,
+                value += (a7 * a7) * (a7 * a7) * grad(
+                        seed,
                         xrbp + (~xNMask & PRIME_X),
                         yrbp + (yNMask & PRIME_Y),
                         zrbp + (~zNMask & PRIME_Z),
                         x7,
                         y7,
-                        z7);
+                        z7
+                );
             }
 
             float a8 = yAFlipMask1 + a1;
@@ -1702,13 +1715,15 @@ public class OpenSimplex2S {
                 float x8 = x1;
                 float y8 = (yNMask | 1) + y1;
                 float z8 = z1;
-                value += (a8 * a8) * (a8 * a8) * grad(seed2,
+                value += (a8 * a8) * (a8 * a8) * grad(
+                        seed2,
                         xrbp + PRIME_X,
                         yrbp + (yNMask & (PRIME_Y << 1)),
                         zrbp + PRIME_Z,
                         x8,
                         y8,
-                        z8);
+                        z8
+                );
                 skip9 = true;
             }
         }
@@ -1719,26 +1734,30 @@ public class OpenSimplex2S {
             float xA = x0;
             float yA = y0;
             float zA = z0 - (zNMask | 1);
-            value += (aA * aA) * (aA * aA) * grad(seed,
+            value += (aA * aA) * (aA * aA) * grad(
+                    seed,
                     xrbp + (xNMask & PRIME_X),
                     yrbp + (yNMask & PRIME_Y),
                     zrbp + (~zNMask & PRIME_Z),
                     xA,
                     yA,
-                    zA);
+                    zA
+            );
         } else {
             float aB = xAFlipMask0 + yAFlipMask0 + a0;
             if (aB > 0) {
                 float xB = x0 - (xNMask | 1);
                 float yB = y0 - (yNMask | 1);
                 float zB = z0;
-                value += (aB * aB) * (aB * aB) * grad(seed,
+                value += (aB * aB) * (aB * aB) * grad(
+                        seed,
                         xrbp + (~xNMask & PRIME_X),
                         yrbp + (~yNMask & PRIME_Y),
                         zrbp + (zNMask & PRIME_Z),
                         xB,
                         yB,
-                        zB);
+                        zB
+                );
             }
 
             float aC = zAFlipMask1 + a1;
@@ -1746,13 +1765,15 @@ public class OpenSimplex2S {
                 float xC = x1;
                 float yC = y1;
                 float zC = (zNMask | 1) + z1;
-                value += (aC * aC) * (aC * aC) * grad(seed2,
+                value += (aC * aC) * (aC * aC) * grad(
+                        seed2,
                         xrbp + PRIME_X,
                         yrbp + PRIME_Y,
                         zrbp + (zNMask & (PRIME_Z << 1)),
                         xC,
                         yC,
-                        zC);
+                        zC
+                );
                 skipD = true;
             }
         }
@@ -1763,13 +1784,15 @@ public class OpenSimplex2S {
                 float x5 = x1;
                 float y5 = (yNMask | 1) + y1;
                 float z5 = (zNMask | 1) + z1;
-                value += (a5 * a5) * (a5 * a5) * grad(seed2,
+                value += (a5 * a5) * (a5 * a5) * grad(
+                        seed2,
                         xrbp + PRIME_X,
                         yrbp + (yNMask & (PRIME_Y << 1)),
                         zrbp + (zNMask & (PRIME_Z << 1)),
                         x5,
                         y5,
-                        z5);
+                        z5
+                );
             }
         }
 
@@ -1779,13 +1802,15 @@ public class OpenSimplex2S {
                 float x9 = (xNMask | 1) + x1;
                 float y9 = y1;
                 float z9 = (zNMask | 1) + z1;
-                value += (a9 * a9) * (a9 * a9) * grad(seed2,
+                value += (a9 * a9) * (a9 * a9) * grad(
+                        seed2,
                         xrbp + (xNMask & (PRIME_X * 2)),
                         yrbp + PRIME_Y,
                         zrbp + (zNMask & (PRIME_Z << 1)),
                         x9,
                         y9,
-                        z9);
+                        z9
+                );
             }
         }
 
@@ -1795,13 +1820,15 @@ public class OpenSimplex2S {
                 float xD = (xNMask | 1) + x1;
                 float yD = (yNMask | 1) + y1;
                 float zD = z1;
-                value += (aD * aD) * (aD * aD) * grad(seed2,
+                value += (aD * aD) * (aD * aD) * grad(
+                        seed2,
                         xrbp + (xNMask & (PRIME_X << 1)),
                         yrbp + (yNMask & (PRIME_Y << 1)),
                         zrbp + PRIME_Z,
                         xD,
                         yD,
-                        zD);
+                        zD
+                );
             }
         }
 
@@ -1952,15 +1979,17 @@ public class OpenSimplex2S {
         return GRADIENTS_3D[gi | 0] * dx + GRADIENTS_3D[gi | 1] * dy + GRADIENTS_3D[gi | 2] * dz;
     }
 
-    private static float grad(long seed,
-                              long xsvp,
-                              long ysvp,
-                              long zsvp,
-                              long wsvp,
-                              float dx,
-                              float dy,
-                              float dz,
-                              float dw) {
+    private static float grad(
+            long seed,
+            long xsvp,
+            long ysvp,
+            long zsvp,
+            long wsvp,
+            float dx,
+            float dy,
+            float dz,
+            float dw
+    ) {
         long hash = seed ^ (xsvp ^ ysvp) ^ (zsvp ^ wsvp);
         hash *= HASH_MULTIPLIER;
         hash ^= hash >> (64 - N_GRADS_4D_EXPONENT + 2);
