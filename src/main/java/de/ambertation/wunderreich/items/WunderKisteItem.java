@@ -77,7 +77,9 @@ public class WunderKisteItem extends BlockItem {
     ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         final WunderKisteDomain domain = getDomain(itemStack);
-        Component domainComponent = getDomainComponent(domain);
+        Component domainComponent = itemStack.hasCustomHoverName()
+                ? itemStack.getHoverName()
+                : getDomainComponent(domain);
         list.add(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
                 ChatFormatting.GRAY));
     }
