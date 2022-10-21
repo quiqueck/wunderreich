@@ -23,28 +23,33 @@ import org.jetbrains.annotations.NotNull;
 public class WunderreichItems {
     private static final List<Item> ITEMS = new ArrayList<>(3);
 
-    public static Item WHISPERER = registerItem("whisperer",
-                                                TrainedVillagerWhisperer::new,
-                                                Configs.MAIN.addImprintedWhispers.get()
+    public static Item WHISPERER = registerItem(
+            "whisperer",
+            TrainedVillagerWhisperer::new,
+            Configs.MAIN.addImprintedWhispers.get()
     );
-    public static Item BLANK_WHISPERER = registerItem("whisperer_blank",
-                                                      VillagerWhisperer::new,
-                                                      Configs.MAIN.addBlankWhispere.get()
-    );
-
-    public static Item BUILDERS_TROWEL = registerItem("builders_trowel",
-                                                      () -> new BuildersTrowel(Tiers.IRON),
-                                                      Configs.MAIN.allowBuilderTools.get()
+    public static Item BLANK_WHISPERER = registerItem(
+            "whisperer_blank",
+            VillagerWhisperer::new,
+            Configs.MAIN.addBlankWhispere.get()
     );
 
-    public static Item DIAMOND_BUILDERS_TROWEL = registerItem("diamond_builders_trowel",
-                                                              () -> new BuildersTrowel(Tiers.DIAMOND),
-                                                              Configs.MAIN.allowBuilderTools.get()
+    public static Item BUILDERS_TROWEL = registerItem(
+            "builders_trowel",
+            () -> new BuildersTrowel(Tiers.IRON),
+            Configs.MAIN.allowBuilderTools.get()
+    );
+
+    public static Item DIAMOND_BUILDERS_TROWEL = registerItem(
+            "diamond_builders_trowel",
+            () -> new BuildersTrowel(Tiers.DIAMOND),
+            Configs.MAIN.allowBuilderTools.get()
     );
 
     @NotNull
     public static FabricItemSettings makeItemSettings() {
-        return (FabricItemSettings) new FabricItemSettings().tab(CreativeTabs.TAB_ITEMS);
+        //TODO: 1.20 Changed handling of creative Tabs
+        return (FabricItemSettings) new FabricItemSettings();//.tab(CreativeTabs.TAB_ITEMS);
     }
 
     public static Collection<Item> getAllItems() {

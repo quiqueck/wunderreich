@@ -4,13 +4,16 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
 import net.minecraft.util.ExtraCodecs;
@@ -18,8 +21,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 import com.google.common.collect.Maps;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,14 +29,16 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
-    public static final TicketType<ChunkPos> TICKET = TicketType.create("wunderkiste",
-            Comparator.comparingLong(ChunkPos::toLong));
+    public static final TicketType<ChunkPos> TICKET = TicketType.create(
+            "wunderkiste",
+            Comparator.comparingLong(ChunkPos::toLong)
+    );
     public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
     private static final String POSITIONS_TAG = "positions";
     private final String type;
     private final Set<T> liveBlocks = ConcurrentHashMap.newKeySet(8);
     private final List<ChangeEvent> listeners = new LinkedList<>();
-    private RegistryAccess registryAccess;
+    private LayeredRegistryAccess<RegistryLayer> registryAccess;
     private boolean isLoaded = false;
     private Timer saveTimer;
 
@@ -111,7 +114,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         liveBlocks.clear();
     }
 
-    public void load(RegistryAccess registryAccess) {
+    public void load(LayeredRegistryAccess<RegistryLayer> registryAccess) {
         this.registryAccess = registryAccess;
         liveBlocks.clear();
 

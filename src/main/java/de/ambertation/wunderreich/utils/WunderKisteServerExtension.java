@@ -5,8 +5,9 @@ import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.LayeredRegistryAccess;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -58,7 +59,7 @@ public class WunderKisteServerExtension {
         WUNDERKISTEN.unLoad();
     }
 
-    public void onStartServer(RegistryAccess registryAccess) {
+    public void onStartServer(LayeredRegistryAccess<RegistryLayer> registryAccess) {
         //we start a new world, so clear any old block
         Wunderreich.LOGGER.info("Initializing Cache for Wunderkiste");
         containers.clear();

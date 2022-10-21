@@ -41,11 +41,10 @@
   "depends": {
     "fabricloader": ">=0.14.6",
     "fabric": ">=0.55.1",
-    "minecraft": "1.19.x",
+    "minecraft": [
+      "1.19.3-alpha.22.42.a"
+    ],
     "java": ">=17"
-  },
-  "breaks": {
-    "minecraft": ">1.19.2"
   },
   "suggests": {
     "modmenu": "4.0.x",

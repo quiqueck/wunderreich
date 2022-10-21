@@ -11,10 +11,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -69,10 +66,12 @@ public class WunderKisteItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack itemStack,
-                                @Nullable Level level,
-                                @NotNull List<Component> list,
-                                @NotNull TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+            @NotNull ItemStack itemStack,
+            @Nullable Level level,
+            @NotNull List<Component> list,
+            @NotNull TooltipFlag tooltipFlag
+    ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         final WunderKisteDomain domain = getDomain(itemStack);
         Component domainComponent = getDomainComponent(domain);
@@ -80,9 +79,9 @@ public class WunderKisteItem extends BlockItem {
                 ChatFormatting.GRAY));
     }
 
-    @Override
+    //TODO: 1.20 Changed handling of creative Tabs
     public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTab.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
+        if (creativeModeTab == CreativeModeTabs.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
             addAllVariants(itemList);
         }
     }

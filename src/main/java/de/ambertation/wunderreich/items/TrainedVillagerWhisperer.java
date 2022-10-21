@@ -2,16 +2,13 @@ package de.ambertation.wunderreich.items;
 
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
@@ -72,10 +69,12 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         return EnchantmentHelper.getEnchantmentId(tag);
     }
 
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+            ItemStack itemStack,
+            @Nullable Level level,
+            List<Component> list,
+            TooltipFlag tooltipFlag
+    ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         var tag = getEnchantment(itemStack);
 
@@ -84,18 +83,18 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         });
     }
 
-    @Override
-    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTab.TAB_SEARCH) {
-            addAllVariants(itemList);
-        } else if (creativeModeTab.getEnchantmentCategories().length != 0) {
-            ImprinterRecipe.getRecipes().forEach(r -> {
-                if (creativeModeTab.hasEnchantmentCategory(r.enchantment.category)) {
-                    itemList.add(createForEnchantment(r.enchantment));
-                }
-            });
-        } else if (creativeModeTab == CreativeTabs.TAB_ITEMS) {
-            addAllVariants(itemList);
-        }
-    }
+    //TODO: 1.20 Changed handling of creative Tabs
+//    public void fillItemCategory(CreativeModeTab creativeModeTab, NonNullList<ItemStack> itemList) {
+//        if (creativeModeTab == CreativeModeTabs.TAB_SEARCH) {
+//            addAllVariants(itemList);
+//        } else if (creativeModeTab.getEnchantmentCategories().length != 0) {
+//            ImprinterRecipe.getRecipes().forEach(r -> {
+//                if (creativeModeTab.hasEnchantmentCategory(r.enchantment.category)) {
+//                    itemList.add(createForEnchantment(r.enchantment));
+//                }
+//            });
+//        } else if (creativeModeTab == CreativeTabs.TAB_ITEMS) {
+//            addAllVariants(itemList);
+//        }
+//    }
 }
