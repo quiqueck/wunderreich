@@ -356,7 +356,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                             ? Component.translatable(
                                             "%s - %s",
                                             CONTAINER_TITLE,
-                                            wunderKisteBlockEntity.hasCustomName()
+                                            WunderreichRules.Wunderkiste.namedNetworks() && wunderKisteBlockEntity.hasCustomName()
                                                     ? wunderKisteBlockEntity.getCustomName()
                                                     : WunderKisteItem.getDomainComponent(
                                                             domain)

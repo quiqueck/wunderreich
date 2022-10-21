@@ -29,7 +29,7 @@ public class WunderKisteServerExtension {
     }
 
     public WunderKisteContainer getContainer(BlockState state, @Nullable BlockEntity entity) {
-        if (entity instanceof WunderKisteBlockEntity kiste && kiste.hasCustomName()) {
+        if (WunderreichRules.Wunderkiste.namedNetworks() && entity instanceof WunderKisteBlockEntity kiste && kiste.hasCustomName()) {
             return getContainer(kiste.getDomainName());
         }
         return getContainer(getDomain(state).domainID);
