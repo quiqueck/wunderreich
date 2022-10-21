@@ -38,17 +38,20 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
             WunderKisteBlockEntity kiste,
             CompoundTag serverData
     ) {
-        Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks()
-                ? readCustomName(serverData)
-                : null;
-        if (domainComponent == null) {
-            domainComponent = WunderKisteItem.getDomainComponent(WunderKisteServerExtension.getDomain(state));
-        }
+        if (WunderreichRules.Wunderkiste.haveMultiple()) {
+            Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks()
+                    ? readCustomName(serverData)
+                    : null;
+            if (domainComponent == null) {
 
-        tooltip.addLine(Component
-                .translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent)
-                .withStyle(ChatFormatting.GRAY)
-        );
+                domainComponent = WunderKisteItem.getDomainComponent(WunderKisteServerExtension.getDomain(state));
+            }
+
+            tooltip.addLine(Component
+                    .translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent)
+                    .withStyle(ChatFormatting.GRAY)
+            );
+        }
     }
 
     @Nullable
