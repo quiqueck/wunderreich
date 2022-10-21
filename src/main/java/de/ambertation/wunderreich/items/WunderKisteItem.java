@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.ChatFormatting;
@@ -76,12 +77,15 @@ public class WunderKisteItem extends BlockItem {
             TooltipFlag tooltipFlag
     ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
-        final WunderKisteDomain domain = getDomain(itemStack);
-        Component domainComponent = itemStack.hasCustomHoverName()
-                ? itemStack.getHoverName()
-                : getDomainComponent(domain);
+        if (WunderreichRules.Wunderkiste.haveMultiple()) {
+            final WunderKisteDomain domain = getDomain(itemStack);
+
+            Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks() && itemStack.hasCustomHoverName()
+                    ? itemStack.getHoverName()
+                    : getDomainComponent(domain);
         list.add(new TranslatableComponent("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
-                ChatFormatting.GRAY));
+                    ChatFormatting.GRAY));
+        }
     }
 
     @Override

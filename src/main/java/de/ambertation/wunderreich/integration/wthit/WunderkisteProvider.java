@@ -12,6 +12,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -27,7 +29,7 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
     private static Component readCustomName(CompoundTag compoundTag) {
         if (compoundTag == null) return null;
         if (compoundTag.contains("customName", Tag.TAG_STRING)) {
-            return Component.literal(compoundTag.getString("customName")).setStyle(Style.EMPTY.withBold(true));
+            return new TextComponent(compoundTag.getString("customName")).setStyle(Style.EMPTY.withBold(true));
         }
         return null;
     }
@@ -38,17 +40,19 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
             WunderKisteBlockEntity kiste,
             CompoundTag serverData
     ) {
-        Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks()
-                ? readCustomName(serverData)
-                : null;
-        if (domainComponent == null) {
-            domainComponent = WunderKisteItem.getDomainComponent(WunderKisteServerExtension.getDomain(state));
-        }
+        if (WunderreichRules.Wunderkiste.haveMultiple()) {
+            Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks()
+                    ? readCustomName(serverData)
+                    : null;
+            if (domainComponent == null) {
 
-        tooltip.addLine(Component
-                .translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent)
-                .withStyle(ChatFormatting.GRAY)
-        );
+                domainComponent = WunderKisteItem.getDomainComponent(WunderKisteServerExtension.getDomain(state));
+            }
+
+            tooltip.addLine(new TranslatableComponent("wunderreich.wunderkiste.domain.HoverText", domainComponent)
+                    .withStyle(ChatFormatting.GRAY)
+            );
+        }
     }
 
     @Nullable
@@ -66,8 +70,7 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
     public void appendHead(ITooltip tooltip, IBlockAccessor accessor, IPluginConfig config) {
         tooltip.setLine(
                 WailaConstants.OBJECT_NAME_TAG,
-                Component
-                        .translatable("block.wunderreich.wunder_kiste")
+                new TranslatableComponent("block.wunderreich.wunder_kiste")
                         .withStyle(
                                 Style.EMPTY
                                         .withColor(0xffffffff)
