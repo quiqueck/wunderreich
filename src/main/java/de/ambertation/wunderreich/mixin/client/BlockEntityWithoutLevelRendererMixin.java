@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -15,7 +16,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 import com.google.common.collect.Maps;
-import com.mojang.blaze3d.vertex.PoseStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -33,21 +33,25 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
-    public void wunderreich_render(ItemStack itemStack,
-                                   TransformType transformType,
-                                   PoseStack poseStack,
-                                   MultiBufferSource multiBufferSource,
-                                   int i,
-                                   int j,
-                                   CallbackInfo ci) {
+    public void wunderreich_render(
+            ItemStack itemStack,
+            TransformType transformType,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
+            int i,
+            int j,
+            CallbackInfo ci
+    ) {
         Item item = itemStack.getItem();
         if (item instanceof WunderKisteItem) {
             WunderKisteBlockEntity wunderKiste = wunderKisten.computeIfAbsent(
                     WunderKisteItem.getDomain(itemStack),
-                    (domain) -> new WunderKisteBlockEntity(BlockPos.ZERO,
+                    (domain) -> new WunderKisteBlockEntity(
+                            BlockPos.ZERO,
                             WunderreichBlocks.WUNDER_KISTE
                                     .defaultBlockState()
-                                    .setValue(WunderKisteBlock.DOMAIN, domain))
+                                    .setValue(WunderKisteBlock.DOMAIN, domain)
+                    )
             );
 
             this.blockEntityRenderDispatcher.renderItem(wunderKiste, poseStack, multiBufferSource, i, j);

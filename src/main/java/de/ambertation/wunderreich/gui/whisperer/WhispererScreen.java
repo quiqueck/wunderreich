@@ -3,6 +3,10 @@ package de.ambertation.wunderreich.gui.whisperer;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
+import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.CrashReport;
 import net.minecraft.CrashReportCategory;
 import net.minecraft.ReportedException;
@@ -26,11 +30,6 @@ import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.List;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +82,8 @@ public class WhispererScreen
         final int paddingY = (this.height - this.imageHeight) / 2;
         int top = paddingY + TOP_MARGIN + BORDER_WIDTH;
         for (int idx = 0; idx < NUMBER_OF_OFFER_BUTTONS; ++idx) {
-            this.enchantButtons[idx] = this.addRenderableWidget(new WhispersButton(paddingX + TRADE_BUTTON_X,
+            this.enchantButtons[idx] = this.addRenderableWidget(new WhispersButton(
+                    paddingX + TRADE_BUTTON_X,
                     top,
                     idx,
                     button -> {
@@ -91,24 +91,29 @@ public class WhispererScreen
                             this.shopItem = ((WhispersButton) button).getIndex() + this.scrollOff;
                             this.postButtonClick();
                         }
-                    }));
+                    }
+            ));
             top += TRADE_BUTTON_HEIGHT;
         }
     }
 
     @Override
     protected void renderLabels(PoseStack poseStack, int x, int y) {
-        this.font.draw(poseStack,
+        this.font.draw(
+                poseStack,
                 this.title,
                 (float) (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
                 6.0f,
-                0x404040);
+                0x404040
+        );
 
-        this.font.draw(poseStack,
+        this.font.draw(
+                poseStack,
                 this.playerInventoryTitle,
                 (float) this.inventoryLabelX,
                 (float) this.inventoryLabelY,
-                0x404040);
+                0x404040
+        );
         int component = this.font.width(ENCHANTS_LABEL);
         this.font.draw(poseStack, ENCHANTS_LABEL, (float) (TRADE_BUTTON_X - component / 2 + 48), 6.0f, 0x404040);
     }
@@ -122,7 +127,8 @@ public class WhispererScreen
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
 
-        blit(poseStack,
+        blit(
+                poseStack,
                 paddingX,
                 paddingY,
                 this.getBlitOffset(),
@@ -131,7 +137,8 @@ public class WhispererScreen
                 this.imageWidth,
                 this.imageHeight,
                 TEXTURE_WIDTH,
-                TEXTURE_HEIGHT);
+                TEXTURE_HEIGHT
+        );
     }
 
 
@@ -145,7 +152,8 @@ public class WhispererScreen
             if (this.scrollOff == pageCount) {
                 scrollerOffset = SCROLLER_MAX_Y;
             }
-            WhispererScreen.blit(poseStack,
+            WhispererScreen.blit(
+                    poseStack,
                     x + SCROLL_BAR_START_X,
                     y + SCROLL_BAR_TOP_POS_Y + scrollerOffset,
                     this.getBlitOffset(),
@@ -154,9 +162,11 @@ public class WhispererScreen
                     SCROLLER_WIDTH,
                     SCROLLER_HEIGHT,
                     TEXTURE_WIDTH,
-                    TEXTURE_HEIGHT);
+                    TEXTURE_HEIGHT
+            );
         } else {
-            WhispererScreen.blit(poseStack,
+            WhispererScreen.blit(
+                    poseStack,
                     x + SCROLL_BAR_START_X,
                     y + SCROLL_BAR_TOP_POS_Y,
                     this.getBlitOffset(),
@@ -165,7 +175,8 @@ public class WhispererScreen
                     SCROLLER_WIDTH,
                     SCROLLER_HEIGHT,
                     TEXTURE_WIDTH,
-                    TEXTURE_HEIGHT);
+                    TEXTURE_HEIGHT
+            );
         }
     }
 
@@ -178,13 +189,15 @@ public class WhispererScreen
         this.tryRenderGuiItemScaled(Minecraft.getInstance().player, itemStack, i, j, 0, 0, scale);
     }
 
-    private void tryRenderGuiItemScaled(@Nullable LivingEntity livingEntity,
-                                        ItemStack itemStack,
-                                        int i,
-                                        int j,
-                                        int k,
-                                        int l,
-                                        float scale) {
+    private void tryRenderGuiItemScaled(
+            @Nullable LivingEntity livingEntity,
+            ItemStack itemStack,
+            int i,
+            int j,
+            int k,
+            int l,
+            float scale
+    ) {
         if (!itemStack.isEmpty()) {
             BakedModel bakedModel = this.itemRenderer.getModel(itemStack, null, livingEntity, k);
             this.itemRenderer.blitOffset = bakedModel.isGui3d()
@@ -237,14 +250,16 @@ public class WhispererScreen
             Lighting.setupForFlatItems();
         }
 
-        this.itemRenderer.render(itemStack,
+        this.itemRenderer.render(
+                itemStack,
                 ItemTransforms.TransformType.GUI,
                 false,
                 poseStack2,
                 bufferSource,
                 15728880,
                 OverlayTexture.NO_OVERLAY,
-                bakedModel);
+                bakedModel
+        );
         bufferSource.endBatch();
         RenderSystem.enableDepthTest();
         if (bl) {
@@ -292,20 +307,26 @@ public class WhispererScreen
                 poseStack.popPose();
                 this.renderAndDecorateCostA(poseStack, costA, left + 12, decorateY);
                 if (!costB.isEmpty()) {
-                    this.itemRenderer.renderAndDecorateFakeItem(costB,
-                            paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
-                            decorateY);
-                    this.itemRenderer.renderGuiItemDecorations(this.font,
+                    this.itemRenderer.renderAndDecorateFakeItem(
                             costB,
                             paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
-                            decorateY);
+                            decorateY
+                    );
+                    this.itemRenderer.renderGuiItemDecorations(
+                            this.font,
+                            costB,
+                            paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
+                            decorateY
+                    );
                 }
                 this.renderButtonArrows(poseStack, rule, paddingX, decorateY);
                 this.itemRenderer.renderAndDecorateFakeItem(result, paddingX + TRADE_BUTTON_X + BUY_ITEM_X, decorateY);
-                this.itemRenderer.renderGuiItemDecorations(this.font,
+                this.itemRenderer.renderGuiItemDecorations(
+                        this.font,
                         result,
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
-                        decorateY);
+                        decorateY
+                );
                 this.itemRenderer.blitOffset = 0.0f;
                 top += TRADE_BUTTON_HEIGHT;
                 ++o;
@@ -326,7 +347,8 @@ public class WhispererScreen
         RenderSystem.enableBlend();
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
-        WhispererScreen.blit(poseStack,
+        WhispererScreen.blit(
+                poseStack,
                 x + TRADE_BUTTON_X + SELL_ITEM_2_X + TRADE_BUTTON_HEIGHT,
                 y + 3,
                 this.getBlitOffset(),
@@ -335,7 +357,8 @@ public class WhispererScreen
                 10,
                 9,
                 TEXTURE_WIDTH,
-                TEXTURE_HEIGHT);
+                TEXTURE_HEIGHT
+        );
     }
 
     private void renderAndDecorateCostA(PoseStack poseStack, ItemStack costA, int x, int y) {

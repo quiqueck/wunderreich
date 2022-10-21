@@ -32,12 +32,13 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         super(baseBlock);
     }
 
-    public static boolean doesOcclude(BlockGetter blockGetter,
-                                      BlockState state,
-                                      BlockPos pos,
-                                      BlockState aboveState,
-                                      BlockPos abovePos,
-                                      Direction direction
+    public static boolean doesOcclude(
+            BlockGetter blockGetter,
+            BlockState state,
+            BlockPos pos,
+            BlockState aboveState,
+            BlockPos abovePos,
+            Direction direction
     ) {
 
 
@@ -62,9 +63,10 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         return Shapes.mergedFaceOccludes(shape, aboveShape, direction);
     }
 
-    private static boolean canBeGrassNewSlab(BlockState state,
-                                             LevelReader reader,
-                                             BlockPos pos
+    private static boolean canBeGrassNewSlab(
+            BlockState state,
+            LevelReader reader,
+            BlockPos pos
     ) {
         if (state.getValue(TYPE) == SlabType.BOTTOM) {
             return true;
@@ -73,9 +75,10 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         return canBeGrassNew(state, reader, pos);
     }
 
-    private static boolean canBeGrassNew(BlockState state,
-                                         LevelReader reader,
-                                         BlockPos pos
+    private static boolean canBeGrassNew(
+            BlockState state,
+            LevelReader reader,
+            BlockPos pos
     ) {
 
         BlockPos abovePos = pos.above();
@@ -86,12 +89,13 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         if (state.getFluidState().getAmount() == 8) {
             return false;
         }
-        return !doesOcclude(reader,
-                            state,
-                            pos,
-                            aboveState,
-                            abovePos,
-                            Direction.UP
+        return !doesOcclude(
+                reader,
+                state,
+                pos,
+                aboveState,
+                abovePos,
+                Direction.UP
         );
     }
 
@@ -111,11 +115,12 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                 .is(FluidTags.WATER);
     }
 
-    public static void spreadingTick(Block me,
-                                     BlockState blockState,
-                                     ServerLevel level,
-                                     BlockPos blockPos,
-                                     Random random
+    public static void spreadingTick(
+            Block me,
+            BlockState blockState,
+            ServerLevel level,
+            BlockPos blockPos,
+            Random random
     ) {
         if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_SLAB)
                 || !Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB))
@@ -145,27 +150,32 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             BlockState testState;
 
             for (int i = 0; i < 2; ++i) {
-                BlockPos testPos = blockPos.offset(random.nextInt(3) - 1,
-                                                   random.nextInt(5) - 3,
-                                                   random.nextInt(3) - 1
+                BlockPos testPos = blockPos.offset(
+                        random.nextInt(3) - 1,
+                        random.nextInt(5) - 3,
+                        random.nextInt(3) - 1
                 );
                 testState = level.getBlockState(testPos);
                 if (!canPropagate(testState, level, testPos)) continue;
 
                 if (testState.is(Blocks.DIRT)) {
-                    level.setBlockAndUpdate(testPos,
-                                            grassBlockState.setValue(SNOWY,
-                                                                     level.getBlockState(testPos.above())
-                                                                          .is(Blocks.SNOW)
-                                            )
+                    level.setBlockAndUpdate(
+                            testPos,
+                            grassBlockState.setValue(
+                                    SNOWY,
+                                    level.getBlockState(testPos.above())
+                                         .is(Blocks.SNOW)
+                            )
                     );
                 } else if (testState.is(WunderreichSlabBlocks.DIRT_SLAB)) {
-                    final BlockState newState = grassSlabBlockState.setValue(SNOWY,
-                                                                             level.getBlockState(testPos.above())
-                                                                                  .is(Blocks.SNOW)
+                    final BlockState newState = grassSlabBlockState.setValue(
+                                                                           SNOWY,
+                                                                           level.getBlockState(testPos.above())
+                                                                                .is(Blocks.SNOW)
                                                                    )
-                                                                   .setValue(WATERLOGGED,
-                                                                             testState.getValue(WATERLOGGED)
+                                                                   .setValue(
+                                                                           WATERLOGGED,
+                                                                           testState.getValue(WATERLOGGED)
                                                                    )
                                                                    .setValue(TYPE, testState.getValue(TYPE));
                     level.setBlockAndUpdate(testPos, newState);

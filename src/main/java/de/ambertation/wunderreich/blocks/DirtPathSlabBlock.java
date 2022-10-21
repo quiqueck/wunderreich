@@ -41,10 +41,11 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     }
 
     @Override
-    public boolean isPathfindable(BlockState blockState,
-                                  BlockGetter blockGetter,
-                                  BlockPos blockPos,
-                                  PathComputationType pathComputationType
+    public boolean isPathfindable(
+            BlockState blockState,
+            BlockGetter blockGetter,
+            BlockPos blockPos,
+            PathComputationType pathComputationType
     ) {
         return false;
     }
@@ -65,12 +66,13 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState blockState,
-                                  Direction direction,
-                                  BlockState blockState2,
-                                  LevelAccessor levelAccessor,
-                                  BlockPos blockPos,
-                                  BlockPos blockPos2
+    public BlockState updateShape(
+            BlockState blockState,
+            Direction direction,
+            BlockState blockState2,
+            LevelAccessor levelAccessor,
+            BlockPos blockPos,
+            BlockPos blockPos2
     ) {
         if (direction == Direction.UP && !blockState.canSurvive(levelAccessor, blockPos)) {
             levelAccessor.scheduleTick(blockPos, this, 1);
@@ -79,10 +81,11 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     }
 
     @Override
-    public VoxelShape getShape(BlockState blockState,
-                               BlockGetter blockGetter,
-                               BlockPos blockPos,
-                               CollisionContext collisionContext
+    public VoxelShape getShape(
+            BlockState blockState,
+            BlockGetter blockGetter,
+            BlockPos blockPos,
+            CollisionContext collisionContext
     ) {
         SlabType slabType = blockState.getValue(TYPE);
         switch (slabType) {

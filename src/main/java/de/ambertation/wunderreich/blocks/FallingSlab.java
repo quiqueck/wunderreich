@@ -36,12 +36,14 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState blockState,
-                                  Direction direction,
-                                  BlockState blockState2,
-                                  LevelAccessor levelAccessor,
-                                  BlockPos blockPos,
-                                  BlockPos blockPos2) {
+    public BlockState updateShape(
+            BlockState blockState,
+            Direction direction,
+            BlockState blockState2,
+            LevelAccessor levelAccessor,
+            BlockPos blockPos,
+            BlockPos blockPos2
+    ) {
         levelAccessor.scheduleTick(blockPos, this, this.getDelayAfterPlace());
         return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
     }

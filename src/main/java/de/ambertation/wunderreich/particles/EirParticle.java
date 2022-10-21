@@ -12,13 +12,15 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class EirParticle extends PortalParticle {
-    protected EirParticle(ClientLevel clientLevel,
-                          double x,
-                          double y,
-                          double z,
-                          double deltaX,
-                          double deltaY,
-                          double deltaZ) {
+    protected EirParticle(
+            ClientLevel clientLevel,
+            double x,
+            double y,
+            double z,
+            double deltaX,
+            double deltaY,
+            double deltaZ
+    ) {
         super(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
         this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.3F);
 
@@ -38,14 +40,16 @@ public class EirParticle extends PortalParticle {
             this.sprite = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType simpleParticleType,
-                                       ClientLevel clientLevel,
-                                       double x,
-                                       double y,
-                                       double z,
-                                       double deltaX,
-                                       double deltaY,
-                                       double deltaZ) {
+        public Particle createParticle(
+                SimpleParticleType simpleParticleType,
+                ClientLevel clientLevel,
+                double x,
+                double y,
+                double z,
+                double deltaX,
+                double deltaY,
+                double deltaZ
+        ) {
             EirParticle portalParticle = new EirParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
             portalParticle.pickSprite(this.sprite);
             return portalParticle;

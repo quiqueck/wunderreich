@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.gui.modmenu;
 import de.ambertation.wunderreich.config.ConfigFile;
 import de.ambertation.wunderreich.config.Configs;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.screens.Screen;
@@ -12,8 +13,6 @@ import net.minecraft.network.chat.TranslatableComponent;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,13 +25,15 @@ class EventCheckBox extends Checkbox {
     private final Consumer<Boolean> onChange;
     private boolean enabled;
 
-    public EventCheckBox(int left,
-                         int top,
-                         int width,
-                         int height,
-                         Component component,
-                         boolean checked,
-                         Consumer<Boolean> onChange) {
+    public EventCheckBox(
+            int left,
+            int top,
+            int width,
+            int height,
+            Component component,
+            boolean checked,
+            Consumer<Boolean> onChange
+    ) {
         super(left, top, width, height, component, checked);
         this.onChange = onChange;
         this.enabled = true;
@@ -68,9 +69,11 @@ public class MainScreen extends Screen {
         this.parent = parent;
     }
 
-    protected <T> TranslatableComponent getComponent(ConfigFile config,
-                                                     ConfigFile.Value<T> option,
-                                                     String type) {
+    protected <T> TranslatableComponent getComponent(
+            ConfigFile config,
+            ConfigFile.Value<T> option,
+            String type
+    ) {
         return new TranslatableComponent(type + ".config." + config.category + "." + option.token.path() + "." + option.token.key());
     }
 
@@ -90,7 +93,8 @@ public class MainScreen extends Screen {
 
 
     protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option) {
-        EventCheckBox cb = new EventCheckBox(state.left + (option.getIsValidSupplier() != null ? 12 : 0),
+        EventCheckBox cb = new EventCheckBox(
+                state.left + (option.getIsValidSupplier() != null ? 12 : 0),
                 state.top,
                 this.width - 2 * state.left,
                 20,
@@ -128,7 +132,8 @@ public class MainScreen extends Screen {
         state.top += 15;
 
         final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
-        Button b = new Button(this.width - width - state.left,
+        Button b = new Button(
+                this.width - width - state.left,
                 this.height - BUTTON_HEIGHT - 20,
                 width,
                 BUTTON_HEIGHT,
@@ -136,7 +141,8 @@ public class MainScreen extends Screen {
                 (button) -> {
                     Configs.MAIN.save();
                     onClose();
-                });
+                }
+        );
         this.addRenderableWidget(b);
     }
 

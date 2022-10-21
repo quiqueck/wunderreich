@@ -69,10 +69,12 @@ public class WunderKisteItem extends BlockItem {
     }
 
     @Override
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+            ItemStack itemStack,
+            @Nullable Level level,
+            List<Component> list,
+            TooltipFlag tooltipFlag
+    ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         final WunderKisteDomain domain = getDomain(itemStack);
         Component domainComponent = getDomainComponent(domain);

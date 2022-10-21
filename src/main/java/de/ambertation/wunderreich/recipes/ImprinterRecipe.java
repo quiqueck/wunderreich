@@ -41,22 +41,26 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     //    private static List<ImprinterRecipe> RECIPES_UI_SORTED = new LinkedList<>();
     private final ResourceLocation id;
 
-    private ImprinterRecipe(ResourceLocation id,
-                            Enchantment enchantment,
-                            Ingredient inputA,
-                            Ingredient inputB,
-                            int baseXP) {
+    private ImprinterRecipe(
+            ResourceLocation id,
+            Enchantment enchantment,
+            Ingredient inputA,
+            Ingredient inputB,
+            int baseXP
+    ) {
         super(enchantment, inputA, inputB, baseXP);
         this.id = id;
     }
 
-    private ImprinterRecipe(ResourceLocation id,
-                            Enchantment enchantment,
-                            Ingredient inputA,
-                            Ingredient inputB,
-                            ItemStack output,
-                            int baseXP,
-                            ItemStack type) {
+    private ImprinterRecipe(
+            ResourceLocation id,
+            Enchantment enchantment,
+            Ingredient inputA,
+            Ingredient inputB,
+            ItemStack output,
+            int baseXP,
+            ItemStack type
+    ) {
         super(enchantment, inputA, inputB, output, baseXP, type);
         this.id = id;
     }

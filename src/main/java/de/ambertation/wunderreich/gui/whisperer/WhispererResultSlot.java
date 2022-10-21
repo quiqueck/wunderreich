@@ -15,12 +15,14 @@ public class WhispererResultSlot extends Slot {
     private final WhispererMenu owner;
     private int removeCount;
 
-    public WhispererResultSlot(WhispererMenu owner,
-                               Player player,
-                               WhisperContainer container,
-                               int slotIndex,
-                               int x,
-                               int y) {
+    public WhispererResultSlot(
+            WhispererMenu owner,
+            Player player,
+            WhisperContainer container,
+            int slotIndex,
+            int x,
+            int y
+    ) {
         super(container, slotIndex, x, y);
 
         this.player = player;

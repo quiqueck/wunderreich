@@ -111,16 +111,20 @@ public class AdvancementsJsonBuilder {
         return this;
     }
 
-    public AdvancementsJsonBuilder startDisplay(Item icon,
-                                                Consumer<DisplayBuilder> builder) {
+    public AdvancementsJsonBuilder startDisplay(
+            Item icon,
+            Consumer<DisplayBuilder> builder
+    ) {
         String baseName = "advancements." + ID.getNamespace() + "." + ID.getPath() + ".";
         return startDisplay(icon, baseName + "title", baseName + "description", builder);
     }
 
-    public AdvancementsJsonBuilder startDisplay(Item icon,
-                                                String title,
-                                                String description,
-                                                Consumer<DisplayBuilder> builder) {
+    public AdvancementsJsonBuilder startDisplay(
+            Item icon,
+            String title,
+            String description,
+            Consumer<DisplayBuilder> builder
+    ) {
         var id = Registry.ITEM.getKey(icon);
         if (id == null) {
             id = Registry.ITEM.getDefaultKey();

@@ -17,11 +17,15 @@ public class WunderreichParticles {
     public static SimpleParticleType EIR_PARTICLES;
     public static SimpleParticleType IMPRINT_PARTICLES;
 
-    private static SimpleParticleType register(String name,
-                                               PendingParticleFactory<net.minecraft.core.particles.SimpleParticleType> constructor) {
-        SimpleParticleType particle = Registry.register(Registry.PARTICLE_TYPE,
+    private static SimpleParticleType register(
+            String name,
+            PendingParticleFactory<net.minecraft.core.particles.SimpleParticleType> constructor
+    ) {
+        SimpleParticleType particle = Registry.register(
+                Registry.PARTICLE_TYPE,
                 Wunderreich.ID(name),
-                new SimpleParticleType(false));
+                new SimpleParticleType(false)
+        );
         ParticleFactoryRegistry.getInstance().register(particle, constructor);
 
         return particle;

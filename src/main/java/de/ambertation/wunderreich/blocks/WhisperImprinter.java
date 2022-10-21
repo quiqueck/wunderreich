@@ -53,12 +53,14 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     }
 
     @Override
-    public InteractionResult use(BlockState blockState,
-                                 Level level,
-                                 BlockPos blockPos,
-                                 Player player,
-                                 InteractionHand interactionHand,
-                                 BlockHitResult blockHitResult) {
+    public InteractionResult use(
+            BlockState blockState,
+            Level level,
+            BlockPos blockPos,
+            Player player,
+            InteractionHand interactionHand,
+            BlockHitResult blockHitResult
+    ) {
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
@@ -74,32 +76,44 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     @Override
     @Nullable
     public MenuProvider getMenuProvider(BlockState blockState, Level level, BlockPos blockPos) {
-        return new SimpleMenuProvider((i, inventory, player) -> new WhispererMenu(i,
-                inventory,
-                ContainerLevelAccess.create(level,
-                        blockPos)),
-                new TextComponent("Hello"));
+        return new SimpleMenuProvider(
+                (i, inventory, player) -> new WhispererMenu(
+                        i,
+                        inventory,
+                        ContainerLevelAccess.create(
+                                level,
+                                blockPos
+                        )
+                ),
+                new TextComponent("Hello")
+        );
     }
 
     @Override
-    public void onProjectileHit(Level level,
-                                BlockState blockState,
-                                BlockHitResult blockHitResult,
-                                Projectile projectile) {
+    public void onProjectileHit(
+            Level level,
+            BlockState blockState,
+            BlockHitResult blockHitResult,
+            Projectile projectile
+    ) {
         if (!level.isClientSide) {
             BlockPos blockPos = blockHitResult.getBlockPos();
-            level.playSound(null,
+            level.playSound(
+                    null,
                     blockPos,
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
-            level.playSound(null,
+                    0.5f + level.random.nextFloat() * 1.2f
+            );
+            level.playSound(
+                    null,
                     blockPos,
                     SoundEvents.AMETHYST_BLOCK_CHIME,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f);
+                    0.5f + level.random.nextFloat() * 1.2f
+            );
         }
     }
 

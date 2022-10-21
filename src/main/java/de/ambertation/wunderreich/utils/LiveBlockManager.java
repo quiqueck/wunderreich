@@ -4,6 +4,8 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
@@ -18,8 +20,6 @@ import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
 import com.google.common.collect.Maps;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,8 +28,10 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
-    public static final TicketType<ChunkPos> TICKET = TicketType.create("wunderkiste",
-            Comparator.comparingLong(ChunkPos::toLong));
+    public static final TicketType<ChunkPos> TICKET = TicketType.create(
+            "wunderkiste",
+            Comparator.comparingLong(ChunkPos::toLong)
+    );
     public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
     private static final String POSITIONS_TAG = "positions";
     private final String type;
