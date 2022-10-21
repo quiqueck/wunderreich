@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.utils;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.registries.WunderreichRules;
@@ -9,14 +10,16 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteServerExtension {
-    private final Map<WunderKisteDomain, WunderKisteContainer> containers = Maps.newHashMap();
+    private final Map<WunderKisteDomain.ID, WunderKisteContainer> containers = Maps.newHashMap();
     public static final LiveBlockManager<LiveBlockManager.LiveBlock> WUNDERKISTEN = new LiveBlockManager<>("wunderkiste");
 
     public static WunderKisteDomain getDomain(BlockState state) {
@@ -25,21 +28,24 @@ public class WunderKisteServerExtension {
         return WunderKisteBlock.DEFAULT_DOMAIN;
     }
 
-    public WunderKisteContainer getContainer(BlockState state) {
-        return getContainer(getDomain(state));
+    public WunderKisteContainer getContainer(BlockState state, @Nullable BlockEntity entity) {
+        if (entity instanceof WunderKisteBlockEntity kiste && kiste.hasCustomName()) {
+            return getContainer(kiste.getDomainName());
+        }
+        return getContainer(getDomain(state).domainID);
     }
 
-    public WunderKisteContainer getContainer(WunderKisteDomain domain) {
+    public WunderKisteContainer getContainer(WunderKisteDomain.ID domainID) {
         return containers.computeIfAbsent(
                 WunderreichRules.Wunderkiste.haveMultiple()
-                        ? domain
-                        : WunderKisteBlock.DEFAULT_DOMAIN,
-                d -> this.loadOrCreate(domain, null)
+                        ? domainID
+                        : WunderKisteBlock.DEFAULT_DOMAIN.domainID,
+                d -> this.loadOrCreate(domainID)
         );
     }
 
-    private WunderKisteContainer loadOrCreate(WunderKisteDomain wunderKisteDomain, String networkName) {
-        WunderKisteContainer wunderKisteContainer = new WunderKisteContainer(wunderKisteDomain, networkName);
+    private WunderKisteContainer loadOrCreate(WunderKisteDomain.ID domainID) {
+        WunderKisteContainer wunderKisteContainer = new WunderKisteContainer(domainID);
         wunderKisteContainer.load();
         wunderKisteContainer.addListener((container) -> {
             WunderKisteBlock.updateAllBoxes(container, false, true);
