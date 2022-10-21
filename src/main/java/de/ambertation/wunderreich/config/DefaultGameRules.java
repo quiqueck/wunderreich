@@ -40,6 +40,12 @@ public class DefaultGameRules extends ConfigFile {
             true
     );
 
+    public final BooleanValue wunderkisteAllowNamedDomains = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
+            "allowNamedNetworks",
+            true
+    );
+
     public final IntValue wunderkisteChangeDomainCost = new IntValue(
             WUNDERKISTE_CATEGORY,
             "changeNetworkCost",
