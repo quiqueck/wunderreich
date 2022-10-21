@@ -19,10 +19,12 @@ import java.util.function.Consumer;
 @Mixin(Sheets.class)
 public abstract class SheetsMixin {
     @Inject(cancellable = true, method = "chooseMaterial(Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/level/block/state/properties/ChestType;Z)Lnet/minecraft/client/resources/model/Material;", at = @At("HEAD"))
-    private static void wunderreich_choose(BlockEntity blockEntity,
-                                           ChestType chestType,
-                                           boolean bl,
-                                           CallbackInfoReturnable<Material> cir) {
+    private static void wunderreich_choose(
+            BlockEntity blockEntity,
+            ChestType chestType,
+            boolean bl,
+            CallbackInfoReturnable<Material> cir
+    ) {
         if (blockEntity instanceof WunderKisteBlockEntity) {
             cir.setReturnValue(WunderreichClient.WUNDER_KISTE_LOCATION);
             cir.cancel();

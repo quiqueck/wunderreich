@@ -39,8 +39,9 @@ public class ShovelItemMixin {
                     )
             ) {
 
-                final BlockState newState = DirtSlabBlock.createStateFrom(WunderreichSlabBlocks.DIRT_PATH_SLAB,
-                                                                          currentState
+                final BlockState newState = DirtSlabBlock.createStateFrom(
+                        WunderreichSlabBlocks.DIRT_PATH_SLAB,
+                        currentState
                 );
                 final Player player = useOnContext.getPlayer();
                 if (!level.isClientSide) {

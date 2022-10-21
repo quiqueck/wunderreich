@@ -72,10 +72,12 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         return EnchantmentHelper.getEnchantmentId(tag);
     }
 
-    public void appendHoverText(ItemStack itemStack,
-                                @Nullable Level level,
-                                List<Component> list,
-                                TooltipFlag tooltipFlag) {
+    public void appendHoverText(
+            ItemStack itemStack,
+            @Nullable Level level,
+            List<Component> list,
+            TooltipFlag tooltipFlag
+    ) {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         var tag = getEnchantment(itemStack);
 

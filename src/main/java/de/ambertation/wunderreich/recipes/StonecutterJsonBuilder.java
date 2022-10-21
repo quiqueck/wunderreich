@@ -98,8 +98,10 @@ public class StonecutterJsonBuilder {
         return registerAndCreateAdvancement(type, items);
     }
 
-    public JsonElement registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType type,
-                                                    List<Item> items) {
+    public JsonElement registerAndCreateAdvancement(
+            AdvancementsJsonBuilder.AdvancementType type,
+            List<Item> items
+    ) {
         JsonElement res = register();
         if (res == null) return null;
         if (items.size() == 0) return res;

@@ -11,14 +11,18 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(AbstractVillager.class)
 public abstract class AbstractVillagerMixin implements AbstractVillagerAccessor {
-    public void wunderreich_addOffersFromItemListings(MerchantOffers merchantOffers,
-                                                      VillagerTrades.ItemListing[] itemListings,
-                                                      int i) {
+    public void wunderreich_addOffersFromItemListings(
+            MerchantOffers merchantOffers,
+            VillagerTrades.ItemListing[] itemListings,
+            int i
+    ) {
         addOffersFromItemListings(merchantOffers, itemListings, i);
     }
 
     @Shadow
-    protected abstract void addOffersFromItemListings(MerchantOffers merchantOffers,
-                                                      VillagerTrades.ItemListing[] itemListings,
-                                                      int i);
+    protected abstract void addOffersFromItemListings(
+            MerchantOffers merchantOffers,
+            VillagerTrades.ItemListing[] itemListings,
+            int i
+    );
 }

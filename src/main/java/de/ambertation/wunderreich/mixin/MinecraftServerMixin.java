@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
+import com.mojang.datafixers.DataFixer;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Services;
@@ -15,7 +16,6 @@ import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
-import com.mojang.datafixers.DataFixer;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -40,15 +40,16 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void wunderreich_init(Thread thread,
-                                 LevelStorageAccess levelStorageAccess,
-                                 PackRepository packRepository,
-                                 WorldStem worldStem,
-                                 Proxy proxy,
-                                 DataFixer dataFixer,
-                                 Services services,
-                                 ChunkProgressListenerFactory chunkProgressListenerFactory,
-                                 CallbackInfo ci
+    public void wunderreich_init(
+            Thread thread,
+            LevelStorageAccess levelStorageAccess,
+            PackRepository packRepository,
+            WorldStem worldStem,
+            Proxy proxy,
+            DataFixer dataFixer,
+            Services services,
+            ChunkProgressListenerFactory chunkProgressListenerFactory,
+            CallbackInfo ci
     ) {
         LevelData.getInstance().loadNewLevel(levelStorageAccess);
 

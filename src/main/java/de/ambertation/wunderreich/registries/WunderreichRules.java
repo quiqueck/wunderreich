@@ -109,13 +109,15 @@ public class WunderreichRules {
                 new IntRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteChangeDomainCost, 0, 64);
 
         private static final IntRule CHUNK_LOADER_DIST_WUNDERKISTE =
-                new IntRule(Category.UPDATES,
+                new IntRule(
+                        Category.UPDATES,
                         Configs.DEFAULT_RULES.wunderkisteChunkLoaderRadius,
                         0,
                         5,
                         (server, value) -> {
                             WunderKisteServerExtension.WUNDERKISTEN.rebuildLoadedChunks();
-                        });
+                        }
+                );
 
         public static boolean redstonePowerWhenOpened() {
             return REDSTONE_POWER.get();

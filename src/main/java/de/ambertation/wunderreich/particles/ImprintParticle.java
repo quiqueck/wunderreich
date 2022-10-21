@@ -12,13 +12,15 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public class ImprintParticle extends EnchantmentTableParticle {
-    ImprintParticle(ClientLevel clientLevel,
-                    double x,
-                    double y,
-                    double z,
-                    double deltaX,
-                    double deltaY,
-                    double deltaZ) {
+    ImprintParticle(
+            ClientLevel clientLevel,
+            double x,
+            double y,
+            double z,
+            double deltaX,
+            double deltaY,
+            double deltaZ
+    ) {
         super(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
 
         float intensity = this.random.nextFloat() * 0.4F + 0.6F;
@@ -35,14 +37,16 @@ public class ImprintParticle extends EnchantmentTableParticle {
             this.sprite = spriteSet;
         }
 
-        public Particle createParticle(SimpleParticleType simpleParticleType,
-                                       ClientLevel clientLevel,
-                                       double x,
-                                       double y,
-                                       double z,
-                                       double deltaX,
-                                       double deltaY,
-                                       double deltaZ) {
+        public Particle createParticle(
+                SimpleParticleType simpleParticleType,
+                ClientLevel clientLevel,
+                double x,
+                double y,
+                double z,
+                double deltaX,
+                double deltaY,
+                double deltaZ
+        ) {
             ImprintParticle portalParticle = new ImprintParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
             portalParticle.pickSprite(this.sprite);
             return portalParticle;

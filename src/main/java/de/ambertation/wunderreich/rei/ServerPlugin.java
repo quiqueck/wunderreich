@@ -17,8 +17,10 @@ import me.shedaniel.rei.api.common.plugins.REIServerPlugin;
 import java.util.function.Function;
 
 public class ServerPlugin implements REIServerPlugin {
-    public static CategoryIdentifier<ImprinterDisplay> IMPRINTER = CategoryIdentifier.of(Wunderreich.MOD_ID,
-            ImprinterRecipe.Type.ID.getPath());
+    public static CategoryIdentifier<ImprinterDisplay> IMPRINTER = CategoryIdentifier.of(
+            Wunderreich.MOD_ID,
+            ImprinterRecipe.Type.ID.getPath()
+    );
 
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {
@@ -32,7 +34,9 @@ public class ServerPlugin implements REIServerPlugin {
             return new CompoundTag();
         };
 
-        registry.register((context, stack) -> nbtHasher.hash(context, enchantmentTag.apply(stack)),
-                WunderreichItems.WHISPERER);
+        registry.register(
+                (context, stack) -> nbtHasher.hash(context, enchantmentTag.apply(stack)),
+                WunderreichItems.WHISPERER
+        );
     }
 }

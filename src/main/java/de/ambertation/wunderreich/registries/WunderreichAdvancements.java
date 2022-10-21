@@ -82,8 +82,9 @@ public class WunderreichAdvancements {
             assert WunderreichBlocks.WUNDER_KISTE != null;
             ResourceLocation opened_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_open")
-                    .startDisplay(WunderreichBlocks.WUNDER_KISTE.asItem(),
-                                  b -> b.showToast().visible().announceToChat()
+                    .startDisplay(
+                            WunderreichBlocks.WUNDER_KISTE.asItem(),
+                            b -> b.showToast().visible().announceToChat()
                     )
                     .parent(root)
                     .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE.getId().toString(), b -> {
@@ -91,8 +92,9 @@ public class WunderreichAdvancements {
 
             ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
-                    .startDisplay(Items.RED_DYE,
-                                  b -> b.showToast().visible().announceToChat().goal()
+                    .startDisplay(
+                            Items.RED_DYE,
+                            b -> b.showToast().visible().announceToChat().goal()
                     )
                     .parent(opened_wunderkiste)
                     .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE.getId().toString(), b -> {

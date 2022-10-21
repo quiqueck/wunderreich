@@ -8,6 +8,8 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -24,9 +26,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,8 +34,10 @@ import org.jetbrains.annotations.NotNull;
 public class CycleTradesButton extends Button {
 
     public static final int WIDTH = 18;
-    private static final ResourceLocation ARROW_BUTTON = new ResourceLocation(Wunderreich.MOD_ID,
-            "textures/gui/reroll.png");
+    private static final ResourceLocation ARROW_BUTTON = new ResourceLocation(
+            Wunderreich.MOD_ID,
+            "textures/gui/reroll.png"
+    );
     private static final int HALF_HEIGHT = 13;
     public static final int HEIGHT = HALF_HEIGHT * 2;
 
@@ -51,11 +52,13 @@ public class CycleTradesButton extends Button {
     }
 
     @NotNull
-    public static CycleTradesButton getCycleTradesButton(AbstractContainerScreen<MerchantMenu> merchantScreenMixin,
-                                                         int imageWidth,
-                                                         int imageHeight,
-                                                         MerchantScreen merchantScreen,
-                                                         MerchantMenu menu) {
+    public static CycleTradesButton getCycleTradesButton(
+            AbstractContainerScreen<MerchantMenu> merchantScreenMixin,
+            int imageWidth,
+            int imageHeight,
+            MerchantScreen merchantScreen,
+            MerchantMenu menu
+    ) {
         final int left = (merchantScreenMixin.width - imageWidth) / 2;
         final int top = (merchantScreenMixin.height - imageHeight) / 2;
 

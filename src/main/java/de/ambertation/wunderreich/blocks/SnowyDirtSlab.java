@@ -35,12 +35,14 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     }
 
     @Override
-    public BlockState updateShape(BlockState blockState,
-                                  Direction direction,
-                                  BlockState blockState2,
-                                  LevelAccessor levelAccessor,
-                                  BlockPos blockPos,
-                                  BlockPos blockPos2) {
+    public BlockState updateShape(
+            BlockState blockState,
+            Direction direction,
+            BlockState blockState2,
+            LevelAccessor levelAccessor,
+            BlockPos blockPos,
+            BlockPos blockPos2
+    ) {
         blockState = super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
         if (direction == Direction.UP) {
             return blockState.setValue(SNOWY, isSnowySetting(blockState2));

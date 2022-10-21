@@ -32,21 +32,25 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     @Override
-    public void onPlace(@NotNull BlockState blockState,
-                        Level level,
-                        BlockPos blockPos,
-                        BlockState blockState2,
-                        boolean bl) {
+    public void onPlace(
+            @NotNull BlockState blockState,
+            Level level,
+            BlockPos blockPos,
+            BlockState blockState2,
+            boolean bl
+    ) {
         level.scheduleTick(blockPos, this, this.getDelayAfterPlace());
     }
 
     @Override
-    public BlockState updateShape(@NotNull BlockState blockState,
-                                  @NotNull Direction direction,
-                                  @NotNull BlockState blockState2,
-                                  LevelAccessor levelAccessor,
-                                  @NotNull BlockPos blockPos,
-                                  @NotNull BlockPos blockPos2) {
+    public BlockState updateShape(
+            @NotNull BlockState blockState,
+            @NotNull Direction direction,
+            @NotNull BlockState blockState2,
+            LevelAccessor levelAccessor,
+            @NotNull BlockPos blockPos,
+            @NotNull BlockPos blockPos2
+    ) {
         levelAccessor.scheduleTick(blockPos, this, this.getDelayAfterPlace());
         return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
     }
@@ -87,10 +91,12 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     @Override
-    public void animateTick(@NotNull BlockState blockState,
-                            @NotNull Level level,
-                            @NotNull BlockPos blockPos,
-                            RandomSource random) {
+    public void animateTick(
+            @NotNull BlockState blockState,
+            @NotNull Level level,
+            @NotNull BlockPos blockPos,
+            RandomSource random
+    ) {
         BlockPos blockPos2;
         if (random.nextInt(16) == 0 && FallingBlock.isFree(level.getBlockState(blockPos2 = blockPos.below()))) {
             double d = (double) blockPos.getX() + random.nextDouble();

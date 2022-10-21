@@ -22,15 +22,19 @@ public abstract class ServerBoundPacketHandler<D> {
     public static <T extends ServerBoundPacketHandler> T register(String channel, T packetHandler) {
         packetHandler.CHANNEL = Wunderreich.ID(channel);
         ServerPlayConnectionEvents.INIT.register((handler, server) -> {
-            ServerPlayNetworking.registerReceiver(handler,
+            ServerPlayNetworking.registerReceiver(
+                    handler,
                     packetHandler.CHANNEL,
                     (_server, _player, _handler, _buf, _responseSender) -> {
-                        packetHandler.receiveOnServer(_server,
+                        packetHandler.receiveOnServer(
+                                _server,
                                 _player,
                                 _handler,
                                 _buf,
-                                _responseSender);
-                    });
+                                _responseSender
+                        );
+                    }
+            );
         });
 
         ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> {
@@ -60,11 +64,13 @@ public abstract class ServerBoundPacketHandler<D> {
         ClientPlayNetworking.send(CHANNEL, buf);
     }
 
-    void receiveOnServer(MinecraftServer server,
-                         ServerPlayer player,
-                         ServerGamePacketListenerImpl handler,
-                         FriendlyByteBuf buf,
-                         PacketSender responseSender) {
+    void receiveOnServer(
+            MinecraftServer server,
+            ServerPlayer player,
+            ServerGamePacketListenerImpl handler,
+            FriendlyByteBuf buf,
+            PacketSender responseSender
+    ) {
         D content = deserializeOnServer(buf, player, responseSender);
         server.execute(() -> processOnGameThread(server, player, content));
     }

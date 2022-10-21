@@ -20,11 +20,13 @@ public class WhisperRule {
     public final int baseXP;
 
     private WhisperRule(Enchantment enchantment, EnchantmentInfo nfo) {
-        this(enchantment,
+        this(
+                enchantment,
                 Ingredient.of(nfo.inputA),
                 Ingredient.of(new ItemStack(WunderreichItems.BLANK_WHISPERER)),
                 nfo.baseXP,
-                nfo.type);
+                nfo.type
+        );
     }
 
     protected WhisperRule(Enchantment enchantment, Ingredient inputA, Ingredient inputB, int baseXP) {
@@ -35,12 +37,14 @@ public class WhisperRule {
         this(enchantment, inputA, inputB, TrainedVillagerWhisperer.createForEnchantment(enchantment), baseXP, type);
     }
 
-    protected WhisperRule(Enchantment enchantment,
-                          Ingredient inputA,
-                          Ingredient inputB,
-                          ItemStack output,
-                          int baseXP,
-                          ItemStack type) {
+    protected WhisperRule(
+            Enchantment enchantment,
+            Ingredient inputA,
+            Ingredient inputB,
+            ItemStack output,
+            int baseXP,
+            ItemStack type
+    ) {
         this.enchantment = enchantment;
         this.baseXP = baseXP;
         this.output = output;
