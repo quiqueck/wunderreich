@@ -1,6 +1,13 @@
 package de.ambertation.wunderreich.integration.wthit;
 
-/*public class WailaPlugin implements IWailaPlugin {
+import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+
+import mcp.mobius.waila.api.IRegistrar;
+import mcp.mobius.waila.api.IWailaPlugin;
+import mcp.mobius.waila.api.TooltipPosition;
+
+public class WailaPlugin implements IWailaPlugin {
     @Override
     public void register(IRegistrar registrar) {
         Wunderreich.LOGGER.info("Registering Waila-/Wthit-Plugin.");
@@ -9,4 +16,4 @@ package de.ambertation.wunderreich.integration.wthit;
         registrar.addComponent(WunderkisteProvider.INSTANCE, TooltipPosition.BODY, WunderKisteBlock.class);
         registrar.addIcon(WunderkisteProvider.INSTANCE, WunderKisteBlock.class);
     }
-}*/
+}

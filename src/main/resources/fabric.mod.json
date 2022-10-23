@@ -54,7 +54,7 @@
     "bclib": {
       "updater_icon": "icon_updater.png"
     },
-    "REM_waila:plugins": {
+    "waila:plugins": {
       "id": "wunderreich:global",
       "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
     }
