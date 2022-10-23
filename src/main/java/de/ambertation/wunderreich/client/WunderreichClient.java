@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
+import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
@@ -58,14 +59,17 @@ public class WunderreichClient implements ClientModInitializer {
         WunderreichParticles.register();
         WunderreichScreens.registerScreens();
 
+        CreativeTabs.ensureStaticallyLoaded();
+
         Registry.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {
                 BlockRenderLayerMap.INSTANCE.putBlock(block, view.getRenderType());
             }
 
             if (block instanceof BlockEntityProvider view) {
-                BlockEntityRendererRegistry.register(view.getBlockEntityType(),
-                                                     view.getBlockEntityRenderProvider()
+                BlockEntityRendererRegistry.register(
+                        view.getBlockEntityType(),
+                        view.getBlockEntityRenderProvider()
                 );
             }
         });
@@ -79,8 +83,9 @@ public class WunderreichClient implements ClientModInitializer {
                 return 0xffffffff;
             }, WunderreichSlabBlocks.GRASS_SLAB);
 
-            ColorProviderRegistry.ITEM.register((item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                                                WunderreichSlabBlocks.GRASS_SLAB
+            ColorProviderRegistry.ITEM.register(
+                    (item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
+                    WunderreichSlabBlocks.GRASS_SLAB
             );
         }
     }
