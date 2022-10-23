@@ -174,7 +174,6 @@ modrinth {
     changelog = changes
     dependencies {
         required.project "fabric-api"
-        optional.project "wthit"
     }
     debugMode = false
 }
