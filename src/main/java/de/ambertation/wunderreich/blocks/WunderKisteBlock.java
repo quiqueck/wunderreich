@@ -78,7 +78,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    private static final Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Map<WunderKisteDomain.ID, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -128,13 +128,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         if (container != null) {
             //check if any box was opened
             if (withOpenState) {
-                for (WunderKisteDomain d : WunderKisteDomain.values()) hasAnyOpenInstance.put(d, false);
+                WunderKisteDomain.ID.forAll(d -> hasAnyOpenInstance.put(d, false));
 
                 getLiveBlockManager().forEach((liveBlock) -> {
                     BlockEntity be = liveBlock.getLevel().getBlockEntity(liveBlock.pos);
                     if (be instanceof WunderKisteBlockEntity) {
                         WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
-                        WunderKisteDomain d = WunderKisteServerExtension.getDomain(entity.getBlockState());
+                        WunderKisteDomain.ID d = WunderKisteServerExtension.getDomain(entity.getBlockState(), entity);
                         hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.get(d));
                     }
                 });
@@ -430,8 +430,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             @NotNull Direction direction
     ) {
         if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
-        final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
-        return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
+
+        BlockEntity entity = blockGetter.getBlockEntity(blockPos);
+        if (entity instanceof WunderKisteBlockEntity wentity) {
+            final WunderKisteDomain.ID domain = WunderKisteServerExtension.getDomain(blockState, wentity);
+            return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
+        }
+        return 0;
     }
 
 //	@Override

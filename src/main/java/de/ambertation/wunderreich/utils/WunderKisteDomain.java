@@ -21,6 +21,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 
 public enum WunderKisteDomain implements StringRepresentable {
     WHITE("white", Items.WHITE_DYE, 0xFFFFFF, false, "wunder_kiste"),
@@ -116,6 +117,16 @@ public enum WunderKisteDomain implements StringRepresentable {
 
         public static ID forDomain(WunderKisteDomain d) {
             return d.domainID;
+        }
+
+
+        public static void forAll(Consumer<ID> idConsumer) {
+            for (WunderKisteDomain domain : WunderKisteDomain.values()) {
+                idConsumer.accept(domain.domainID);
+            }
+            for (ID id : ID_MAP.values()) {
+                idConsumer.accept(id);
+            }
         }
 
         @Override

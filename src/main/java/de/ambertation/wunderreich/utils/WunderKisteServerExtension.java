@@ -28,11 +28,15 @@ public class WunderKisteServerExtension {
         return WunderKisteBlock.DEFAULT_DOMAIN;
     }
 
-    public WunderKisteContainer getContainer(BlockState state, @Nullable BlockEntity entity) {
+    public static WunderKisteDomain.ID getDomain(BlockState state, @Nullable BlockEntity entity) {
         if (WunderreichRules.Wunderkiste.namedNetworks() && entity instanceof WunderKisteBlockEntity kiste && kiste.hasCustomName()) {
-            return getContainer(kiste.getDomainName());
+            return kiste.getDomainName();
         }
-        return getContainer(getDomain(state).domainID);
+        return getDomain(state).domainID;
+    }
+
+    public WunderKisteContainer getContainer(BlockState state, @Nullable BlockEntity entity) {
+        return getContainer(getDomain(state, entity));
     }
 
     public WunderKisteContainer getContainer(WunderKisteDomain.ID domainID) {
