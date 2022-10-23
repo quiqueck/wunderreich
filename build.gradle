@@ -140,7 +140,7 @@ String generateChangelog() {
         changelog += "\n\n"
     }
 
-    println "Changelog since $lastTag:\n$changelog"
+    println "Changelog for $project.mod_version since $lastTag:\n$changelog"
     return changelog
 }
 
