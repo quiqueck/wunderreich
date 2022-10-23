@@ -27,11 +27,13 @@ public class PoiWrapper {
     public final int maxTickets;
     public final int validRange;
 
-    public PoiWrapper(ResourceKey<PoiType> key,
-                      PoiType type,
-                      Set<BlockState> matchingStates,
-                      int maxTickets,
-                      int validRange) {
+    public PoiWrapper(
+            ResourceKey<PoiType> key,
+            PoiType type,
+            Set<BlockState> matchingStates,
+            int maxTickets,
+            int validRange
+    ) {
         this.key = key;
         this.type = type;
         this.matchingStates = matchingStates;
@@ -39,10 +41,12 @@ public class PoiWrapper {
         this.validRange = validRange;
     }
 
-    public static PoiWrapper register(ResourceLocation location,
-                                      Set<BlockState> matchingStates,
-                                      int maxTickets,
-                                      int validRanges) {
+    public static PoiWrapper register(
+            ResourceLocation location,
+            Set<BlockState> matchingStates,
+            int maxTickets,
+            int validRanges
+    ) {
         ResourceKey<PoiType> key = ResourceKey.create(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, location);
         PoiType type = PoiTypes.register(Registry.POINT_OF_INTEREST_TYPE, key, matchingStates, maxTickets, validRanges);
         return new PoiWrapper(key, type, matchingStates, maxTickets, validRanges);

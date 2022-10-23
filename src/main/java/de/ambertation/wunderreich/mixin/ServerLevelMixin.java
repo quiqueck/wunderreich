@@ -35,18 +35,20 @@ public abstract class ServerLevelMixin {
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    public void wunderreich_init(MinecraftServer minecraftServer,
-                                 Executor executor,
-                                 LevelStorageSource.LevelStorageAccess levelStorageAccess,
-                                 ServerLevelData serverLevelData,
-                                 ResourceKey resourceKey,
-                                 LevelStem levelStem,
-                                 ChunkProgressListener chunkProgressListener,
-                                 boolean bl,
-                                 long l,
-                                 List list,
-                                 boolean bl2,
-                                 CallbackInfo ci) {
+    public void wunderreich_init(
+            MinecraftServer minecraftServer,
+            Executor executor,
+            LevelStorageSource.LevelStorageAccess levelStorageAccess,
+            ServerLevelData serverLevelData,
+            ResourceKey resourceKey,
+            LevelStem levelStem,
+            ChunkProgressListener chunkProgressListener,
+            boolean bl,
+            long l,
+            List list,
+            boolean bl2,
+            CallbackInfo ci
+    ) {
         WunderreichRules.onLevelLoad((ServerLevel) (Object) this, serverLevelData);
     }
 }

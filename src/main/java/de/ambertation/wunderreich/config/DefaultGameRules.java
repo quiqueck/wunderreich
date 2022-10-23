@@ -10,29 +10,47 @@ public class DefaultGameRules extends ConfigFile {
     public final IntValue whisperMinXPMultiplier = new IntValue(WHIPSER_CATEGORY, "minXPMultiplier", 75);
     public final IntValue whisperMaxXPMultiplier = new IntValue(WHIPSER_CATEGORY, "maxXPMultiplier", 100);
 
-    public final BooleanValue wunderkisteRedstonePowerWhenOpened = new BooleanValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteRedstonePowerWhenOpened = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
             "redstonePowerWhenOpened",
-            true);
+            true
+    );
 
-    public final BooleanValue wunderkisteAnalogRedstoneOutput = new BooleanValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteAnalogRedstoneOutput = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
             "analogRedstoneOutput",
-            true);
+            true
+    );
 
-    public final BooleanValue wunderkisteCanColor = new BooleanValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteCanColor = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
             "canColor",
-            true);
+            true
+    );
 
-    public final BooleanValue wunderkisteShowColored = new BooleanValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteShowColored = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
             "showColored",
-            true);
+            true
+    );
 
-    public final BooleanValue wunderkisteAllowDomains = new BooleanValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteAllowDomains = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
             "allowNetworks",
-            true);
+            true
+    );
 
-    public final IntValue wunderkisteChangeDomainCost = new IntValue(WUNDERKISTE_CATEGORY,
+    public final BooleanValue wunderkisteAllowNamedDomains = new BooleanValue(
+            WUNDERKISTE_CATEGORY,
+            "allowNamedNetworks",
+            true
+    );
+
+    public final IntValue wunderkisteChangeDomainCost = new IntValue(
+            WUNDERKISTE_CATEGORY,
             "changeNetworkCost",
-            1);
+            1
+    );
 
     public final BooleanValue allowTradesCycling = new BooleanValue(FEATURE_CATEGORY, "allowTradesCycling", true);
 
@@ -50,13 +68,17 @@ public class DefaultGameRules extends ConfigFile {
             .and(allowTradesCycling)
             .and(() -> Configs.MAIN.addBlankWhispere.get() || Configs.MAIN.addImprintedWhispers.get());
 
-    public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(FEATURE_CATEGORY,
+    public final BooleanValue doNotDespawnWithNameTag = new BooleanValue(
+            FEATURE_CATEGORY,
             "doNotDespawnWithNameTag",
-            true);
+            true
+    );
 
-    public final IntValue wunderkisteChunkLoaderRadius = new IntValue(WUNDERKISTE_CATEGORY,
+    public final IntValue wunderkisteChunkLoaderRadius = new IntValue(
+            WUNDERKISTE_CATEGORY,
             "chunkLoaderRadius",
-            1);
+            1
+    );
 
 
     public DefaultGameRules() {

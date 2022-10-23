@@ -102,6 +102,9 @@ public class WunderreichRules {
         private static final BooleanRule ALLOW_WUNDERKISTE_DOMAINS =
                 new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowDomains);
 
+        private static final BooleanRule ALLOW_WUNDERKISTE_NAMED_DOMAINS =
+                new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowNamedDomains);
+
         private static final BooleanRule CAN_COLOR_WUNDERKISTE =
                 new BooleanRule(Category.PLAYER, Configs.DEFAULT_RULES.wunderkisteCanColor);
 
@@ -109,13 +112,15 @@ public class WunderreichRules {
                 new IntRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteChangeDomainCost, 0, 64);
 
         private static final IntRule CHUNK_LOADER_DIST_WUNDERKISTE =
-                new IntRule(Category.UPDATES,
+                new IntRule(
+                        Category.UPDATES,
                         Configs.DEFAULT_RULES.wunderkisteChunkLoaderRadius,
                         0,
                         5,
                         (server, value) -> {
                             WunderKisteServerExtension.WUNDERKISTEN.rebuildLoadedChunks();
-                        });
+                        }
+                );
 
         public static boolean redstonePowerWhenOpened() {
             return REDSTONE_POWER.get();
@@ -135,6 +140,10 @@ public class WunderreichRules {
 
         public static boolean haveMultiple() {
             return ALLOW_WUNDERKISTE_DOMAINS.get();
+        }
+
+        public static boolean namedNetworks() {
+            return haveMultiple() && ALLOW_WUNDERKISTE_NAMED_DOMAINS.get();
         }
 
         public static int recolorCost() {

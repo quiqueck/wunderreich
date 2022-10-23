@@ -25,6 +25,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -49,6 +50,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -73,7 +75,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
-    private static final Map<WunderKisteDomain, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Map<WunderKisteDomain.ID, Boolean> hasAnyOpenInstance = Maps.newHashMap();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -101,11 +103,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     public static void updateAllBoxes(
             BlockState state,
+            @Nullable BlockEntity entity,
             MinecraftServer server,
             boolean withOpenState,
             boolean withFillrate
     ) {
-        WunderKisteContainer container = getContainer(state, server);
+        WunderKisteContainer container = getContainer(state, entity, server);
         WunderKisteBlock.updateAllBoxes(container, withOpenState, withFillrate);
     }
 
@@ -122,13 +125,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         if (container != null) {
             //check if any box was opened
             if (withOpenState) {
-                for (WunderKisteDomain d : WunderKisteDomain.values()) hasAnyOpenInstance.put(d, false);
+                WunderKisteDomain.ID.forAll(d -> hasAnyOpenInstance.put(d, false));
 
                 getLiveBlockManager().forEach((liveBlock) -> {
                     BlockEntity be = liveBlock.getLevel().getBlockEntity(liveBlock.pos);
                     if (be instanceof WunderKisteBlockEntity) {
                         WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
-                        WunderKisteDomain d = WunderKisteServerExtension.getDomain(entity.getBlockState());
+                        WunderKisteDomain.ID d = WunderKisteServerExtension.getDomain(entity.getBlockState(), entity);
                         hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.get(d));
                     }
                 });
@@ -157,13 +160,17 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         level.updateNeighborsAt(pos.relative(facing), box);
     }
 
-    public static WunderKisteContainer getContainer(BlockState state, Level level) {
-        return level != null ? getContainer(state, level.getServer()) : null;
+    public static WunderKisteContainer getContainer(BlockState state, BlockEntity entity, Level level) {
+        return level != null ? getContainer(state, entity, level.getServer()) : null;
     }
 
-    public static WunderKisteContainer getContainer(BlockState state, MinecraftServer server) {
+    public static WunderKisteContainer getContainer(
+            BlockState state,
+            @Nullable BlockEntity entity,
+            MinecraftServer server
+    ) {
         if (server instanceof WunderKisteExtensionProvider extWunderkiste) {
-            return extWunderkiste.getWunderKisteExtension().getContainer(state);
+            return extWunderkiste.getWunderKisteExtension().getContainer(state, entity);
         }
         return null;
     }
@@ -281,10 +288,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             @NotNull InteractionHand interactionHand,
             @NotNull BlockHitResult blockHitResult
     ) {
-        final WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        BlockEntity entity = level.getBlockEntity(blockPos);
+        final WunderKisteContainer wunderKisteContainer = getContainer(blockState, entity, level);
 
-        if (wunderKisteContainer != null && blockEntity instanceof WunderKisteBlockEntity) {
+
+        if (wunderKisteContainer != null && entity instanceof WunderKisteBlockEntity) {
             final ItemStack tool = player.getItemInHand(interactionHand);
             WunderKisteDomain targetDomain = null;
             if (WunderreichRules.Wunderkiste.canColor()) {
@@ -329,7 +337,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 } else if (level.isClientSide) {
                     return InteractionResult.SUCCESS;
                 } else {
-                    WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) blockEntity;
+                    WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) entity;
 
                     ((ActiveChestStorage) player).setActiveWunderKiste(wunderKisteBlockEntity);
                     final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
@@ -345,8 +353,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                                             ? Component.translatable(
                                             "%s - %s",
                                             CONTAINER_TITLE,
-                                            WunderKisteItem.getDomainComponent(
-                                                    domain)
+                                            WunderreichRules.Wunderkiste.namedNetworks() && wunderKisteBlockEntity.hasCustomName()
+                                                    ? wunderKisteBlockEntity.getCustomName()
+                                                    : WunderKisteItem.getDomainComponent(domain)
                                     )
                                             : CONTAINER_TITLE
                             )
@@ -397,7 +406,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     @Override
     public int getAnalogOutputSignal(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos) {
         if (WunderreichRules.Wunderkiste.analogRedstoneOutput()) {
-            WunderKisteContainer wunderKisteContainer = getContainer(blockState, level);
+            WunderKisteContainer wunderKisteContainer = getContainer(blockState, level.getBlockEntity(blockPos), level);
             if (wunderKisteContainer != null) {
                 return AbstractContainerMenu.getRedstoneSignalFromContainer(wunderKisteContainer);
             }
@@ -418,8 +427,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             @NotNull Direction direction
     ) {
         if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
-        final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
-        return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
+
+        BlockEntity entity = blockGetter.getBlockEntity(blockPos);
+        if (entity instanceof WunderKisteBlockEntity wentity) {
+            final WunderKisteDomain.ID domain = WunderKisteServerExtension.getDomain(blockState, wentity);
+            return hasAnyOpenInstance.getOrDefault(domain, false) ? 15 : 0;
+        }
+        return 0;
     }
 
 //	@Override
@@ -480,7 +494,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             LevelAccessor levelAccessor,
             @NotNull BlockPos blockPos
     ) {
-        return getContainer(blockState, levelAccessor.getServer());
+        return getContainer(blockState, levelAccessor.getBlockEntity(blockPos), levelAccessor.getServer());
     }
 
     @Override
@@ -501,12 +515,55 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public List<ItemStack> getDrops(@NotNull BlockState blockState, LootContext.@NotNull Builder builder) {
+        BlockEntity entity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         return super.getDrops(blockState, builder).stream().map(stack -> {
             if (stack.getItem() instanceof WunderKisteItem item) {
-                return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+                stack = WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+                if (entity instanceof WunderKisteBlockEntity wentity && wentity.hasCustomName()) {
+                    stack.setHoverName(wentity.getCustomName());
+                }
             }
             return stack;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public void setPlacedBy(
+            Level level,
+            BlockPos blockPos,
+            BlockState blockState,
+            LivingEntity livingEntity,
+            ItemStack itemStack
+    ) {
+        if (itemStack.hasCustomHoverName() && level.getBlockEntity(blockPos) instanceof WunderKisteBlockEntity entity) {
+            entity.setDomainName(itemStack.getHoverName());
+        }
+    }
+
+    @Override
+    public void playerWillDestroy(Level level, BlockPos blockPos, BlockState blockState, Player player) {
+//        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+//        if (blockEntity instanceof WunderKisteBlockEntity entity) {
+//            if (!level.isClientSide && player.isCreative()) {
+//                ItemStack itemStack = WunderKisteServerExtension.getDomain(blockState).createStack();
+//                blockEntity.saveToItem(itemStack);
+//                if (entity.hasCustomName()) {
+//                    itemStack.setHoverName(entity.getCustomName());
+//                }
+//                ItemEntity itemEntity = new ItemEntity(
+//                        level,
+//                        (double) blockPos.getX() + 0.5,
+//                        (double) blockPos.getY() + 0.5,
+//                        (double) blockPos.getZ() + 0.5,
+//                        itemStack
+//                );
+//                itemEntity.setDefaultPickUpDelay();
+//                level.addFreshEntity(itemEntity);
+//            } else {
+//                //entity.unpackLootTable(player);
+//            }
+//        }
+        super.playerWillDestroy(level, blockPos, blockState, player);
     }
 
     @Override

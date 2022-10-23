@@ -26,11 +26,13 @@ public abstract class MerchantScreenMixin extends AbstractContainerScreen<Mercha
         if (!WunderreichRules.Whispers.allowTradesCycling()) return;
 
         MerchantScreen merchantScreen = (MerchantScreen) (Object) this;
-        CycleTradesButton button = CycleTradesButton.getCycleTradesButton(this,
+        CycleTradesButton button = CycleTradesButton.getCycleTradesButton(
+                this,
                 this.imageWidth,
                 this.imageHeight,
                 merchantScreen,
-                this.menu);
+                this.menu
+        );
 
         this.addRenderableWidget(button);
     }
