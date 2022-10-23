@@ -1,7 +1,7 @@
 plugins {
-	id 'fabric-loom' version "${loom_version}"
-	id 'maven-publish'
-	id "com.modrinth.minotaur" version "2.+"
+    id 'fabric-loom' version "${loom_version}"
+    id 'maven-publish'
+    id "com.modrinth.minotaur" version "2.+"
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
@@ -12,23 +12,23 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-	maven { url "https://maven.shedaniel.me" }
+    maven { url "https://maven.shedaniel.me" }
     maven { url "https://maven.bai.lol" }
     maven { url 'https://maven.terraformersmc.com/releases' }
-	flatDir { dirs 'libs'}
+    flatDir { dirs 'libs' }
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
+    accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
 }
 
 dependencies {
-	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings loom.officialMojangMappings()
-	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    mappings loom.officialMojangMappings()
+    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 //    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
@@ -37,146 +37,146 @@ dependencies {
 }
 
 processResources {
-	inputs.property "version", project.version
+    inputs.property "version", project.version
 
-	filesMatching("fabric.mod.json") {
-		expand "version": project.version
-	}
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {
-	it.options.encoding = "UTF-8"
-	it.options.release = 17
+    it.options.encoding = "UTF-8"
+    it.options.release = 17
 }
 
 java {
-	// Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-	// if it is present.
-	// If you remove this line, sources will not be generated.
-	withSourcesJar()
+    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
+    // if it is present.
+    // If you remove this line, sources will not be generated.
+    withSourcesJar()
 }
 
 jar {
-	from("LICENSE") {
-		rename { "${it}_${project.archivesBaseName}"}
-	}
+    from("LICENSE") {
+        rename { "${it}_${project.archivesBaseName}" }
+    }
 }
 
 // configure the maven publication
 publishing {
-	publications {
-		mavenJava(MavenPublication) {
-			// add all the jars that should be included when publishing to maven
-			artifact(remapJar) {
-				builtBy remapJar
-			}
-			artifact(sourcesJar) {
-				builtBy remapSourcesJar
-			}
-		}
-	}
+    publications {
+        mavenJava(MavenPublication) {
+            // add all the jars that should be included when publishing to maven
+            artifact(remapJar) {
+                builtBy remapJar
+            }
+            artifact(sourcesJar) {
+                builtBy remapSourcesJar
+            }
+        }
+    }
 
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
-	}
+    // See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
+    repositories {
+        // Add repositories to publish to here.
+        // Notice: This block does NOT have the same function as the block in the top level.
+        // The repositories here will be used for publishing your artifact, not for
+        // retrieving dependencies.
+    }
 }
 
 
 //from https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
 String generateChangelog() {
-	println "Assembeling Changelog ..."
-	def lastTag = "git describe --tags --abbrev=0".execute().text.trim()
-	def gitLogCmd = "git log $lastTag..HEAD --oneline --no-merges --pretty=format:\"%s\"".execute().text.trim()
+    println "Assembeling Changelog ..."
+    def lastTag = "git describe --tags --abbrev=0".execute().text.trim()
+    def gitLogCmd = "git log $lastTag..HEAD --oneline --no-merges --pretty=format:\"%s\"".execute().text.trim()
 
-	def features = ""
-	def fixes = ""
-	def changes = ""
-	gitLogCmd.eachLine { gitLine ->
-		def line = gitLine.substring(1, gitLine.length() - 1)
-		if (line.trim().startsWith("[")) {
-			def sline = line.split("]", 2)
-			if (sline.length == 2) {
-				def type = sline[0].trim().toLowerCase().substring(1)
-				def comment = sline[1].trim()
+    def features = ""
+    def fixes = ""
+    def changes = ""
+    gitLogCmd.eachLine { gitLine ->
+        def line = gitLine.substring(1, gitLine.length() - 1)
+        if (line.trim().startsWith("[")) {
+            def sline = line.split("]", 2)
+            if (sline.length == 2) {
+                def type = sline[0].trim().toLowerCase().substring(1)
+                def comment = sline[1].trim()
 
-				//filter issue links
-				if (comment.contains("(")) {
-					def cline = comment.split("\\(", 2)
-					if (cline.length == 2 && cline[1].contains("#")) {
-						comment = cline[0].trim()
-					}
-				}
+                //filter issue links
+                if (comment.contains("(")) {
+                    def cline = comment.split("\\(", 2)
+                    if (cline.length == 2 && cline[1].contains("#")) {
+                        comment = cline[0].trim()
+                    }
+                }
 
-				if (type == "fix" || type == "fixes" || type == "fixed") {
-					fixes += "- $comment \n"
-				} else if (type == "feature" || type == "features") {
-					features += "- $comment \n"
-				} else if (type == "change" || type == "changes" || type == "changed") {
-					changes += "- $comment \n"
-				} else {
-					println "Unknown Type: $type ($line)"
-				}
-			}
-		}
+                if (type == "fix" || type == "fixes" || type == "fixed") {
+                    fixes += "- $comment \n"
+                } else if (type == "feature" || type == "features") {
+                    features += "- $comment \n"
+                } else if (type == "change" || type == "changes" || type == "changed") {
+                    changes += "- $comment \n"
+                } else {
+                    println "Unknown Type: $type ($line)"
+                }
+            }
+        }
 
-	}
-	def changelog = ""
-	if (!features.isEmpty()) {
-		changelog += "#### Features\n"
-		changelog += features.trim()
-		changelog += "\n\n"
-	}
-	if (!changes.isEmpty()) {
-		changelog += "#### Changes\n"
-		changelog += changes.trim()
-		changelog += "\n\n"
-	}
-	if (!fixes.isEmpty()) {
-		changelog += "#### Fixes\n"
-		changelog += fixes.trim()
-		changelog += "\n\n"
-	}
+    }
+    def changelog = ""
+    if (!features.isEmpty()) {
+        changelog += "#### Features\n"
+        changelog += features.trim()
+        changelog += "\n\n"
+    }
+    if (!changes.isEmpty()) {
+        changelog += "#### Changes\n"
+        changelog += changes.trim()
+        changelog += "\n\n"
+    }
+    if (!fixes.isEmpty()) {
+        changelog += "#### Fixes\n"
+        changelog += fixes.trim()
+        changelog += "\n\n"
+    }
 
-	println "Changelog since $lastTag:\n$changelog"
-	return changelog
+    println "Changelog for $project.mod_version since $lastTag:\n$changelog"
+    return changelog
 }
 
 task changelog() {
-	doLast {
-		new File(projectDir, "CHANGES.md").text = generateChangelog()
-	}
+    doLast {
+        new File(projectDir, "CHANGES.md").text = generateChangelog()
+    }
 }
 
 modrinth {
-	def changes = new File(projectDir, "CHANGES.md")
-	if (changes.exists()) {
-		changes = changes.getText('UTF-8')
-	} else {
-		changes = ""
-	}
-	def modrinth_token = new File(projectDir, "../MODRINTH_TOKEN")
-	if (modrinth_token.exists()) {
-		modrinth_token = modrinth_token.text
-	} else {
-		modrinth_token = ""
-	}
-	def slurper = new groovy.json.JsonSlurper()
-	token = modrinth_token
-	projectId = project.archives_base_name
-	versionNumber = project.mod_version
-	versionType = project.release_channel
-	uploadFile = remapJar
-	gameVersions = slurper.parseText(project.modrinth_versions)
-	loaders = ["fabric"]
-	changelog = changes
-	dependencies {
-		required.project "fabric-api"
+    def changes = new File(projectDir, "CHANGES.md")
+    if (changes.exists()) {
+        changes = changes.getText('UTF-8')
+    } else {
+        changes = ""
+    }
+    def modrinth_token = new File(projectDir, "../MODRINTH_TOKEN")
+    if (modrinth_token.exists()) {
+        modrinth_token = modrinth_token.text
+    } else {
+        modrinth_token = ""
+    }
+    def slurper = new groovy.json.JsonSlurper()
+    token = modrinth_token
+    projectId = project.archives_base_name
+    versionNumber = project.mod_version
+    versionType = project.release_channel
+    uploadFile = remapJar
+    gameVersions = slurper.parseText(project.modrinth_versions)
+    loaders = ["fabric"]
+    changelog = changes
+    dependencies {
+        required.project "fabric-api"
         optional.project "wthit"
-	}
-	debugMode = false
+    }
+    debugMode = false
 }
 
