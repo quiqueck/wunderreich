@@ -23,6 +23,12 @@ public class MainConfig extends ConfigFile {
             true
     ).and(enableWhispers);
 
+    public final BooleanValue multiTexturedWunderkiste = new BooleanValue(
+            DISPLAY_CATEGORY,
+            "multiTexturedWunderkiste",
+            true
+    );
+
     public final BooleanValue allowBuilderTools = new BooleanValue(
             FEATURE_CATEGORY,
             "allowBuilderTools",
@@ -44,12 +50,6 @@ public class MainConfig extends ConfigFile {
     public final BooleanValue addWalls = new BooleanValue(
             FEATURE_CATEGORY,
             "addWalls",
-            true
-    );
-
-    public final BooleanValue multiTexturedWunderkiste = new BooleanValue(
-            DISPLAY_CATEGORY,
-            "multiTexturedWunderkiste",
             true
     );
 
