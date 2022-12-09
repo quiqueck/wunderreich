@@ -5,7 +5,7 @@ import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -27,7 +27,7 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
     }
 
     public static Enchantment findEnchantment(CompoundTag tag) {
-        var oEnchantment = Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag));
+        var oEnchantment = BuiltInRegistries.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag));
         if (oEnchantment.isPresent()) {
             return oEnchantment.get();
         }
@@ -78,7 +78,7 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         super.appendHoverText(itemStack, level, list, tooltipFlag);
         var tag = getEnchantment(itemStack);
 
-        Registry.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag)).ifPresent((enchantment) -> {
+        BuiltInRegistries.ENCHANTMENT.getOptional(EnchantmentHelper.getEnchantmentId(tag)).ifPresent((enchantment) -> {
             list.add(WhisperRule.getFullname(enchantment));
         });
     }

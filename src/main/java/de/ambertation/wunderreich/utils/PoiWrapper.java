@@ -1,7 +1,8 @@
 package de.ambertation.wunderreich.utils;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -47,8 +48,14 @@ public class PoiWrapper {
             int maxTickets,
             int validRanges
     ) {
-        ResourceKey<PoiType> key = ResourceKey.create(Registry.POINT_OF_INTEREST_TYPE_REGISTRY, location);
-        PoiType type = PoiTypes.register(Registry.POINT_OF_INTEREST_TYPE, key, matchingStates, maxTickets, validRanges);
+        ResourceKey<PoiType> key = ResourceKey.create(Registries.POINT_OF_INTEREST_TYPE, location);
+        PoiType type = PoiTypes.register(
+                BuiltInRegistries.POINT_OF_INTEREST_TYPE,
+                key,
+                matchingStates,
+                maxTickets,
+                validRanges
+        );
         return new PoiWrapper(key, type, matchingStates, maxTickets, validRanges);
     }
 

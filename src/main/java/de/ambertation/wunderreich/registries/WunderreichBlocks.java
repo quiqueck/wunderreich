@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
@@ -78,12 +79,12 @@ public class WunderreichBlocks {
                 FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
             }
 
-            Registry.register(Registry.BLOCK, id, block);
+            Registry.register(BuiltInRegistries.BLOCK, id, block);
 
 
             BlockItem item = itemCreator.apply(block);
             if (item != Items.AIR) {
-                Registry.register(Registry.ITEM, id, item);
+                Registry.register(BuiltInRegistries.ITEM, id, item);
                 WunderreichItems.processItem(id, item);
             }
 

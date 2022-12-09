@@ -5,7 +5,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -56,7 +56,7 @@ public class LootTableJsonBuilder {
     }
 
     public static LootTableJsonBuilder create(Block bl) {
-        return new LootTableJsonBuilder(Registry.BLOCK.getKey(bl), LootTypes.BLOCK);
+        return new LootTableJsonBuilder(BuiltInRegistries.BLOCK.getKey(bl), LootTypes.BLOCK);
 
     }
 
@@ -161,7 +161,7 @@ public class LootTableJsonBuilder {
         }
 
         public EntryBuilder<P> enchantedTool(Enchantment e, int minLevel) {
-            var id = Registry.ENCHANTMENT.getKey(e);
+            var id = BuiltInRegistries.ENCHANTMENT.getKey(e);
             if (id != null) {
                 var predicate = new EnchantmentPredicate();
                 predicate.addEnchantment(new de.ambertation.wunderreich.loot.Enchantment(id.toString(), minLevel));
@@ -192,7 +192,7 @@ public class LootTableJsonBuilder {
         }
 
         public ME startItemEntry(Item itm, Consumer<EntryBuilder<ME>> builder) {
-            ResourceLocation id = Registry.ITEM.getKey(itm);
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(itm);
             return startEntry("minecraft:item", id != null ? id.toString() : "", builder);
         }
 

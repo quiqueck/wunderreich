@@ -414,7 +414,7 @@ public class WhispererScreen
         final int index;
 
         public WhispersButton(int x, int y, int index, Button.OnPress onPress) {
-            super(x, y, TRADE_BUTTON_WIDTH, TRADE_BUTTON_HEIGHT, Component.empty(), onPress);
+            super(x, y, TRADE_BUTTON_WIDTH, TRADE_BUTTON_HEIGHT, Component.empty(), onPress, Button.DEFAULT_NARRATION);
             this.index = index;
             this.visible = false;
         }
@@ -423,18 +423,18 @@ public class WhispererScreen
             return this.index;
         }
 
-        @Override
+        //TODO: 1.19.3 is this called from my code?
         public void renderToolTip(@NotNull PoseStack poseStack, int i, int j) {
             if (this.isHovered && WhispererScreen.this.menu
                     .getEnchants()
                     .size() > this.index + WhispererScreen.this.scrollOff) {
-                if (i < this.x + TRADE_BUTTON_HEIGHT) {
+                if (i < this.getX() + TRADE_BUTTON_HEIGHT) {
                     var typeName = Component.translatable("enchantment.type." + WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
                             .getCategory());
                     WhispererScreen.this.renderTooltip(poseStack, typeName, i, j);
-                } else if (i < this.x + 50 && i > this.x + 30) {
+                } else if (i < this.getX() + 50 && i > this.getX() + 30) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
@@ -442,7 +442,7 @@ public class WhispererScreen
                     if (!itemStack.isEmpty()) {
                         WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
                     }
-                } else if (i > this.x + 65) {
+                } else if (i > this.getX() + 65) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff).output;

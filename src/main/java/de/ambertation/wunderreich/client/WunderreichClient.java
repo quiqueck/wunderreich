@@ -13,7 +13,7 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -61,7 +61,7 @@ public class WunderreichClient implements ClientModInitializer {
 
         CreativeTabs.ensureStaticallyLoaded();
 
-        Registry.BLOCK.forEach(block -> {
+        BuiltInRegistries.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {
                 BlockRenderLayerMap.INSTANCE.putBlock(block, view.getRenderType());
             }

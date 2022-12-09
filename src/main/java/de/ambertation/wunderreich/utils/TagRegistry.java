@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagEntry;
@@ -24,8 +25,8 @@ import java.util.Set;
 
 public class TagRegistry<T> {
     private static final List<TagRegistry<?>> REGISTRIES = Lists.newArrayList();
-    public static final TagRegistry<Block> BLOCK = new TagRegistry<>(Registry.BLOCK);
-    public static final TagRegistry<Item> ITEM = new TagRegistry<>(Registry.ITEM);
+    public static final TagRegistry<Block> BLOCK = new TagRegistry<>(BuiltInRegistries.BLOCK);
+    public static final TagRegistry<Item> ITEM = new TagRegistry<>(BuiltInRegistries.ITEM);
     private final Map<ResourceLocation, Set<T>> tags;
     private final DefaultedRegistry<T> registry;
 

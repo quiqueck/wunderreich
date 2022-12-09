@@ -11,6 +11,7 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -95,14 +96,14 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     public static void register() {
-        Registry.register(Registry.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
-        Registry.register(Registry.RECIPE_TYPE, Type.ID, Type.INSTANCE);
+        Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
+        Registry.register(BuiltInRegistries.RECIPE_TYPE, Type.ID, Type.INSTANCE);
 
         RECIPES.clear();
 
         if (WunderreichRules.Whispers.allowLibrarianSelection()) {
             List<Enchantment> enchants = new LinkedList<>();
-            Registry.ENCHANTMENT
+            BuiltInRegistries.ENCHANTMENT
                     .stream()
                     .filter(e -> e.isTradeable())
                     .forEach(e -> {
@@ -217,7 +218,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             int baseXP = packetBuffer.readVarInt();
 
             ResourceLocation eID = packetBuffer.readResourceLocation();
-            var enchantment = Registry.ENCHANTMENT.getOptional(eID);
+            var enchantment = BuiltInRegistries.ENCHANTMENT.getOptional(eID);
 
             return new ImprinterRecipe(
                     id,
@@ -244,7 +245,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
 
         public JsonElement toJson(ImprinterRecipe r) {
             ImprinterRecipeJsonFormat recipeJson = new ImprinterRecipeJsonFormat();
-            recipeJson.enchantment = Registry.ENCHANTMENT.getKey(r.enchantment).toString();
+            recipeJson.enchantment = BuiltInRegistries.ENCHANTMENT.getKey(r.enchantment).toString();
             recipeJson.xp = r.baseXP;
             recipeJson.inputA = r.inputA.toJson();
             recipeJson.count = r.inputA.getItems().length == 0 ? 0 : r.inputA.getItems()[0].getCount();
@@ -277,7 +278,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
             }
 
             ResourceLocation eID = new ResourceLocation(recipeJson.enchantment);
-            var enchantment = Registry.ENCHANTMENT.getOptional(eID);
+            var enchantment = BuiltInRegistries.ENCHANTMENT.getOptional(eID);
             if (!enchantment.isPresent()) {
                 throw new JsonParseException("Unknown Enchantment " + eID);
             }

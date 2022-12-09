@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 
@@ -14,7 +15,7 @@ public class WunderreichBlockEntities {
             String id,
             FabricBlockEntityTypeBuilder<T> builder
     ) {
-        return Registry.register(Registry.BLOCK_ENTITY_TYPE, Wunderreich.ID(id), builder.build(null));
+        return Registry.register(BuiltInRegistries.BLOCK_ENTITY_TYPE, Wunderreich.ID(id), builder.build(null));
     }
 
     public static void register() {

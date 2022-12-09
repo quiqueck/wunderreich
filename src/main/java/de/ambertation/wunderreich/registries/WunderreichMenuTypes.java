@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -22,7 +23,7 @@ public class WunderreichMenuTypes {
             BiFunction<Integer, Inventory, T> factory
     ) {
         MenuType<T> type = new MenuType<>((syncId, inventory) -> factory.apply(syncId, inventory));
-        return Registry.register(Registry.MENU, id, type);
+        return Registry.register(BuiltInRegistries.MENU, id, type);
     }
 
     public static void ensureStaticallyLoaded() {

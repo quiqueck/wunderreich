@@ -5,7 +5,7 @@ import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -46,9 +46,9 @@ public class RecipeJsonBuilder {
 
     private static ResourceLocation getKey(ItemLike item) {
         if (item instanceof Block bl) {
-            return Registry.BLOCK.getKey(bl);
+            return BuiltInRegistries.BLOCK.getKey(bl);
         } else if (item instanceof Item itm) {
-            return Registry.ITEM.getKey(itm);
+            return BuiltInRegistries.ITEM.getKey(itm);
         }
         return null;
     }

@@ -585,9 +585,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return b;
     }
 
-    @Override
+    //TODO: 1.19.3 Changed handling of creative Tabs
     public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTabs.TAB_SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
+        if (creativeModeTab == CreativeModeTabs.SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
             WunderKisteItem.addAllVariants(itemList);
         }
     }

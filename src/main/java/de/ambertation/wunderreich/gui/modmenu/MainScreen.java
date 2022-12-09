@@ -132,17 +132,17 @@ public class MainScreen extends Screen {
         state.top += 15;
 
         final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
-        Button b = new Button(
-                this.width - width - state.left,
-                this.height - BUTTON_HEIGHT - 20,
-                width,
-                BUTTON_HEIGHT,
-                CommonComponents.GUI_DONE,
-                (button) -> {
+        Button b = Button
+                .builder(CommonComponents.GUI_DONE, (button) -> {
                     Configs.MAIN.save();
                     onClose();
-                }
-        );
+                }).bounds(
+                        this.width - width - state.left,
+                        this.height - BUTTON_HEIGHT - 20,
+                        width,
+                        BUTTON_HEIGHT
+                )
+                .build();
         this.addRenderableWidget(b);
     }
 

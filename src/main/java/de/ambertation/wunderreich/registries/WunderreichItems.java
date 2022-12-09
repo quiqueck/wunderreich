@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.VillagerWhisperer;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -69,7 +70,7 @@ public class WunderreichItems {
             if (item != Items.AIR) {
                 //this ensures that the dynamic config contains a valid entry for this Item.
                 Configs.ITEM_CONFIG.newBooleanFor(name, item);
-                Registry.register(Registry.ITEM, id, item);
+                Registry.register(BuiltInRegistries.ITEM, id, item);
                 ITEMS.add(item);
                 processItem(id, item);
             }

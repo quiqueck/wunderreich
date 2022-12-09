@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 
 import net.minecraft.advancements.FrameType;
-import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
@@ -62,11 +62,11 @@ public class AdvancementsJsonBuilder {
     }
 
     public static AdvancementsJsonBuilder create(Item item, AdvancementType type, Consumer<DisplayBuilder> builder) {
-        var id = Registry.ITEM.getKey(item);
+        var id = BuiltInRegistries.ITEM.getKey(item);
         boolean canBuild = true;
         if (id == null) {
             canBuild = false;
-            id = Registry.ITEM.getDefaultKey();
+            id = BuiltInRegistries.ITEM.getDefaultKey();
         }
 
         String baseName = "advancements." + id.getNamespace() + "." + id.getPath() + ".";
@@ -125,9 +125,9 @@ public class AdvancementsJsonBuilder {
             String description,
             Consumer<DisplayBuilder> builder
     ) {
-        var id = Registry.ITEM.getKey(icon);
+        var id = BuiltInRegistries.ITEM.getKey(icon);
         if (id == null) {
-            id = Registry.ITEM.getDefaultKey();
+            id = BuiltInRegistries.ITEM.getDefaultKey();
             canBuild = false;
         }
         display = Display.DISPLAY.get().reset(id.toString(), title, description);
@@ -153,7 +153,7 @@ public class AdvancementsJsonBuilder {
     public AdvancementsJsonBuilder awardRecipe(Item... items) {
         RecipeReward rew = new RecipeReward();
         for (Item item : items) {
-            var id = Registry.ITEM.getKey(item);
+            var id = BuiltInRegistries.ITEM.getKey(item);
             if (id == null) continue;
             rew.addRecipe(id.toString());
         }
@@ -227,7 +227,7 @@ public class AdvancementsJsonBuilder {
         public CriteriaBuilder itemsCondition(Item... items) {
             ItemCondition cond = new ItemCondition();
             for (Item item : items) {
-                var id = Registry.ITEM.getKey(item);
+                var id = BuiltInRegistries.ITEM.getKey(item);
                 if (id == null) {
                     base.canBuild = false;
                     continue;
@@ -239,7 +239,7 @@ public class AdvancementsJsonBuilder {
         }
 
         public CriteriaBuilder recipeCondition(Item item) {
-            var id = Registry.ITEM.getKey(item);
+            var id = BuiltInRegistries.ITEM.getKey(item);
             if (id == null) {
                 base.canBuild = false;
                 return this;

@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.particles.ImprintParticle;
 import de.ambertation.wunderreich.particles.SimpleParticleType;
 
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -22,7 +23,7 @@ public class WunderreichParticles {
             PendingParticleFactory<net.minecraft.core.particles.SimpleParticleType> constructor
     ) {
         SimpleParticleType particle = Registry.register(
-                Registry.PARTICLE_TYPE,
+                BuiltInRegistries.PARTICLE_TYPE,
                 Wunderreich.ID(name),
                 new SimpleParticleType(false)
         );

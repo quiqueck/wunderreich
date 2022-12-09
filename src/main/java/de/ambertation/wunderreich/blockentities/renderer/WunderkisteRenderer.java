@@ -10,10 +10,7 @@ import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix3f;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector3f;
-import com.mojang.math.Vector4f;
+import com.mojang.math.Axis;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -35,11 +32,16 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
+
     private static final String BOTTOM = "bottom";
     private static final String LID = "lid";
     private static final String LOCK = "lock";
@@ -93,7 +95,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             poseStack.pushPose();
             float g = blockState.getValue(ChestBlock.FACING).toYRot();
             poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(Vector3f.YP.rotationDegrees(-g));
+            poseStack.mulPose(Axis.YP.rotationDegrees(-g));
             poseStack.translate(-0.5, -0.5, -0.5);
 
             DoubleBlockCombiner.NeighborCombineResult<ChestBlockEntity> neighborCombineResult = renderInWorld
@@ -175,12 +177,12 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         final Matrix4f pose = last.pose();
         final Matrix3f npose = last.normal();
 
-        Vector3f normal = Vector3f.YP.copy();
-        normal.transform(npose);
+        Vector3f normal = new Vector3f(0.0f, 1.0f, 0.0f); //==Axis.YP
+        normal.mul(npose);
 
         for (Vertex v : TOP_PLANE) {
             Vector4f vector4f = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f);
-            vector4f.transform(pose);
+            vector4f.mul(pose);
             vertexConsumer.vertex(
                     vector4f.x(),
                     vector4f.y(),
