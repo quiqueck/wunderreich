@@ -83,20 +83,20 @@ public class MainScreen extends Screen {
 
 
     @SuppressWarnings("unchecked")
-    protected <T> void addRow(LayoutState state, ConfigFile config, ConfigFile.Value<T> option) {
+    protected <T> void addRow(LayoutState state, ConfigFile config, ConfigFile.Value<T> option, int maxRight) {
         if (option instanceof ConfigFile.BooleanValue bool) {
-            addCheckbox(state, config, bool);
+            addCheckbox(state, config, bool, maxRight);
         }
 
         state.top += 2;
     }
 
 
-    protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option) {
+    protected void addCheckbox(LayoutState state, ConfigFile config, ConfigFile.BooleanValue option, int maxRight) {
         EventCheckBox cb = new EventCheckBox(
                 state.left + (option.getIsValidSupplier() != null ? 12 : 0),
                 state.top,
-                this.width - 2 * state.left,
+                maxRight - state.left,
                 20,
                 getComponent(config, option, "title"),
                 option.getRaw(),
@@ -122,24 +122,25 @@ public class MainScreen extends Screen {
         super.init();
         final int BUTTON_HEIGHT = 20;
         LayoutState state = new LayoutState(55);
+        final int buttonWidth = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
+        final int buttonLeft = this.width - buttonWidth - state.left;
 
         Configs.MAIN
                 .getAllValues()
                 .stream()
                 .filter(o -> !o.isDeprecated() && !o.isHiddenInUI())
-                .forEach(o -> addRow(state, Configs.MAIN, o));
+                .forEach(o -> addRow(state, Configs.MAIN, o, buttonLeft));
 
         state.top += 15;
 
-        final int width = font.width(CommonComponents.GUI_DONE.getVisualOrderText()) + 24;
         Button b = Button
                 .builder(CommonComponents.GUI_DONE, (button) -> {
                     Configs.MAIN.save();
                     onClose();
                 }).bounds(
-                        this.width - width - state.left,
+                        buttonLeft,
                         this.height - BUTTON_HEIGHT - 20,
-                        width,
+                        buttonWidth,
                         BUTTON_HEIGHT
                 )
                 .build();
