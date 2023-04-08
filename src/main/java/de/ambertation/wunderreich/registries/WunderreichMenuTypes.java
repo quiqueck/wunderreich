@@ -7,6 +7,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 
@@ -22,7 +23,8 @@ public class WunderreichMenuTypes {
             ResourceLocation id,
             BiFunction<Integer, Inventory, T> factory
     ) {
-        MenuType<T> type = new MenuType<>((syncId, inventory) -> factory.apply(syncId, inventory));
+        final MenuType.MenuSupplier<T> supplier = (syncId, inventory) -> factory.apply(syncId, inventory);
+        MenuType<T> type = new MenuType<>(supplier, FeatureFlagSet.of());
         return Registry.register(BuiltInRegistries.MENU, id, type);
     }
 

@@ -39,16 +39,16 @@
     "wunderreich.mixins.common.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.11",
-    "fabric": ">=0.68.1",
+    "fabricloader": ">=0.14.19",
+    "fabric": ">=0.77",
     "minecraft": [
-      "1.19.3"
+      "1.19.4"
     ],
     "java": ">=17"
   },
   "suggests": {
-    "modmenu": "4.0.x",
-    "rei": "9.x"
+    "modmenu": "6.1.x",
+    "rei": "11.x"
   },
   "custom": {
     "bclib": {

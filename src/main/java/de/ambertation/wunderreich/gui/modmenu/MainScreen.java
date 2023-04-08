@@ -147,7 +147,7 @@ public class MainScreen extends Screen {
     }
 
     public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
-        this.renderDirtBackground(i);
+        this.renderDirtBackground(poseStack);
         drawCenteredString(poseStack, this.font, this.title, width / 2, 20, 0xFFFFFFFF);
         super.render(poseStack, i, j, f);
     }

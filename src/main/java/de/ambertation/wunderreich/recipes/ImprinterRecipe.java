@@ -11,6 +11,7 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -142,7 +143,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     @Override
-    public ItemStack assemble(WhisperContainer container) {
+    public ItemStack assemble(WhisperContainer container, RegistryAccess registryAccess) {
         return this.output.copy();
     }
 
@@ -153,7 +154,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<WhisperContai
     }
 
     @Override
-    public ItemStack getResultItem() {
+    public ItemStack getResultItem(RegistryAccess registryAccess) {
         return this.output;
     }
 

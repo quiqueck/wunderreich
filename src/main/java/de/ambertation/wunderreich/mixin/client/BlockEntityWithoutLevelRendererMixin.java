@@ -9,12 +9,11 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 
 import com.google.common.collect.Maps;
 import org.spongepowered.asm.mixin.Final;
@@ -32,14 +31,11 @@ public abstract class BlockEntityWithoutLevelRendererMixin {
     @Shadow
     @Final
     private BlockEntityRenderDispatcher blockEntityRenderDispatcher;
-    @Shadow
-    @Final
-    private EnderChestBlockEntity enderChest;
 
     @Inject(method = "renderByItem", at = @At("HEAD"), cancellable = true)
     public void wunderreich_render(
             ItemStack itemStack,
-            TransformType transformType,
+            ItemDisplayContext itemDisplayContext,
             PoseStack poseStack,
             MultiBufferSource multiBufferSource,
             int i,

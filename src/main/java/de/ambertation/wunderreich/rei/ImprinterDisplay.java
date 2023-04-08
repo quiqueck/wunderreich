@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.rei;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.Recipe;
 
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -18,7 +19,7 @@ public class ImprinterDisplay extends BasicDisplay {
     public static ImprinterDisplay of(Recipe<?> recipe) {
         return new ImprinterDisplay(
                 EntryIngredients.ofIngredients(recipe.getIngredients()),
-                Collections.singletonList(EntryIngredients.of(recipe.getResultItem()))
+                Collections.singletonList(EntryIngredients.of(recipe.getResultItem(Minecraft.getInstance().level.registryAccess())))
         );
     }
 

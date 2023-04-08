@@ -28,7 +28,7 @@ public class CreativeTabs {
         TAB_BLOCKS = FabricItemGroup
                 .builder(Wunderreich.ID("blocks"))
                 .icon(() -> new ItemStack(getBlockIcon()))
-                .displayItems((featureFlagSet, output, bll) -> {
+                .displayItems((itemDisplayParameters, output) -> {
                     List<ItemStack> stacks = new ArrayList<>(32);
                     stacks.addAll(WunderreichBlocks.getAllBlocks()
                                                    .stream()
@@ -69,7 +69,7 @@ public class CreativeTabs {
         TAB_ITEMS = FabricItemGroup
                 .builder(Wunderreich.ID("items"))
                 .icon(() -> new ItemStack(getItemIcon()))
-                .displayItems((featureFlagSet, output, bl) -> {
+                .displayItems((itemDisplayParameters, output) -> {
                     List<ItemStack> stacks = new ArrayList<>(32);
                     stacks.addAll(WunderreichItems.getAllItems()
                                                   .stream()
