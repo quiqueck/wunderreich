@@ -177,7 +177,7 @@ modrinth {
         required.project "fabric-api"
         optional.project "wthit"
         optional.project "modmenu"
-        optional.project "roughly-enough-items"
+        optional.project "rei"
     }
     debugMode = false
 }
