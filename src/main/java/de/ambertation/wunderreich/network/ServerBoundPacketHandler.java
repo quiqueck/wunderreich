@@ -48,6 +48,8 @@ public abstract class ServerBoundPacketHandler<D> {
         AddRemoveWunderKisteMessage.INSTANCE.onRegister();
         CycleTradesMessage.INSTANCE.onRegister();
         SelectWhisperMessage.INSTANCE.onRegister();
+        ChangedSDFMessage.INSTANCE.onRegister();
+        ChangedTargetBlockMessage.INSTANCE.onRegister();
     }
 
     public void sendToServer(D content) {

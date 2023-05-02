@@ -35,6 +35,12 @@ public class MainConfig extends ConfigFile {
             true
     );
 
+    public final BooleanValue allowConstructionTools = new BooleanValue(
+            FEATURE_CATEGORY,
+            "allowConstructionTools",
+            true
+    ).and(allowBuilderTools);
+
     public final BooleanValue addSlabs = new BooleanValue(
             FEATURE_CATEGORY,
             "addSlabs",

@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich;
 
+import org.wunder.lib.math.sdf.SDF;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
@@ -34,6 +35,8 @@ public class Wunderreich implements ModInitializer {
             ModContainer modContainer = optional.get();
             VERSION = new Version(modContainer.getMetadata().getVersion().toString());
         }
+
+        SDF.ensureStaticallyLoaded();
 
         // This code runs as soon as Minecraft is in a mod-load-ready state.
         // However, some things (like resources) may still be uninitialized.

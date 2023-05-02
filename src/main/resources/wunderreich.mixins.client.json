@@ -9,7 +9,13 @@
     "BlockEntityWithoutLevelRendererMixin",
     "ClientRecipeBookMixin",
     "MerchantScreenMixin",
-    "SheetsMixin"
+    "SheetsMixin",
+    "overlay.DebugRendererMixin",
+    "overlay.GuiMixin",
+    "overlay.KeyboardHandlerMixin",
+    "overlay.LevelRendererMixin",
+    "overlay.MouseHandlerAccessor",
+    "overlay.MouseHandlerMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -269,5 +269,7 @@
   "gamerule.wunderreichDoNotDespawnWithNameTag": "Benannte Monster in Friedlich",
   "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Feindliche Mobs bleiben in friedlich erhalten.",
   "gamerule.whispersDurability.description": "Haltbarkeit eines Flüsterers",
-  "gamerule.whispersTrainedDurability.description": "Haltbarkeit eines geprägte Flüsterers"
+  "gamerule.whispersTrainedDurability.description": "Haltbarkeit eines geprägte Flüsterers",
+  "category.wunderreich": "Wunderreich",
+  "key.wunderreich.transform": "Transformieren"
 }

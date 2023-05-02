@@ -269,5 +269,7 @@
   "gamerule.wunderreichCyclingNeedsWhisperer": "Whispered Cycling",
   "gamerule.wunderreichCyclingNeedsWhisperer.description": "Villagers will only cycle trades when player holds a Whisperer.",
   "gamerule.wunderreichDoNotDespawnWithNameTag": "Named Monsters in Peaceful",
-  "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Do not despawn named hostile mobs in peaceful"
+  "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Do not despawn named hostile mobs in peaceful",
+  "category.wunderreich": "Wunderreich",
+  "key.wunderreich.transform": "Transform"
 }
