@@ -1,8 +1,12 @@
 package de.ambertation.wunderreich.config;
 
+import org.wunder.lib.configs.ConfigFile;
 import de.ambertation.wunderreich.Wunderreich;
 
 public class MainConfig extends ConfigFile {
+    public final static Group TOOLS_GROUP = new Group(Wunderreich.MOD_ID, "tools", 0);
+    public final static Group BLOCKS_GROUP = new Group(Wunderreich.MOD_ID, "blocks", 1);
+    public final static Group COSMETICS_GROUP = new Group(Wunderreich.MOD_ID, "cosmetics", 2);
     public final static String FEATURE_CATEGORY = "features";
     public final static String DISPLAY_CATEGORY = "display";
 
@@ -10,54 +14,56 @@ public class MainConfig extends ConfigFile {
             FEATURE_CATEGORY,
             "enableWhispers",
             true
-    );
+    ).setGroup(TOOLS_GROUP);
     public final BooleanValue addBlankWhispere = new BooleanValue(
             FEATURE_CATEGORY,
             "addBlankWhisperer",
             true
-    ).and(enableWhispers);
+    ).and(enableWhispers).setGroup(TOOLS_GROUP);
+    ;
 
     public final BooleanValue addImprintedWhispers = new BooleanValue(
             FEATURE_CATEGORY,
             "addImprintedWhispers",
             true
-    ).and(enableWhispers);
+    ).and(enableWhispers).setGroup(TOOLS_GROUP);
+    ;
 
     public final BooleanValue multiTexturedWunderkiste = new BooleanValue(
             DISPLAY_CATEGORY,
             "multiTexturedWunderkiste",
             true
-    );
+    ).setGroup(COSMETICS_GROUP);
 
     public final BooleanValue allowBuilderTools = new BooleanValue(
             FEATURE_CATEGORY,
             "allowBuilderTools",
             true
-    );
+    ).setGroup(TOOLS_GROUP);
 
     public final BooleanValue allowConstructionTools = new BooleanValue(
             FEATURE_CATEGORY,
-            "allowConstructionTools",
-            true
-    ).and(allowBuilderTools);
+            "allowExperimentalConstructionTools",
+            false
+    ).and(allowBuilderTools).setGroup(TOOLS_GROUP);
 
     public final BooleanValue addSlabs = new BooleanValue(
             FEATURE_CATEGORY,
             "addSlabs",
             true
-    );
+    ).setGroup(BLOCKS_GROUP);
 
     public final BooleanValue addStairs = new BooleanValue(
             FEATURE_CATEGORY,
             "addStairs",
             true
-    );
+    ).setGroup(BLOCKS_GROUP);
 
     public final BooleanValue addWalls = new BooleanValue(
             FEATURE_CATEGORY,
             "addWalls",
             true
-    );
+    ).setGroup(BLOCKS_GROUP);
 
 
     @Deprecated(forRemoval = true)
@@ -89,7 +95,7 @@ public class MainConfig extends ConfigFile {
     ).and(deprecated_allowTradesCycling);
 
     public MainConfig() {
-        super("main");
+        super(Wunderreich.VERSION_PROVIDER, "main");
     }
 
 

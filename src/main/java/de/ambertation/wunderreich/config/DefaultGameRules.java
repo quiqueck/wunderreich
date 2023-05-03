@@ -1,5 +1,8 @@
 package de.ambertation.wunderreich.config;
 
+import org.wunder.lib.configs.ConfigFile;
+import de.ambertation.wunderreich.Wunderreich;
+
 public class DefaultGameRules extends ConfigFile {
     public final static String WUNDERKISTE_CATEGORY = "wunderkiste";
     public final static String WHIPSER_CATEGORY = "whispers";
@@ -82,6 +85,6 @@ public class DefaultGameRules extends ConfigFile {
 
 
     public DefaultGameRules() {
-        super("defaultGameRules");
+        super(Wunderreich.VERSION_PROVIDER, "defaultGameRules");
     }
 }

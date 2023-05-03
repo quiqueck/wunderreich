@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.utils;
 
+import org.wunder.lib.configs.ConfigFile;
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.config.ConfigFile;
 
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.GameRules;
@@ -25,7 +25,7 @@ public class WunderreichGameRules {
         }
     }
 
-    private static abstract class Base<T extends net.minecraft.world.level.GameRules.Value<T>, V extends ConfigFile.Value<R>, R> {
+    private static abstract class Base<T extends net.minecraft.world.level.GameRules.Value<T>, V extends ConfigFile.Value<R, V>, R> {
         public final net.minecraft.world.level.GameRules.Type<T> type;
         public final net.minecraft.world.level.GameRules.Key<T> key;
         public final V config;
