@@ -97,17 +97,19 @@ public class WunderreichClient implements ClientModInitializer {
             );
         }
 
-        transformKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.wunderreich.transform",
-                InputConstants.Type.KEYSYM,
-                GLFW.GLFW_KEY_PERIOD,
-                "category.wunderreich"
-        ));
+        if (Configs.MAIN.allowConstructionTools.get()) {
+            transformKey = KeyBindingHelper.registerKeyBinding(new KeyMapping(
+                    "key.wunderreich.transform",
+                    InputConstants.Type.KEYSYM,
+                    GLFW.GLFW_KEY_PERIOD,
+                    "category.wunderreich"
+            ));
 
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (transformKey.consumeClick()) {
-                InputManager.INSTANCE.startTransformMode();
-            }
-        });
+            ClientTickEvents.END_CLIENT_TICK.register(client -> {
+                while (transformKey.consumeClick()) {
+                    InputManager.INSTANCE.startTransformMode();
+                }
+            });
+        }
     }
 }
