@@ -35,6 +35,9 @@ dependencies {
 
     modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
     //modRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+
+    modCompileOnly "dev.emi:emi:${project.emi_version}:api"
+//    modRuntimeOnly "dev.emi:emi:${project.emi_version}"
 }
 
 processResources {

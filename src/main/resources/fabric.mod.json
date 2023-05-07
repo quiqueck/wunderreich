@@ -29,6 +29,9 @@
     "rei_client": [
       "de.ambertation.wunderreich.rei.ClientPlugin"
     ],
+    "emi": [
+      "de.ambertation.wunderreich.emi.WunderreichEmiPlugin"
+    ],
     "modmenu": [
       "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
     ]
