@@ -61,7 +61,7 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
         if (state.hasProperty(SlabBlock.TYPE) && state.getValue(SlabBlock.TYPE) == SlabType.BOTTOM) return true;
 
         final BlockState aboveState = levelReader.getBlockState(blockPos.above());
-        return !aboveState.getMaterial().isSolid() || aboveState.getBlock() instanceof FenceGateBlock;
+        return !aboveState.isSolid() || aboveState.getBlock() instanceof FenceGateBlock;
     }
 
     @Override

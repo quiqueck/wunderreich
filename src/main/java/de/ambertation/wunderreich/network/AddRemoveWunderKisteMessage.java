@@ -64,7 +64,7 @@ public class AddRemoveWunderKisteMessage extends ServerBoundPacketHandler<AddRem
     protected Content deserializeOnServer(FriendlyByteBuf buf, ServerPlayer player, PacketSender responseSender) {
         boolean didAdd = buf.readBoolean();
         BlockPos pos = buf.readBlockPos();
-        ServerLevel level = player.getLevel();
+        ServerLevel level = player.serverLevel();
         return new Content(didAdd, pos, level);
 
     }

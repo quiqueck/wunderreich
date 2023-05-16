@@ -61,10 +61,10 @@ public class WhispererResultSlot extends Slot {
 
     @Override
     protected void checkTakeAchievements(ItemStack itemStack) {
-        itemStack.onCraftedBy(this.player.level, this.player, this.removeCount);
+        itemStack.onCraftedBy(this.player.level(), this.player, this.removeCount);
         owner.playImprintSound();
 
-        if (player.level instanceof ServerLevel serverLevel) {
+        if (player.level() instanceof ServerLevel serverLevel) {
             WhisperRule rules = this.slots.getActiveRule();
 
             if (rules != null)

@@ -1,18 +1,18 @@
 package de.ambertation.wunderreich.items;
 
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.ChatFormatting;
-import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 
@@ -82,13 +82,6 @@ public class WunderKisteItem extends BlockItem {
                     : getDomainComponent(domain);
             list.add(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
                     ChatFormatting.GRAY));
-        }
-    }
-
-    //TODO: 1.19.3 Changed handling of creative Tabs
-    public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTabs.SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
-            addAllVariants(itemList);
         }
     }
 }

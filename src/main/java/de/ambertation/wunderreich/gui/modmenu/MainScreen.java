@@ -11,8 +11,7 @@ import de.ambertation.wunderlib.ui.vanilla.ConfigScreen;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -56,11 +55,11 @@ public class MainScreen extends ConfigScreen {
     }
 
     @Override
-    protected void renderBackground(PoseStack poseStack, int i, int j, float f) {
-        GuiComponent.fill(poseStack, 0, 0, width, height, ColorHelper.SCREEN_BACKGROUND);
+    protected void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+        guiGraphics.fill(0, 0, width, height, ColorHelper.SCREEN_BACKGROUND);
 
         RenderHelper.renderImage(
-                poseStack,
+                guiGraphics,
                 300, 8, 200, 220,
                 BOX, BOX_UV.size(), BOX_UV, 1
         );

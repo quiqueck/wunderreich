@@ -67,7 +67,7 @@ public class WunderreichClient implements ClientModInitializer {
         WunderreichParticles.register();
         WunderreichScreens.registerScreens();
 
-        CreativeTabs.ensureStaticallyLoaded();
+        CreativeTabs.register();
 
         BuiltInRegistries.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {

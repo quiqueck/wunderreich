@@ -9,13 +9,12 @@ import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.BookViewScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.MerchantMenu;
@@ -28,7 +27,6 @@ import net.minecraft.world.item.trading.MerchantOffers;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class CycleTradesButton extends Button {
@@ -78,23 +76,31 @@ public class CycleTradesButton extends Button {
     }
 
     @Override
-    public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         visible = canUse && screen.getMenu().showProgressBar() && screen.getMenu().getTraderXp() <= 0;
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void renderWidget(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
-        RenderSystem.setShaderTexture(0, BookViewScreen.BOOK_LOCATION);
         final int u = isHovered ? 26 : 3;
 
-        blit(matrixStack, getX(), getY() + HALF_HEIGHT - 5, u, 204, WIDTH, HALF_HEIGHT, 256, 256);
-        matrixStack.pushPose();
-        matrixStack.scale(1, -1, 1);
-        blit(matrixStack, getX(), -getY(), u, 204, WIDTH, -HALF_HEIGHT, 256, 256);
-        matrixStack.popPose();
+        guiGraphics.blit(
+                BookViewScreen.BOOK_LOCATION,
+                getX(),
+                getY() + HALF_HEIGHT - 5,
+                u,
+                204,
+                WIDTH,
+                HALF_HEIGHT,
+                256,
+                256
+        );
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().scale(1, -1, 1);
+        guiGraphics.blit(BookViewScreen.BOOK_LOCATION, getX(), -getY(), u, 204, WIDTH, -HALF_HEIGHT, 256, 256);
+        guiGraphics.pose().popPose();
 
         if (isHovered) {
             List<Component> components = new ArrayList<>(2);
@@ -116,7 +122,10 @@ public class CycleTradesButton extends Button {
             }
 
 
-            screen.renderTooltip(matrixStack, components, Optional.empty(), mouseX, mouseY);
+            //TODO: 1.20 check what is missing now
+            //screen.renderTooltip(guiGraphics, components, Optional.empty(), mouseX, mouseY);
         }
+
+
     }
 }

@@ -90,7 +90,7 @@ public class CycleTradesMessage extends ServerBoundPacketHandler<CycleTradesMess
     }
 
     public static ClosestWhisperer getClosestWhisperer(Villager villager, boolean doLog) {
-        if (villager.level instanceof ServerLevel server) {
+        if (villager.level() instanceof ServerLevel server) {
             Player p = server.getNearestPlayer(villager, 6);
             if (p == null) return null;
 

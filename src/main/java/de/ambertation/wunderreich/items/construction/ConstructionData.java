@@ -278,7 +278,7 @@ public class ConstructionData {
                 int mIdx = 0;
                 if (ed.source() instanceof MaterialProvider mp) mIdx = mp.getMaterialIndex();
                 ItemStack stack = materials[mIdx % materials.length].getRandomAt(p, noise);
-                player.level.setBlock(
+                player.level().setBlock(
                         p.toBlockPos(),
                         ((BlockItem) (stack.getItem())).getBlock().defaultBlockState(),
                         2

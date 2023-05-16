@@ -17,7 +17,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.debug.DebugRenderer;
@@ -242,7 +242,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
     }
 
     @ApiStatus.Internal
-    public void renderHUD(PoseStack poseStack) {
+    public void renderHUD(GuiGraphics guiGraphics) {
         final Font font = Minecraft.getInstance().font;
         if (InputManager.INSTANCE.inTransformMode()) {
             Component c = null;
@@ -266,7 +266,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
             float y = 8;
             if (c != null) {
                 y = TextRenderer.draw(
-                        poseStack,
+                        guiGraphics,
                         font,
                         Float2.of(8),
                         Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -289,7 +289,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
                 if (axis != null) {
                     y = TextRenderer.draw(
-                            poseStack,
+                            guiGraphics,
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -306,7 +306,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
 
                 if (InputManager.INSTANCE.hasNumberString()) {
                     y = TextRenderer.draw(
-                            poseStack,
+                            guiGraphics,
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -316,7 +316,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     );
                 } else {
                     y = TextRenderer.draw(
-                            poseStack,
+                            guiGraphics,
                             font,
                             Float2.of(8, y),
                             Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -334,16 +334,14 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     final Float2 center = r.center();
                     final Float2 offset = center.add(InputManager.INSTANCE.getMouseDelta());
 
-                    GuiComponent.fill(
-                            poseStack,
+                    guiGraphics.fill(
                             (int) center.x - 2,
                             (int) center.y - 2,
                             (int) center.x + 2,
                             (int) center.y + 2,
                             0x77000000
                     );
-                    GuiComponent.fill(
-                            poseStack,
+                    guiGraphics.fill(
                             (int) center.x - 1,
                             (int) center.y - 1,
                             (int) center.x + 1,
@@ -351,8 +349,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             0x77FFFFFF
                     );
 
-                    GuiComponent.fill(
-                            poseStack,
+                    guiGraphics.fill(
                             (int) offset.x - 2,
                             (int) offset.y - 2,
                             (int) offset.x + 2,
@@ -360,8 +357,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                             ColorHelper.BLACK
                     );
 
-                    GuiComponent.fill(
-                            poseStack,
+                    guiGraphics.fill(
                             (int) offset.x - 1,
                             (int) offset.y - 1,
                             (int) offset.x + 1,
@@ -370,7 +366,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     );
 
 
-                    RenderHelper.outline(poseStack, r.left, r.top, r.right(), r.bottom(), 0x77FFFFFF);
+                    RenderHelper.outline(guiGraphics, r.left, r.top, r.right(), r.bottom(), 0x77FFFFFF);
                 }
             }
 
@@ -383,7 +379,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                     if (sdf != null) {
                         y += 8;
                         y = TextRenderer.draw(
-                                poseStack,
+                                guiGraphics,
                                 font,
                                 Float2.of(8, y),
                                 Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -391,7 +387,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 ColorHelper.YELLOW
                         );
                         y = TextRenderer.draw(
-                                poseStack,
+                                guiGraphics,
                                 font,
                                 Float2.of(8, y),
                                 Minecraft.getInstance().getWindow().getWidth() - 16,
@@ -399,7 +395,7 @@ public class OverlayRenderer implements DebugRenderer.SimpleDebugRenderer {
                                 ColorHelper.YELLOW
                         );
                         y = TextRenderer.draw(
-                                poseStack,
+                                guiGraphics,
                                 font,
                                 Float2.of(8, y),
                                 Minecraft.getInstance().getWindow().getWidth() - 16,

@@ -11,8 +11,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.construction.BluePrintData;
 import de.ambertation.wunderreich.network.ChangedSDFMessage;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiComponent;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -314,17 +313,17 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
 
 
     @Override
-    protected void renderBg(PoseStack poseStack, float deltaTime, int mouseX, int mouseY) {
-        GuiComponent.fill(poseStack, 0, 0, width, height, 0xE8242424);
+    protected void renderBg(GuiGraphics guiGraphics, float deltaTime, int mouseX, int mouseY) {
+        guiGraphics.fill(0, 0, width, height, 0xE8242424);
     }
 
     @Override
-    public void render(PoseStack poseStack, int mouseX, int mouseY, float f) {
-        super.render(poseStack, mouseX, mouseY, f);
+    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float f) {
+        super.render(guiGraphics, mouseX, mouseY, f);
 
         if (selectedPageButton != null) {
             RenderHelper.renderImage(
-                    poseStack,
+                    guiGraphics,
                     selectedPageButton.getScreenBounds().left,
                     selectedPageButton.getScreenBounds().top - 4,
                     SDF_TEXTURE,
@@ -334,6 +333,6 @@ public class RulerScreen extends AbstractContainerScreen<RulerContainerMenu> {
             );
         }
 
-        this.renderTooltip(poseStack, mouseX, mouseY);
+        this.renderTooltip(guiGraphics, mouseX, mouseY);
     }
 }

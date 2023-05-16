@@ -28,7 +28,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.MaterialColor;
+import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 
 import net.fabricmc.api.EnvType;
@@ -44,7 +44,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
      */
     public WhisperImprinter() {
         super(WunderreichBlocks.makeStoneBlockSettings()
-                               .mapColor(MaterialColor.LAPIS)
+                               .mapColor(MapColor.LAPIS)
                                .strength(5.0f, 1200.0f)
                                .luminance(8)
                                .requiresTool()

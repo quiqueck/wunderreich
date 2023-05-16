@@ -3,37 +3,22 @@ package de.ambertation.wunderreich.gui.whisperer;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.platform.Lighting;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.CrashReport;
-import net.minecraft.CrashReportCategory;
-import net.minecraft.ReportedException;
-import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import org.joml.Matrix4f;
-
 import java.util.List;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 @Environment(value = EnvType.CLIENT)
 public class WhispererScreen
@@ -99,37 +84,44 @@ public class WhispererScreen
     }
 
     @Override
-    protected void renderLabels(@NotNull PoseStack poseStack, int x, int y) {
-        this.font.draw(
-                poseStack,
+    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int x, int y) {
+        guiGraphics.drawString(
+                this.font,
                 this.title,
-                (float) (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
-                6.0f,
-                0x404040
+                (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
+                6,
+                0x404040,
+                false
         );
 
-        this.font.draw(
-                poseStack,
+        guiGraphics.drawString(
+                this.font,
                 this.playerInventoryTitle,
-                (float) this.inventoryLabelX,
-                (float) this.inventoryLabelY,
-                0x404040
+                this.inventoryLabelX,
+                this.inventoryLabelY,
+                0x404040,
+                false
         );
         int component = this.font.width(ENCHANTS_LABEL);
-        this.font.draw(poseStack, ENCHANTS_LABEL, (float) (TRADE_BUTTON_X - component / 2 + 48), 6.0f, 0x404040);
+        guiGraphics.drawString(
+                this.font,
+                ENCHANTS_LABEL,
+                (TRADE_BUTTON_X - component / 2 + 48),
+                6,
+                0x404040,
+                false
+        );
     }
 
     @Override
-    protected void renderBg(@NotNull PoseStack poseStack, float f, int i, int j) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+    protected void renderBg(@NotNull GuiGraphics guiGraphics, float f, int i, int j) {
         RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-        RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
 
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
 
-        blit(
-                poseStack,
+        guiGraphics.blit(
+                VILLAGER_LOCATION,
                 paddingX,
                 paddingY,
                 0,
@@ -143,7 +135,7 @@ public class WhispererScreen
     }
 
 
-    private void renderScroller(PoseStack poseStack, int x, int y, List<ImprinterRecipe> enchants) {
+    private void renderScroller(GuiGraphics guiGraphics, int x, int y, List<ImprinterRecipe> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
         if (pageCount > 0) {
             final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;
@@ -153,8 +145,8 @@ public class WhispererScreen
             if (this.scrollOff == pageCount) {
                 scrollerOffset = SCROLLER_MAX_Y;
             }
-            WhispererScreen.blit(
-                    poseStack,
+            guiGraphics.blit(
+                    VILLAGER_LOCATION,
                     x + SCROLL_BAR_START_X,
                     y + SCROLL_BAR_TOP_POS_Y + scrollerOffset,
                     0,
@@ -166,8 +158,8 @@ public class WhispererScreen
                     TEXTURE_HEIGHT
             );
         } else {
-            WhispererScreen.blit(
-                    poseStack,
+            guiGraphics.blit(
+                    VILLAGER_LOCATION,
                     x + SCROLL_BAR_START_X,
                     y + SCROLL_BAR_TOP_POS_Y,
                     0,
@@ -181,104 +173,10 @@ public class WhispererScreen
         }
     }
 
-
-    /*
-     * BEGIN: From ItemRenderer by Mojang
-     * --------------------------------
-     */
-    public void renderAndDecorateItemScaled(PoseStack poseStack, ItemStack itemStack, int i, int j) {
-        this.tryRenderGuiItemScaled(poseStack, Minecraft.getInstance().player, itemStack, i, j, 0, 0);
-    }
-
-    private void tryRenderGuiItemScaled(
-            PoseStack poseStack,
-            @Nullable LivingEntity livingEntity,
-            ItemStack itemStack,
-            int i,
-            int j,
-            int k,
-            int l
-    ) {
-        if (!itemStack.isEmpty()) {
-            BakedModel bakedModel = this.itemRenderer.getModel(itemStack, null, livingEntity, k);
-            poseStack.pushPose();
-            poseStack.translate(0.0F, 0.0F, (float) (50 + (bakedModel.isGui3d() ? l : 0)));
-
-            try {
-                this.renderGuiItem(poseStack, itemStack, i, j, bakedModel);
-            } catch (Throwable var11) {
-                CrashReport crashReport = CrashReport.forThrowable(var11, "Rendering item");
-                CrashReportCategory crashReportCategory = crashReport.addCategory("Item being rendered");
-                crashReportCategory.setDetail("Item Type", () -> {
-                    return String.valueOf(itemStack.getItem());
-                });
-                crashReportCategory.setDetail("Item Damage", () -> {
-                    return String.valueOf(itemStack.getDamageValue());
-                });
-                crashReportCategory.setDetail("Item NBT", () -> {
-                    return String.valueOf(itemStack.getTag());
-                });
-                crashReportCategory.setDetail("Item Foil", () -> {
-                    return String.valueOf(itemStack.hasFoil());
-                });
-                throw new ReportedException(crashReport);
-            }
-
-            poseStack.popPose();
-        }
-    }
-
-    protected void renderGuiItem(PoseStack poseStack, ItemStack itemStack, int i, int j, BakedModel bakedModel) {
-        Minecraft.getInstance().getTextureManager().getTexture(TextureAtlas.LOCATION_BLOCKS).setFilter(false, false);
-        RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
-        RenderSystem.enableBlend();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        poseStack.pushPose();
-        poseStack.translate(i, j, 100.0F);
-        poseStack.translate(8.0D, 8.0D, 0.0D);
-        poseStack.mulPoseMatrix((new Matrix4f()).scaling(1.0F, -1.0F, 1.0F));
-        poseStack.scale(16.0F, 16.0F, 16.0F);
-        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
-        boolean bl = !bakedModel.usesBlockLight();
-        if (bl) {
-            Lighting.setupForFlatItems();
-        }
-
-        PoseStack poseStack2 = RenderSystem.getModelViewStack();
-        poseStack2.pushPose();
-        poseStack2.mulPoseMatrix(poseStack.last().pose());
-        RenderSystem.applyModelViewMatrix();
-        this.itemRenderer.render(
-                itemStack,
-                ItemDisplayContext.GUI,
-                false,
-                new PoseStack(),
-                bufferSource,
-                15728880,
-                OverlayTexture.NO_OVERLAY,
-                bakedModel
-        );
-        bufferSource.endBatch();
-        RenderSystem.enableDepthTest();
-        if (bl) {
-            Lighting.setupFor3DItems();
-        }
-
-        poseStack.popPose();
-        poseStack2.popPose();
-        RenderSystem.applyModelViewMatrix();
-    }
-    /*
-     * END: From ItemRenderer by Mojang
-     * --------------------------------
-     */
-
-
     @Override
-    public void render(@NotNull PoseStack poseStack, int i, int j, float f) {
-        this.renderBackground(poseStack);
-        super.render(poseStack, i, j, f);
+    public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
+        this.renderBackground(guiGraphics);
+        super.render(guiGraphics, i, j, f);
         var enchants = this.menu.getEnchants();
         if (!enchants.isEmpty()) {
             final int paddingX = (this.width - this.imageWidth) / 2;
@@ -287,7 +185,7 @@ public class WhispererScreen
             int left = paddingX + TRADE_BUTTON_X + 5;
             RenderSystem.setShader(GameRenderer::getPositionTexShader);
             RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
-            this.renderScroller(poseStack, paddingX, paddingY, enchants);
+            this.renderScroller(guiGraphics, paddingX, paddingY, enchants);
             int o = 0;
             for (WhisperRule rule : enchants) {
                 if (this.canScroll(enchants.size()) && (o < this.scrollOff || o >= 7 + this.scrollOff)) {
@@ -298,66 +196,61 @@ public class WhispererScreen
                 ItemStack costA = rule.getInputA();
                 ItemStack costB = rule.getInputB();
                 ItemStack result = rule.output;
-                poseStack.pushPose();
-                poseStack.translate(0.0F, 0.0F, 100.0F);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
 
                 int decorateY = top + BORDER_WIDTH;
-                poseStack.pushPose();
-                poseStack.scale(0.5f, 0.5f, 0.5f);
-                renderAndDecorateItemScaled(poseStack, rule.type, 2 * (left - 2), 2 * (decorateY + 7));
-                poseStack.popPose();
-                this.renderAndDecorateCostA(poseStack, costA, left + 12, decorateY);
+                guiGraphics.pose().pushPose();
+                guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
+
+                guiGraphics.renderFakeItem(rule.type, 2 * (left - 2), 2 * (decorateY + 7));
+                guiGraphics.pose().popPose();
+                this.renderAndDecorateCostA(guiGraphics, costA, left + 12, decorateY);
                 if (!costB.isEmpty()) {
-                    this.itemRenderer.renderAndDecorateFakeItem(
-                            poseStack,
+                    guiGraphics.renderFakeItem(
                             costB,
                             paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
                             decorateY
                     );
-                    this.itemRenderer.renderGuiItemDecorations(
-                            poseStack,
+                    guiGraphics.renderItemDecorations(
                             this.font,
                             costB,
                             paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
                             decorateY
                     );
                 }
-                this.renderButtonArrows(poseStack, rule, paddingX, decorateY);
-                this.itemRenderer.renderAndDecorateFakeItem(
-                        poseStack,
+                this.renderButtonArrows(guiGraphics, rule, paddingX, decorateY);
+                guiGraphics.renderFakeItem(
                         result,
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
                         decorateY
                 );
-                this.itemRenderer.renderGuiItemDecorations(
-                        poseStack,
+                guiGraphics.renderItemDecorations(
                         this.font,
                         result,
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
                         decorateY
                 );
-                poseStack.popPose();
+                guiGraphics.pose().popPose();
                 top += TRADE_BUTTON_HEIGHT;
                 ++o;
             }
 
             for (WhispersButton tradeOfferButton : this.enchantButtons) {
                 if (tradeOfferButton.isHoveredOrFocused()) {
-                    tradeOfferButton.renderToolTip(poseStack, i, j);
+                    tradeOfferButton.renderToolTip(guiGraphics, i, j);
                 }
                 tradeOfferButton.visible = tradeOfferButton.index < this.menu.getEnchants().size();
             }
             RenderSystem.enableDepthTest();
         }
-        this.renderTooltip(poseStack, i, j);
+        this.renderTooltip(guiGraphics, i, j);
     }
 
-    private void renderButtonArrows(PoseStack poseStack, WhisperRule rule, int x, int y) {
+    private void renderButtonArrows(GuiGraphics guiGraphics, WhisperRule rule, int x, int y) {
         RenderSystem.enableBlend();
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
-        WhispererScreen.blit(
-                poseStack,
+        guiGraphics.blit(
+                VILLAGER_LOCATION,
                 x + TRADE_BUTTON_X + SELL_ITEM_2_X + TRADE_BUTTON_HEIGHT,
                 y + 3,
                 0,
@@ -370,9 +263,9 @@ public class WhispererScreen
         );
     }
 
-    private void renderAndDecorateCostA(PoseStack poseStack, ItemStack costA, int x, int y) {
-        this.itemRenderer.renderAndDecorateFakeItem(poseStack, costA, x, y);
-        this.itemRenderer.renderGuiItemDecorations(poseStack, this.font, costA, x, y);
+    private void renderAndDecorateCostA(GuiGraphics guiGraphics, ItemStack costA, int x, int y) {
+        guiGraphics.renderFakeItem(costA, x, y);
+        guiGraphics.renderItemDecorations(this.font, costA, x, y);
     }
 
     private boolean canScroll(int i) {
@@ -432,8 +325,8 @@ public class WhispererScreen
         public int getIndex() {
             return this.index;
         }
-        
-        public void renderToolTip(@NotNull PoseStack poseStack, int i, int j) {
+
+        public void renderToolTip(@NotNull GuiGraphics guiGraphics, int i, int j) {
             if (this.isHovered && WhispererScreen.this.menu
                     .getEnchants()
                     .size() > this.index + WhispererScreen.this.scrollOff) {
@@ -442,20 +335,20 @@ public class WhispererScreen
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
                             .getCategory());
-                    WhispererScreen.this.renderTooltip(poseStack, typeName, i, j);
+                    guiGraphics.renderTooltip(font, typeName, i, j);
                 } else if (i < this.getX() + 50 && i > this.getX() + 30) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
                             .getInputA();
                     if (!itemStack.isEmpty()) {
-                        WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
+                        guiGraphics.renderTooltip(font, itemStack, i, j);
                     }
                 } else if (i > this.getX() + 65) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff).output;
-                    WhispererScreen.this.renderTooltip(poseStack, itemStack, i, j);
+                    guiGraphics.renderTooltip(font, itemStack, i, j);
                 }
             }
         }

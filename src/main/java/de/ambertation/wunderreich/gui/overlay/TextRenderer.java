@@ -7,8 +7,8 @@ import de.ambertation.wunderlib.math.Transform;
 import de.ambertation.wunderlib.ui.layout.LineWithWidth;
 import de.ambertation.wunderlib.ui.layout.components.MultiLineText;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.debug.DebugRenderer;
 import net.minecraft.network.chat.Component;
 
@@ -72,18 +72,18 @@ public class TextRenderer {
     }
 
 
-    public static float draw(PoseStack stack, Font font, Float2 pos, int maxWidth, Component c, int color) {
+    public static float draw(GuiGraphics guiGraphics, Font font, Float2 pos, int maxWidth, Component c, int color) {
         c = MultiLineText.parse(c);
         ImmutableList<LineWithWidth> lines = font
                 .split(c, maxWidth)
                 .stream()
                 .map((component) -> new LineWithWidth(component, font.width(component)))
                 .collect(ImmutableList.toImmutableList());
-        float x = (float) pos.x;
-        float y = (float) pos.y;
+        int x = (int) pos.x;
+        int y = (int) pos.y;
 
         for (LineWithWidth line : lines) {
-            font.drawShadow(stack, line.text(), x, y, color);
+            guiGraphics.drawString(font, line.text(), x, y, color);
             y += font.lineHeight;
         }
 

@@ -6,6 +6,11 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -21,12 +26,33 @@ public class CreativeTabs {
     public static final CreativeModeTab TAB_BLOCKS;
     public static final CreativeModeTab TAB_ITEMS;
 
-    public static void ensureStaticallyLoaded() {
+    public static final ResourceKey<CreativeModeTab> TAB_ITEMS_KEY = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
+            Wunderreich.ID("item_tab")
+    );
+    public static final ResourceKey<CreativeModeTab> TAB_BLOCKS_KEY = ResourceKey.create(
+            Registries.CREATIVE_MODE_TAB,
+            Wunderreich.ID("block_tab")
+    );
+
+    public static void register() {
+        Registry.register(
+                BuiltInRegistries.CREATIVE_MODE_TAB,
+                TAB_ITEMS_KEY,
+                TAB_ITEMS
+        );
+
+        Registry.register(
+                BuiltInRegistries.CREATIVE_MODE_TAB,
+                TAB_BLOCKS_KEY,
+                TAB_BLOCKS
+        );
     }
 
     static {
         TAB_BLOCKS = FabricItemGroup
-                .builder(Wunderreich.ID("blocks"))
+                .builder()
+                .title(Component.translatable("itemGroup.wunderreich.blocks"))
                 .icon(() -> new ItemStack(getBlockIcon()))
                 .displayItems((itemDisplayParameters, output) -> {
                     List<ItemStack> stacks = new ArrayList<>(32);
@@ -67,7 +93,8 @@ public class CreativeTabs {
                 .build();
 
         TAB_ITEMS = FabricItemGroup
-                .builder(Wunderreich.ID("items"))
+                .builder()
+                .title(Component.translatable("itemGroup.wunderreich.items"))
                 .icon(() -> new ItemStack(getItemIcon()))
                 .displayItems((itemDisplayParameters, output) -> {
                     List<ItemStack> stacks = new ArrayList<>(32);

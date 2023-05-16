@@ -14,7 +14,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-import net.minecraft.world.level.material.Material;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,8 +26,7 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     public static boolean isFree(BlockState blockState) {
-        final Material material = blockState.getMaterial();
-        return blockState.isAir() || blockState.is(BlockTags.FIRE) || material.isLiquid() || material.isReplaceable();
+        return blockState.isAir() || blockState.is(BlockTags.FIRE) || blockState.liquid() || blockState.canBeReplaced();
     }
 
     @Override

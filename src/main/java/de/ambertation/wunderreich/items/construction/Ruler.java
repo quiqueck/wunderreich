@@ -103,7 +103,7 @@ public class Ruler extends Item implements FabricItem {
     }
 
     public static void openScreen(Player player, ItemStack rulerStack) {
-        if (player != null && player.level != null && !player.level.isClientSide) {
+        if (player != null && player.level() != null && !player.level().isClientSide) {
             System.out.println("open");
             player.openMenu(new ExtendedScreenHandlerFactory() {
                 @Override

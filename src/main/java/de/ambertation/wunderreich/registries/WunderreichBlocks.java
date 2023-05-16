@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
@@ -74,7 +74,7 @@ public class WunderreichBlocks {
 
             ResourceLocation id = Wunderreich.ID(name);
 
-            if (block.defaultBlockState().getMaterial().isFlammable() && FlammableBlockRegistry
+            if (block.defaultBlockState().ignitedByLava() && FlammableBlockRegistry
                     .getDefaultInstance().get(block).getBurnChance() == 0) {
                 FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
             }
@@ -100,7 +100,8 @@ public class WunderreichBlocks {
     }
 
     public static FabricBlockSettings makeStoneBlockSettings() {
-        return FabricBlockSettings.of(Material.STONE);
+        //TODO: 1.20  Correct material handling?
+        return FabricBlockSettings.copyOf(Blocks.STONE);
     }
 
     public static void register() {

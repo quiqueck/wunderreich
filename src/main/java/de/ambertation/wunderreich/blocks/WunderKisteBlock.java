@@ -16,7 +16,6 @@ import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -30,7 +29,9 @@ import net.minecraft.world.entity.monster.piglin.PiglinAi;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -49,7 +50,7 @@ import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.pathfinder.PathComputationType;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -513,8 +514,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return WunderkisteRenderer::new;
     }
 
+
     @Override
-    public List<ItemStack> getDrops(@NotNull BlockState blockState, LootContext.@NotNull Builder builder) {
+    public List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
         BlockEntity entity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         return super.getDrops(blockState, builder).stream().map(stack -> {
             if (stack.getItem() instanceof WunderKisteItem item) {
@@ -584,13 +586,5 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
         return b;
     }
-
-    //TODO: 1.19.3 Changed handling of creative Tabs
-    public void fillItemCategory(@NotNull CreativeModeTab creativeModeTab, @NotNull NonNullList<ItemStack> itemList) {
-        if (creativeModeTab == CreativeModeTabs.SEARCH || creativeModeTab == CreativeTabs.TAB_BLOCKS) {
-            WunderKisteItem.addAllVariants(itemList);
-        }
-    }
-
 }
 

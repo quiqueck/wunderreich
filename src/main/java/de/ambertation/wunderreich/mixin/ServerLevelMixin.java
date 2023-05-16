@@ -7,6 +7,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.progress.ChunkProgressListener;
+import net.minecraft.world.RandomSequences;
 import net.minecraft.world.level.dimension.LevelStem;
 import net.minecraft.world.level.storage.LevelStorageSource;
 import net.minecraft.world.level.storage.ServerLevelData;
@@ -47,6 +48,7 @@ public abstract class ServerLevelMixin {
             long l,
             List list,
             boolean bl2,
+            RandomSequences randomSequences,
             CallbackInfo ci
     ) {
         WunderreichRules.onLevelLoad((ServerLevel) (Object) this, serverLevelData);
