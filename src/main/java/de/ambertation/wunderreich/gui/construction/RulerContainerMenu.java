@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.construction;
 
-import org.wunder.lib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 

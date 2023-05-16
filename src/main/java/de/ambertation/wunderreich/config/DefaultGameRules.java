@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.config;
 
-import org.wunder.lib.configs.ConfigFile;
+import de.ambertation.wunderlib.configs.ConfigFile;
 import de.ambertation.wunderreich.Wunderreich;
 
 public class DefaultGameRules extends ConfigFile {

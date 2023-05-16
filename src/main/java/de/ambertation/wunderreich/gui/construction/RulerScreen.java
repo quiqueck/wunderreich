@@ -1,12 +1,12 @@
 package de.ambertation.wunderreich.gui.construction;
 
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.interfaces.Rotatable;
-import org.wunder.lib.ui.layout.components.*;
-import org.wunder.lib.ui.layout.components.render.RenderHelper;
-import org.wunder.lib.ui.layout.values.Rectangle;
-import org.wunder.lib.ui.layout.values.Size;
-import org.wunder.lib.ui.layout.values.Value;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.interfaces.Rotatable;
+import de.ambertation.wunderlib.ui.layout.components.*;
+import de.ambertation.wunderlib.ui.layout.components.render.RenderHelper;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.ui.layout.values.Size;
+import de.ambertation.wunderlib.ui.layout.values.Value;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.construction.BluePrintData;
 import de.ambertation.wunderreich.network.ChangedSDFMessage;

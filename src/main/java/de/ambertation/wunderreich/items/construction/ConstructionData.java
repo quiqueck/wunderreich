@@ -1,12 +1,12 @@
 package de.ambertation.wunderreich.items.construction;
 
-import org.wunder.lib.math.Bounds;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.Matrix4;
-import org.wunder.lib.math.Transform;
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.interfaces.MaterialProvider;
-import org.wunder.lib.math.sdf.interfaces.Transformable;
+import de.ambertation.wunderlib.math.Bounds;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.Matrix4;
+import de.ambertation.wunderlib.math.Transform;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.wunderlib.math.sdf.interfaces.Transformable;
 import de.ambertation.wunderreich.gui.construction.RulerContainer;
 import de.ambertation.wunderreich.gui.overlay.TransformWidget;
 import de.ambertation.wunderreich.network.ChangedTargetBlockMessage;

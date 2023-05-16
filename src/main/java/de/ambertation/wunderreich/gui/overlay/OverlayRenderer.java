@@ -1,15 +1,15 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Bounds;
-import org.wunder.lib.math.Float2;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.Matrix4;
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.interfaces.MaterialProvider;
-import org.wunder.lib.math.sdf.shapes.Empty;
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.render.RenderHelper;
-import org.wunder.lib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.math.Bounds;
+import de.ambertation.wunderlib.math.Float2;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.Matrix4;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.wunderlib.math.sdf.shapes.Empty;
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.render.RenderHelper;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 

@@ -1,10 +1,10 @@
 package de.ambertation.wunderreich.items.construction;
 
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.SDFUnion;
-import org.wunder.lib.math.sdf.shapes.Box;
-import org.wunder.lib.math.sdf.shapes.Cylinder;
-import org.wunder.lib.math.sdf.shapes.Sphere;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.SDFUnion;
+import de.ambertation.wunderlib.math.sdf.shapes.Box;
+import de.ambertation.wunderlib.math.sdf.shapes.Cylinder;
+import de.ambertation.wunderlib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.utils.nbt.CachedNBTValue;
 import de.ambertation.wunderreich.utils.nbt.NbtTagHelper;

@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.config;
 
-import org.wunder.lib.configs.DynamicConfig;
+import de.ambertation.wunderlib.configs.DynamicConfig;
 import de.ambertation.wunderreich.Wunderreich;
 
 import net.minecraft.core.registries.BuiltInRegistries;

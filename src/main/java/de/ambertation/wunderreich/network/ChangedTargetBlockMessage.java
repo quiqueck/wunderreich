@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.network;
 
-import org.wunder.lib.math.Float3;
+import de.ambertation.wunderlib.math.Float3;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 
 import net.minecraft.network.FriendlyByteBuf;

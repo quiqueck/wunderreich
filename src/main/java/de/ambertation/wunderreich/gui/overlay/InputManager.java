@@ -1,10 +1,10 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Float2;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.Quaternion;
-import org.wunder.lib.math.Transform;
-import org.wunder.lib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.Float2;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.Quaternion;
+import de.ambertation.wunderlib.math.Transform;
+import de.ambertation.wunderlib.math.sdf.SDF;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.mixin.client.overlay.MouseHandlerAccessor;

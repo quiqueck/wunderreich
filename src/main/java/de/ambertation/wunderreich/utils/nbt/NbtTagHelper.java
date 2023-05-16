@@ -1,8 +1,8 @@
 package de.ambertation.wunderreich.utils.nbt;
 
-import org.wunder.lib.math.Bounds;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.Bounds;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.sdf.SDF;
 import de.ambertation.wunderreich.Wunderreich;
 
 import com.mojang.serialization.DataResult;

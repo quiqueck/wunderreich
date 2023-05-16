@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.utils;
 
-import org.wunder.lib.math.Float3;
+import de.ambertation.wunderlib.math.Float3;
 
 import java.util.ArrayList;
 import java.util.Iterator;

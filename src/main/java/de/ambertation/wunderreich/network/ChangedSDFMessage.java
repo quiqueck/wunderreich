@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.network;
 
-import org.wunder.lib.math.Transform;
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.interfaces.MaterialProvider;
-import org.wunder.lib.math.sdf.interfaces.Transformable;
+import de.ambertation.wunderlib.math.Transform;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.interfaces.MaterialProvider;
+import de.ambertation.wunderlib.math.sdf.interfaces.Transformable;
 import de.ambertation.wunderreich.gui.construction.RulerContainerMenu;
 import de.ambertation.wunderreich.items.construction.ConstructionData;
 import de.ambertation.wunderreich.registries.WunderreichItems;

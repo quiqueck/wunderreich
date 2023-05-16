@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.items.construction;
 
-import org.wunder.lib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.SDF;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
 import net.minecraft.nbt.CompoundTag;

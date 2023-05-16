@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.utils;
 
-import org.wunder.lib.configs.ConfigFile;
+import de.ambertation.wunderlib.configs.ConfigFile;
 import de.ambertation.wunderreich.Wunderreich;
 
 import net.minecraft.server.MinecraftServer;

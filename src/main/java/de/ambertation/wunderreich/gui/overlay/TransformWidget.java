@@ -1,11 +1,11 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Bounds;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.Matrix4;
-import org.wunder.lib.math.Transform;
-import org.wunder.lib.math.sdf.interfaces.Transformable;
-import org.wunder.lib.ui.ColorHelper;
+import de.ambertation.wunderlib.math.Bounds;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.Matrix4;
+import de.ambertation.wunderlib.math.Transform;
+import de.ambertation.wunderlib.math.sdf.interfaces.Transformable;
+import de.ambertation.wunderlib.ui.ColorHelper;
 
 import net.minecraft.nbt.CompoundTag;
 

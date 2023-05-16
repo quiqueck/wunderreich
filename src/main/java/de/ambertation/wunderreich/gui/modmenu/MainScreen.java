@@ -1,13 +1,13 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
-import org.wunder.lib.ui.ColorHelper;
-import org.wunder.lib.ui.layout.components.Image;
-import org.wunder.lib.ui.layout.components.LayoutComponent;
-import org.wunder.lib.ui.layout.components.VerticalStack;
-import org.wunder.lib.ui.layout.components.render.RenderHelper;
-import org.wunder.lib.ui.layout.values.Rectangle;
-import org.wunder.lib.ui.layout.values.Value;
-import org.wunder.lib.ui.vanilla.ConfigScreen;
+import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.ui.layout.components.Image;
+import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
+import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
+import de.ambertation.wunderlib.ui.layout.components.render.RenderHelper;
+import de.ambertation.wunderlib.ui.layout.values.Rectangle;
+import de.ambertation.wunderlib.ui.layout.values.Value;
+import de.ambertation.wunderlib.ui.vanilla.ConfigScreen;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 

@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.registries;
 
-import org.wunder.lib.math.sdf.SDFUnion;
-import org.wunder.lib.math.sdf.shapes.Box;
-import org.wunder.lib.math.sdf.shapes.Cylinder;
-import org.wunder.lib.math.sdf.shapes.Sphere;
+import de.ambertation.wunderlib.math.sdf.SDFUnion;
+import de.ambertation.wunderlib.math.sdf.shapes.Box;
+import de.ambertation.wunderlib.math.sdf.shapes.Cylinder;
+import de.ambertation.wunderlib.math.sdf.shapes.Sphere;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.BuildersTrowel;

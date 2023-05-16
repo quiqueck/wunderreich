@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.construction;
 
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.math.sdf.shapes.Empty;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.math.sdf.shapes.Empty;
 import de.ambertation.wunderreich.items.construction.BluePrintData;
 
 import net.minecraft.world.Container;

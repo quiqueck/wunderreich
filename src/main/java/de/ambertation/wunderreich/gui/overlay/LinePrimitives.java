@@ -1,9 +1,9 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Bounds;
-import org.wunder.lib.math.Float2;
-import org.wunder.lib.math.Float3;
-import org.wunder.lib.math.Transform;
+import de.ambertation.wunderlib.math.Bounds;
+import de.ambertation.wunderlib.math.Float2;
+import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.math.Transform;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.FastColor;

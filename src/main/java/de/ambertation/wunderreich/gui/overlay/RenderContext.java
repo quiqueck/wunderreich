@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Float3;
+import de.ambertation.wunderlib.math.Float3;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

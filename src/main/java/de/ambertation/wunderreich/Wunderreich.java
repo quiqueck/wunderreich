@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich;
 
-import org.wunder.lib.math.sdf.SDF;
-import org.wunder.lib.utils.Version;
+import de.ambertation.wunderlib.math.sdf.SDF;
+import de.ambertation.wunderlib.utils.Version;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;

@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.gui.overlay;
 
-import org.wunder.lib.math.Float2;
-import org.wunder.lib.math.Float3;
+import de.ambertation.wunderlib.math.Float2;
+import de.ambertation.wunderlib.math.Float3;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import net.minecraft.util.FastColor;
