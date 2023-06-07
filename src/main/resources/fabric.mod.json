@@ -23,13 +23,13 @@
         "value": "de.ambertation.wunderreich.client.WunderreichClient"
       }
     ],
-    "rei_server": [
+    "rei_server_": [
       "de.ambertation.wunderreich.rei.ServerPlugin"
     ],
-    "rei_client": [
+    "rei_client_": [
       "de.ambertation.wunderreich.rei.ClientPlugin"
     ],
-    "modmenu": [
+    "modmenu_": [
       "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
     ]
   },
@@ -39,10 +39,10 @@
     "wunderreich.mixins.common.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.19",
-    "fabric": ">=0.81.3",
+    "fabricloader": ">=0.14.21",
+    "fabric": ">=0.83.0",
     "minecraft": [
-      "1.20-beta.5"
+      "1.20"
     ],
     "java": ">=17"
   },
@@ -54,7 +54,7 @@
     "bclib": {
       "updater_icon": "icon_updater.png"
     },
-    "waila:plugins": {
+    "waila:plugins_": {
       "id": "wunderreich:global",
       "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
     }
