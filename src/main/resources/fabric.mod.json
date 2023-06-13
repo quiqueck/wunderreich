@@ -23,13 +23,13 @@
         "value": "de.ambertation.wunderreich.client.WunderreichClient"
       }
     ],
-    "rei_server_": [
+    "rei_server": [
       "de.ambertation.wunderreich.rei.ServerPlugin"
     ],
-    "rei_client_": [
+    "rei_client": [
       "de.ambertation.wunderreich.rei.ClientPlugin"
     ],
-    "modmenu_": [
+    "modmenu": [
       "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
     ]
   },
@@ -44,11 +44,15 @@
     "minecraft": [
       "1.20"
     ],
-    "java": ">=17"
+    "java": ">=17",
+    "wunderlib": "1.1.x"
+  },
+  "breaks": {
+    "wunderlib": "<1.1.1"
   },
   "suggests": {
-    "modmenu": "6.1.x",
-    "rei": "11.x"
+    "modmenu": "7.0.x",
+    "rei": "12.x"
   },
   "custom": {
     "bclib": {

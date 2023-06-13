@@ -32,11 +32,12 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    //modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-//    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    //modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    //modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
     //modRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 
     println "Using local WunderLib: ${local_wunderlib}"
