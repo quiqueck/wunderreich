@@ -367,7 +367,7 @@ public class WunderreichWallBlocks {
     );
     public static final Block BAMBOO_WALL = registerWoodWall(
             "bamboo_wall",
-            Blocks.BAMBOO,
+            Blocks.BAMBOO_PLANKS,
             Blocks.BAMBOO_FENCE,
             Configs.MAIN.addWalls.get()
     );
