@@ -24,13 +24,16 @@
       }
     ],
     "rei_server": [
-      "de.ambertation.wunderreich.rei.ServerPlugin"
+      "de.ambertation.wunderreich.integration.rei.ServerPlugin"
     ],
     "rei_client": [
-      "de.ambertation.wunderreich.rei.ClientPlugin"
+      "de.ambertation.wunderreich.integration.rei.ClientPlugin"
     ],
     "modmenu": [
       "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
+    ],
+    "emi": [
+      "de.ambertation.wunderreich.integration.emi.EMIPlugin"
     ]
   },
   "accessWidener": "wunderreich.accesswidener",

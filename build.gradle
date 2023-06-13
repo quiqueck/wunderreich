@@ -33,12 +33,15 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
-    modRuntimeOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-    
+    //modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
-    //modRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+    modLocalRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+
+    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
+    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
     println "Using local WunderLib: ${local_wunderlib}"
     if (local_wunderlib) {
@@ -191,6 +194,7 @@ modrinth {
         optional.project "wthit"
         optional.project "modmenu"
         optional.project "rei"
+        optional.project "emi"
     }
     debugMode = false
 }
@@ -229,6 +233,7 @@ curseforge {
             optionalDependency 'roughly-enough-items'
             optionalDependency 'wthit'
             optionalDependency 'modmenu'
+            optionalDependency 'emi'
         }
         mainArtifact(remapJar) {
             displayName = "$project.archives_base_name-$project.version $latestVersion"
