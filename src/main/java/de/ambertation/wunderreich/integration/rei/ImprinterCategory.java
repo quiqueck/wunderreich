@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.rei;
+package de.ambertation.wunderreich.integration.rei;
 
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;

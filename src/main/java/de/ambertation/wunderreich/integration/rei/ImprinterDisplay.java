@@ -1,4 +1,4 @@
-package de.ambertation.wunderreich.rei;
+package de.ambertation.wunderreich.integration.rei;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.Recipe;
