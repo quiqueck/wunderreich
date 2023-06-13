@@ -359,6 +359,18 @@ public class WunderreichWallBlocks {
             Blocks.MANGROVE_FENCE,
             Configs.MAIN.addWalls.get()
     );
+    public static final Block CHERRY_WALL = registerWoodWall(
+            "cherry_wall",
+            Blocks.CHERRY_PLANKS,
+            Blocks.CHERRY_FENCE,
+            Configs.MAIN.addWalls.get()
+    );
+    public static final Block BAMBOO_WALL = registerWoodWall(
+            "bamboo_wall",
+            Blocks.BAMBOO,
+            Blocks.BAMBOO_FENCE,
+            Configs.MAIN.addWalls.get()
+    );
 
 
     public static Block registerWall(

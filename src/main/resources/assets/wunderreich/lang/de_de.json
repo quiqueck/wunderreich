@@ -284,5 +284,7 @@
   "gamerule.whispersDurability.description": "Haltbarkeit eines Flüsterers",
   "gamerule.whispersTrainedDurability.description": "Haltbarkeit eines geprägte Flüsterers",
   "category.wunderreich": "Wunderreich",
-  "key.wunderreich.transform": "Transformieren"
+  "key.wunderreich.transform": "Transformieren",
+  "block.wunderreich.cherry_wall": "Kirschholzmauer",
+  "block.wunderreich.bamboo_wall": "Bambusmauer"
 }

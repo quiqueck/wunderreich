@@ -284,5 +284,7 @@
   "gamerule.wunderreichDoNotDespawnWithNameTag": "Named Monsters in Peaceful",
   "gamerule.wunderreichDoNotDespawnWithNameTag.description": "Do not despawn named hostile mobs in peaceful",
   "category.wunderreich": "Wunderreich",
-  "key.wunderreich.transform": "Transform"
+  "key.wunderreich.transform": "Transform",
+  "block.wunderreich.cherry_wall": "Cherry Wall",
+  "block.wunderreich.bamboo_wall": "Bamboo Wall"
 }

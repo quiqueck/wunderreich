@@ -18,16 +18,16 @@ const fs = require("fs")
     const colors = [
         'acacia', 'birch', 'oak', 'dark_oak', 
         'jungle', 
-        'crimson', 'warped', 'spruce', 'mangrove']
+        'crimson', 'warped', 'spruce', 'mangrove', 'cherry', 'bamboo']
     
     const colorsEN = [
             'Acacia', 'Birch', 'Oak', 'Dark Oak', 
             'Jungle Wood', 
-            'Crimson', 'Warped', "Spruce", "Mangrove"]
+            'Crimson', 'Warped', "Spruce", "Mangrove", "Cherry", "Bamboo"]
     const colorsDE = [
         'Akazienholz', 'Birkenholz', 'Eichenholz', 'Schwarzeichenholz', 
         'Tropenholz', 
-        'Karmesin', 'Wirr', "Fichtenholz", 'Mangrovenholz']
+        'Karmesin', 'Wirr', "Fichtenholz", 'Mangrovenholz', 'Kirschholz', 'Bambus']
 const type = ""
 const nameEN = " Wall"
 const nameDE = "mauer"

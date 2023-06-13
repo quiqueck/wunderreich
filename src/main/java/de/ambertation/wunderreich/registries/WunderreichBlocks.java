@@ -100,7 +100,6 @@ public class WunderreichBlocks {
     }
 
     public static FabricBlockSettings makeStoneBlockSettings() {
-        //TODO: 1.20  Correct material handling?
         return FabricBlockSettings.copyOf(Blocks.STONE);
     }
 
