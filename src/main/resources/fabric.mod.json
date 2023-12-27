@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "wunderreich",
-  "version": "${version}",
+  "version": "5.0.2",
   "name": "Wunderreich",
   "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
   "authors": [

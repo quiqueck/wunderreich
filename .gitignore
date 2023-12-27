@@ -12,3 +12,4 @@ bin/
 .project
 *.blend1
 /CHANGES.md
+/modrinth.json
