@@ -1,5 +1,5 @@
 package de.ambertation.wunderreich.integration.wthit;
-
+/*
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.items.WunderKisteItem;
@@ -90,3 +90,4 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
     }
 
 }
+*/

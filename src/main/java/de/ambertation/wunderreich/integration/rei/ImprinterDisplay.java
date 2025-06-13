@@ -1,5 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
-
+/*
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.crafting.RecipeHolder;
 
@@ -30,3 +30,4 @@ public class ImprinterDisplay extends BasicDisplay {
         return ServerPlugin.IMPRINTER;
     }
 }
+*/

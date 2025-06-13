@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.integration.emi;
 
-
+/*
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.Logger;
@@ -95,3 +95,4 @@ public class EMIPlugin implements dev.emi.emi.api.EmiPlugin {
         EMIImprinterRecipe.addAllRecipes(emiRegistry, manager);
     }
 }
+*/

@@ -1,5 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
-
+/*
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 
@@ -24,3 +24,4 @@ public class ClientPlugin implements REIClientPlugin {
         registry.registerRecipeFiller(ImprinterRecipe.class, ImprinterRecipe.Type.INSTANCE, ImprinterDisplay::of);
     }
 }
+*/

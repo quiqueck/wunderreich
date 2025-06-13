@@ -1,5 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
-
+/*
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichItems;
@@ -28,3 +28,4 @@ public class ServerPlugin implements REIServerPlugin {
         );
     }
 }
+*/
