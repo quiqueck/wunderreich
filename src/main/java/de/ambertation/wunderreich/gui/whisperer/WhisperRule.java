@@ -18,7 +18,7 @@ import net.minecraft.world.item.enchantment.Enchantments;
 
 public class WhisperRule {
     public static final ItemStack BLANK = new ItemStack(WunderreichItems.BLANK_WHISPERER);
-    public static final Ingredient BLANK_INGREDIENT = Ingredient.of(BLANK);
+    public static final Ingredient BLANK_INGREDIENT = Ingredient.of(WunderreichItems.BLANK_WHISPERER);
     public final Holder<Enchantment> enchantment;
     public final ItemStack input;
     public final ItemStack output;
@@ -96,7 +96,7 @@ public class WhisperRule {
     public boolean satisfiedBy(ItemStack itemStack, ItemStack itemStack2) {
         return isRequiredItem(itemStack, this.input)
                 && itemStack.getCount() >= this.getInput().getCount()
-                && isRequiredItem(itemStack2, BLANK)
+                && isRequiredItem(itemStack2, WunderreichItems.BLANK_WHISPERER)
                 && itemStack2.getCount() >= 1;
     }
 
