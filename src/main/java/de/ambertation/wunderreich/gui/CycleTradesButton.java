@@ -6,13 +6,12 @@ package de.ambertation.wunderreich.gui;
 import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
@@ -28,12 +27,13 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 
 public class CycleTradesButton extends Button {
-    private static final ResourceLocation PAGE_FORWARD_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace("widget/page_forward_highlighted");
-    private static final ResourceLocation PAGE_FORWARD_SPRITE = ResourceLocation.withDefaultNamespace("widget/page_forward");
+    private static final ResourceLocation PAGE_FORWARD_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace(
+            "widget/page_forward_highlighted");
+    private static final ResourceLocation PAGE_FORWARD_SPRITE = ResourceLocation.withDefaultNamespace(
+            "widget/page_forward");
 
     public static final int WIDTH = 23;
     private static final int HALF_HEIGHT = 13;
@@ -60,9 +60,11 @@ public class CycleTradesButton extends Button {
         final int left = (merchantScreenMixin.width - imageWidth) / 2;
         final int top = (merchantScreenMixin.height - imageHeight) / 2;
 
-        CycleTradesButton button = new CycleTradesButton(left - CycleTradesButton.WIDTH - 2, top + 2, b -> {
+        CycleTradesButton button = new CycleTradesButton(
+                left - CycleTradesButton.WIDTH - 2, top + 2, b -> {
             CycleTradesMessage.send();
-        }, merchantScreen, menu);
+        }, merchantScreen, menu
+        );
 
         if (WunderreichRules.Whispers.cyclingNeedsWhisperer()) {
             button.canUse = CycleTradesMessage.containsWhisperer(Minecraft.getInstance().player) != null;
@@ -79,17 +81,30 @@ public class CycleTradesButton extends Button {
     public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         visible = canUse && screen.getMenu().showProgressBar() && screen.getMenu().getTraderXp() <= 0;
 
-        RenderSystem.setShaderColor(1F, 1F, 1F, 1F);
         ResourceLocation arrowLocation = (this.isHovered()
                 ? PAGE_FORWARD_HIGHLIGHTED_SPRITE
                 : PAGE_FORWARD_SPRITE);
 
-        guiGraphics.blitSprite(arrowLocation, this.getX(), getY() + HALF_HEIGHT - 3, 23, 13);
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                arrowLocation,
+                this.getX(),
+                getY() + HALF_HEIGHT - 3,
+                23,
+                13
+        );
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().rotateAround(Axis.ZP.rotationDegrees(180), getX(), getY(), 0);
-        guiGraphics.blitSprite(arrowLocation, getX() - WIDTH, getY() - HALF_HEIGHT, 23, 13);
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().rotateAbout(180, getX(), getY());
+        guiGraphics.blitSprite(
+                RenderPipelines.GUI_TEXTURED,
+                arrowLocation,
+                getX() - WIDTH,
+                getY() - HALF_HEIGHT,
+                23,
+                13
+        );
+        guiGraphics.pose().popMatrix();
 
 
         if (isHovered) {
@@ -109,7 +124,7 @@ public class CycleTradesButton extends Button {
                 }
             }
 
-            guiGraphics.renderTooltip(Minecraft.getInstance().font, components, Optional.empty(), mouseX, mouseY);
+            guiGraphics.setComponentTooltipForNextFrame(Minecraft.getInstance().font, components, mouseX, mouseY);
         }
 
 
