@@ -5,10 +5,11 @@ import de.ambertation.wunderreich.blocks.WoodWallBlock;
 import de.ambertation.wunderreich.blocks.WoolWallBlock;
 import de.ambertation.wunderreich.config.Configs;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class WunderreichWallBlocks {
     public static final Block WHITE_WOOL_WALL = registerWall(
@@ -376,7 +377,7 @@ public class WunderreichWallBlocks {
     public static Block registerWall(
             String name,
             Block baseBlock,
-            Function<Block, Block> creator,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);

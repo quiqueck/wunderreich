@@ -4,12 +4,13 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class WunderreichSlabBlocks {
     //Slabs
@@ -19,7 +20,8 @@ public class WunderreichSlabBlocks {
             SpreadableSnowyDirtSlab.GrassSlab::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block DIRT_SLAB = registerSlab("dirt_slab", Blocks.DIRT,
+    public static final Block DIRT_SLAB = registerSlab(
+            "dirt_slab", Blocks.DIRT,
             Configs.MAIN.addSlabs.get()
     );
     public static final Block DIRT_PATH_SLAB = registerSlab(
@@ -28,13 +30,16 @@ public class WunderreichSlabBlocks {
             DirtPathSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block COARSE_DIRT_SLAB = registerSlab("coarse_dirt_slab", Blocks.COARSE_DIRT,
+    public static final Block COARSE_DIRT_SLAB = registerSlab(
+            "coarse_dirt_slab", Blocks.COARSE_DIRT,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block SAND_SLAB = registerSlab("sand_slab", Blocks.SAND, SandSlab::new,
+    public static final Block SAND_SLAB = registerSlab(
+            "sand_slab", Blocks.SAND, SandSlab::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block RED_SAND_SLAB = registerSlab("red_sand_slab", Blocks.RED_SAND, SandSlab.Red::new,
+    public static final Block RED_SAND_SLAB = registerSlab(
+            "red_sand_slab", Blocks.RED_SAND, SandSlab.Red::new,
             Configs.MAIN.addSlabs.get()
     );
     public static final Block WHITE_CONCRETE_SLAB = registerSlab(
@@ -418,7 +423,11 @@ public class WunderreichSlabBlocks {
         return registerSlab(name, baseBlock, true);
     }
 
-    public static Block registerSlab(String name, Block baseBlock, Function<Block, Block> creator) {
+    public static Block registerSlab(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator
+    ) {
         return registerSlab(name, baseBlock, creator, true);
     }
 
@@ -429,7 +438,7 @@ public class WunderreichSlabBlocks {
     public static Block registerSlab(
             String name,
             Block baseBlock,
-            Function<Block, Block> creator,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
@@ -443,10 +452,20 @@ public class WunderreichSlabBlocks {
             boolean register
     ) {
         if (baseBlock instanceof BeaconBeamBlock stained) {
-            return registerSlab(name, baseBlock, (bl) -> new StainedGlassSlabBlock(stained.getColor(), bl), register);
+            return registerSlab(
+                    name,
+                    baseBlock,
+                    (bl, key) -> new StainedGlassSlabBlock(stained.getColor(), bl, key),
+                    register
+            );
         }
         Wunderreich.LOGGER.warn(name + " is not a valid glass block.");
-        return registerSlab(name, baseBlock, (bl) -> new StainedGlassSlabBlock(DyeColor.MAGENTA, bl), register);
+        return registerSlab(
+                name,
+                baseBlock,
+                (bl, key) -> new StainedGlassSlabBlock(DyeColor.MAGENTA, bl, key),
+                register
+        );
     }
 
     static void register() {

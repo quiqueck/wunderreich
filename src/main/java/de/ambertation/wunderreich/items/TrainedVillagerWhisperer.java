@@ -1,27 +1,28 @@
 package de.ambertation.wunderreich.items;
 
-import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WHISPERER;
-
-import java.util.List;
-import java.util.function.Consumer;
-
 import de.ambertation.wunderreich.data_components.WhisperData;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
+import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WHISPERER;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
 
+import java.util.List;
+import java.util.function.Consumer;
+
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
-    public TrainedVillagerWhisperer() {
-        super(WunderreichRules.Whispers.trainedDurability());
+    public TrainedVillagerWhisperer(ResourceKey<Item> key) {
+        super(WunderreichRules.Whispers.trainedDurability(), key);
     }
 
     public static ItemStack createForEnchantment(Holder<Enchantment> enchantment) {

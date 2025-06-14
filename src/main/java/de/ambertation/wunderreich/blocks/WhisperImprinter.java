@@ -11,6 +11,7 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -41,7 +42,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     /**
      * Creates a new Block
      */
-    public WhisperImprinter() {
+    public WhisperImprinter(ResourceKey<Block> key) {
         super(WunderreichBlocks.makeStoneBlockSettings()
                                .mapColor(MapColor.LAPIS)
                                .strength(5.0f, 1200.0f)
@@ -49,6 +50,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                                .requiresCorrectToolForDrops()
                                .noOcclusion()
                                .sound(SoundType.AMETHYST)
+                               .setId(key)
         );
     }
 

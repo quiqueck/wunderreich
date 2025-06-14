@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.registries.WunderreichTags;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -10,8 +11,8 @@ import net.minecraft.world.level.block.Block;
 import java.util.function.Consumer;
 
 public class WoolStairBlock extends AbstractStairBlock {
-    public WoolStairBlock(Block baseBlock) {
-        super(baseBlock);
+    public WoolStairBlock(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
     }
 
     @Override

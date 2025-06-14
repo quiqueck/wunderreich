@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -23,8 +24,8 @@ import net.fabricmc.api.Environment;
 public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     public static final BooleanProperty SNOWY = SnowyDirtBlock.SNOWY;
 
-    public SnowyDirtSlab(Block baseBlock) {
-        super(baseBlock);
+    public SnowyDirtSlab(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
 
         this.registerDefaultState(this.defaultBlockState()
                                       .setValue(TYPE, SlabType.BOTTOM)

@@ -4,10 +4,11 @@ import de.ambertation.wunderreich.blocks.StairBlock;
 import de.ambertation.wunderreich.blocks.WoolStairBlock;
 import de.ambertation.wunderreich.config.Configs;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class WunderreichStairBlocks {
     public static final Block PINK_CONCRETE_STAIRS = registerStairs(
@@ -307,7 +308,7 @@ public class WunderreichStairBlocks {
     public static Block registerStairs(
             String name,
             Block baseBlock,
-            Function<Block, Block> creator,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);

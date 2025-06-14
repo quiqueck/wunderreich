@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -11,8 +12,8 @@ import java.util.function.Consumer;
 
 public class WallBlock extends AbstractWallBlock implements BlockTagSupplier {
 
-    public WallBlock(Block baseBlock) {
-        super(baseBlock);
+    public WallBlock(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
     }
 
     @Override

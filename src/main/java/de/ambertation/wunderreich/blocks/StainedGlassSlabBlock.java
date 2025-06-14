@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.Block;
@@ -7,8 +8,8 @@ import net.minecraft.world.level.block.Block;
 public class StainedGlassSlabBlock extends GlassSlabBlock implements BeaconBeamBlock {
     private final DyeColor color;
 
-    public StainedGlassSlabBlock(DyeColor color, Block baseBlock) {
-        super(baseBlock);
+    public StainedGlassSlabBlock(DyeColor color, Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
         this.color = color;
     }
 

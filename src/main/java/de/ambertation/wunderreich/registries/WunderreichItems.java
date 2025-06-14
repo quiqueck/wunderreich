@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.items.VillagerWhisperer;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -16,7 +17,7 @@ import net.minecraft.world.item.ToolMaterial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
+import java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 public class WunderreichItems {
@@ -35,13 +36,13 @@ public class WunderreichItems {
 
     public static Item BUILDERS_TROWEL = registerItem(
             "builders_trowel",
-            () -> new BuildersTrowel(ToolMaterial.IRON),
+            (key) -> new BuildersTrowel(ToolMaterial.IRON, key),
             Configs.MAIN.allowBuilderTools.get()
     );
 
     public static Item DIAMOND_BUILDERS_TROWEL = registerItem(
             "diamond_builders_trowel",
-            () -> new BuildersTrowel(ToolMaterial.DIAMOND),
+            (key) -> new BuildersTrowel(ToolMaterial.DIAMOND, key),
             Configs.MAIN.allowBuilderTools.get()
     );
 
@@ -54,16 +55,18 @@ public class WunderreichItems {
         return Configs.ITEM_CONFIG.getAllObjects();
     }
 
-    public static Item registerItem(String name, Supplier<Item> itemSupply) {
+    public static Item registerItem(String name, Function<ResourceKey<Item>, Item> itemSupply) {
         return registerItem(name, itemSupply, true);
     }
 
-    public static Item registerItem(String name, Supplier<Item> itemSupply, boolean register) {
+    public static Item registerItem(String name, Function<ResourceKey<Item>, Item> itemSupply, boolean register) {
         boolean enabled = Configs.ITEM_CONFIG.booleanOrDefault(name).get();
 
         if (enabled && register) {
-            Item item = itemSupply.get();
             final ResourceLocation id = Wunderreich.ID(name);
+            final ResourceKey<Item> key = ResourceKey.create(BuiltInRegistries.ITEM.key(), id);
+            Item item = itemSupply.apply(key);
+
             if (item != Items.AIR) {
                 //this ensures that the dynamic config contains a valid entry for this Item.
                 Configs.ITEM_CONFIG.newBooleanFor(name, item);

@@ -8,8 +8,10 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -20,20 +22,20 @@ import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(64);
     public static final Block WUNDER_KISTE = registerBlock(
             "wunder_kiste",
             null,
-            bb -> new WunderKisteBlock(),
-            bl -> new WunderKisteItem(bl)
+            (baseBlock, key) -> new WunderKisteBlock(key),
+            (baseBlock, key) -> new WunderKisteItem(baseBlock, key)
     );
     public static final Block WHISPER_IMPRINTER = registerBlock(
             "whisper_imprinter",
             null,
-            bb -> new WhisperImprinter(), Configs.MAIN.enableWhispers.get()
+            (baseBlock, key) -> new WhisperImprinter(key), Configs.MAIN.enableWhispers.get()
     );
 
 
@@ -44,7 +46,7 @@ public class WunderreichBlocks {
     static Block registerBlock(
             String name,
             Block baseBlock,
-            Function<Block, Block> creator,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
         if (register) {
@@ -53,27 +55,34 @@ public class WunderreichBlocks {
         return null;
     }
 
-    private static Block registerBlock(String name, Block baseBlock, Function<Block, Block> creator) {
+    private static Block registerBlock(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator
+    ) {
         return registerBlock(
                 name,
                 baseBlock,
                 creator,
-                block -> new BlockItem(block, WunderreichItems.makeItemSettings())
+                (block, key) -> new BlockItem(block, WunderreichItems.makeItemSettings().setId(key))
         );
     }
 
     private static Block registerBlock(
             String name,
             Block baseBlock,
-            Function<Block, Block> creator,
-            Function<Block, BlockItem> itemCreator
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            BiFunction<Block, ResourceKey<Item>, BlockItem> itemCreator
     ) {
         if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
-            final Block block = creator.apply(baseBlock);
+            final ResourceLocation id = Wunderreich.ID(name);
+            final ResourceKey<Block> key = ResourceKey.create(BuiltInRegistries.BLOCK.key(), id);
+
+
+            final Block block = creator.apply(baseBlock, key);
             Configs.BLOCK_CONFIG.newBooleanFor(name, block);
             BLOCKS.add(block);
 
-            ResourceLocation id = Wunderreich.ID(name);
 
             if (block.defaultBlockState().ignitedByLava() && FlammableBlockRegistry
                     .getDefaultInstance().get(block).getBurnChance() == 0) {
@@ -82,8 +91,8 @@ public class WunderreichBlocks {
 
             Registry.register(BuiltInRegistries.BLOCK, id, block);
 
-
-            BlockItem item = itemCreator.apply(block);
+            final ResourceKey<Item> itemKey = ResourceKey.create(BuiltInRegistries.ITEM.key(), id);
+            BlockItem item = itemCreator.apply(block, itemKey);
             if (item != Items.AIR) {
                 Registry.register(BuiltInRegistries.ITEM, id, item);
                 WunderreichItems.processItem(id, item);

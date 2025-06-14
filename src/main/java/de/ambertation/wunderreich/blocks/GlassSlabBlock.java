@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -17,8 +18,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.function.Consumer;
 
 public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, CanDropLoot, ChangeRenderLayer {
-    public GlassSlabBlock(Block baseBlock) {
-        super(baseBlock);
+    public GlassSlabBlock(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
     }
 
     @Override

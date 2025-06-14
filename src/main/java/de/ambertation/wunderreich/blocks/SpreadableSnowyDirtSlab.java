@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
@@ -28,8 +29,8 @@ import com.google.common.math.DoubleMath;
 import java.util.function.Consumer;
 
 public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
-    public SpreadableSnowyDirtSlab(Block baseBlock) {
-        super(baseBlock);
+    public SpreadableSnowyDirtSlab(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
     }
 
     public static boolean doesOcclude(
@@ -190,8 +191,8 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
     }
 
     public static class GrassSlab extends SpreadableSnowyDirtSlab {
-        public GrassSlab(Block baseBlock) {
-            super(baseBlock);
+        public GrassSlab(Block baseBlock, ResourceKey<Block> key) {
+            super(baseBlock, key);
         }
 
         @Override

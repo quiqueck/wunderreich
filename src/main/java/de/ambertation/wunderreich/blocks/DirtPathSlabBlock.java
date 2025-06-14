@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
@@ -30,8 +31,8 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
         DOUBLE_AABB = Block.box(0.0D, 0.0D, 0.0D, 16.0D, 15.0D, 16.0D);
     }
 
-    public DirtPathSlabBlock(Block baseBlock) {
-        super(baseBlock);
+    public DirtPathSlabBlock(Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
     }
 
     @Override

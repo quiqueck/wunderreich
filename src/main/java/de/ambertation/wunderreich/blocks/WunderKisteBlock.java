@@ -19,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -41,6 +42,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -68,7 +70,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
-    public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(properties -> new WunderKisteBlock());
+    public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(WunderKisteBlock::new);
     public static final EnumProperty<WunderKisteDomain> DOMAIN;
     public static final WunderKisteDomain DEFAULT_DOMAIN;
 
@@ -87,14 +89,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         DOMAIN = EnumProperty.create("domain", WunderKisteDomain.class);
     }
 
-    public WunderKisteBlock() {
-        super(
-                WunderreichBlocks.makeStoneBlockSettings()
-                                 .lightLevel(state -> 7)
-                                 .requiresCorrectToolForDrops()
-                                 .strength(12.5F, 800.0F)
-                , () -> WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE
-        );
+    private WunderKisteBlock(BlockBehaviour.Properties properties) {
+        super(properties, () -> WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE);
         this.registerDefaultState(
                 this.stateDefinition
                         .any()
@@ -102,6 +98,18 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                         .setValue(WATERLOGGED, false)
                         .setValue(DOMAIN, DEFAULT_DOMAIN)
         );
+    }
+
+    public WunderKisteBlock(ResourceKey<Block> id) {
+        this(
+                WunderreichBlocks.makeStoneBlockSettings()
+                                 .lightLevel(state -> 7)
+                                 .requiresCorrectToolForDrops()
+                                 .strength(12.5F, 800.0F)
+                                 .setId(id)
+
+        );
+
     }
 
     public static void updateAllBoxes(

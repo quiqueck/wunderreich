@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blocks;
 
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -9,12 +10,12 @@ import net.minecraft.world.level.block.Block;
 import java.util.function.Consumer;
 
 public class SandSlab extends FallingSlab {
-    public SandSlab(Block baseBlock) {
-        this(0xDBD3A0, baseBlock);
+    public SandSlab(Block baseBlock, ResourceKey<Block> key) {
+        this(0xDBD3A0, baseBlock, key);
     }
 
-    protected SandSlab(int dustColor, Block baseBlock) {
-        super(dustColor, baseBlock);
+    protected SandSlab(int dustColor, Block baseBlock, ResourceKey<Block> key) {
+        super(dustColor, baseBlock, key);
     }
 
     @Override
@@ -28,8 +29,8 @@ public class SandSlab extends FallingSlab {
     }
 
     public static class Red extends SandSlab {
-        public Red(Block baseBlock) {
-            super(0xA95821, baseBlock);
+        public Red(Block baseBlock, ResourceKey<Block> key) {
+            super(0xA95821, baseBlock, key);
         }
     }
 }

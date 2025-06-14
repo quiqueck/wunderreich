@@ -12,7 +12,9 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -23,8 +25,8 @@ import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 public class WunderKisteItem extends BlockItem {
-    public WunderKisteItem(Block block) {
-        super(block, WunderreichItems.makeItemSettings());
+    public WunderKisteItem(Block block, ResourceKey<Item> key) {
+        super(block, WunderreichItems.makeItemSettings().setId(key));
     }
 
     public static WunderKisteDomain getDomain(ItemStack itemStack) {

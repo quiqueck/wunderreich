@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.utils.RandomList;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,8 +34,8 @@ public class BuildersTrowel extends Item {
                       .durability(toolMaterial.durability() * 4);
     }
 
-    public BuildersTrowel(ToolMaterial toolMaterial) {
-        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, -2.5f, -0.5f));
+    public BuildersTrowel(ToolMaterial toolMaterial, ResourceKey<Item> key) {
+        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, -2.5f, -0.5f).setId(key));
         seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
     }
 

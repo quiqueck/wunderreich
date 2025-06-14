@@ -4,6 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
@@ -21,8 +22,8 @@ import org.jetbrains.annotations.NotNull;
 public class FallingSlab extends DirtSlabBlock {
     private final int dustColor;
 
-    public FallingSlab(int dustColor, Block baseBlock) {
-        super(baseBlock);
+    public FallingSlab(int dustColor, Block baseBlock, ResourceKey<Block> key) {
+        super(baseBlock, key);
         this.dustColor = dustColor;
     }
 
