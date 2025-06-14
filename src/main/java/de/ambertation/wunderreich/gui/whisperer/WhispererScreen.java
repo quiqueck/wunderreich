@@ -3,11 +3,10 @@ package de.ambertation.wunderreich.gui.whisperer;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -25,8 +24,10 @@ public class WhispererScreen
         extends AbstractContainerScreen<WhispererMenu> {
     private static final ResourceLocation VILLAGER_LOCATION = ResourceLocation.withDefaultNamespace(
             "textures/gui/container/villager.png");
-    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace("container/villager/scroller_disabled");
+    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace(
+            "container/villager/scroller");
+    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace(
+            "container/villager/scroller_disabled");
 
     private static final int TEXTURE_WIDTH = 512;
     private static final int TEXTURE_HEIGHT = 256;
@@ -117,16 +118,15 @@ public class WhispererScreen
 
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float f, int i, int j) {
-        RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
-
+        // No need for RenderSystem.setShaderColor in 1.21.6 - GuiGraphics handles this
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
 
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 VILLAGER_LOCATION,
                 paddingX,
                 paddingY,
-                0,
                 0.0f,
                 0.0f,
                 this.imageWidth,
@@ -135,7 +135,6 @@ public class WhispererScreen
                 TEXTURE_HEIGHT
         );
     }
-
 
     private void renderScroller(GuiGraphics guiGraphics, int x, int y, List<ImprinterRecipe> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
@@ -147,9 +146,23 @@ public class WhispererScreen
             if (this.scrollOff == pageCount) {
                 scrollerOffset = SCROLLER_MAX_Y;
             }
-            guiGraphics.blitSprite(SCROLLER_SPRITE, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y + scrollerOffset, 0, SCROLLER_WIDTH, SCROLLER_HEIGHT);
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    SCROLLER_SPRITE,
+                    x + SCROLL_BAR_START_X,
+                    y + SCROLL_BAR_TOP_POS_Y + scrollerOffset,
+                    SCROLLER_WIDTH,
+                    SCROLLER_HEIGHT
+            );
         } else {
-            guiGraphics.blitSprite(SCROLLER_DISABLED_SPRITE, x + SCROLL_BAR_START_X, y + SCROLL_BAR_TOP_POS_Y, 0, SCROLLER_WIDTH, SCROLLER_HEIGHT);
+            guiGraphics.blitSprite(
+                    RenderPipelines.GUI_TEXTURED,
+                    SCROLLER_DISABLED_SPRITE,
+                    x + SCROLL_BAR_START_X,
+                    y + SCROLL_BAR_TOP_POS_Y,
+                    SCROLLER_WIDTH,
+                    SCROLLER_HEIGHT
+            );
         }
     }
 
@@ -163,9 +176,10 @@ public class WhispererScreen
             final int paddingY = (this.height - this.imageHeight) / 2;
             int top = paddingY + TOP_MARGIN + 1;
             int left = paddingX + TRADE_BUTTON_X + 5;
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderTexture(0, VILLAGER_LOCATION);
+
+            // No need for RenderSystem.setShader or setShaderTexture in 1.21.6
             this.renderScroller(guiGraphics, paddingX, paddingY, enchants);
+
             int o = 0;
             for (WhisperRule rule : enchants) {
                 if (this.canScroll(enchants.size()) && (o < this.scrollOff || o >= 7 + this.scrollOff)) {
@@ -175,15 +189,17 @@ public class WhispererScreen
 
                 ItemStack costA = rule.getInput();
                 ItemStack result = rule.output;
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().translate(0.0F, 0.0F, 100.0F);
+
+                guiGraphics.pose().pushMatrix();
+                guiGraphics.pose().translate(0.0F, 0.0F); // Remove z-coordinate for 2D
 
                 int decorateY = top + BORDER_WIDTH;
-                guiGraphics.pose().pushPose();
-                guiGraphics.pose().scale(0.5f, 0.5f, 0.5f);
+                guiGraphics.pose().pushMatrix();
+                guiGraphics.pose().scale(0.5f, 0.5f);
 
                 guiGraphics.renderFakeItem(rule.icon, 2 * (left - 2), 2 * (decorateY + 7));
-                guiGraphics.pose().popPose();
+                guiGraphics.pose().popMatrix();
+
                 this.renderAndDecorateCostA(guiGraphics, costA, left + 12, decorateY);
 
                 guiGraphics.renderFakeItem(
@@ -210,7 +226,7 @@ public class WhispererScreen
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
                         decorateY
                 );
-                guiGraphics.pose().popPose();
+                guiGraphics.pose().popMatrix();
                 top += TRADE_BUTTON_HEIGHT;
                 ++o;
             }
@@ -221,18 +237,18 @@ public class WhispererScreen
                 }
                 tradeOfferButton.visible = tradeOfferButton.index < this.menu.getEnchants().size();
             }
-            RenderSystem.enableDepthTest();
+            // RenderSystem.enableDepthTest() not needed in 1.21.6 - handled automatically
         }
         this.renderTooltip(guiGraphics, i, j);
     }
 
     private void renderButtonArrows(GuiGraphics guiGraphics, WhisperRule rule, int x, int y) {
-        RenderSystem.enableBlend();
+        // No need for RenderSystem.enableBlend() in 1.21.6
         guiGraphics.blit(
+                RenderPipelines.GUI_TEXTURED,
                 VILLAGER_LOCATION,
                 x + TRADE_BUTTON_X + SELL_ITEM_2_X + TRADE_BUTTON_HEIGHT,
                 y + 3,
-                0,
                 15.0f,
                 171.0f,
                 10,
@@ -256,7 +272,7 @@ public class WhispererScreen
         int i = this.menu.getEnchants().size();
         if (this.canScroll(i)) {
             int j = i - NUMBER_OF_OFFER_BUTTONS;
-            this.scrollOff = (int) ((double) this.scrollOff - f);
+            this.scrollOff = (int) ((double) this.scrollOff - g); // Changed f to g for deltaY parameter
             this.scrollOff = Mth.clamp(this.scrollOff, 0, j);
         }
         return true;
@@ -314,23 +330,22 @@ public class WhispererScreen
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
                             .getCategory());
-                    guiGraphics.renderTooltip(font, typeName, i, j);
+                    guiGraphics.setTooltipForNextFrame(font, typeName, i, j);
                 } else if (i < this.getX() + 50 && i > this.getX() + 30) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff)
                             .getInput();
                     if (!itemStack.isEmpty()) {
-                        guiGraphics.renderTooltip(font, itemStack, i, j);
+                        guiGraphics.setTooltipForNextFrame(font, itemStack, i, j);
                     }
                 } else if (i > this.getX() + 65) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
                             .get(this.index + WhispererScreen.this.scrollOff).output;
-                    guiGraphics.renderTooltip(font, itemStack, i, j);
+                    guiGraphics.setTooltipForNextFrame(font, itemStack, i, j);
                 }
             }
         }
     }
 }
-
