@@ -1,20 +1,24 @@
 package de.ambertation.wunderreich.blocks;
 
-import apple.laf.JRSUIConstants.Direction;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SnowyDirtBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
+
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     public static final BooleanProperty SNOWY = SnowyDirtBlock.SNOWY;
@@ -33,15 +37,27 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     }
 
     @Override
-    public BlockState updateShape(
+    protected BlockState updateShape(
             BlockState blockState,
-            Direction direction,
-            BlockState blockState2,
-            LevelAccessor levelAccessor,
+            LevelReader levelReader,
+            ScheduledTickAccess scheduledTickAccess,
             BlockPos blockPos,
-            BlockPos blockPos2
+            Direction direction,
+            BlockPos blockPos2,
+            BlockState blockState2,
+            RandomSource randomSource
     ) {
-        blockState = super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+
+        blockState = super.updateShape(
+                blockState,
+                levelReader,
+                scheduledTickAccess,
+                blockPos,
+                direction,
+                blockPos2,
+                blockState2,
+                randomSource
+        );
         if (direction == Direction.UP) {
             return blockState.setValue(SNOWY, isSnowySetting(blockState2));
         }

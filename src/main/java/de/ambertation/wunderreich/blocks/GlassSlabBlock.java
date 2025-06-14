@@ -42,14 +42,6 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
         return super.skipRendering(blockState, blockState2, direction);
     }
 
-    //see Mojang: AbstractGlassBlock
-//    @Override
-//    public VoxelShape getVisualShape(BlockState blockState,
-//                                     BlockGetter blockGetter,
-//                                     BlockPos blockPos,
-//                                     CollisionContext collisionContext) {
-//        return Shapes.empty();
-//    }
 
     @Override
     public float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
@@ -57,8 +49,8 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
-        return true;
+    protected boolean propagatesSkylightDown(BlockState blockState) {
+        return super.propagatesSkylightDown(blockState);
     }
 
     @Override
