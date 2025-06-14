@@ -2,10 +2,10 @@ package de.ambertation.wunderreich.gui.overlay;
 
 import de.ambertation.wunderlib.math.Float2;
 import de.ambertation.wunderlib.math.Float3;
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.util.FastColor;
 
 import org.joml.Matrix4f;
 
@@ -19,7 +19,7 @@ public class SolidPrimitives {
                 builder,
                 nfo.pos,
                 nfo.deflate,
-                FastColor.ARGB32.color(nfo.color, (int) (nfo.alpha * 0xFF))
+                ColorUtilARGB32.color(nfo.color, (int) (nfo.alpha * 0xFF))
         );
     }
 
@@ -27,8 +27,9 @@ public class SolidPrimitives {
             RenderContext ctx, BufferBuilder builder,
             Float3 pos, float deflate, int color, float alpha
     ) {
-        renderSingleBlock(ctx, builder, pos, deflate,
-                FastColor.ARGB32.color(color, (int) (alpha * 0xFF))
+        renderSingleBlock(
+                ctx, builder, pos, deflate,
+                ColorUtilARGB32.color(color, (int) (alpha * 0xFF))
         );
     }
 
@@ -92,7 +93,7 @@ public class SolidPrimitives {
                 center.add(sz.mul(Float3.mXmZ_PLANE)),
                 center.add(sz.mul(Float3.mXZ_PLANE)),
                 Float3.Y_AXIS,
-                FastColor.ARGB32.color(color, (int) (alpha * 0xFF))
+                ColorUtilARGB32.color(color, (int) (alpha * 0xFF))
         );
     }
 
