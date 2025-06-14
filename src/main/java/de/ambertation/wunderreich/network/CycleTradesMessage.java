@@ -134,7 +134,7 @@ public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMes
         if (villager == null || villager.getVillagerXp() > 0) return false;
 
         VillagerData villagerData = villager.getVillagerData();
-        VillagerProfession profession = villagerData.getProfession();
+        VillagerProfession profession = villagerData.profession().value();
         if (profession == null || !VillagerProfession.LIBRARIAN.equals(profession)) return false;
         //if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
 
@@ -214,7 +214,7 @@ public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMes
             player.sendMerchantOffers(
                     menu.containerId,
                     villager.getOffers(),
-                    villager.getVillagerData().getLevel(),
+                    villager.getVillagerData().level(),
                     villager.getVillagerXp(),
                     villager.showProgressBar(),
                     villager.canRestock()
