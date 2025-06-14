@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.items;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.data_components.WunderKisteData;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WUNDERKISTE;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -15,8 +16,6 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.block.Block;
-
-import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WUNDERKISTE;
 
 import java.util.List;
 import org.jetbrains.annotations.NotNull;

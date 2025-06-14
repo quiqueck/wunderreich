@@ -13,8 +13,8 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 import java.util.ArrayList;
@@ -30,7 +30,8 @@ public class WunderreichBlocks {
             bb -> new WunderKisteBlock(),
             bl -> new WunderKisteItem(bl)
     );
-    public static final Block WHISPER_IMPRINTER = registerBlock("whisper_imprinter",
+    public static final Block WHISPER_IMPRINTER = registerBlock(
+            "whisper_imprinter",
             null,
             bb -> new WhisperImprinter(), Configs.MAIN.enableWhispers.get()
     );
@@ -99,8 +100,8 @@ public class WunderreichBlocks {
         WunderreichTags.supplyForBlock(bl);
     }
 
-    public static FabricBlockSettings makeStoneBlockSettings() {
-        return FabricBlockSettings.copyOf(Blocks.STONE);
+    public static BlockBehaviour.Properties makeStoneBlockSettings() {
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.STONE);
     }
 
     public static void register() {

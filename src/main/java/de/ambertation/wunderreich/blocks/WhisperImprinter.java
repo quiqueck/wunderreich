@@ -45,9 +45,9 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
         super(WunderreichBlocks.makeStoneBlockSettings()
                                .mapColor(MapColor.LAPIS)
                                .strength(5.0f, 1200.0f)
-                               .luminance(8)
-                               .requiresTool()
-                               .nonOpaque()
+                               .lightLevel(state -> 8)
+                               .requiresCorrectToolForDrops()
+                               .noOcclusion()
                                .sound(SoundType.AMETHYST)
         );
     }
