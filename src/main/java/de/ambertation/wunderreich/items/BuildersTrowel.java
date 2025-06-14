@@ -18,19 +18,22 @@ import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.function.Supplier;
 
-public class BuildersTrowel extends DiggerItem {
+public class BuildersTrowel extends Item {
     private final long seed;
 
-    public BuildersTrowel(Tiers tier) {
-        super(
-                tier,
-                WunderreichTags.MINEABLE_TROWEL,
-                WunderreichItems
-                        .makeItemSettings()
-                        .rarity(Rarity.UNCOMMON)
-                        .durability(tier.getUses() * 4)
-                        .attributes(DiggerItem.createAttributes(tier, -2.5f, -0.5f))
-        );
+    public static Item.Properties trowel(
+            Item.Properties inProps,
+            ToolMaterial toolMaterial,
+            float attackDamage,
+            float attackSpeed
+    ) {
+        return inProps.tool(toolMaterial, WunderreichTags.MINEABLE_TROWEL, attackDamage, attackSpeed, 0.0F)
+                      .rarity(Rarity.UNCOMMON)
+                      .durability(toolMaterial.durability() * 4);
+    }
+
+    public BuildersTrowel(ToolMaterial toolMaterial) {
+        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, -2.5f, -0.5f));
         seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
     }
 

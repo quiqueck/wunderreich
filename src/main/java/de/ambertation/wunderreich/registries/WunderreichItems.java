@@ -11,7 +11,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.ToolMaterial;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,13 +35,13 @@ public class WunderreichItems {
 
     public static Item BUILDERS_TROWEL = registerItem(
             "builders_trowel",
-            () -> new BuildersTrowel(Tiers.IRON),
+            () -> new BuildersTrowel(ToolMaterial.IRON),
             Configs.MAIN.allowBuilderTools.get()
     );
 
     public static Item DIAMOND_BUILDERS_TROWEL = registerItem(
             "diamond_builders_trowel",
-            () -> new BuildersTrowel(Tiers.DIAMOND),
+            () -> new BuildersTrowel(ToolMaterial.DIAMOND),
             Configs.MAIN.allowBuilderTools.get()
     );
 
