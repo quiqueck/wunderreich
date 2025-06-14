@@ -33,17 +33,17 @@ public class VillagerMixin {
             Int2ObjectMap<VillagerTrades.ItemListing[]> int2ObjectMap;
             if (self.level().enabledFeatures().contains(FeatureFlags.TRADE_REBALANCE)) {
                 Int2ObjectMap<VillagerTrades.ItemListing[]> int2ObjectMap2 = VillagerTrades.EXPERIMENTAL_TRADES
-                        .get(villagerData.getProfession());
+                        .get(villagerData.profession());
                 int2ObjectMap = int2ObjectMap2 != null
                         ? int2ObjectMap2
-                        : VillagerTrades.TRADES.get(villagerData.getProfession());
+                        : VillagerTrades.TRADES.get(villagerData.profession());
             } else {
-                int2ObjectMap = VillagerTrades.TRADES.get(villagerData.getProfession());
+                int2ObjectMap = VillagerTrades.TRADES.get(villagerData.profession());
             }
             if (int2ObjectMap == null || int2ObjectMap.isEmpty()) {
                 return;
             }
-            itemListings = int2ObjectMap.get(villagerData.getLevel());
+            itemListings = int2ObjectMap.get(villagerData.level());
             if (itemListings == null) {
                 return;
             }
