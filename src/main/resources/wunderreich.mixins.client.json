@@ -6,8 +6,8 @@
   "mixins": [
   ],
   "client": [
-    "BlockEntityWithoutLevelRendererMixin",
     "ClientRecipeBookMixin",
+    "ItemRendererMixin",
     "MerchantScreenMixin",
     "SheetsMixin"
   ],
