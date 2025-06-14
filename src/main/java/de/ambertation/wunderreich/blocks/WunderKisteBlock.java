@@ -1,5 +1,17 @@
 package de.ambertation.wunderreich.blocks;
 
+import java.util.List;
+import java.util.Map;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import com.google.common.collect.Maps;
+import com.mojang.serialization.MapCodec;
+
+import apple.laf.JRSUIConstants.Direction;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
@@ -12,11 +24,10 @@ import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.LiveBlockManager;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
-
-import com.mojang.serialization.MapCodec;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
@@ -36,7 +47,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -56,18 +66,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
-import com.google.common.collect.Maps;
-
-import java.util.List;
-import java.util.Map;
-import java.util.function.Consumer;
-import java.util.stream.Collectors;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
     public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(properties -> new WunderKisteBlock());
@@ -284,7 +282,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    protected @NotNull ItemInteractionResult useItemOn(
+    protected @NotNull InteractionResult useItemOn(
             ItemStack itemStack,
             BlockState blockState,
             Level level,
@@ -330,17 +328,17 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     if (player instanceof ServerPlayer sp) {
                         WunderreichAdvancements.COLOR_WUNDERKISTE.trigger(sp);
                     }
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 } else {
-                    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
                 }
             } else {
                 BlockPos blockPos2 = blockPos.above();
                 if (level.getBlockState(blockPos2)
                          .isRedstoneConductor(level, blockPos2)) {
-                    return ItemInteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.sidedSuccess(level.isClientSide);
                 } else if (level.isClientSide) {
-                    return ItemInteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;
                 } else {
                     WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) entity;
 
@@ -371,11 +369,11 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     }
 
                     PiglinAi.angerNearbyPiglins(player, true);
-                    return ItemInteractionResult.CONSUME;
+                    return InteractionResult.CONSUME;
                 }
             }
         } else {
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
     }
 
