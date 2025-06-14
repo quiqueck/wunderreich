@@ -15,9 +15,11 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 public class WunderKisteItem extends BlockItem {
@@ -64,18 +66,20 @@ public class WunderKisteItem extends BlockItem {
     public void appendHoverText(
             ItemStack itemStack,
             TooltipContext tooltipContext,
-            List<Component> list,
+            TooltipDisplay tooltipDisplay,
+            Consumer<Component> consumer,
             TooltipFlag tooltipFlag
     ) {
-        super.appendHoverText(itemStack, tooltipContext, list, tooltipFlag);
+        super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
         if (WunderreichRules.Wunderkiste.haveMultiple()) {
             final WunderKisteDomain domain = getDomain(itemStack);
 
             Component domainComponent = WunderreichRules.Wunderkiste.namedNetworks() && itemStack.has(DataComponents.CUSTOM_NAME)
                     ? itemStack.getHoverName()
                     : getDomainComponent(domain);
-            list.add(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent).withStyle(
-                    ChatFormatting.GRAY));
+            consumer.accept(Component.translatable("wunderreich.wunderkiste.domain.HoverText", domainComponent)
+                                     .withStyle(
+                                             ChatFormatting.GRAY));
         }
     }
 }

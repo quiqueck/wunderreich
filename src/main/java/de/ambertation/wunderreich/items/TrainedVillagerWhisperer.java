@@ -1,22 +1,23 @@
 package de.ambertation.wunderreich.items;
 
+import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WHISPERER;
+
+import java.util.List;
+import java.util.function.Consumer;
+
 import de.ambertation.wunderreich.data_components.WhisperData;
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
-
-import static de.ambertation.wunderreich.registries.WunderreichDataComponents.WHISPERER;
-
-import java.util.List;
 
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public TrainedVillagerWhisperer() {
@@ -49,16 +50,17 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public void appendHoverText(
             ItemStack itemStack,
             TooltipContext tooltipContext,
-            List<Component> list,
+            TooltipDisplay tooltipDisplay,
+            Consumer<Component> consumer,
             TooltipFlag tooltipFlag
     ) {
-        super.appendHoverText(itemStack, tooltipContext, list, tooltipFlag);
+        super.appendHoverText(itemStack, tooltipContext, tooltipDisplay, consumer, tooltipFlag);
         final ResourceKey<Enchantment> key = getEnchantment(itemStack);
 
         final var enchantments = tooltipContext.registries().lookup(Registries.ENCHANTMENT).orElse(null);
         if (enchantments != null) {
             enchantments.get(key).ifPresent((enchantment) -> {
-                list.add(WhisperRule.getFullname(enchantment));
+                consumer.accept(WhisperRule.getFullname(enchantment));
             });
         }
     }
