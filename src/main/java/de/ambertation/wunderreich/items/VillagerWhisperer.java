@@ -4,7 +4,6 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 
 public class VillagerWhisperer extends Item {
@@ -20,10 +19,4 @@ public class VillagerWhisperer extends Item {
                 .durability(durability)
         );
     }
-
-    @Override
-    public boolean isEnchantable(ItemStack itemStack) {
-        return false;
-    }
-
 }
