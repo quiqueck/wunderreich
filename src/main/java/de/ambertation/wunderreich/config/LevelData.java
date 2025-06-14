@@ -1,16 +1,16 @@
 package de.ambertation.wunderreich.config;
 
-import de.ambertation.wunderreich.utils.WunderKisteDomain;
-
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.storage.LevelResource;
-import net.minecraft.world.level.storage.LevelStorageSource;
-
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.level.storage.LevelStorageSource;
 
 public class LevelData {
     public final static String DATA_FOLDER = "data";
@@ -68,7 +68,7 @@ public class LevelData {
             liveBlocks = new CompoundTag();
             root.put(LIVEBLOCKS_TAG_NAME, liveBlocks);
         } else {
-            liveBlocks = root.getCompound(LIVEBLOCKS_TAG_NAME);
+            liveBlocks = root.getCompound(LIVEBLOCKS_TAG_NAME).orElseThrow();
         }
 
         if (!liveBlocks.contains(type)) {
@@ -76,7 +76,7 @@ public class LevelData {
             liveBlocks.put(type, item);
             return item;
         } else {
-            return liveBlocks.getCompound(type);
+            return liveBlocks.getCompound(type).orElseThrow();
         }
     }
 
