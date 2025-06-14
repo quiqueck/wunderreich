@@ -25,6 +25,9 @@ def isIDE = properties.containsKey('android.injected.invoked.from.ide')
         || (System.getenv("XPC_SERVICE_NAME") ?: "").contains("intellij")
         || (System.getenv("XPC_SERVICE_NAME") ?: "").contains(".idea")
         || System.getenv("IDEA_INITIAL_DIRECTORY") != null
+        || System.getenv("VSCODE_INJECTION") != null
+        || System.getenv("TERM_PROGRAM") == "vscode"
+        || (System.getenv("XPC_SERVICE_NAME") ?: "").contains("VSCode")
 
 println "IntelliJ: ${isIDE}"
 
