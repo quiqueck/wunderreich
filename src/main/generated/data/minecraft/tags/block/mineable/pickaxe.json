@@ -1,0 +1,468 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:wunder_kiste",
+      "required": false
+    },
+    {
+      "id": "wunderreich:whisper_imprinter",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_concrete_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_terracotta_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_concrete_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_terracotta_wall",
+      "required": false
+    }
+  ]
+}

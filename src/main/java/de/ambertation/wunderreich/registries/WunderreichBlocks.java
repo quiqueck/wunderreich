@@ -106,7 +106,7 @@ public class WunderreichBlocks {
     }
 
     public static void processBlock(ResourceLocation id, Block bl) {
-        WunderreichTags.supplyForBlock(bl);
+
     }
 
     public static BlockBehaviour.Properties makeStoneBlockSettings() {

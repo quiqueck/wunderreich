@@ -15,7 +15,6 @@
     "ServerLevelMixin",
     "ShovelItemMixin",
     "SpreadingSnowyDirtBlockMixin",
-    "TagLoaderMixin",
     "VillagerMixin",
     "despawn.GhastMixin",
     "despawn.MonsterMixin",

@@ -1,0 +1,48 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:acacia_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:birch_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:oak_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:dark_oak_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:jungle_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:crimson_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:warped_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:spruce_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:mangrove_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cherry_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:bamboo_wall",
+      "required": false
+    }
+  ]
+}

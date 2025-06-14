@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:dirt_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:dirt_path_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:coarse_dirt_slab",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,192 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:white_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_wool_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_wool_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_wool_wall",
+      "required": false
+    }
+  ]
+}

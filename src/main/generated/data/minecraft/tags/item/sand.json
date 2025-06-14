@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:sand_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_sand_slab",
+      "required": false
+    }
+  ]
+}

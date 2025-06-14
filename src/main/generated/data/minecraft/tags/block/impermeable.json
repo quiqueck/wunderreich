@@ -1,0 +1,72 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_stained_glass_slab",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_stained_glass_slab",
+      "required": false
+    }
+  ]
+}

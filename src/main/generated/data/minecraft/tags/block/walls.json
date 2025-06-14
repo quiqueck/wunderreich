@@ -1,0 +1,240 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:white_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_wool_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_concrete_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:white_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_gray_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:gray_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:black_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:brown_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:red_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:orange_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:yellow_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:lime_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:green_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cyan_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:light_blue_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:blue_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:purple_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:magenta_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:pink_terracotta_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:acacia_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:birch_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:oak_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:dark_oak_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:jungle_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:crimson_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:warped_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:spruce_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:mangrove_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:cherry_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:bamboo_wall",
+      "required": false
+    }
+  ]
+}

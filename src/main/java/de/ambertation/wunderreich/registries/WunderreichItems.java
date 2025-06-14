@@ -80,7 +80,7 @@ public class WunderreichItems {
     }
 
     public static void processItem(ResourceLocation id, Item itm) {
-        WunderreichTags.supplyForItem(itm);
+
     }
 
     public static void register() {
