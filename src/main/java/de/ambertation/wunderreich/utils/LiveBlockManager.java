@@ -8,11 +8,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.LayeredRegistryAccess;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
@@ -29,9 +32,10 @@ import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
-    public static final TicketType<ChunkPos> TICKET = TicketType.create(
-            "wunderkiste",
-            Comparator.comparingLong(ChunkPos::toLong)
+    private static final int TICKET_RADIUS = 2;
+    public static final TicketType TICKET = LiveBlockManager.registerTicketType(
+            Wunderreich.ID("wunderkiste"),
+            0L, true, TicketType.TicketUse.LOADING_AND_SIMULATION
     );
     public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
     private static final String POSITIONS_TAG = "positions";
@@ -223,9 +227,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             Wunderreich.LOGGER.info("Keep Chunk " + cPos + " in " + level
                     .dimension()
                     .location() + " permanently loaded");
-            server.getChunkSource().chunkMap
-                    .getDistanceManager()
-                    .addRegionTicket(TICKET, cPos, 2, cPos);
+            server.getChunkSource().addTicketWithRadius(TICKET, cPos, TICKET_RADIUS);
         }
     }
 
@@ -249,10 +251,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             Wunderreich.LOGGER.info("Remove Chunk " + cPos + " in " + level
                     .dimension()
                     .location() + " from force loaded list");
-
-            server.getChunkSource().chunkMap
-                    .getDistanceManager()
-                    .removeRegionTicket(TICKET, cPos, 2, cPos);
+            server.getChunkSource().removeTicketWithRadius(TICKET, cPos, TICKET_RADIUS);
         }
     }
 
@@ -366,5 +365,18 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         public Level getLevel() {
             return level;
         }
+    }
+
+    private static TicketType registerTicketType(
+            ResourceLocation location,
+            long timeout,
+            boolean persistent,
+            TicketType.TicketUse ticketUse
+    ) {
+        return Registry.register(
+                BuiltInRegistries.TICKET_TYPE,
+                location,
+                new TicketType(timeout, persistent, ticketUse)
+        );
     }
 }
