@@ -21,6 +21,12 @@ repositories {
     flatDir { dirs 'libs' }
 }
 
+fabricApi {
+    configureDataGeneration() {
+        client = true
+    }
+}
+
 loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
 }

@@ -17,3 +17,4 @@ bin/
 original_assets/
 original_sources/
 .DS_Store
+/src/main/generated/.cache/

@@ -15,6 +15,9 @@
   "icon": "assets/wunderreich/icon.png",
   "environment": "*",
   "entrypoints": {
+    "fabric-datagen": [
+      "de.ambertation.wunderreich.datagen.WunderreichDataGenerator"
+    ],
     "main": [
       "de.ambertation.wunderreich.Wunderreich"
     ],
