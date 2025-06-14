@@ -13,6 +13,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -59,13 +60,19 @@ public class WhispererMenu
         this(i, inventory, ContainerLevelAccess.NULL);
     }
 
+
     public WhispererMenu(int containerId, Inventory inventory, ContainerLevelAccess containerLevelAccess) {
-        super(WunderreichMenuTypes.WHISPERER, containerId, inventory, containerLevelAccess);
+        super(
+                WunderreichMenuTypes.WHISPERER,
+                containerId,
+                inventory,
+                containerLevelAccess,
+                createInputSlotDefinitions()
+        );
         recipes = ImprinterRecipe.getUISortedRecipes();
     }
 
-    @Override
-    protected ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
+    protected static ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {
         return ItemCombinerMenuSlotDefinition
                 .create()
                 .withSlot(INGREDIENT_SLOT_A, INGREDIENT_SLOT_A_X, ROW_Y, itemStack -> true)
@@ -74,14 +81,14 @@ public class WhispererMenu
     }
 
     @ApiStatus.Internal
-    public void createCustomInventorySlots(Inventory inventory) {
+    public void createCustomInventorySlots(Container container) {
         for (int i = 0; i < WhispererMenu.INV_SLOT_START; ++i) {
             for (int k = 0; k < 9; ++k) {
-                this.addSlot(new Slot(inventory, k + i * 9 + 9, 108 + k * 18, 84 + i * 18));
+                this.addSlot(new Slot(container, k + i * 9 + 9, 108 + k * 18, 84 + i * 18));
             }
         }
         for (int i = 0; i < 9; ++i) {
-            this.addSlot(new Slot(inventory, i, 108 + i * 18, 142));
+            this.addSlot(new Slot(container, i, 108 + i * 18, 142));
         }
     }
 
