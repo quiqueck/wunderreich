@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.registries.WunderreichTags;
 import de.ambertation.wunderreich.utils.RandomList;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -49,7 +50,7 @@ public class BuildersTrowel extends Item {
         final RandomList<ItemStack> list = new RandomList<>(9);
 
 
-        for (int i = 0; i < Math.min(9, p.getInventory().items.size()); i++) {
+        for (int i = 0; i < Math.min(9, p.getInventory().getNonEquipmentItems().size()); i++) {
             ItemStack stack = p.getInventory().getItem(i);
             if (stack.getItem() instanceof BlockItem item) {
                 if (bctx.canPlace()) {
@@ -67,12 +68,14 @@ public class BuildersTrowel extends Item {
         int maxTries = 100;
         final BlockPos cPos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
         final Supplier<Float> noise;
-        if (getTier() == Tiers.DIAMOND) noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(
-                seed,
-                cPos.getX() * 0.15,
-                cPos.getY() * 0.2,
-                cPos.getZ() * 0.15
-        )) / 2;
+        final Integer duration = this.components().get(DataComponents.MAX_DAMAGE);
+        if (duration != null && duration >= ToolMaterial.DIAMOND.durability() * 4)
+            noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(
+                    seed,
+                    cPos.getX() * 0.15,
+                    cPos.getY() * 0.2,
+                    cPos.getZ() * 0.15
+            )) / 2;
         else noise = RandomList::random;
 
         do {
