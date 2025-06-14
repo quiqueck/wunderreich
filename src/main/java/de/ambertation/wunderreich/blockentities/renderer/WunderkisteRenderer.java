@@ -26,6 +26,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoubleBlockCombiner;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -35,8 +36,6 @@ import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import org.jetbrains.annotations.NotNull;
 
 @Environment(value = EnvType.CLIENT)
 public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
@@ -74,10 +73,11 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
     public void render(
             WunderKisteBlockEntity blockEntity,
             float f,
-            @NotNull PoseStack poseStack,
-            @NotNull MultiBufferSource multiBufferSource,
+            PoseStack poseStack,
+            MultiBufferSource multiBufferSource,
             int i,
-            int overlayCoords
+            int overlayCoords,
+            Vec3 vec3
     ) {
         final Level level = blockEntity.getLevel();
         final boolean renderInWorld = level != null;

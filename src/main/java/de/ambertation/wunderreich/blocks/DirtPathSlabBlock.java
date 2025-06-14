@@ -8,7 +8,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
@@ -44,7 +43,7 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
         return false;
     }
-    
+
     @Override
     public void tick(BlockState blockState, ServerLevel level, BlockPos blockPos, RandomSource random) {
         if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_SLAB)) return;
@@ -72,9 +71,18 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
             RandomSource randomSource
     ) {
         if (direction == Direction.UP && !blockState.canSurvive(levelReader, blockPos)) {
-            scheduledTickAccess.schedule(blockPos, this, 1);
+            scheduledTickAccess.scheduleTick(blockPos, this, 1);
         }
-        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
+        return super.updateShape(
+                blockState,
+                levelReader,
+                scheduledTickAccess,
+                blockPos,
+                direction,
+                blockPos2,
+                blockState2,
+                randomSource
+        );
     }
 
     @Override

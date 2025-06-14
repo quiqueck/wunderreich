@@ -46,8 +46,8 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
             return false;
         }
 
-        VoxelShape shape = state.getOcclusionShape(blockGetter, pos);
-        VoxelShape aboveShape = aboveState.getOcclusionShape(blockGetter, abovePos);
+        VoxelShape shape = state.getOcclusionShape();
+        VoxelShape aboveShape = aboveState.getOcclusionShape();
         if (!aboveState.useShapeForLightOcclusion() && aboveShape != Shapes.block()) {
             return false;
         }

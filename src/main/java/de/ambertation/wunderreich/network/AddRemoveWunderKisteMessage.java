@@ -61,7 +61,7 @@ public class AddRemoveWunderKisteMessage extends ServerBoundNetworkPayload<AddRe
 
     @Override
     protected void processOnServer(ServerPlayer player, PacketSender responseSender) {
-        this.level = player.serverLevel();
+        this.level = player.level();
     }
 
     @Override
