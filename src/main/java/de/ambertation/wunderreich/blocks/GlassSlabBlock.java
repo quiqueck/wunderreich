@@ -1,19 +1,20 @@
 package de.ambertation.wunderreich.blocks;
 
-import java.util.function.Consumer;
-
-import apple.laf.JRSUIConstants.Direction;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
+
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+
+import java.util.function.Consumer;
 
 public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, CanDropLoot, ChangeRenderLayer {
     public GlassSlabBlock(Block baseBlock) {
