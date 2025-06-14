@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "wunderreich",
-  "version": "21.0.4",
+  "version": "21.6.0",
   "name": "Wunderreich",
   "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
   "authors": [
@@ -45,7 +45,7 @@
     "fabricloader": ">=0.16.0",
     "fabric-api": ">=0.126.0",
     "minecraft": [
-      "1.21.6"
+      "1.21.6-rc.1"
     ],
     "java": ">=21",
     "wunderlib": "21.6.x"
