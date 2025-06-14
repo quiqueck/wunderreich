@@ -47,7 +47,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -75,7 +74,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public static final EnumProperty<WunderKisteDomain> DOMAIN;
     public static final WunderKisteDomain DEFAULT_DOMAIN;
 
-    public static final DirectionProperty FACING;
+    public static final EnumProperty<Direction> FACING;
     public static final BooleanProperty WATERLOGGED;
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
@@ -91,11 +90,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     public WunderKisteBlock() {
-        super(WunderreichBlocks.makeStoneBlockSettings()
-                               .luminance(7)
-                               .requiresTool()
-                               .strength(12.5F, 800.0F)
-                , () -> WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE);
+        super(
+                WunderreichBlocks.makeStoneBlockSettings()
+                                 .luminance(7)
+                                 .requiresTool()
+                                 .strength(12.5F, 800.0F)
+                , () -> WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE
+        );
         this.registerDefaultState(
                 this.stateDefinition
                         .any()
@@ -548,17 +549,18 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     @Override
     public LootTableJsonBuilder buildLootTable() {
         LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
-                                                     .startPool(1.0, 0.0, poolBuilder -> poolBuilder
-                                                             .startAlternatives(altBuilder -> altBuilder
-                                                                     .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
+                                                     .startPool(
+                                                             1.0, 0.0, poolBuilder -> poolBuilder
+                                                                     .startAlternatives(altBuilder -> altBuilder
+                                                                             .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
+                                                                             )
+                                                                             .startItemEntry(
+                                                                                     Items.NETHERITE_SCRAP,
+                                                                                     builder -> builder
+                                                                                             .setCount(4, false)
+                                                                                             .explosionDecay()
+                                                                             )
                                                                      )
-                                                                     .startItemEntry(
-                                                                             Items.NETHERITE_SCRAP,
-                                                                             builder -> builder
-                                                                                     .setCount(4, false)
-                                                                                     .explosionDecay()
-                                                                     )
-                                                             )
                                                      );
 
         return b;

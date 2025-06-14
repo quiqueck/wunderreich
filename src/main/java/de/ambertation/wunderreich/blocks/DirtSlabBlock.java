@@ -9,16 +9,15 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
-
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 
 import java.util.function.Consumer;
 
 public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDropLoot {
     public DirtSlabBlock(Block baseBlock) {
-        super(FabricBlockSettings.copyOf(baseBlock));
+        super(BlockBehaviour.Properties.ofFullCopy(baseBlock));
     }
 
     public static BlockState createStateFrom(Block baseBlock, BlockState currentState) {

@@ -72,15 +72,17 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             saveTimer = new java.util.Timer();
         }
 
-        saveTimer.schedule(new java.util.TimerTask() {
-            @Override
-            public void run() {
-                synchronized (this) {
-                    saveRaw();
-                    cancleScheduledSave();
-                }
-            }
-        }, 10000);
+        saveTimer.schedule(
+                new java.util.TimerTask() {
+                    @Override
+                    public void run() {
+                        synchronized (this) {
+                            saveRaw();
+                            cancleScheduledSave();
+                        }
+                    }
+                }, 10000
+        );
     }
 
     private void saveRaw() {
@@ -121,7 +123,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         CompoundTag tag = LevelData.getInstance().getLiveBlocks(type);
         List<T> list = null;
         if (tag.contains(POSITIONS_TAG)) {
-            ListTag positions = tag.getList(POSITIONS_TAG, Tag.TAG_COMPOUND);
+            ListTag positions = tag.getList(POSITIONS_TAG).orElseThrow();
             list = codec().parse(NbtOps.INSTANCE, positions).resultOrPartial(Wunderreich.LOGGER::error).orElse(null);
         }
 
