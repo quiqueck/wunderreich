@@ -10,6 +10,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.SlabBlock;
@@ -60,18 +61,20 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
     }
 
     @Override
-    public BlockState updateShape(
+    protected BlockState updateShape(
             BlockState blockState,
-            Direction direction,
-            BlockState blockState2,
-            LevelAccessor levelAccessor,
+            LevelReader levelReader,
+            ScheduledTickAccess scheduledTickAccess,
             BlockPos blockPos,
-            BlockPos blockPos2
+            Direction direction,
+            BlockPos blockPos2,
+            BlockState blockState2,
+            RandomSource randomSource
     ) {
-        if (direction == Direction.UP && !blockState.canSurvive(levelAccessor, blockPos)) {
-            levelAccessor.scheduleTick(blockPos, this, 1);
+        if (direction == Direction.UP && !blockState.canSurvive(levelReader, blockPos)) {
+            scheduledTickAccess.schedule(blockPos, this, 1);
         }
-        return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
     }
 
     @Override

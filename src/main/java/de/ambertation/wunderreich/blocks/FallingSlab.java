@@ -9,7 +9,8 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.FallingBlock;
 import net.minecraft.world.level.block.state.BlockState;
@@ -41,16 +42,27 @@ public class FallingSlab extends DirtSlabBlock {
     }
 
     @Override
-    public BlockState updateShape(
-            @NotNull BlockState blockState,
-            @NotNull Direction direction,
-            @NotNull BlockState blockState2,
-            LevelAccessor levelAccessor,
-            @NotNull BlockPos blockPos,
-            @NotNull BlockPos blockPos2
+    protected BlockState updateShape(
+            BlockState blockState,
+            LevelReader levelReader,
+            ScheduledTickAccess scheduledTickAccess,
+            BlockPos blockPos,
+            Direction direction,
+            BlockPos blockPos2,
+            BlockState blockState2,
+            RandomSource randomSource
     ) {
-        levelAccessor.scheduleTick(blockPos, this, this.getDelayAfterPlace());
-        return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+        scheduledTickAccess.scheduleTick(blockPos, this, this.getDelayAfterPlace());
+        return super.updateShape(
+                blockState,
+                levelReader,
+                scheduledTickAccess,
+                blockPos,
+                direction,
+                blockPos2,
+                blockState2,
+                randomSource
+        );
     }
 
     public BlockState makeState(BlockState state, SlabType type) {
@@ -64,7 +76,7 @@ public class FallingSlab extends DirtSlabBlock {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
         SlabType belowType = (SlabType) below.getValues().get(TYPE);
 
-        if ((FallingBlock.isFree(below) || (belowType != null && belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinBuildHeight()) {
+        if ((FallingBlock.isFree(below) || (belowType != null && belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinY()) {
             BlockState state = serverLevel.getBlockState(blockPos);
 
             SlabType type = (SlabType) state.getValues().get(TYPE);

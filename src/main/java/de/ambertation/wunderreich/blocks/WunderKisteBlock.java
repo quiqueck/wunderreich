@@ -38,6 +38,8 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -234,19 +236,22 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 : super.getFluidState(blockState);
     }
 
-    public BlockState updateShape(
+    @Override
+    protected BlockState updateShape(
             BlockState blockState,
-            @NotNull Direction direction,
-            @NotNull BlockState blockState2,
-            @NotNull LevelAccessor levelAccessor,
-            @NotNull BlockPos blockPos,
-            @NotNull BlockPos blockPos2
+            LevelReader levelReader,
+            ScheduledTickAccess scheduledTickAccess,
+            BlockPos blockPos,
+            Direction direction,
+            BlockPos blockPos2,
+            BlockState blockState2,
+            RandomSource randomSource
     ) {
         if (blockState.getValue(WATERLOGGED)) {
-            levelAccessor.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelAccessor));
+            scheduledTickAccess.schedule(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
         }
 
-        return super.updateShape(blockState, direction, blockState2, levelAccessor, blockPos, blockPos2);
+        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
     }
 
     public boolean isPathfindable(
