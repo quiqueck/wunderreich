@@ -156,14 +156,12 @@ public class StonecutterJsonBuilder {
         json.addProperty("type", "minecraft:stonecutting");
 
 
-        JsonObject ing = new JsonObject();
         final ResourceLocation ingredientLoc = getKey(ingredient);
         if (ingredientLoc == null) {
             Wunderreich.LOGGER.info("Ignoring Stonecutter-Recipe for " + this.ID + " due to missing ingredient.");
             return null;
         }
-        ing.addProperty("item", ingredientLoc.toString());
-        json.add("ingredient", ing);
+        json.addProperty("ingredient", ingredientLoc.toString());
 
 
         final ResourceLocation resLoc = getKey(resultItem);
