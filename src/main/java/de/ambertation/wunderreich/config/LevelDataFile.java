@@ -7,7 +7,6 @@ import net.minecraft.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import net.minecraft.nbt.Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -110,22 +109,25 @@ public class LevelDataFile {
 
             //we found the initial file format => convert it to the new one
             if (root.contains(OLD_GLOBAL_TAG_NAME)) {
-                wunderkiste.put(WunderKisteBlock.DEFAULT_DOMAIN.toString(), root.getCompound(OLD_GLOBAL_TAG_NAME));
+                wunderkiste.put(
+                        WunderKisteBlock.DEFAULT_DOMAIN.toString(),
+                        root.getCompound(OLD_GLOBAL_TAG_NAME).orElseThrow()
+                );
                 root.remove(OLD_GLOBAL_TAG_NAME);
             }
 
             root.put(WUNDERKISTE_TAG_NAME, wunderkiste);
         } else {
-            wunderkiste = root.getCompound(WUNDERKISTE_TAG_NAME);
+            wunderkiste = root.getCompound(WUNDERKISTE_TAG_NAME).orElseThrow();
         }
 
-        if (wunderkiste.contains(domain, Tag.TAG_COMPOUND)) {
-            return wunderkiste.getCompound(domain);
-        } else {
-            CompoundTag global = new CompoundTag();
-            wunderkiste.put(domain, global);
-            return global;
+        CompoundTag wunderkisteDomain = wunderkiste.getCompound(domain).orElse(null);
+        if (wunderkisteDomain == null) {
+            wunderkisteDomain = new CompoundTag();
+            wunderkiste.put(domain, wunderkisteDomain);
+
         }
+        return wunderkisteDomain;
     }
 
     public @NotNull CompoundTag getRoot() {
