@@ -1,10 +1,5 @@
 package de.ambertation.wunderreich.client;
 
-import java.util.Map;
-import java.util.function.Consumer;
-
-import com.google.common.collect.Maps;
-
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
@@ -14,18 +9,25 @@ import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.GrassColor;
+
+import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
+
+import com.google.common.collect.Maps;
+
+import java.util.Map;
+import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
@@ -75,6 +77,25 @@ public class WunderreichClient implements ClientModInitializer {
             }
         });
 
+        /*
+         * Color Provider Registration for Grass Slab Block and Item
+         *
+         * BLOCK COLOR PROVIDER:
+         * - Registered using ColorProviderRegistry.BLOCK.register() as usual
+         * - Applies grass biome tinting to tintindex 0 faces in the block model
+         *
+         * ITEM COLOR PROVIDER (Minecraft 1.21.4+):
+         * - Item colors are now defined in item model definitions using the new tint system
+         * - The grass_slab item model (in models/item/grass_slab.json) uses:
+         *   - "type": "grass" for automatic grass color tinting
+         *   - "default": 7455580 as fallback color
+         * - This replaces the old ColorProviderRegistry.ITEM.register() approach
+         *
+         * The block model (models/block/grass_slab.json) has tintindex: 0 on:
+         * - Top face: "top" texture (grass_block_top)
+         * - Side overlays: "overlay" texture (grass_block_side_overlay)
+         */
+
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)) {
             ColorProviderRegistry.BLOCK.register(
                     (state, view, pos, tintIndex) -> {
@@ -84,11 +105,6 @@ public class WunderreichClient implements ClientModInitializer {
 
                         return 0xffffffff;
                     }, WunderreichSlabBlocks.GRASS_SLAB
-            );
-
-            ColorProviderRegistry.ITEM.register(
-                    (item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
-                    WunderreichSlabBlocks.GRASS_SLAB
             );
         }
     }

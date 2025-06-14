@@ -1,3 +1,12 @@
 {
-    "parent": "wunderreich:block/grass_slab"
+    "model": {
+        "type": "model",
+        "model": "wunderreich:block/grass_slab",
+        "tints": [
+            {
+                "type": "grass",
+                "default": 7455580
+            }
+        ]
+    }
 }
