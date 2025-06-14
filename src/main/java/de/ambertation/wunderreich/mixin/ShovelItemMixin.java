@@ -54,7 +54,7 @@ public class ShovelItemMixin {
                     }
                 }
 
-                cir.setReturnValue(InteractionResult.sidedSuccess(level.isClientSide));
+                cir.setReturnValue(InteractionResult.SUCCESS);
                 cir.cancel();
             }
         }
