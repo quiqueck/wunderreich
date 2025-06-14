@@ -8,7 +8,7 @@ import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.loot.LootTableJsonBuilder;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
+import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.LiveBlockManager;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
@@ -35,11 +35,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
-import net.minecraft.world.level.ScheduledTickAccess;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -204,10 +200,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return SHAPE;
     }
 
-    public RenderShape getRenderShape(@NotNull BlockState blockState) {
-        return RenderShape.ENTITYBLOCK_ANIMATED;
-    }
-
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext blockPlaceContext) {
         FluidState fluidState = blockPlaceContext.getLevel()
@@ -248,10 +240,19 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             RandomSource randomSource
     ) {
         if (blockState.getValue(WATERLOGGED)) {
-            scheduledTickAccess.schedule(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
+            scheduledTickAccess.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(levelReader));
         }
 
-        return super.updateShape(blockState, levelReader, scheduledTickAccess, blockPos, direction, blockPos2, blockState2, randomSource);
+        return super.updateShape(
+                blockState,
+                levelReader,
+                scheduledTickAccess,
+                blockPos,
+                direction,
+                blockPos2,
+                blockState2,
+                randomSource
+        );
     }
 
     public boolean isPathfindable(
@@ -335,15 +336,15 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     if (player instanceof ServerPlayer sp) {
                         WunderreichAdvancements.COLOR_WUNDERKISTE.trigger(sp);
                     }
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 } else {
-                    return InteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                    return InteractionResult.PASS;
                 }
             } else {
                 BlockPos blockPos2 = blockPos.above();
                 if (level.getBlockState(blockPos2)
                          .isRedstoneConductor(level, blockPos2)) {
-                    return InteractionResult.sidedSuccess(level.isClientSide);
+                    return InteractionResult.SUCCESS;
                 } else if (level.isClientSide) {
                     return InteractionResult.SUCCESS;
                 } else {
@@ -375,12 +376,14 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                         WunderreichAdvancements.OPEN_WUNDERKISTE.trigger(sp);
                     }
 
-                    PiglinAi.angerNearbyPiglins(player, true);
+                    if (level instanceof ServerLevel serverLevel) {
+                        PiglinAi.angerNearbyPiglins(serverLevel, player, true);
+                    }
                     return InteractionResult.CONSUME;
                 }
             }
         } else {
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.SUCCESS;
         }
     }
 
@@ -477,25 +480,15 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         super.onPlace(blockState, level, blockPos, blockState2, bl);
     }
 
-    @Deprecated
-    public void onRemove(
-            @NotNull BlockState blockState,
-            @NotNull Level level,
-            @NotNull BlockPos blockPos,
-            @NotNull BlockState blockState2,
+    @Override
+    protected void affectNeighborsAfterRemoval(
+            BlockState blockState,
+            ServerLevel serverLevel,
+            BlockPos blockPos,
             boolean bl
     ) {
-        super.onRemove(blockState, level, blockPos, blockState2, bl);
-
-        if (level instanceof ServerLevel serverLevel) {
-            AddRemoveWunderKisteMessage.removedBox(serverLevel, blockPos);
-        } else {
-            AddRemoveWunderKisteMessage.send(false, blockPos);
-        }
-        if (blockState.hasBlockEntity() && !blockState.is(blockState2.getBlock())) {
-            //liveBlocks.remove(blockPos);
-            //AddRemoveWunderKisteMessage.INSTANCE.send(false, blockPos);
-        }
+        super.affectNeighborsAfterRemoval(blockState, serverLevel, blockPos, bl);
+        AddRemoveWunderKisteMessage.removedBox(serverLevel, blockPos);
     }
 
     @Override

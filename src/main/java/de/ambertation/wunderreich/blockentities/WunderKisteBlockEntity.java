@@ -7,10 +7,8 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Nameable;
@@ -21,6 +19,8 @@ import net.minecraft.world.level.block.entity.ChestLidController;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,19 +31,15 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     private Component domainName;
 
     @Override
-    protected void loadAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.loadAdditional(compoundTag, provider);
-        if (compoundTag.contains("CustomName", Tag.TAG_STRING)) {
-            this.domainName = Component.Serializer.fromJson(compoundTag.getString("CustomName"), provider);
-        }
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        valueInput.read("CustomName", ComponentSerialization.CODEC).ifPresent(name -> this.domainName = name);
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag, HolderLookup.Provider provider) {
-        super.saveAdditional(compoundTag, provider);
-        if (this.domainName != null) {
-            compoundTag.putString("CustomName", Component.Serializer.toJson(this.domainName, provider));
-        }
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        valueOutput.storeNullable("CustomName", ComponentSerialization.CODEC, this.domainName);
     }
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
