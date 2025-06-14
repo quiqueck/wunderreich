@@ -6,7 +6,6 @@
   "mixins": [
     "AbstractVillagerMixin",
     "ItemCombinerMenuMixin",
-    "LootTablesMixin",
     "MerchantMenuMixin",
     "MinecraftServerMixin",
     "PlayerMixin",

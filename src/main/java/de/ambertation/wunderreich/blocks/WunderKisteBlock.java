@@ -6,7 +6,7 @@ import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.interfaces.*;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
-import de.ambertation.wunderreich.loot.LootTableJsonBuilder;
+import de.ambertation.wunderreich.loot.LootTableHelper;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.LiveBlockManager;
@@ -553,23 +553,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public LootTableJsonBuilder buildLootTable() {
-        LootTableJsonBuilder b = LootTableJsonBuilder.create(this)
-                                                     .startPool(
-                                                             1.0, 0.0, poolBuilder -> poolBuilder
-                                                                     .startAlternatives(altBuilder -> altBuilder
-                                                                             .startSelfEntry(LootTableJsonBuilder.EntryBuilder::silkTouch
-                                                                             )
-                                                                             .startItemEntry(
-                                                                                     Items.NETHERITE_SCRAP,
-                                                                                     builder -> builder
-                                                                                             .setCount(4, false)
-                                                                                             .explosionDecay()
-                                                                             )
-                                                                     )
-                                                     );
-
-        return b;
+    public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
+        provider.dropSilkTouchOrElse(
+                this,
+                Items.NETHERITE_SCRAP,
+                4
+        );
     }
 
     @Override
