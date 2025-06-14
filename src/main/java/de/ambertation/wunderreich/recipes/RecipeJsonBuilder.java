@@ -1,10 +1,20 @@
 package de.ambertation.wunderreich.recipes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
-
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -12,12 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-
-import java.util.*;
 
 public class RecipeJsonBuilder {
     private static final ThreadLocal<RecipeJsonBuilder> BUILDER = ThreadLocal.withInitial(RecipeJsonBuilder::new);
@@ -96,13 +100,12 @@ public class RecipeJsonBuilder {
     }
 
     public RecipeJsonBuilder material(Character c, ItemStack... items) {
-        return material(c, Ingredient.of(items));
+        return material(c, Ingredient.of(Arrays.stream(items).map(ItemStack::getItem)));
     }
 
     public RecipeJsonBuilder material(Character c, Ingredient ing) {
-        canBuild &= Arrays
-                .stream(ing.getItems())
-                .map(ItemStack::getItem)
+        canBuild &= ing.items()
+                .map(holder -> holder.value())
                 .map(RecipeJsonBuilder::isEnabled)
                 .noneMatch(v -> !v);
 
@@ -122,8 +125,8 @@ public class RecipeJsonBuilder {
     public JsonElement registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType type) {
         List<Item> items = new ArrayList<>(materials.size());
         for (var mat : materials.values()) {
-            for (var item : mat.getItems()) {
-                items.add(item.getItem());
+            for (var holder : mat.items().toList()) {
+                items.add(holder.value());
             }
         }
         return registerAndCreateAdvancement(type, items);
@@ -189,20 +192,18 @@ public class RecipeJsonBuilder {
 
         for (var mat : materials.entrySet()) {
             Ingredient ing = mat.getValue();
-            ItemStack[] items = ing.getItems();
+            List<Holder<Item>> holders = ing.items().toList();
 
             individualContainer = new JsonArray();
-            for (ItemStack stack : items) {
+            for (Holder<Item> holder : holders) {
                 individualKey = new JsonObject();
-                final ResourceLocation il = getKey(stack.getItem());
+                final ResourceLocation il = getKey(holder.value());
                 if (il == null) {
                     Wunderreich.LOGGER.info("Ignoring Recipe for " + this.ID + " due to missing item.");
                     return null;
                 }
                 individualKey.addProperty("item", il.toString());
-                if (stack.getCount() > 1) {
-                    individualKey.addProperty("count", stack.getCount());
-                }
+                // Note: Individual holders don't have count, so we don't add count property
                 individualContainer.add(individualKey);
             }
             keyList.add(mat.getKey() + "", individualContainer);
