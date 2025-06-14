@@ -64,7 +64,7 @@ public class WunderreichClient implements ClientModInitializer {
 
         BuiltInRegistries.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {
-                BlockRenderLayerMap.INSTANCE.putBlock(block, view.getRenderType());
+                BlockRenderLayerMap.putBlocks(view.getRenderType(), block);
             }
 
             if (block instanceof BlockEntityProvider view) {
@@ -76,13 +76,15 @@ public class WunderreichClient implements ClientModInitializer {
         });
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)) {
-            ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> {
-                if (tintIndex == 0) return view != null && pos != null
-                        ? BiomeColors.getAverageGrassColor(view, pos)
-                        : GrassColor.get(0.5D, 1.0D);
+            ColorProviderRegistry.BLOCK.register(
+                    (state, view, pos, tintIndex) -> {
+                        if (tintIndex == 0) return view != null && pos != null
+                                ? BiomeColors.getAverageGrassColor(view, pos)
+                                : GrassColor.get(0.5D, 1.0D);
 
-                return 0xffffffff;
-            }, WunderreichSlabBlocks.GRASS_SLAB);
+                        return 0xffffffff;
+                    }, WunderreichSlabBlocks.GRASS_SLAB
+            );
 
             ColorProviderRegistry.ITEM.register(
                     (item, tintIndex) -> GrassColor.get(0.5D, 1.0D),
