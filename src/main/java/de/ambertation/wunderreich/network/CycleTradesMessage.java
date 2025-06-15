@@ -134,8 +134,8 @@ public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMes
         if (villager == null || villager.getVillagerXp() > 0) return false;
 
         VillagerData villagerData = villager.getVillagerData();
-        VillagerProfession profession = villagerData.profession().value();
-        if (profession == null || !VillagerProfession.LIBRARIAN.equals(profession)) return false;
+        final Holder<VillagerProfession> professionHoler = villagerData.profession();
+        if (!professionHoler.is(VillagerProfession.LIBRARIAN)) return false;
         //if (profession == null || !PoiType.LIBRARIAN.equals(profession.getJobPoiType())) return false;
 
         ClosestWhisperer whispererStack = getClosestWhisperer(villager, doLog);

@@ -35,6 +35,7 @@ public class CycleTradesButton extends Button {
     private static final ResourceLocation PAGE_FORWARD_SPRITE = ResourceLocation.withDefaultNamespace(
             "widget/page_forward");
 
+    private static final int HALF_WIDTH = 11;
     public static final int WIDTH = 23;
     private static final int HALF_HEIGHT = 13;
     public static final int HEIGHT = HALF_HEIGHT * 2;
@@ -90,19 +91,19 @@ public class CycleTradesButton extends Button {
                 arrowLocation,
                 this.getX(),
                 getY() + HALF_HEIGHT - 3,
-                23,
-                13
+                WIDTH,
+                HALF_HEIGHT
         );
 
         guiGraphics.pose().pushMatrix();
-        guiGraphics.pose().rotateAbout(180, getX(), getY());
+        guiGraphics.pose().rotateAbout((float) Math.PI, getX(), getY());
         guiGraphics.blitSprite(
                 RenderPipelines.GUI_TEXTURED,
                 arrowLocation,
                 getX() - WIDTH,
                 getY() - HALF_HEIGHT,
-                23,
-                13
+                WIDTH,
+                HALF_HEIGHT
         );
         guiGraphics.pose().popMatrix();
 
