@@ -79,6 +79,8 @@ def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
 modrinth {
+    println "Start Uploading to Modrinth ..."
+
     def changes = new File(projectDir, "CHANGES.md")
     if (changes.exists()) {
         changes = changes.getText('UTF-8')
@@ -111,7 +113,7 @@ modrinth {
             optional.project dep
         }
     }
-    debugMode = true
+    debugMode = false
 }
 
 curseforge {
