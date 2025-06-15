@@ -20,7 +20,7 @@ import java.util.Map;
 @Mixin(SpecialModelRenderers.class)
 public class SpecialModelRenderersMixin {
 
-    @Inject(method = "bootstrap", at = @At("HEAD"), remap = false)
+    @Inject(method = "bootstrap", at = @At("HEAD"))
     private static void wunderreich_bootstrap(CallbackInfo ci) {
         SpecialModelRenderers.ID_MAPPER.put(
                 Wunderreich.ID("wunder_kiste"),
@@ -28,13 +28,13 @@ public class SpecialModelRenderersMixin {
         );
     }
 
+
     @WrapOperation(
             method = "createBlockRenderers",
             at = @At(
                     value = "INVOKE",
                     target = "Ljava/util/Map;put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;"
-            ),
-            remap = false
+            )
     )
     private static Object wunderreich_createBlockRenderers(
             Map<Block, SpecialModelRenderer.Unbaked> map,
