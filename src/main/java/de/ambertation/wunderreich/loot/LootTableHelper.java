@@ -105,6 +105,9 @@ public class LootTableHelper {
                                                                             count)))
                                                     )
                                             )
+                            )
+                            .withPool(
+                                    LootPool.lootPool()
                                             .when(provider.hasSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
                                             .add(
