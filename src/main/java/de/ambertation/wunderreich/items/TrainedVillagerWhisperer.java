@@ -44,6 +44,7 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
 
     public static void addAllVariants(List<ItemStack> itemList) {
         ImprinterRecipe.getAllVariants()
+                       .filter(r -> r != null)
                        .forEach(r -> itemList.add(createForEnchantment(r.enchantment)));
     }
 
