@@ -1,10 +1,14 @@
 buildscript {
     dependencies {
         classpath 'org.kohsuke:github-api:1.114'
+        classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.1.26'
     }
 
     repositories {
         gradlePluginPortal()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 }
 def env = System.getenv()
@@ -116,8 +120,58 @@ modrinth {
     debugMode = false
 }
 
+
+task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
+    def slurper = new groovy.json.JsonSlurper()
+    def projectID = project.archives_base_name
+    apiToken = new File(projectDir, "../CURSEFORGE_TOKEN")
+    if (apiToken.exists()) {
+        apiToken = apiToken.text
+    } else {
+        apiKey = ""
+    }
+
+    def numericId = findProperty('curseforge_id')
+    def mainFile = upload(numericId, remapJar.outputs)
+
+    def changes = new File(projectDir, "CHANGES.md")
+    if (changes.exists()) {
+        changes = changes.getText('UTF-8')
+    } else {
+        changes = ""
+    }
+    mainFile.changelogType = 'markdown'
+    mainFile.changelog = changes
+
+    mainFile.releaseType = project.release_channel
+
+    def versions = slurper.parseText(project.modrinth_versions);
+    def latestVersion = ''
+    for (v in versions) {
+        mainFile.addGameVersion v
+        latestVersion = "[$v]"
+    }
+
+    mainFile.addModLoader('Fabric')
+    mainFile.addJavaVersion('Java 21')
+    mainFile.displayName = "$projectID-$project.version $latestVersion"
+
+    requiredDependencies.each { dep ->
+        mainFile.addRequirement dep
+    }
+
+    optionalDependencies.each { dep ->
+        mainFile.addOptional dep
+    }
+
+    debugMode = true
+}
+
+
 curseforge {
-    def projectID = findProperty('modrinth_id') ?: project.archives_base_name
+    def projectID = project.archives_base_name
+
+
     def slurper = new groovy.json.JsonSlurper()
     apiKey = new File(projectDir, "../CURSEFORGE_TOKEN")
     if (apiKey.exists()) {
@@ -125,7 +179,7 @@ curseforge {
     } else {
         apiKey = ""
     }
-
+    println "Start Uploading " + projectID + " to Curseforge ..."
     def changes = new File(projectDir, "CHANGES.md")
     if (changes.exists()) {
         changes = changes.getText('UTF-8')
@@ -134,7 +188,7 @@ curseforge {
     }
 
     project {
-        id = project.curseforge_id
+        id = findProperty('curseforge_id')
         changelogType = 'markdown'
         changelog = changes
         releaseType = project.release_channel
@@ -162,7 +216,6 @@ curseforge {
             mainArtifact(remapJar.outputs)
         }
     }
-
     options {
         debug = false
         forgeGradleIntegration = false
