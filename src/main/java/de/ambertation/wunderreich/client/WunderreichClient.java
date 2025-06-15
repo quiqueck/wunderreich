@@ -8,9 +8,7 @@ import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
-import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
@@ -27,7 +25,6 @@ import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
-import java.util.function.Consumer;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
@@ -46,16 +43,6 @@ public class WunderreichClient implements ClientModInitializer {
     public static Material getWunderkisteColor(String name) {
         return WUNDERKISTE_MATERIALS.computeIfAbsent(name, WunderreichClient::chestMaterial);
     }
-
-    public static void getAllWunderkisteMaterials(Consumer<Material> consumer) {
-        //this ensures that all static fields are loaded before we register the materials
-        WunderKisteDomain.WHITE.getMaterial();
-        for (Map.Entry<String, Material> entry : WUNDERKISTE_MATERIALS.entrySet()) {
-            consumer.accept(entry.getValue());
-        }
-    }
-
-    private static KeyMapping transformKey;
 
     @Override
     public void onInitializeClient() {
@@ -88,7 +75,6 @@ public class WunderreichClient implements ClientModInitializer {
          * - Item colors are now defined in item model definitions using the new tint system
          * - The grass_slab item model (in models/item/grass_slab.json) uses:
          *   - "type": "grass" for automatic grass color tinting
-         *   - "default": 7455580 as fallback color
          * - This replaces the old ColorProviderRegistry.ITEM.register() approach
          *
          * The block model (models/block/grass_slab.json) has tintindex: 0 on:

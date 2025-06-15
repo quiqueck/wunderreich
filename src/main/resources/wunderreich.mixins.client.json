@@ -6,9 +6,9 @@
   "mixins": [
   ],
   "client": [
-    "ItemRendererMixin",
     "MerchantScreenMixin",
-    "SheetsMixin"
+    "SheetsMixin",
+    "SpecialModelRenderersMixin"
   ],
   "injectors": {
     "defaultRequire": 1

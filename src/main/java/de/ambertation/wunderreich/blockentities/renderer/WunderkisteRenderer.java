@@ -87,7 +87,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         if (!renderInWorld) blockState = blockState.setValue(ChestBlock.FACING, Direction.SOUTH);
 
         if ((blockState.getBlock() instanceof AbstractChestBlock abstractChestBlock)) {
-            final WunderKisteDomain d = WunderreichRules.Wunderkiste.showColors()
+            final WunderKisteDomain domain = WunderreichRules.Wunderkiste.showColors()
                     ? WunderKisteServerExtension.getDomain(blockState)
                     : WunderKisteBlock.DEFAULT_DOMAIN;
 
@@ -105,7 +105,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             openness = 1.0f - openness * openness * openness;
 
             final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
-            Material material = d.getMaterial();
+            Material material = domain.getMaterial();
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
             this.render(
                     poseStack,
@@ -116,11 +116,11 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                     openness,
                     uv2,
                     overlayCoords,
-                    d.overlayColor
+                    domain.overlayColor
             );
 
             if (openness > 0) {
-                material = getTopMaterial(d);
+                material = getTopMaterial(domain);
                 vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
                 this.renderAnimTop(
                         poseStack,
@@ -128,7 +128,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
                         this.bottom,
                         uv2,
                         overlayCoords,
-                        d.color
+                        domain.color
                 );
             }
             poseStack.popPose();

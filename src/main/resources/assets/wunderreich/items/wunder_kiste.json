@@ -3,8 +3,7 @@
     "type": "minecraft:special",
     "base": "wunderreich:item/wunder_kiste",
     "model": {
-      "type": "minecraft:chest",
-      "texture": "wunderreich:wunder_kiste"
+      "type": "wunderreich:wunder_kiste"
     }
   }
 }
