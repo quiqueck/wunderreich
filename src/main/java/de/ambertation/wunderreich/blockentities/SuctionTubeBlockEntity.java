@@ -49,6 +49,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     private static final Direction[] DIRECTIONS = {
             Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
+
     // Randomized order of container indices to try transferring from
     private static final int[] CONTAINER_INDEX_ORDER = {0, 1, 2, 3, 4};
 
@@ -60,8 +61,17 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         Container destContainer = getContainerAt(level, abovePos);
 
         if (destContainer == null) return;
+
+        // Get redstone disable mask
+        int redstoneDisableMask = getRedstoneDisableMask();
+
         //randomly pick one available container to transfer from without adding a new datastructure
         for (int i : CONTAINER_INDEX_ORDER) {
+            // Check if this direction is disabled by redstone
+            if (isDirectionDisabledByRedstone(DIRECTIONS[i], redstoneDisableMask)) {
+                continue; // Skip this direction
+            }
+
             Container c = getContainerAt(level, worldPosition.relative(DIRECTIONS[i]));
             if (c != null && transferItemFromTo(c, destContainer, DIRECTIONS[i])) {
                 shuffleSourceContainerOrder();
@@ -79,6 +89,65 @@ public class SuctionTubeBlockEntity extends BlockEntity {
             CONTAINER_INDEX_ORDER[cIndx] = CONTAINER_INDEX_ORDER[randomIndex];
             CONTAINER_INDEX_ORDER[randomIndex] = temp;
         }
+    }
+
+    /**
+     * Gets the redstone disable mask by checking redstone signals from all horizontal directions.
+     * The signal strength from each direction is treated as a bitmask.
+     *
+     * @return Combined redstone disable mask
+     */
+    private int getRedstoneDisableMask() {
+        if (level == null) return 0;
+
+        int combinedMask = 0;
+
+        // Check redstone signal from each horizontal direction
+        for (int i = 1; i < DIRECTIONS.length; i++) { // Start from 1 to skip DOWN
+            Direction direction = DIRECTIONS[i];
+            BlockPos signalPos = worldPosition.relative(direction);
+            int signalStrength = level.getSignal(signalPos, direction);
+
+            // Use the signal strength as a bitmask
+            combinedMask |= signalStrength;
+        }
+
+        return combinedMask;
+    }
+
+    /**
+     * Checks if a specific direction is disabled by the redstone signal.
+     *
+     * @param direction           The direction to check
+     * @param redstoneDisableMask The redstone disable mask
+     * @return true if the direction is disabled
+     */
+    private boolean isDirectionDisabledByRedstone(Direction direction, int redstoneDisableMask) {
+        // DOWN (bottom) is controlled by horizontal redstone inputs
+        if (direction == Direction.DOWN) {
+            // Find which redstone input controls the bottom face
+            // This is determined by which direction has a redstone signal
+            for (int bitIndex = 1; bitIndex < DIRECTIONS.length; bitIndex++) {
+                Direction redstoneDirection = DIRECTIONS[bitIndex];
+                BlockPos signalPos = worldPosition.relative(redstoneDirection);
+                int signalStrength = level.getSignal(signalPos, redstoneDirection);
+
+                if (signalStrength > 0) {
+                    // Check if the bit corresponding to this redstone input direction is set
+                    return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
+                }
+            }
+            return false;
+        }
+
+        // For horizontal directions, check the corresponding bit
+        for (int bitIndex = 1; bitIndex < DIRECTIONS.length; bitIndex++) {
+            if (DIRECTIONS[bitIndex] == direction) {
+                return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
+            }
+        }
+
+        return false;
     }
 
     @Nullable
