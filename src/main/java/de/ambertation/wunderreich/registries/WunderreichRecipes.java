@@ -100,6 +100,25 @@ public class WunderreichRecipes {
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                         Items.DIAMOND
                 ));
+
+        RecipeJsonBuilder
+                .create("suction_tube")
+                .result(WunderreichBlocks.SUCTION_TUBE)
+                .pattern(
+                        "IPI",
+                        "IHI",
+                        "IRI"
+                )
+                .material('I', Items.IRON_INGOT)
+                .material('P', Items.STICKY_PISTON)
+                .material('H', Blocks.HOPPER)
+                .material('R', Items.REDSTONE)
+                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                        Items.IRON_INGOT,
+                        Items.STICKY_PISTON,
+                        Blocks.HOPPER.asItem(),
+                        Items.REDSTONE
+                ));
     }
 
     public static void createSlabRecipe(String name, Block baseBlock, Block block) {

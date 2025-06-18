@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.Configs;
@@ -36,6 +37,11 @@ public class WunderreichBlocks {
             "whisper_imprinter",
             null,
             (baseBlock, key) -> new WhisperImprinter(key), Configs.MAIN.enableWhispers.get()
+    );
+    public static final Block SUCTION_TUBE = registerBlock(
+            "suction_tube",
+            null,
+            (baseBlock, key) -> new SuctionTube(key)
     );
 
 

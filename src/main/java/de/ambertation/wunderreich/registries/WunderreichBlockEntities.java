@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 
 import net.minecraft.core.Registry;
@@ -25,5 +26,10 @@ public class WunderreichBlockEntities {
     public static BlockEntityType<WunderKisteBlockEntity> BLOCK_ENTITY_WUNDER_KISTE = registerBlockEntity(
             "wunder_kiste_block_entity",
             FabricBlockEntityTypeBuilder.create(WunderKisteBlockEntity::new, WunderreichBlocks.WUNDER_KISTE)
+    );
+
+    public static BlockEntityType<SuctionTubeBlockEntity> BLOCK_ENTITY_SUCTION_TUBE = registerBlockEntity(
+            "suction_tube_block_entity",
+            FabricBlockEntityTypeBuilder.create(SuctionTubeBlockEntity::new, WunderreichBlocks.SUCTION_TUBE)
     );
 }
