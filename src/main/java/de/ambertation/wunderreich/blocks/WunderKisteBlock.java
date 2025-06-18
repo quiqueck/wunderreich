@@ -524,9 +524,21 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         return WunderkisteRenderer::new;
     }
 
+    @Override
+    protected @NotNull ItemStack getCloneItemStack(
+            LevelReader levelReader,
+            BlockPos blockPos,
+            BlockState blockState,
+            boolean bl
+    ) {
+        var stack = new ItemStack(this.asItem());
+        WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
+        WunderKisteItem.setDomain(stack, domain);
+        return stack;
+    }
 
     @Override
-    public List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
+    public @NotNull List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
         BlockEntity entity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         return super.getDrops(blockState, builder).stream().map(stack -> {
             if (stack.getItem() instanceof WunderKisteItem item) {
@@ -562,7 +574,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    protected MapCodec<? extends AbstractChestBlock<WunderKisteBlockEntity>> codec() {
+    protected @NotNull MapCodec<? extends AbstractChestBlock<WunderKisteBlockEntity>> codec() {
         return CODEC;
     }
 }
