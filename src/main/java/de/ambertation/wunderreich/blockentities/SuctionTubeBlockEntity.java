@@ -13,14 +13,18 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
 public class SuctionTubeBlockEntity extends BlockEntity {
     private int transferCooldown = 0;
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
+    private final Random random = new Random();
 
     public SuctionTubeBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
+
+        shuffleSourceContainerOrder();
     }
 
     public SuctionTubeBlockEntity(
@@ -33,7 +37,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SuctionTubeBlockEntity blockEntity) {
         if (level.isClientSide) return;
-        
+
         --blockEntity.transferCooldown;
         if (blockEntity.transferCooldown <= 0) {
             blockEntity.transferCooldown = TRANSFER_COOLDOWN;
@@ -41,19 +45,39 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         }
     }
 
+    // Directions for the containers relative to the suction tube
+    private static final Direction[] DIRECTIONS = {
+            Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+    };
+    // Randomized order of container indices to try transferring from
+    private static final int[] CONTAINER_INDEX_ORDER = {0, 1, 2, 3, 4};
+
     private void tryTransferItem() {
         if (level == null || level.isClientSide) return;
 
-        // Get container below (source)
-        BlockPos belowPos = worldPosition.below();
-        Container sourceContainer = getContainerAt(level, belowPos);
-        
         // Get container above (destination)
         BlockPos abovePos = worldPosition.above();
         Container destContainer = getContainerAt(level, abovePos);
 
-        if (sourceContainer != null && destContainer != null) {
-            transferItemFromTo(sourceContainer, destContainer, Direction.UP);
+        if (destContainer == null) return;
+        //randomly pick one available container to transfer from without adding a new datastructure
+        for (int i : CONTAINER_INDEX_ORDER) {
+            Container c = getContainerAt(level, worldPosition.relative(DIRECTIONS[i]));
+            if (c != null && transferItemFromTo(c, destContainer, DIRECTIONS[i])) {
+                shuffleSourceContainerOrder();
+                return; // Successfully transferred an item
+            }
+        }
+    }
+
+    // Shuffle the CONTAINER_INDEX_ORDER array to randomize the next transfer attempt
+
+    private void shuffleSourceContainerOrder() {
+        for (int cIndx = 0; cIndx < CONTAINER_INDEX_ORDER.length; cIndx++) {
+            int randomIndex = random.nextInt(CONTAINER_INDEX_ORDER.length);
+            int temp = CONTAINER_INDEX_ORDER[cIndx];
+            CONTAINER_INDEX_ORDER[cIndx] = CONTAINER_INDEX_ORDER[randomIndex];
+            CONTAINER_INDEX_ORDER[randomIndex] = temp;
         }
     }
 
@@ -85,14 +109,23 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         return false;
     }
 
-    private static boolean tryTakeAndTransfer(Container source, Container destination, int sourceSlot, Direction direction) {
+    private static boolean tryTakeAndTransfer(
+            Container source,
+            Container destination,
+            int sourceSlot,
+            Direction direction
+    ) {
         ItemStack sourceStack = source.getItem(sourceSlot);
         if (sourceStack.isEmpty()) {
             return false;
         }
 
         // Check if we can extract from source
-        if (source instanceof WorldlyContainer worldlySource && !worldlySource.canTakeItemThroughFace(sourceSlot, sourceStack, direction.getOpposite())) {
+        if (source instanceof WorldlyContainer worldlySource && !worldlySource.canTakeItemThroughFace(
+                sourceSlot,
+                sourceStack,
+                direction.getOpposite()
+        )) {
             return false;
         }
 
@@ -167,5 +200,16 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     private static boolean canMergeItems(ItemStack stack1, ItemStack stack2) {
         return ItemStack.isSameItemSameComponents(stack1, stack2);
+    }
+
+    // Helper class to store container and its relative direction
+    private static class ContainerInfo {
+        final Container container;
+        final Direction direction;
+
+        ContainerInfo(Container container, Direction direction) {
+            this.container = container;
+            this.direction = direction;
+        }
     }
 }
