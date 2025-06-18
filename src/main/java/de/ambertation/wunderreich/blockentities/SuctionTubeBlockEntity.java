@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Block entity for the Suction Tube block that transfers items from surrounding containers
  * to a container above it, with redstone signal control for selective direction disabling.
- * 
+ *
  * <h3>Basic Functionality:</h3>
  * The Suction Tube pulls items from containers in the following directions relative to itself:
  * <ul>
@@ -30,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
  *   <li>WEST (horizontal)</li>
  * </ul>
  * Items are transferred to the container located above the Suction Tube (UP direction).
- * 
+ *
  * <h3>Redstone Signal Control:</h3>
  * The Suction Tube accepts redstone signals from horizontal directions to selectively disable
  * item transfer from specific sides. The redstone signal strength is used as a bitmask where
@@ -41,22 +41,22 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Bit 2: SOUTH direction</li>
  *   <li>Bit 3: WEST direction</li>
  * </ul>
- * 
+ * <p>
  * When a bit is set (1), the corresponding direction is <strong>disabled</strong> for item transfer.
- * 
+ *
  * <h3>Usage Examples:</h3>
  * <ul>
- *   <li><strong>Disable EAST side:</strong> Place a comparator on the EAST side outputting signal strength 2 
+ *   <li><strong>Disable EAST side:</strong> Place a comparator on the EAST side outputting signal strength 2
  *       (binary: 0010, bit 1 set) - this disables item transfer from the EAST direction</li>
- *   <li><strong>Disable NORTH and SOUTH:</strong> Place a comparator on any side outputting signal strength 5 
+ *   <li><strong>Disable NORTH and SOUTH:</strong> Place a comparator on any side outputting signal strength 5
  *       (binary: 0101, bits 0 and 2 set) - this disables both NORTH and SOUTH directions</li>
- *   <li><strong>Disable bottom face:</strong> The bottom face (DOWN) is controlled by whichever horizontal 
- *       direction provides the redstone signal. For example, if EAST provides signal strength 1 
+ *   <li><strong>Disable bottom face:</strong> The bottom face (DOWN) is controlled by whichever horizontal
+ *       direction provides the redstone signal. For example, if EAST provides signal strength 1
  *       (binary: 0001, bit 0 set), it disables the bottom face because bit 0 (NORTH) is set</li>
- *   <li><strong>No signal:</strong> When no redstone signal is present, all directions are enabled 
+ *   <li><strong>No signal:</strong> When no redstone signal is present, all directions are enabled
  *       (backward compatible behavior)</li>
  * </ul>
- * 
+ *
  * <h3>Technical Details:</h3>
  * <ul>
  *   <li>Transfer cooldown: 8 ticks (same as vanilla hopper)</li>
@@ -104,7 +104,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     /**
      * Attempts to transfer one item from any available source container to the destination container above.
-     * 
+     *
      * <p>This method:
      * <ol>
      *   <li>Checks for a valid destination container above the Suction Tube</li>
@@ -114,7 +114,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
      *   <li>Attempts to transfer one item from the first available source</li>
      *   <li>Re-randomizes the order for the next transfer attempt if successful</li>
      * </ol>
-     * 
+     *
      * <p>The randomization ensures fair distribution when multiple source containers are available.
      * Redstone control allows selective disabling of specific source directions.
      */
@@ -157,10 +157,11 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     }
 
     /**
-     * Gets the redstone disable mask by checking redstone signals from all horizontal directions.
-     * The signal strength from each direction is combined using bitwise OR to create a unified
+     * Gets the redstone disable mask by checking redstone signals from comparators facing into this block.
+     * Only comparators that are oriented to face into the Suction Tube are considered.
+     * The signal strength from each valid direction is combined using bitwise OR to create a unified
      * bitmask that determines which directions should be disabled.
-     * 
+     *
      * <p>Each bit in the returned mask corresponds to a direction:
      * <ul>
      *   <li>Bit 0 (value 1): NORTH direction</li>
@@ -168,7 +169,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
      *   <li>Bit 2 (value 4): SOUTH direction</li>
      *   <li>Bit 3 (value 8): WEST direction</li>
      * </ul>
-     * 
+     *
      * @return Combined redstone disable mask (0-15), where each set bit disables the corresponding direction
      */
     private int getRedstoneDisableMask() {
@@ -180,10 +181,13 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         for (int i = 1; i < DIRECTIONS.length; i++) { // Start from 1 to skip DOWN
             Direction direction = DIRECTIONS[i];
             BlockPos signalPos = worldPosition.relative(direction);
-            int signalStrength = level.getSignal(signalPos, direction);
 
-            // Use the signal strength as a bitmask
-            combinedMask |= signalStrength;
+            // Only accept signal if there's a comparator facing into this block
+            if (isComparatorFacingInto(signalPos, direction)) {
+                int signalStrength = level.getSignal(signalPos, direction);
+                // Use the signal strength as a bitmask
+                combinedMask |= signalStrength;
+            }
         }
 
         return combinedMask;
@@ -191,15 +195,15 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     /**
      * Checks if a specific direction is disabled by the redstone signal.
-     * 
+     *
      * <p>For horizontal directions (NORTH, EAST, SOUTH, WEST), this method checks if the
      * corresponding bit is set in the redstone disable mask.
-     * 
+     *
      * <p>For the DOWN direction (bottom face), the control is more complex:
      * The bottom face is controlled by whichever horizontal direction is currently providing
      * a redstone signal. The bit that gets checked corresponds to the direction providing
      * the signal, not the bottom face itself.
-     * 
+     *
      * <p>Examples:
      * <ul>
      *   <li>If EAST provides signal strength 1 (bit 0 set), and bit 0 corresponds to NORTH,
@@ -215,16 +219,20 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     private boolean isDirectionDisabledByRedstone(Direction direction, int redstoneDisableMask) {
         // DOWN (bottom) is controlled by horizontal redstone inputs
         if (direction == Direction.DOWN) {
-            // Find which redstone input controls the bottom face
-            // This is determined by which direction has a redstone signal
+            // Find which comparator input controls the bottom face
+            // This is determined by which direction has a comparator facing into the block with a signal
             for (int bitIndex = 1; bitIndex < DIRECTIONS.length; bitIndex++) {
                 Direction redstoneDirection = DIRECTIONS[bitIndex];
                 BlockPos signalPos = worldPosition.relative(redstoneDirection);
-                int signalStrength = level.getSignal(signalPos, redstoneDirection);
 
-                if (signalStrength > 0) {
-                    // Check if the bit corresponding to this redstone input direction is set
-                    return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
+                // Only check if there's a comparator facing into this block
+                if (isComparatorFacingInto(signalPos, redstoneDirection)) {
+                    int signalStrength = level.getSignal(signalPos, redstoneDirection);
+
+                    if (signalStrength > 0) {
+                        // Check if the bit corresponding to this redstone input direction is set
+                        return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
+                    }
                 }
             }
             return false;
@@ -238,6 +246,31 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         }
 
         return false;
+    }
+
+    /**
+     * Checks if there is a comparator at the given position that is facing into this block.
+     *
+     * @param comparatorPos     The position to check for a comparator
+     * @param directionFromTube The direction from the tube to the comparator position
+     * @return true if there's a comparator facing into this block, false otherwise
+     */
+    private boolean isComparatorFacingInto(BlockPos comparatorPos, Direction directionFromTube) {
+        if (level == null) return false;
+
+        BlockState blockState = level.getBlockState(comparatorPos);
+
+        // Check if it's a comparator block
+        if (!blockState.is(net.minecraft.world.level.block.Blocks.COMPARATOR)) {
+            return false;
+        }
+
+        // Get the facing direction of the comparator
+        Direction comparatorFacing = blockState.getValue(net.minecraft.world.level.block.ComparatorBlock.FACING);
+
+        // The comparator should be facing the opposite direction of directionFromTube
+        // (i.e., facing into the tube)
+        return comparatorFacing == directionFromTube;
     }
 
     @Nullable
@@ -359,16 +392,5 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     private static boolean canMergeItems(ItemStack stack1, ItemStack stack2) {
         return ItemStack.isSameItemSameComponents(stack1, stack2);
-    }
-
-    // Helper class to store container and its relative direction
-    private static class ContainerInfo {
-        final Container container;
-        final Direction direction;
-
-        ContainerInfo(Container container, Direction direction) {
-            this.container = container;
-            this.direction = direction;
-        }
     }
 }
