@@ -16,6 +16,55 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * Block entity for the Suction Tube block that transfers items from surrounding containers
+ * to a container above it, with redstone signal control for selective direction disabling.
+ * 
+ * <h3>Basic Functionality:</h3>
+ * The Suction Tube pulls items from containers in the following directions relative to itself:
+ * <ul>
+ *   <li>DOWN (bottom face)</li>
+ *   <li>NORTH (horizontal)</li>
+ *   <li>EAST (horizontal)</li>
+ *   <li>SOUTH (horizontal)</li>
+ *   <li>WEST (horizontal)</li>
+ * </ul>
+ * Items are transferred to the container located above the Suction Tube (UP direction).
+ * 
+ * <h3>Redstone Signal Control:</h3>
+ * The Suction Tube accepts redstone signals from horizontal directions to selectively disable
+ * item transfer from specific sides. The redstone signal strength is used as a bitmask where
+ * each bit corresponds to a direction according to this order:
+ * <ul>
+ *   <li>Bit 0: NORTH direction</li>
+ *   <li>Bit 1: EAST direction</li>
+ *   <li>Bit 2: SOUTH direction</li>
+ *   <li>Bit 3: WEST direction</li>
+ * </ul>
+ * 
+ * When a bit is set (1), the corresponding direction is <strong>disabled</strong> for item transfer.
+ * 
+ * <h3>Usage Examples:</h3>
+ * <ul>
+ *   <li><strong>Disable EAST side:</strong> Place a comparator on the EAST side outputting signal strength 2 
+ *       (binary: 0010, bit 1 set) - this disables item transfer from the EAST direction</li>
+ *   <li><strong>Disable NORTH and SOUTH:</strong> Place a comparator on any side outputting signal strength 5 
+ *       (binary: 0101, bits 0 and 2 set) - this disables both NORTH and SOUTH directions</li>
+ *   <li><strong>Disable bottom face:</strong> The bottom face (DOWN) is controlled by whichever horizontal 
+ *       direction provides the redstone signal. For example, if EAST provides signal strength 1 
+ *       (binary: 0001, bit 0 set), it disables the bottom face because bit 0 (NORTH) is set</li>
+ *   <li><strong>No signal:</strong> When no redstone signal is present, all directions are enabled 
+ *       (backward compatible behavior)</li>
+ * </ul>
+ * 
+ * <h3>Technical Details:</h3>
+ * <ul>
+ *   <li>Transfer cooldown: 8 ticks (same as vanilla hopper)</li>
+ *   <li>Transfers one item at a time</li>
+ *   <li>Randomizes source container checking order to prevent bias</li>
+ *   <li>Respects WorldlyContainer face restrictions</li>
+ * </ul>
+ */
 public class SuctionTubeBlockEntity extends BlockEntity {
     private int transferCooldown = 0;
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
@@ -53,6 +102,22 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     // Randomized order of container indices to try transferring from
     private static final int[] CONTAINER_INDEX_ORDER = {0, 1, 2, 3, 4};
 
+    /**
+     * Attempts to transfer one item from any available source container to the destination container above.
+     * 
+     * <p>This method:
+     * <ol>
+     *   <li>Checks for a valid destination container above the Suction Tube</li>
+     *   <li>Gets the current redstone disable mask to determine which directions are disabled</li>
+     *   <li>Iterates through source containers in randomized order</li>
+     *   <li>Skips directions that are disabled by redstone signals</li>
+     *   <li>Attempts to transfer one item from the first available source</li>
+     *   <li>Re-randomizes the order for the next transfer attempt if successful</li>
+     * </ol>
+     * 
+     * <p>The randomization ensures fair distribution when multiple source containers are available.
+     * Redstone control allows selective disabling of specific source directions.
+     */
     private void tryTransferItem() {
         if (level == null || level.isClientSide) return;
 
@@ -93,9 +158,18 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     /**
      * Gets the redstone disable mask by checking redstone signals from all horizontal directions.
-     * The signal strength from each direction is treated as a bitmask.
-     *
-     * @return Combined redstone disable mask
+     * The signal strength from each direction is combined using bitwise OR to create a unified
+     * bitmask that determines which directions should be disabled.
+     * 
+     * <p>Each bit in the returned mask corresponds to a direction:
+     * <ul>
+     *   <li>Bit 0 (value 1): NORTH direction</li>
+     *   <li>Bit 1 (value 2): EAST direction</li>
+     *   <li>Bit 2 (value 4): SOUTH direction</li>
+     *   <li>Bit 3 (value 8): WEST direction</li>
+     * </ul>
+     * 
+     * @return Combined redstone disable mask (0-15), where each set bit disables the corresponding direction
      */
     private int getRedstoneDisableMask() {
         if (level == null) return 0;
@@ -117,10 +191,26 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     /**
      * Checks if a specific direction is disabled by the redstone signal.
+     * 
+     * <p>For horizontal directions (NORTH, EAST, SOUTH, WEST), this method checks if the
+     * corresponding bit is set in the redstone disable mask.
+     * 
+     * <p>For the DOWN direction (bottom face), the control is more complex:
+     * The bottom face is controlled by whichever horizontal direction is currently providing
+     * a redstone signal. The bit that gets checked corresponds to the direction providing
+     * the signal, not the bottom face itself.
+     * 
+     * <p>Examples:
+     * <ul>
+     *   <li>If EAST provides signal strength 1 (bit 0 set), and bit 0 corresponds to NORTH,
+     *       then the bottom face will be disabled</li>
+     *   <li>If NORTH provides signal strength 2 (bit 1 set), and bit 1 corresponds to EAST,
+     *       then both the EAST horizontal direction and potentially the bottom face are affected</li>
+     * </ul>
      *
-     * @param direction           The direction to check
-     * @param redstoneDisableMask The redstone disable mask
-     * @return true if the direction is disabled
+     * @param direction           The direction to check (DOWN, NORTH, EAST, SOUTH, or WEST)
+     * @param redstoneDisableMask The redstone disable mask obtained from {@link #getRedstoneDisableMask()}
+     * @return true if the direction is disabled and should not transfer items, false otherwise
      */
     private boolean isDirectionDisabledByRedstone(Direction direction, int redstoneDisableMask) {
         // DOWN (bottom) is controlled by horizontal redstone inputs
