@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -79,5 +80,25 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
             CollisionContext collisionContext
     ) {
         return Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, 0.99D, 1.0D);
+    }
+
+    // Redstone signal output methods
+    @Override
+    protected boolean isSignalSource(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+        BlockEntity blockEntity = blockGetter.getBlockEntity(blockPos);
+        if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+            return suctionTube.getRedstoneSignal(direction);
+        }
+        return 0;
+    }
+
+    @Override
+    protected int getDirectSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+        return getSignal(blockState, blockGetter, blockPos, direction);
     }
 }

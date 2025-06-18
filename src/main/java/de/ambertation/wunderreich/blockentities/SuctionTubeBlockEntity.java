@@ -18,7 +18,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Block entity for the Suction Tube block that transfers items from surrounding containers
- * to a container above it, with redstone signal control for selective direction disabling.
+ * to a container above it, with redstone signal control for selective direction disabling
+ * and redstone signal output when items are transferred.
  *
  * <h3>Basic Functionality:</h3>
  * The Suction Tube pulls items from containers in the following directions relative to itself:
@@ -31,8 +32,8 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  * Items are transferred to the container located above the Suction Tube (UP direction).
  *
- * <h3>Redstone Signal Control:</h3>
- * The Suction Tube accepts redstone signals from horizontal directions to selectively disable
+ * <h3>Redstone Signal Control (Input):</h3>
+ * The Suction Tube accepts redstone signals from comparators facing INTO the block to selectively disable
  * item transfer from specific sides. The redstone signal strength is used as a bitmask where
  * each bit corresponds to a direction according to this order:
  * <ul>
@@ -43,18 +44,28 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  * <p>
  * When a bit is set (1), the corresponding direction is <strong>disabled</strong> for item transfer.
+ * Only comparators that are oriented to face into the Suction Tube block are considered for input.
+ *
+ * <h3>Redstone Signal Output:</h3>
+ * When an item is successfully transferred, the Suction Tube emits a redstone signal for one tick.
+ * The signal strength corresponds to the direction from which the item was taken:
+ * <ul>
+ *   <li>DOWN direction: Signal strength 1 (bit 0)</li>
+ *   <li>NORTH direction: Signal strength 1 (bit 0)</li>
+ *   <li>EAST direction: Signal strength 2 (bit 1)</li>
+ *   <li>SOUTH direction: Signal strength 4 (bit 2)</li>
+ *   <li>WEST direction: Signal strength 8 (bit 3)</li>
+ * </ul>
+ * <p>
+ * Comparators and repeaters facing AWAY from the block will detect this output signal.
  *
  * <h3>Usage Examples:</h3>
  * <ul>
- *   <li><strong>Disable EAST side:</strong> Place a comparator on the EAST side outputting signal strength 2
- *       (binary: 0010, bit 1 set) - this disables item transfer from the EAST direction</li>
- *   <li><strong>Disable NORTH and SOUTH:</strong> Place a comparator on any side outputting signal strength 5
- *       (binary: 0101, bits 0 and 2 set) - this disables both NORTH and SOUTH directions</li>
- *   <li><strong>Disable bottom face:</strong> The bottom face (DOWN) is controlled by whichever horizontal
- *       direction provides the redstone signal. For example, if EAST provides signal strength 1
- *       (binary: 0001, bit 0 set), it disables the bottom face because bit 0 (NORTH) is set</li>
- *   <li><strong>No signal:</strong> When no redstone signal is present, all directions are enabled
- *       (backward compatible behavior)</li>
+ *   <li><strong>Input Control - Disable EAST side:</strong> Place a comparator on the EAST side facing INTO the block,
+ *       outputting signal strength 2 (binary: 0010, bit 1 set) - this disables item transfer from the EAST direction</li>
+ *   <li><strong>Output Detection:</strong> Place a comparator on any side facing AWAY from the block to detect
+ *       when items are transferred and from which direction they came</li>
+ *   <li><strong>Combined Usage:</strong> Use multiple comparators - some facing in for control, others facing out for detection</li>
  * </ul>
  *
  * <h3>Technical Details:</h3>
@@ -63,12 +74,17 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Transfers one item at a time</li>
  *   <li>Randomizes source container checking order to prevent bias</li>
  *   <li>Respects WorldlyContainer face restrictions</li>
+ *   <li>Output signal duration: 1 tick</li>
  * </ul>
  */
 public class SuctionTubeBlockEntity extends BlockEntity {
     private int transferCooldown = 0;
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
     private final Random random = new Random();
+
+    // Redstone output fields
+    private int redstoneOutputSignal = 0;
+    private int redstoneOutputTicks = 0;
 
     public SuctionTubeBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
@@ -86,6 +102,15 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SuctionTubeBlockEntity blockEntity) {
         if (level.isClientSide) return;
+
+        // Handle redstone output timing
+        if (blockEntity.redstoneOutputTicks > 0) {
+            blockEntity.redstoneOutputTicks--;
+            if (blockEntity.redstoneOutputTicks <= 0) {
+                blockEntity.redstoneOutputSignal = 0;
+                level.updateNeighborsAt(pos, state.getBlock());
+            }
+        }
 
         --blockEntity.transferCooldown;
         if (blockEntity.transferCooldown <= 0) {
@@ -139,6 +164,8 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
             Container c = getContainerAt(level, worldPosition.relative(DIRECTIONS[i]));
             if (c != null && transferItemFromTo(c, destContainer, DIRECTIONS[i])) {
+                // Emit redstone signal based on the direction the item came from
+                emitRedstoneSignalForTransfer(DIRECTIONS[i], i);
                 shuffleSourceContainerOrder();
                 return; // Successfully transferred an item
             }
@@ -392,5 +419,90 @@ public class SuctionTubeBlockEntity extends BlockEntity {
 
     private static boolean canMergeItems(ItemStack stack1, ItemStack stack2) {
         return ItemStack.isSameItemSameComponents(stack1, stack2);
+    }
+
+    /**
+     * Emits a redstone signal for one tick based on which direction an item was transferred from.
+     * The signal strength corresponds to the bit position of the source direction.
+     *
+     * @param sourceDirection The direction the item came from
+     * @param directionIndex  The index of the direction in the DIRECTIONS array
+     */
+    private void emitRedstoneSignalForTransfer(Direction sourceDirection, int directionIndex) {
+        if (level == null) return;
+
+        // Calculate signal strength based on direction
+        int signalStrength;
+        if (sourceDirection == Direction.DOWN) {
+            // For DOWN direction, use bit 0 (value 1)
+            signalStrength = 15; // Full signal strength for DOWN
+        } else {
+            // For horizontal directions, use the bit corresponding to their position
+            // NORTH = bit 0 (1), EAST = bit 1 (2), SOUTH = bit 2 (4), WEST = bit 3 (8)
+            signalStrength = 1 << (directionIndex - 1);
+        }
+
+        redstoneOutputSignal = signalStrength;
+        redstoneOutputTicks = 1; // Emit for one tick
+
+        // Update neighboring blocks to notify them of the signal change
+        level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+    }
+
+    /**
+     * Gets the current redstone signal strength being emitted by this block.
+     * This is used by the block to provide redstone output.
+     *
+     * @return The redstone signal strength (0-15)
+     */
+    public int getRedstoneSignal() {
+        return redstoneOutputSignal;
+    }
+
+    /**
+     * Gets the redstone signal strength for a specific direction.
+     * Used by the block to provide directional redstone output.
+     *
+     * @param direction The direction to get the signal for
+     * @return The redstone signal strength for that direction (0-15)
+     */
+    public int getRedstoneSignal(Direction direction) {
+        return redstoneOutputSignal;
+    }
+
+//    @Override
+//    protected void saveAdditional(ValueOutput valueOutput) {
+//        super.saveAdditional(valueOutput);
+//
+//        // Save the redstone output state to handle world reload correctly
+//        valueOutput.putInt("RsSignal", redstoneOutputSignal);
+//        valueOutput.putInt("RsTicks", redstoneOutputTicks);
+//    }
+//
+//    @Override
+//    protected void loadAdditional(ValueInput valueInput) {
+//        super.loadAdditional(valueInput);
+//        int savedSignal = valueInput.getIntOr("RsSignal", 0);
+//        int savedTicks = valueInput.getIntOr("RsTicks", 0);
+//
+//        // If there was an active signal when the world was saved, we need to clear it
+//        // and notify neighbors to prevent stuck redstone circuits
+//        if (savedSignal > 0 || savedTicks > 0) {
+//            redstoneOutputSignal = 0;
+//            redstoneOutputTicks = 0;
+//            // We'll notify neighbors in setLevel() when the world is fully loaded
+//        } else {
+//            redstoneOutputSignal = savedSignal;
+//            redstoneOutputTicks = savedTicks;
+//        }
+//    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        // If we cleared a signal during loading, notify neighbors now that the world is ready
+        if (level != null && !level.isClientSide) {
+            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+        }
     }
 }
