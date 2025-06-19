@@ -33,17 +33,17 @@ import org.jetbrains.annotations.Nullable;
 public class SuctionTubeMenu extends AbstractContainerMenu {
     public static final int SLOTS_PER_DIRECTION = 4; // Each direction has 4 filter slots
     // GUI Layout Constants
-    public static final int GUI_WIDTH = 176;
-    public static final int GUI_HEIGHT = 200;
+    public static final int GUI_WIDTH = 306;
+    public static final int GUI_HEIGHT = 180;
     public static final int SLOT_SIZE = 18;
     public static final int FILTER_CENTER_Y = 50;
     public static final int FILTER_SPACING_VERTICAL = 4;
     public static final int FILTER_SPACING_HORIZONTAL = 4;
 
     // Player inventory positioning
-    public static final int PLAYER_INV_START_X = 8;
-    public static final int PLAYER_INV_START_Y = FILTER_CENTER_Y * 2 + 20;
-    public static final int PLAYER_HOTBAR_Y = GUI_HEIGHT - SLOT_SIZE - 4;
+    public static final int PLAYER_INV_START_X = 73;
+    public static final int PLAYER_HOTBAR_Y = GUI_HEIGHT - SLOT_SIZE - 6;
+    public static final int PLAYER_INV_START_Y = PLAYER_HOTBAR_Y - 3 * SLOT_SIZE - 4;
 
     private static final int PLAYER_INVENTORY_START = 0;
     private static final int PLAYER_HOTBAR_START = 27;
@@ -323,9 +323,13 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
         @Override
         public @NotNull ItemStack safeTake(int amount, int decrement, Player player) {
-            // Don't actually take the item, just return a copy
-            // This makes the filter slot act as a "ghost" slot
-            return this.getItem().copy();
+            // For filter slots, we want to clear the slot when taken
+            ItemStack current = this.getItem();
+            if (!current.isEmpty()) {
+                this.set(ItemStack.EMPTY);
+                return current.copy();
+            }
+            return ItemStack.EMPTY;
         }
 
         @Override
@@ -335,11 +339,11 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 ItemStack singleCopy = stack.copy();
                 singleCopy.setCount(1);
                 this.set(singleCopy);
+                return ItemStack.EMPTY; // Consume the item (ghost slot behavior)
             } else {
-                // Don't set empty stacks to avoid serialization issues
                 this.set(ItemStack.EMPTY);
+                return ItemStack.EMPTY;
             }
-            return stack; // Return the original stack unchanged
         }
     }
 }

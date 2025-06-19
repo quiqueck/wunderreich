@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
+import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 
@@ -9,8 +10,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -27,10 +31,11 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
+public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTagSupplier {
     public static final MapCodec<SuctionTube> CODEC = simpleCodec(SuctionTube::new);
 
     public SuctionTube(Properties properties) {
@@ -128,5 +133,10 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
             Direction direction
     ) {
         return getSignal(blockState, blockGetter, blockPos, direction);
+    }
+
+    @Override
+    public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
+        blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 }

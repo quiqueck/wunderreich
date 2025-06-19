@@ -9,6 +9,10 @@
       "required": false
     },
     {
+      "id": "wunderreich:suction_tube",
+      "required": false
+    },
+    {
       "id": "wunderreich:white_concrete_slab",
       "required": false
     },

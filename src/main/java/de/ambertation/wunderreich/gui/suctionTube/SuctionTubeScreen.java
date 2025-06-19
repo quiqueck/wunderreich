@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.gui.suctionTube;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
 import static de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu.SLOTS_PER_DIRECTION;
 
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,7 +19,8 @@ import net.minecraft.world.item.ItemStack;
  */
 public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> {
     private static final ResourceLocation TEXTURE = Wunderreich.ID("textures/gui/suction_tube.png");
-
+    private static final int TEXTURE_WIDTH = 306;
+    private static final int TEXTURE_HEIGHT = 256;
     // Direction labels for display
     private static final String[] DIRECTION_LABELS = {
             "Bottom", "North", "East", "South", "West"
@@ -55,15 +57,14 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
         guiGraphics.blit(
                 RenderPipelines.GUI_TEXTURED,
                 TEXTURE,
-                x,
-                y,
-                0.0f,
-                0.0f,
-                this.imageWidth,
-                this.imageHeight,
-                256, // Texture width
-                256  // Texture height
+                x, y,
+                0.0f, 0.0f,
+                this.imageWidth, this.imageHeight,
+                TEXTURE_WIDTH, TEXTURE_HEIGHT
         );
+//        guiGraphics.renderOutline(// Light gray outline
+//                x, y, this.imageWidth, this.imageHeight, 0xFFFFFF8B
+//        );
 
         // Draw filter slots in cross pattern:
         //       NNNN
@@ -72,13 +73,12 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
 
         // Use Menu's position calculation methods for exact alignment
         int[][] dirPositions = SuctionTubeMenu.getAllFilterPositions();
-        Direction[] directions = {Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST};
 
         for (int dirIndex = 0; dirIndex < 5; dirIndex++) {
             int baseX = x + dirPositions[dirIndex][0]; // Add GUI offset
             int baseY = y + dirPositions[dirIndex][1]; // Add GUI offset
 
-            Direction direction = directions[dirIndex];
+            Direction direction = SuctionTubeBlockEntity.DIRECTIONS[dirIndex];
             boolean hasContainer = this.menu.hasConnectedContainer(direction);
 
             // Draw direction label above the slots
@@ -95,27 +95,22 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
 
                 // Draw transparent red background for disconnected containers
                 if (!hasContainer) {
-                    guiGraphics.fill(slotX - 1, baseY - 1, slotX + 17, baseY + 17, 0x80FF0000); // Semi-transparent red
+                    guiGraphics.fill(slotX, baseY, slotX + 16, baseY + 16, 0x20FF0000); // Semi-transparent red
                 }
 
                 // (2) Draw slot background using correct blit signature
-                guiGraphics.blit(
-                        RenderPipelines.GUI_TEXTURED,
-                        TEXTURE,
-                        slotX - 1,
-                        baseY - 1,
-                        0.0f,
-                        0.0f,
-                        SuctionTubeMenu.SLOT_SIZE,
-                        SuctionTubeMenu.SLOT_SIZE,
-                        256, // Texture width
-                        256  // Texture height
-                );
+//                guiGraphics.blit(
+//                        RenderPipelines.GUI_TEXTURED, TEXTURE,
+//                        slotX - 1, baseY - 1,
+//                        0.0f, 0.0f,
+//                        SuctionTubeMenu.SLOT_SIZE, SuctionTubeMenu.SLOT_SIZE,
+//                        TEXTURE_WIDTH, TEXTURE_HEIGHT
+//                );
 
                 // Draw outline rectangle around each slot                
-                guiGraphics.renderOutline(// Light gray outline
-                        slotX - 1, baseY - 1, 18, 18, 0xFF8B8B8B
-                );
+//                guiGraphics.renderOutline(// Light gray outline
+//                        slotX - 1, baseY - 1, 18, 18, 0xFF8B8B8B
+//                );
             }
 
             // Draw container icon if connected
@@ -130,7 +125,7 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
                     // Draw the item icon next to the slots
                     int iconX = x + dirPositions[dirIndex][2]; // Add GUI offset
 
-                    guiGraphics.fill(iconX - 1, baseY - 1, iconX + 17, baseY + 17, 0x800000FF); // Semi-transparent blue
+                    //guiGraphics.fill(iconX - 1, baseY - 1, iconX + 17, baseY + 17, 0x800000FF); // Semi-transparent blue
                     guiGraphics.renderItem(representativeItem, iconX, baseY);
                 }
             }
