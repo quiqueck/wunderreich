@@ -44,7 +44,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     public static final int PLAYER_INV_START_X = 73;
     public static final int PLAYER_HOTBAR_Y = GUI_HEIGHT - SLOT_SIZE - 6;
     public static final int PLAYER_INV_START_Y = PLAYER_HOTBAR_Y - 3 * SLOT_SIZE - 4;
-
+    
     private static final int PLAYER_INVENTORY_START = 0;
     private static final int PLAYER_HOTBAR_START = 27;
     private static final int FILTER_SLOTS_START = 36;
@@ -103,12 +103,14 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
         // Initialize filter containers for each direction
         for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
+            final boolean[] isInitializing = {true}; // Flag to prevent sync during initialization
+            
             Container filterContainer = new SimpleContainer(SLOTS_PER_DIRECTION) {
                 @Override
                 public void setChanged() {
                     super.setChanged();
-                    // Sync filter changes back to block entity
-                    if (blockEntity != null) {
+                    // Only sync filter changes back to block entity after initialization
+                    if (blockEntity != null && !isInitializing[0]) {
                         blockEntity.setFilterItems(direction, this);
                     }
                 }
@@ -121,8 +123,30 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                     filterContainer.setItem(i, filterItems[i]);
                 }
             }
+            
+            isInitializing[0] = false; // Enable sync after loading is complete
 
             filterContainers.put(direction, filterContainer);
+        }
+
+        // Add player inventory slots first (27 main inventory slots)
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 9; ++col) {
+                this.addSlot(new Slot(
+                        playerInventory, col + row * 9 + PLAYER_INVENTORY_START,
+                        PLAYER_INV_START_X + col * SLOT_SIZE,
+                        PLAYER_INV_START_Y + row * SLOT_SIZE
+                ));
+            }
+        }
+
+        // Add player hotbar slots (9 hotbar slots)
+        for (int col = 0; col < 9; ++col) {
+            this.addSlot(new Slot(
+                    playerInventory, col + PLAYER_HOTBAR_START,
+                    PLAYER_INV_START_X + col * SLOT_SIZE,
+                    PLAYER_HOTBAR_Y
+            ));
         }
 
         // Add filter slots (20 slots total: 5 directions × 4 slots each)
@@ -145,26 +169,6 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
                 this.addSlot(new FilterSlot(filterContainer, filterSlot, x, baseY));
             }
-        }
-
-        // Add player inventory slots (27 main inventory + 9 hotbar)
-        for (int row = 0; row < 3; ++row) {
-            for (int col = 0; col < 9; ++col) {
-                this.addSlot(new Slot(
-                        playerInventory, col + row * 9 + 9,
-                        PLAYER_INV_START_X + col * SLOT_SIZE,
-                        PLAYER_INV_START_Y + row * SLOT_SIZE
-                ));
-            }
-        }
-
-        // Add player hotbar slots
-        for (int col = 0; col < 9; ++col) {
-            this.addSlot(new Slot(
-                    playerInventory, col,
-                    PLAYER_INV_START_X + col * SLOT_SIZE,
-                    PLAYER_HOTBAR_Y
-            ));
         }
     }
 

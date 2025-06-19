@@ -413,13 +413,13 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         // Check if we can extract from source
-        if (source instanceof WorldlyContainer worldlySource && !worldlySource.canTakeItemThroughFace(
-                sourceSlot,
-                sourceStack,
-                direction.getOpposite()
-        )) {
-            return false;
-        }
+//        if (source instanceof WorldlyContainer worldlySource && !worldlySource.canTakeItemThroughFace(
+//                sourceSlot,
+//                sourceStack,
+//                direction.getOpposite()
+//        )) {
+//            return false;
+//        }
 
         ItemStack extractedStack = sourceStack.copy();
         extractedStack.setCount(1); // Extract one item at a time
