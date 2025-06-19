@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.gui.whisperer.WhispererScreen;
+import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeScreen;
 
 import net.minecraft.client.gui.screens.MenuScreens;
 
@@ -11,5 +12,6 @@ import net.fabricmc.api.Environment;
 public final class WunderreichScreens {
     public static void registerScreens() {
         MenuScreens.register(WunderreichMenuTypes.WHISPERER, WhispererScreen::new);
+        MenuScreens.register(WunderreichMenuTypes.SUCTION_TUBE, SuctionTubeScreen::new);
     }
 }

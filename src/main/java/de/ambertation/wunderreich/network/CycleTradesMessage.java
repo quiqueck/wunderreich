@@ -13,6 +13,7 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -243,7 +244,7 @@ public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMes
     }
 
     @Override
-    protected void write(FriendlyByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
 
     }
 

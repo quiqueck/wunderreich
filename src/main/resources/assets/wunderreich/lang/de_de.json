@@ -194,6 +194,7 @@
   "block.wunderreich.yellow_wool_wall": "Gelbe Wollmauer",
   "category.wunderreich": "Wunderreich",
   "container.wunderreich.wunder_kiste": "Wunderkiste",
+  "container.wunderreich.suction_tube": "Saugschacht-Konfiguration",
   "description.config.wunderreich.main.display.multiTexturedWunderkiste": "Wenn diese Option aktiviert ist, verwendet die Wunderkiste unterschiedliche Texturen für jede Farbe. Dies erhöht die visuelle Qualität, verbraucht aber auch mehr Speicher.",
   "description.config.wunderreich.main.features.addBlankWhisperer": "Fügt dem Spiel einen leeren Flüsterer hinzu. Wenn diese Funktion deaktiviert ist, können  keine geprägten Flüsterer erstellt werden.",
   "description.config.wunderreich.main.features.addImprintedWhispers": "Fügt dem Spiel für jedes verfügbare Buch einen geprägten Flüsterer hinzu.",

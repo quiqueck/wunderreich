@@ -9,7 +9,7 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -34,7 +34,7 @@ public class AddRemoveWunderKisteMessage extends ServerBoundNetworkPayload<AddRe
     @Nullable
     private ServerLevel level;
 
-    public AddRemoveWunderKisteMessage(FriendlyByteBuf buf) {
+    public AddRemoveWunderKisteMessage(RegistryFriendlyByteBuf buf) {
         super(HANDLER);
         this.didAdd = buf.readBoolean();
         this.pos = buf.readBlockPos();
@@ -54,7 +54,7 @@ public class AddRemoveWunderKisteMessage extends ServerBoundNetworkPayload<AddRe
     }
 
     @Override
-    protected void write(FriendlyByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         buf.writeBoolean(this.didAdd);
         buf.writeBlockPos(this.pos);
     }

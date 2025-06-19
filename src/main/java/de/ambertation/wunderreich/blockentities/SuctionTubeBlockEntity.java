@@ -1,18 +1,30 @@
 package de.ambertation.wunderreich.blockentities;
 
+import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.ItemStackWithSlot;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import org.jetbrains.annotations.Nullable;
 
@@ -77,7 +89,7 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Output signal duration: 1 tick</li>
  * </ul>
  */
-public class SuctionTubeBlockEntity extends BlockEntity {
+public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider {
     private int transferCooldown = 0;
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
     private final Random random = new Random();
@@ -86,8 +98,19 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     private int redstoneOutputSignal = 0;
     private int redstoneOutputTicks = 0;
 
+    // Filter storage: direction -> array of 4 filter items
+    private final Map<Direction, ItemStack[]> filterItems = new HashMap<>();
+
     public SuctionTubeBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
+
+        // Initialize filter arrays for each direction
+        for (Direction direction : DIRECTIONS) {
+            filterItems.put(direction, new ItemStack[4]);
+            for (int i = 0; i < 4; i++) {
+                filterItems.get(direction)[i] = ItemStack.EMPTY;
+            }
+        }
 
         shuffleSourceContainerOrder();
     }
@@ -120,7 +143,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     }
 
     // Directions for the containers relative to the suction tube
-    private static final Direction[] DIRECTIONS = {
+    public static final Direction[] DIRECTIONS = {
             Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
     };
 
@@ -163,13 +186,37 @@ public class SuctionTubeBlockEntity extends BlockEntity {
             }
 
             Container c = getContainerAt(level, worldPosition.relative(DIRECTIONS[i]));
-            if (c != null && transferItemFromTo(c, destContainer, DIRECTIONS[i])) {
+            if (c != null && transferItemFromToWithFilter(c, destContainer, DIRECTIONS[i])) {
                 // Emit redstone signal based on the direction the item came from
                 emitRedstoneSignalForTransfer(DIRECTIONS[i], i);
                 shuffleSourceContainerOrder();
                 return; // Successfully transferred an item
             }
         }
+    }
+
+    /**
+     * Checks if the given item stack passes the filter for the specified direction.
+     * If no filter items are set for a direction, all items pass.
+     * If filter items are set, only items matching the filter pass.
+     */
+    private boolean passesFilter(ItemStack itemStack, Direction direction) {
+        ItemStack[] filters = filterItems.get(direction);
+        if (filters == null) return true;
+
+        // Check if any filter slot is set
+        boolean hasFilters = false;
+        for (ItemStack filter : filters) {
+            if (!filter.isEmpty()) {
+                hasFilters = true;
+                if (ItemStack.isSameItemSameComponents(itemStack, filter)) {
+                    return true;
+                }
+            }
+        }
+
+        // If no filters are set, allow all items
+        return !hasFilters;
     }
 
     // Shuffle the CONTAINER_INDEX_ORDER array to randomize the next transfer attempt
@@ -301,7 +348,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     }
 
     @Nullable
-    private static Container getContainerAt(Level level, BlockPos pos) {
+    public static Container getContainerAt(Level level, BlockPos pos) {
         BlockEntity blockEntity = level.getBlockEntity(pos);
         if (blockEntity instanceof Container container) {
             return container;
@@ -310,6 +357,7 @@ public class SuctionTubeBlockEntity extends BlockEntity {
     }
 
     private static boolean transferItemFromTo(Container source, Container destination, Direction direction) {
+        // Get the block entity to access filter
         if (source instanceof WorldlyContainer worldlySource) {
             int[] slots = worldlySource.getSlotsForFace(direction.getOpposite());
             for (int slot : slots) {
@@ -322,6 +370,31 @@ public class SuctionTubeBlockEntity extends BlockEntity {
             for (int i = 0; i < containerSize; ++i) {
                 if (tryTakeAndTransfer(source, destination, i, direction)) {
                     return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean transferItemFromToWithFilter(Container source, Container destination, Direction direction) {
+        if (source instanceof WorldlyContainer worldlySource) {
+            int[] slots = worldlySource.getSlotsForFace(direction.getOpposite());
+            for (int slot : slots) {
+                ItemStack sourceStack = source.getItem(slot);
+                if (!sourceStack.isEmpty() && passesFilter(sourceStack, direction)) {
+                    if (tryTakeAndTransfer(source, destination, slot, direction)) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            int containerSize = source.getContainerSize();
+            for (int i = 0; i < containerSize; ++i) {
+                ItemStack sourceStack = source.getItem(i);
+                if (!sourceStack.isEmpty() && passesFilter(sourceStack, direction)) {
+                    if (tryTakeAndTransfer(source, destination, i, direction)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -470,39 +543,110 @@ public class SuctionTubeBlockEntity extends BlockEntity {
         return redstoneOutputSignal;
     }
 
-//    @Override
-//    protected void saveAdditional(ValueOutput valueOutput) {
-//        super.saveAdditional(valueOutput);
-//
-//        // Save the redstone output state to handle world reload correctly
-//        valueOutput.putInt("RsSignal", redstoneOutputSignal);
-//        valueOutput.putInt("RsTicks", redstoneOutputTicks);
-//    }
-//
-//    @Override
-//    protected void loadAdditional(ValueInput valueInput) {
-//        super.loadAdditional(valueInput);
-//        int savedSignal = valueInput.getIntOr("RsSignal", 0);
-//        int savedTicks = valueInput.getIntOr("RsTicks", 0);
-//
-//        // If there was an active signal when the world was saved, we need to clear it
-//        // and notify neighbors to prevent stuck redstone circuits
-//        if (savedSignal > 0 || savedTicks > 0) {
-//            redstoneOutputSignal = 0;
-//            redstoneOutputTicks = 0;
-//            // We'll notify neighbors in setLevel() when the world is fully loaded
-//        } else {
-//            redstoneOutputSignal = savedSignal;
-//            redstoneOutputTicks = savedTicks;
-//        }
-//    }
+    // MenuProvider implementation
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("container.wunderreich.suction_tube");
+    }
+
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, Inventory playerInventory, Player player) {
+        return new SuctionTubeMenu(containerId, playerInventory, worldPosition);
+    }
+
+    /**
+     * Opens the configuration menu for the given player.
+     */
+    public void openMenu(ServerPlayer player) {
+        player.openMenu(this);
+    }
+
+    /**
+     * Gets the filter items for a specific direction.
+     */
+    public ItemStack[] getFilterItems(Direction direction) {
+        ItemStack[] filters = filterItems.get(direction);
+        if (filters == null) {
+            filters = new ItemStack[4];
+            for (int i = 0; i < 4; i++) {
+                filters[i] = ItemStack.EMPTY;
+            }
+            filterItems.put(direction, filters);
+        }
+        return filters;
+    }
+
+    /**
+     * Sets the filter items for a specific direction from a container.
+     */
+    public void setFilterItems(Direction direction, Container container) {
+        ItemStack[] filters = filterItems.computeIfAbsent(direction, k -> new ItemStack[4]);
+
+        for (int i = 0; i < Math.min(4, container.getContainerSize()); i++) {
+            filters[i] = container.getItem(i).copy();
+        }
+        setChanged();
+    }
+
+    @Override
+    protected void saveAdditional(ValueOutput valueOutput) {
+        super.saveAdditional(valueOutput);
+        ItemStack[] filters;
+        String listKey;
+        ValueOutput.TypedOutputList<ItemStackWithSlot> typedOutputList;
+        // Save filter items using list-based approach similar to Hopper
+        for (Direction direction : DIRECTIONS) {
+            filters = filterItems.get(direction);
+            if (filters != null) {
+                listKey = direction.getName();
+                typedOutputList = valueOutput.list(
+                        listKey,
+                        ItemStackWithSlot.CODEC
+                );
+
+                for (int i = 0; i < filters.length; i++) {
+                    if (!filters[i].isEmpty()) {
+                        typedOutputList.add(new ItemStackWithSlot(i, filters[i]));
+                    }
+                }
+
+                // If no filters for this direction, discard the list
+                if (typedOutputList.isEmpty()) {
+                    valueOutput.discard(listKey);
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void loadAdditional(ValueInput valueInput) {
+        super.loadAdditional(valueInput);
+        ItemStack[] filters;
+        String listKey;
+        // Load filter items using list-based approach similar to Hopper
+        for (Direction direction : DIRECTIONS) {
+            filters = new ItemStack[4];
+            for (int i = 0; i < 4; i++) {
+                filters[i] = ItemStack.EMPTY;
+            }
+
+            listKey = direction.getName();
+            for (ItemStackWithSlot itemStackWithSlot : valueInput.listOrEmpty(listKey, ItemStackWithSlot.CODEC)) {
+                if (itemStackWithSlot.slot() >= 0 && itemStackWithSlot.slot() < 4) {
+                    filters[itemStackWithSlot.slot()] = itemStackWithSlot.stack();
+                }
+            }
+
+            filterItems.put(direction, filters);
+        }
+    }
 
     @Override
     public void setLevel(Level level) {
         super.setLevel(level);
         // If we cleared a signal during loading, notify neighbors now that the world is ready
         if (level != null && !level.isClientSide) {
-            level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
+            //level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
         }
     }
 }

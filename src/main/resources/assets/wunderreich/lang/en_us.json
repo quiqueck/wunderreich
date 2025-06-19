@@ -194,6 +194,7 @@
   "block.wunderreich.yellow_wool_wall": "Yellow Wool Wall",
   "category.wunderreich": "Wunderreich",
   "container.wunderreich.wunder_kiste": "Wunderkiste",
+  "container.wunderreich.suction_tube": "Suction Tube Configuration",
   "description.config.wunderreich.main.display.multiTexturedWunderkiste": "When enabled, the Wunderkiste will use different textures for every color. This increases the visual quality, but it will consume more memory.",
   "description.config.wunderreich.main.features.addBlankWhisperer": "Will add a blank Whisperer to the game. When disabled, you can not create imprinted Whispers.",
   "description.config.wunderreich.main.features.addImprintedWhispers": "Will add an imprinted Whisper for every available book to the game.",

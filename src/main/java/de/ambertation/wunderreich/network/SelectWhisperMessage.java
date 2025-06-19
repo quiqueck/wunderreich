@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
@@ -46,7 +47,7 @@ public class SelectWhisperMessage extends ServerBoundNetworkPayload<SelectWhispe
     }
 
     @Override
-    protected void write(FriendlyByteBuf buf) {
+    protected void write(RegistryFriendlyByteBuf buf) {
         final boolean isNull = this.ruleID == null;
         buf.writeBoolean(isNull);
         if (!isNull) {

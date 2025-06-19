@@ -8,6 +8,9 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -19,10 +22,12 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
@@ -42,7 +47,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
+    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
         return CODEC;
     }
 
@@ -52,7 +57,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
     }
 
     @Override
-    public RenderShape getRenderShape(BlockState blockState) {
+    public @NotNull RenderShape getRenderShape(BlockState blockState) {
         return RenderShape.MODEL;
     }
 
@@ -73,13 +78,31 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
     }
 
     @Override
-    protected VoxelShape getCollisionShape(
+    protected @NotNull VoxelShape getCollisionShape(
             BlockState blockState,
             BlockGetter blockGetter,
             BlockPos blockPos,
             CollisionContext collisionContext
     ) {
         return Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, 0.99D, 1.0D);
+    }
+
+    @Override
+    protected @NotNull InteractionResult useWithoutItem(
+            BlockState state,
+            Level level,
+            BlockPos pos,
+            Player player,
+            BlockHitResult hitResult
+    ) {
+        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+            BlockEntity blockEntity = level.getBlockEntity(pos);
+            if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+                suctionTube.openMenu(serverPlayer);
+                return InteractionResult.CONSUME;
+            }
+        }
+        return InteractionResult.SUCCESS;
     }
 
     // Redstone signal output methods
@@ -98,7 +121,12 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot {
     }
 
     @Override
-    protected int getDirectSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+    protected int getDirectSignal(
+            BlockState blockState,
+            BlockGetter blockGetter,
+            BlockPos blockPos,
+            Direction direction
+    ) {
         return getSignal(blockState, blockGetter, blockPos, direction);
     }
 }
