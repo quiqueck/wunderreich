@@ -15,8 +15,11 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -31,6 +34,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
+import java.util.List;
 import java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -133,6 +137,26 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
             Direction direction
     ) {
         return getSignal(blockState, blockGetter, blockPos, direction);
+    }
+
+    @Override
+    public @NotNull List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
+        List<ItemStack> drops = super.getDrops(blockState, builder);
+        
+        BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
+        if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+            // Add all filter items from all directions to drops
+            for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
+                ItemStack[] filterItems = suctionTube.getFilterItems(direction);
+                for (ItemStack filterItem : filterItems) {
+                    if (!filterItem.isEmpty()) {
+                        drops.add(filterItem.copy());
+                    }
+                }
+            }
+        }
+        
+        return drops;
     }
 
     @Override
