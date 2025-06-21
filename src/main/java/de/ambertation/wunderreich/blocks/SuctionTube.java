@@ -9,9 +9,11 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -122,10 +124,24 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     }
 
     @Override
+    protected boolean hasAnalogOutputSignal(BlockState blockState) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+            return suctionTube.getRedstoneSignal();
+        }
+        return 0;
+    }
+
+    @Override
     protected int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
         BlockEntity blockEntity = blockGetter.getBlockEntity(blockPos);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
-            return suctionTube.getRedstoneSignal(direction);
+            return suctionTube.getRedstoneSignal();
         }
         return 0;
     }
@@ -178,5 +194,16 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
+    }
+
+
+    @Override
+    protected void affectNeighborsAfterRemoval(
+            BlockState blockState,
+            ServerLevel serverLevel,
+            BlockPos blockPos,
+            boolean bl
+    ) {
+        Containers.updateNeighboursAfterDestroy(blockState, serverLevel, blockPos);
     }
 }

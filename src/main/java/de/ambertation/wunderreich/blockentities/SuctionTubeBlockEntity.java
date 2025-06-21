@@ -338,7 +338,7 @@ class SuctionInputs {
             redstoneOutputTicks--;
             if (redstoneOutputTicks <= 0) {
                 redstoneOutputSignal = 0;
-                level.updateNeighborsAt(worldPosition, suctionBlock);
+                level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
             }
         }
     }
@@ -420,7 +420,7 @@ class SuctionInputs {
         redstoneOutputTicks = 1; // Emit for one tick
 
         // Update neighboring blocks to notify them of the signal change
-        level.updateNeighborsAt(worldPosition, suctionBlock);
+        level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
     }
 
     /**
@@ -593,10 +593,9 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
      * Gets the redstone signal strength for a specific direction.
      * Used by the block to provide directional redstone output.
      *
-     * @param direction The direction to get the signal for
      * @return The redstone signal strength for that direction (0-15)
      */
-    public int getRedstoneSignal(Direction direction) {
+    public int getRedstoneSignal() {
         return this.inputs.redstoneOutputSignal();
     }
 
