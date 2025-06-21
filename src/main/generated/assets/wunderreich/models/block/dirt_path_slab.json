@@ -1,5 +1,5 @@
 {
-  "parent": "wunderreich:template/reduced_slab",
+  "parent": "wunderreich:template/path_slab",
   "textures": {
     "bottom": "minecraft:block/dirt",
     "particle": "minecraft:block/dirt",

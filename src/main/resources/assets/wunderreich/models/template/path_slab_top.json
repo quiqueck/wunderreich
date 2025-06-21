@@ -1,0 +1,23 @@
+{
+  "parent": "minecraft:block/slab_top",
+  "textures": {
+    "particle": "#particle",
+    "top": "#top",
+    "side": "#side",
+    "bottom": "#bottom"
+  },
+  "elements": [
+    {
+      "from": [0, 8, 0],
+      "to": [16, 15, 16],
+      "faces": {
+        "down": {"uv": [0, 0, 16, 16], "texture": "#bottom"},
+        "up": {"uv": [0, 0, 16, 16], "texture": "#top", "cullface": "up"},
+        "north": {"uv": [0, 8, 16, 15], "texture": "#side"},
+        "south": {"uv": [0, 8, 16, 15], "texture": "#side"},
+        "west": {"uv": [0, 8, 16, 15], "texture": "#side"},
+        "east": {"uv": [0, 8, 16, 15], "texture": "#side"}
+      }
+    }
+  ]
+}
