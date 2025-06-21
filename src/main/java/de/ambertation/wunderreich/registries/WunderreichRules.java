@@ -96,6 +96,12 @@ public class WunderreichRules {
         private static final BooleanRule ANALOG_REDSTONE =
                 new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.wunderkisteAnalogRedstoneOutput);
 
+        private static final BooleanRule SUCTION_TUBE_REDSTONE_POWER =
+                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.suctiontubeRedstonePower);
+
+        private static final BooleanRule SUCTION_TUBE_ANALOG_REDSTONE =
+                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.suctiontubeAnalogRedstoneOutput);
+
         private static final BooleanRule SHOW_COLOR_WUNDERKISTE =
                 new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteShowColored);
 
@@ -130,6 +136,14 @@ public class WunderreichRules {
             return ANALOG_REDSTONE.get();
         }
 
+        public static boolean redstonePowerWhenSucking() {
+            return SUCTION_TUBE_REDSTONE_POWER.get();
+        }
+
+        public static boolean analogRedstoneOutputOnSuction() {
+            return SUCTION_TUBE_ANALOG_REDSTONE.get();
+        }
+
         public static boolean showColors() {
             return SHOW_COLOR_WUNDERKISTE.get();
         }
@@ -160,6 +174,10 @@ public class WunderreichRules {
 
         public static boolean isRedstoneEnabled() {
             return redstonePowerWhenOpened() || analogRedstoneOutput();
+        }
+
+        public static boolean isSuctionRedstoneEnabled() {
+            return redstonePowerWhenSucking() || analogRedstoneOutputOnSuction();
         }
 
         static void register() {

@@ -6,12 +6,25 @@ import de.ambertation.wunderreich.Wunderreich;
 public class DefaultGameRules extends ConfigFile {
     public final static String WUNDERKISTE_CATEGORY = "wunderkiste";
     public final static String WHIPSER_CATEGORY = "whispers";
+    public final static String SUCTION_TUBE_CATEGORY = "suctiontube";
     public final static String FEATURE_CATEGORY = "wunderreich";
 
     public final IntValue whisperDurability = new IntValue(WHIPSER_CATEGORY, "durability", 20);
     public final IntValue whisperTrainedDurability = new IntValue(WHIPSER_CATEGORY, "trainedDurability", 40);
     public final IntValue whisperMinXPMultiplier = new IntValue(WHIPSER_CATEGORY, "minXPMultiplier", 75);
     public final IntValue whisperMaxXPMultiplier = new IntValue(WHIPSER_CATEGORY, "maxXPMultiplier", 100);
+
+    public final BooleanValue suctiontubeRedstonePower = new BooleanValue(
+            SUCTION_TUBE_CATEGORY,
+            "redstonePowerWhenSucking",
+            true
+    );
+
+    public final BooleanValue suctiontubeAnalogRedstoneOutput = new BooleanValue(
+            SUCTION_TUBE_CATEGORY,
+            "analogRedstoneOutputForSuction",
+            true
+    );
 
     public final BooleanValue wunderkisteRedstonePowerWhenOpened = new BooleanValue(
             WUNDERKISTE_CATEGORY,

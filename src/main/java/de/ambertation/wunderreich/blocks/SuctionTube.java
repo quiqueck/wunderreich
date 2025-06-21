@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -120,16 +121,17 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     // Redstone signal output methods
     @Override
     protected boolean isSignalSource(BlockState state) {
-        return true;
+        return WunderreichRules.Wunderkiste.redstonePowerWhenSucking();
     }
 
     @Override
     protected boolean hasAnalogOutputSignal(BlockState blockState) {
-        return true;
+        return WunderreichRules.Wunderkiste.analogRedstoneOutputOnSuction();
     }
 
     @Override
     protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
+        if (!WunderreichRules.Wunderkiste.analogRedstoneOutputOnSuction()) return 0;
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
             return suctionTube.getRedstoneSignal();
@@ -139,9 +141,11 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
 
     @Override
     protected int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
+        if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
+
         BlockEntity blockEntity = blockGetter.getBlockEntity(blockPos);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
-            return suctionTube.getRedstoneSignal();
+            return suctionTube.getRedstoneSignal() > 0 ? 15 : 0;
         }
         return 0;
     }

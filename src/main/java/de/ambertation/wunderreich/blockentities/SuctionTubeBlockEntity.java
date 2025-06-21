@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
+import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -346,6 +347,7 @@ class SuctionInputs {
     }
 
     void tickRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
+        if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) return;
         if (redstoneOutputTicks > 0) {
             redstoneOutputTicks--;
             if (redstoneOutputTicks <= 0) {
@@ -401,6 +403,8 @@ class SuctionInputs {
     }
 
     private boolean isDirectionDisabledByRedstone(SuctionInput input) {
+        if (this.redstoneDisableMask == 0) return false; // No redstone signals, all directions enabled
+
         if (input.redstoneBit() < 0) return true;
         return (this.redstoneDisableMask & (1 << input.redstoneBit())) != 0;
     }
@@ -461,6 +465,7 @@ class SuctionInputs {
         //randomly pick one available container to transfer from without adding a new datastructure
         for (int i : randomizedIndexOrder) {
             final SuctionInput input = inputs[i];
+            
             // Check if this direction is disabled by redstone
             if (isDirectionDisabledByRedstone(input)) {
                 continue; // Skip this direction
