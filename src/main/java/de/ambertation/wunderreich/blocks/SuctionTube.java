@@ -18,8 +18,6 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -29,6 +27,9 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.redstone.Orientation;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -140,9 +141,24 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     }
 
     @Override
+    protected void neighborChanged(
+            BlockState blockState,
+            Level level,
+            BlockPos blockPos,
+            Block block,
+            @Nullable Orientation orientation,
+            boolean bl
+    ) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+            suctionTube.neighborChanged(level, blockPos);
+        }
+    }
+
+    @Override
     public @NotNull List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
         List<ItemStack> drops = super.getDrops(blockState, builder);
-        
+
         BlockEntity blockEntity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
             // Add all filter items from all directions to drops
@@ -155,7 +171,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
                 }
             }
         }
-        
+
         return drops;
     }
 

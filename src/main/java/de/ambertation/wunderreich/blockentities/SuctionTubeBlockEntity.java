@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.blockentities;
 
+import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 
@@ -16,17 +17,459 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ComparatorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ComparatorBlockEntity;
 import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import org.jetbrains.annotations.Nullable;
+
+
+class SuctionInput {
+    public final Direction inDirection;
+    public final ItemStack[] filter;
+    private Container container;
+    private ComparatorBlockEntity comparator;
+    private boolean isInputComparator;
+    private byte inputStrength;
+    private final byte redstoneBit;
+    byte redstoneBitOverride = -1; // -1 means no override, 0-3 are valid bits
+
+    SuctionInput(Direction inDirection, byte redstoneBit) {
+        this.inDirection = inDirection;
+        this.redstoneBit = redstoneBit;
+        this.filter = createEmptyFilter();
+    }
+
+    public static ItemStack[] createEmptyFilter() {
+        return new ItemStack[]{
+                ItemStack.EMPTY,
+                ItemStack.EMPTY,
+                ItemStack.EMPTY,
+                ItemStack.EMPTY
+        };
+    }
+
+    public boolean hasContainer() {
+        return container != null;
+    }
+
+    public Container container() {
+        return container;
+    }
+
+    public ComparatorBlockEntity outputComperator() {
+        return isInputComparator ? null : comparator;
+    }
+
+    public ComparatorBlockEntity inputComperator() {
+        return isInputComparator ? comparator : null;
+    }
+
+    public byte redstoneBit() {
+        return (byte) Math.max(this.redstoneBit, this.redstoneBitOverride);
+    }
+
+    public byte currentInputStrength() {
+        return inputStrength;
+    }
+
+    /**
+     * Checks if the given item stack passes the filter for the specified direction.
+     * If no filter items are set for a direction, all items pass.
+     * If filter items are set, only items matching the filter pass.
+     */
+    public boolean passesFilter(ItemStack itemStack) {
+        // If the item stack is empty, it cannot pass any filter
+        if (itemStack.isEmpty()) return false;
+
+        boolean hasNoFilterItems = true;
+
+        // Check if any filter slot matches the input
+        for (ItemStack filter : this.filter) {
+            if (!filter.isEmpty()) {
+                hasNoFilterItems = false;
+                if (ItemStack.isSameItemSameComponents(itemStack, filter)) {
+                    return true; // Item matches one of the filters
+                }
+            }
+        }
+
+        // If no filters are set, allow all items
+        return hasNoFilterItems;
+    }
+
+    public boolean tryTransferItemToDestination(Container destination) {
+        if (this.container instanceof WorldlyContainer worldlySource) {
+            final int[] slots = worldlySource.getSlotsForFace(this.inDirection.getOpposite());
+            for (int slot : slots) {
+                if (tryTakeAndTransfer(slot, destination)) {
+                    return true;
+                }
+            }
+        } else {
+            final int containerSize = this.container.getContainerSize();
+            for (int slot = 0; slot < containerSize; ++slot) {
+                if (tryTakeAndTransfer(slot, destination)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private boolean tryTakeAndTransfer(
+            final int sourceSlotIndex, final Container destination
+    ) {
+        final ItemStack sourceStack = this.container.getItem(sourceSlotIndex);
+        if (!passesFilter(sourceStack)) {
+            return false;
+        }
+
+        // Try to insert into destination
+        if (tryMoveOne(destination, sourceStack)) {
+            this.container.setChanged();
+            destination.setChanged();
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean tryMoveOne(Container destination, ItemStack stackToMoveOneFrom) {
+        if (destination instanceof WorldlyContainer worldlyContainer) {
+            int[] slots = worldlyContainer.getSlotsForFace(Direction.DOWN);
+            for (int slot : slots) {
+                worldlyContainer.canPlaceItemThroughFace(slot, stackToMoveOneFrom.copyWithCount(1), Direction.DOWN);
+                if (tryMoveOneToSlot(destination, stackToMoveOneFrom, slot)) {
+                    return true;
+                }
+            }
+        } else {
+            int containerSize = destination.getContainerSize();
+            for (int i = 0; i < containerSize && !stackToMoveOneFrom.isEmpty(); ++i) {
+                if (tryMoveOneToSlot(destination, stackToMoveOneFrom, i)) {
+                    return true;
+                }
+                ;
+            }
+        }
+        return false;
+    }
+
+    private static boolean tryMoveOneToSlot(Container destination, ItemStack stackToMoveOneFrom, int slot) {
+        final ItemStack slotStack = destination.getItem(slot);
+        if (canPlaceItemInContainer(destination, stackToMoveOneFrom, slot)) {
+            if (slotStack.isEmpty()) {
+                //create a new stack with a single item from the source stack
+                destination.setItem(slot, stackToMoveOneFrom.copyWithCount(1));
+
+                // make sure to remove it from the source stack
+                stackToMoveOneFrom.shrink(1);
+
+                return true;
+            } else if (canMergeItems(slotStack, stackToMoveOneFrom)) {
+                int maxStackSize = Math.min(stackToMoveOneFrom.getMaxStackSize(), slotStack.getMaxStackSize());
+                int canAdd = Math.min(stackToMoveOneFrom.getCount(), maxStackSize - slotStack.getCount());
+                if (canAdd > 0) {
+                    // grow the stack in the destination slot
+                    slotStack.grow(1);
+
+                    // shrink the source stack
+                    stackToMoveOneFrom.shrink(1);
+
+                    //destination.setItem(slot, slotStack);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean canPlaceItemInContainer(Container destination, ItemStack stackToInsert, int slot) {
+        if (destination.canPlaceItem(slot, stackToInsert)) {
+            if (destination instanceof WorldlyContainer worldlyContainer) {
+                return worldlyContainer.canPlaceItemThroughFace(slot, stackToInsert, Direction.UP);
+            } else {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean canMergeItems(ItemStack stack1, ItemStack stack2) {
+        return ItemStack.isSameItemSameComponents(stack1, stack2);
+    }
+
+    void neighborChanged(Level level, BlockPos blockPos) {
+        this.comparator = null;
+        final BlockPos myPos = blockPos.relative(inDirection);
+        BlockEntity blockEntity = level.getBlockEntity(myPos);
+
+        if (blockEntity instanceof Container) {
+            this.container = SuctionTubeBlockEntity.getContainerAt(level, myPos);
+        }
+
+        if (blockEntity instanceof ComparatorBlockEntity comparatorBlockEntity) {
+            // Get the facing direction of the comparator
+            Direction comparatorFacing = comparatorBlockEntity.getBlockState().getValue(ComparatorBlock.FACING);
+
+            // This comparator is inputting a signal, so change the inputValue
+            if (comparatorFacing == inDirection) {
+                this.inputStrength = (byte) Math.max(
+                        Byte.MIN_VALUE,
+                        Math.min(Byte.MAX_VALUE, level.getSignal(myPos, inDirection))
+                );
+                this.isInputComparator = true;
+                this.comparator = comparatorBlockEntity;
+            } else if (comparatorFacing == inDirection.getOpposite()) {
+                this.isInputComparator = false;
+                this.comparator = comparatorBlockEntity;
+            } else {
+                this.comparator = null;
+            }
+        }
+    }
+}
+
+class SuctionInputs {
+    // The First one has to be DOWN, otherwise the BitMask will not work correctly
+    static final Direction[] DIRECTIONS = {
+            Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
+    };
+    static final byte DOWN_DIRECTION_IDEX = 0;
+
+    // Randomized order of container indices to try transferring from
+    private final byte[] randomizedIndexOrder = {0, 1, 2, 3, 4};
+    private final Random random = new Random();
+
+    // Redstone disable mask: bit 0 = NORTH, bit 1 = EAST, bit 2 = SOUTH, bit 3 = WEST
+    private byte redstoneDisableMask;
+    // Redstone output signal strength
+    private byte redstoneOutputSignal;
+    // Number of ticks the redstone output signal is active
+    private byte redstoneOutputTicks;
+
+
+    private final SuctionInput[] inputs;
+
+    SuctionInputs() {
+        assert (SuctionTubeBlockEntity.DIRECTIONS.length == 5) : "SuctionTubeBlockEntity.DIRECTIONS must have exactly 5 directions";
+        assert (SuctionTubeBlockEntity.DIRECTIONS[DOWN_DIRECTION_IDEX] == Direction.DOWN) : "Direction at index " + DOWN_DIRECTION_IDEX + " in SuctionTubeBlockEntity.DIRECTIONS must be DOWN";
+
+        inputs = new SuctionInput[SuctionTubeBlockEntity.DIRECTIONS.length];
+        for (int dirIndex = 0; dirIndex < SuctionTubeBlockEntity.DIRECTIONS.length; dirIndex++) {
+            inputs[dirIndex] = new SuctionInput(SuctionTubeBlockEntity.DIRECTIONS[dirIndex], (byte) (dirIndex - 1));
+        }
+
+        this.shuffleSourceContainerOrder();
+    }
+
+    public SuctionInput forDirection(Direction direction) {
+        for (SuctionInput input : inputs) {
+            if (input.inDirection == direction) {
+                return input;
+            }
+        }
+        return null; // No input found for this direction
+    }
+
+    private void shuffleSourceContainerOrder() {
+        for (int cIndx = 0; cIndx < randomizedIndexOrder.length; cIndx++) {
+            byte randomIndex = (byte) random.nextInt(randomizedIndexOrder.length);
+            byte temp = randomizedIndexOrder[cIndx];
+            randomizedIndexOrder[cIndx] = randomizedIndexOrder[randomIndex];
+            randomizedIndexOrder[randomIndex] = temp;
+        }
+    }
+
+    void loadAdditional(ValueInput valueInput) {
+        String listKey;
+        ValueInput.TypedInputList<ItemStackWithSlot> itemList;
+
+        for (SuctionInput input : inputs) {
+            listKey = input.inDirection.getName();
+            itemList = valueInput.listOrEmpty(listKey, ItemStackWithSlot.CODEC);
+            for (int i = 0; i < 4; i++) input.filter[i] = ItemStack.EMPTY;
+
+            for (ItemStackWithSlot itemStackWithSlot : itemList) {
+                if (itemStackWithSlot.slot() >= 0 && itemStackWithSlot.slot() < input.filter.length) {
+                    input.filter[itemStackWithSlot.slot()] = itemStackWithSlot.stack();
+                }
+            }
+        }
+    }
+
+    void saveAdditional(ValueOutput valueOutput) {
+        String listKey;
+        ValueOutput.TypedOutputList<ItemStackWithSlot> typedOutputList;
+
+        for (SuctionInput input : inputs) {
+            if (input.filter.length == 0) continue;
+            listKey = input.inDirection.getName();
+
+            typedOutputList = valueOutput.list(listKey, ItemStackWithSlot.CODEC);
+            for (int i = 0; i < input.filter.length; i++) {
+                // Only add non-empty filters to the output list
+                if (!input.filter[i].isEmpty()) {
+                    typedOutputList.add(new ItemStackWithSlot(i, input.filter[i]));
+                }
+            }
+
+            // If no filters for this direction, discard the list
+            if (typedOutputList.isEmpty()) {
+                valueOutput.discard(listKey);
+            }
+        }
+    }
+
+    public int redstoneOutputSignal() {
+        return redstoneOutputSignal;
+    }
+
+    void tickRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
+        if (redstoneOutputTicks > 0) {
+            redstoneOutputTicks--;
+            if (redstoneOutputTicks <= 0) {
+                redstoneOutputSignal = 0;
+                level.updateNeighborsAt(worldPosition, suctionBlock);
+            }
+        }
+    }
+
+    /**
+     * Gets the redstone disable mask by checking redstone signals from comparators facing into this block.
+     * Only comparators that are oriented to face into the Suction Tube are considered.
+     * The signal strength from each valid direction is combined using bitwise OR to create a unified
+     * bitmask that determines which directions should be disabled.
+     *
+     * <p>Each bit in the returned mask corresponds to a direction:
+     * <ul>
+     *   <li>Bit 0 (value 1): NORTH direction</li>
+     *   <li>Bit 1 (value 2): EAST direction</li>
+     *   <li>Bit 2 (value 4): SOUTH direction</li>
+     *   <li>Bit 3 (value 8): WEST direction</li>
+     * </ul>
+     */
+    private void updateRedstoneMask() {
+        byte combinedMask = 0;
+        for (SuctionInput input : inputs) {
+            if (input.inputComperator() != null) {
+                // If this input has a comparator facing into the block, use its signal strength
+                combinedMask |= input.currentInputStrength();
+            }
+        }
+        this.redstoneDisableMask = combinedMask;
+    }
+
+    public void neighborChanged(Level level, BlockPos pos) {
+        SuctionInput downInput = null;
+        int newDownOverride = -1; // -1 means no override
+        for (var input : this.inputs) {
+            input.neighborChanged(level, pos);
+            // Remember which input is the DOWN one
+            if (input.inDirection == Direction.DOWN) {
+                downInput = input;
+            } else if (input.inputComperator() != null) {
+                newDownOverride = Math.max(newDownOverride, input.redstoneBit());
+            }
+        }
+        if (downInput != null) {
+            // If we have a DOWN input, set its override to the maximum of all other inputs
+            downInput.redstoneBitOverride = (byte) newDownOverride;
+        }
+
+        this.updateRedstoneMask();
+    }
+
+    private boolean isDirectionDisabledByRedstone(SuctionInput input) {
+        if (input.redstoneBit() < 0) return true;
+        return (this.redstoneDisableMask & (1 << input.redstoneBit())) != 0;
+    }
+
+    /**
+     * Emits a redstone signal for one tick based on which direction an item was transferred from.
+     * The signal strength corresponds to the bit position of the source direction.
+     */
+    private void emitRedstoneSignalForTransfer(
+            Level level,
+            BlockPos worldPosition,
+            SuctionTube suctionBlock,
+            SuctionInput outputSource
+    ) {
+        if (level == null) return;
+
+        // Calculate signal strength based on direction
+        int signalStrength;
+        if (outputSource.inDirection == Direction.DOWN) {
+            // For DOWN direction, has no bit, so we use a fixed value of 5
+            signalStrength = DIRECTIONS.length;
+        } else {
+            // For horizontal directions, use the bit corresponding to their position
+            // NORTH = bit 0 (1), EAST = bit 1 (2), SOUTH = bit 2 (3), WEST = bit 3 (4)
+            signalStrength = outputSource.redstoneBit();
+        }
+
+        redstoneOutputSignal = (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, signalStrength));
+        redstoneOutputTicks = 1; // Emit for one tick
+
+        // Update neighboring blocks to notify them of the signal change
+        level.updateNeighborsAt(worldPosition, suctionBlock);
+    }
+
+    /**
+     * Attempts to transfer one item from any available source container to the destination container above.
+     *
+     * <p>This method:
+     * <ol>
+     *   <li>Checks for a valid destination container above the Suction Tube</li>
+     *   <li>Gets the current redstone disable mask to determine which directions are disabled</li>
+     *   <li>Iterates through source containers in randomized order</li>
+     *   <li>Skips directions that are disabled by redstone signals</li>
+     *   <li>Attempts to transfer one item from the first available source</li>
+     *   <li>Re-randomizes the order for the next transfer attempt if successful</li>
+     * </ol>
+     *
+     * <p>The randomization ensures fair distribution when multiple source containers are available.
+     * Redstone control allows selective disabling of specific source directions.
+     */
+    public boolean tryTransferItem(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
+        if (level == null || level.isClientSide) return false;
+        // Get container above (destination)
+        Container destContainer = SuctionTubeBlockEntity.getContainerAt(level, worldPosition.above());
+        if (destContainer == null) return false;
+
+
+        //randomly pick one available container to transfer from without adding a new datastructure
+        for (int i : randomizedIndexOrder) {
+            final SuctionInput input = inputs[i];
+            // Check if this direction is disabled by redstone
+            if (isDirectionDisabledByRedstone(input)) {
+                continue; // Skip this direction
+            }
+
+            if (!input.hasContainer()) {
+                // If the container is null, skip this input
+                continue;
+            }
+
+            if (input.tryTransferItemToDestination(destContainer)) {
+                // Emit redstone signal based on the direction the item came from
+                emitRedstoneSignalForTransfer(level, worldPosition, suctionBlock, input);
+                shuffleSourceContainerOrder();
+                return true; // Successfully transferred an item
+            }
+        }
+        return false;
+    }
+}
+
 
 /**
  * Block entity for the Suction Tube block that transfers items from surrounding containers
@@ -90,29 +533,17 @@ import org.jetbrains.annotations.Nullable;
  * </ul>
  */
 public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider {
-    private int transferCooldown = 0;
+
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
-    private final Random random = new Random();
+    // Directions for the containers relative to the suction tube
+    public static final Direction[] DIRECTIONS = SuctionInputs.DIRECTIONS;
 
-    // Redstone output fields
-    private int redstoneOutputSignal = 0;
-    private int redstoneOutputTicks = 0;
-
-    // Filter storage: direction -> array of 4 filter items
-    private final Map<Direction, ItemStack[]> filterItems = new HashMap<>();
+    private int transferCooldown = 0;
+    private final SuctionInputs inputs;
+    private boolean didInitialize = false;
 
     public SuctionTubeBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
-
-        // Initialize filter arrays for each direction
-        for (Direction direction : DIRECTIONS) {
-            filterItems.put(direction, new ItemStack[4]);
-            for (int i = 0; i < 4; i++) {
-                filterItems.get(direction)[i] = ItemStack.EMPTY;
-            }
-        }
-
-        shuffleSourceContainerOrder();
+        this(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
     }
 
     public SuctionTubeBlockEntity(
@@ -121,230 +552,32 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
             BlockState blockState
     ) {
         super(blockEntityType, blockPos, blockState);
+
+        // Initialize suction inputs for each direction
+        inputs = new SuctionInputs();
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SuctionTubeBlockEntity blockEntity) {
         if (level.isClientSide) return;
-
-        // Handle redstone output timing
-        if (blockEntity.redstoneOutputTicks > 0) {
-            blockEntity.redstoneOutputTicks--;
-            if (blockEntity.redstoneOutputTicks <= 0) {
-                blockEntity.redstoneOutputSignal = 0;
-                level.updateNeighborsAt(pos, state.getBlock());
-            }
+        if (!blockEntity.didInitialize) {
+            blockEntity.didInitialize = true;
+            blockEntity.inputs.neighborChanged(level, pos);
         }
 
+        // Handle transfer cooldown
         --blockEntity.transferCooldown;
         if (blockEntity.transferCooldown <= 0) {
             blockEntity.transferCooldown = TRANSFER_COOLDOWN;
-            blockEntity.tryTransferItem();
+            blockEntity.inputs.tryTransferItem(level, pos, (SuctionTube) state.getBlock());
         }
+
+        // Handle redstone output timing
+        blockEntity.inputs.tickRedstoneOutput(level, pos, (SuctionTube) state.getBlock());
     }
 
-    // Directions for the containers relative to the suction tube
-    public static final Direction[] DIRECTIONS = {
-            Direction.DOWN, Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST
-    };
-
-    // Randomized order of container indices to try transferring from
-    private static final int[] CONTAINER_INDEX_ORDER = {0, 1, 2, 3, 4};
-
-    /**
-     * Attempts to transfer one item from any available source container to the destination container above.
-     *
-     * <p>This method:
-     * <ol>
-     *   <li>Checks for a valid destination container above the Suction Tube</li>
-     *   <li>Gets the current redstone disable mask to determine which directions are disabled</li>
-     *   <li>Iterates through source containers in randomized order</li>
-     *   <li>Skips directions that are disabled by redstone signals</li>
-     *   <li>Attempts to transfer one item from the first available source</li>
-     *   <li>Re-randomizes the order for the next transfer attempt if successful</li>
-     * </ol>
-     *
-     * <p>The randomization ensures fair distribution when multiple source containers are available.
-     * Redstone control allows selective disabling of specific source directions.
-     */
-    private void tryTransferItem() {
-        if (level == null || level.isClientSide) return;
-
-        // Get container above (destination)
-        BlockPos abovePos = worldPosition.above();
-        Container destContainer = getContainerAt(level, abovePos);
-
-        if (destContainer == null) return;
-
-        // Get redstone disable mask
-        int redstoneDisableMask = getRedstoneDisableMask();
-
-        //randomly pick one available container to transfer from without adding a new datastructure
-        for (int i : CONTAINER_INDEX_ORDER) {
-            // Check if this direction is disabled by redstone
-            if (isDirectionDisabledByRedstone(DIRECTIONS[i], redstoneDisableMask)) {
-                continue; // Skip this direction
-            }
-
-            Container c = getContainerAt(level, worldPosition.relative(DIRECTIONS[i]));
-            if (c != null && transferItemFromToWithFilter(c, destContainer, DIRECTIONS[i])) {
-                // Emit redstone signal based on the direction the item came from
-                emitRedstoneSignalForTransfer(DIRECTIONS[i], i);
-                shuffleSourceContainerOrder();
-                return; // Successfully transferred an item
-            }
-        }
-    }
-
-    /**
-     * Checks if the given item stack passes the filter for the specified direction.
-     * If no filter items are set for a direction, all items pass.
-     * If filter items are set, only items matching the filter pass.
-     */
-    private boolean passesFilter(ItemStack itemStack, Direction direction) {
-        ItemStack[] filters = filterItems.get(direction);
-        if (filters == null) return true;
-
-        // Check if any filter slot is set
-        boolean hasFilters = false;
-        for (ItemStack filter : filters) {
-            if (!filter.isEmpty()) {
-                hasFilters = true;
-                if (ItemStack.isSameItemSameComponents(itemStack, filter)) {
-                    return true;
-                }
-            }
-        }
-
-        // If no filters are set, allow all items
-        return !hasFilters;
-    }
-
-    // Shuffle the CONTAINER_INDEX_ORDER array to randomize the next transfer attempt
-
-    private void shuffleSourceContainerOrder() {
-        for (int cIndx = 0; cIndx < CONTAINER_INDEX_ORDER.length; cIndx++) {
-            int randomIndex = random.nextInt(CONTAINER_INDEX_ORDER.length);
-            int temp = CONTAINER_INDEX_ORDER[cIndx];
-            CONTAINER_INDEX_ORDER[cIndx] = CONTAINER_INDEX_ORDER[randomIndex];
-            CONTAINER_INDEX_ORDER[randomIndex] = temp;
-        }
-    }
-
-    /**
-     * Gets the redstone disable mask by checking redstone signals from comparators facing into this block.
-     * Only comparators that are oriented to face into the Suction Tube are considered.
-     * The signal strength from each valid direction is combined using bitwise OR to create a unified
-     * bitmask that determines which directions should be disabled.
-     *
-     * <p>Each bit in the returned mask corresponds to a direction:
-     * <ul>
-     *   <li>Bit 0 (value 1): NORTH direction</li>
-     *   <li>Bit 1 (value 2): EAST direction</li>
-     *   <li>Bit 2 (value 4): SOUTH direction</li>
-     *   <li>Bit 3 (value 8): WEST direction</li>
-     * </ul>
-     *
-     * @return Combined redstone disable mask (0-15), where each set bit disables the corresponding direction
-     */
-    private int getRedstoneDisableMask() {
-        if (level == null) return 0;
-
-        int combinedMask = 0;
-
-        // Check redstone signal from each horizontal direction
-        for (int i = 1; i < DIRECTIONS.length; i++) { // Start from 1 to skip DOWN
-            Direction direction = DIRECTIONS[i];
-            BlockPos signalPos = worldPosition.relative(direction);
-
-            // Only accept signal if there's a comparator facing into this block
-            if (isComparatorFacingInto(signalPos, direction)) {
-                int signalStrength = level.getSignal(signalPos, direction);
-                // Use the signal strength as a bitmask
-                combinedMask |= signalStrength;
-            }
-        }
-
-        return combinedMask;
-    }
-
-    /**
-     * Checks if a specific direction is disabled by the redstone signal.
-     *
-     * <p>For horizontal directions (NORTH, EAST, SOUTH, WEST), this method checks if the
-     * corresponding bit is set in the redstone disable mask.
-     *
-     * <p>For the DOWN direction (bottom face), the control is more complex:
-     * The bottom face is controlled by whichever horizontal direction is currently providing
-     * a redstone signal. The bit that gets checked corresponds to the direction providing
-     * the signal, not the bottom face itself.
-     *
-     * <p>Examples:
-     * <ul>
-     *   <li>If EAST provides signal strength 1 (bit 0 set), and bit 0 corresponds to NORTH,
-     *       then the bottom face will be disabled</li>
-     *   <li>If NORTH provides signal strength 2 (bit 1 set), and bit 1 corresponds to EAST,
-     *       then both the EAST horizontal direction and potentially the bottom face are affected</li>
-     * </ul>
-     *
-     * @param direction           The direction to check (DOWN, NORTH, EAST, SOUTH, or WEST)
-     * @param redstoneDisableMask The redstone disable mask obtained from {@link #getRedstoneDisableMask()}
-     * @return true if the direction is disabled and should not transfer items, false otherwise
-     */
-    private boolean isDirectionDisabledByRedstone(Direction direction, int redstoneDisableMask) {
-        // DOWN (bottom) is controlled by horizontal redstone inputs
-        if (direction == Direction.DOWN) {
-            // Find which comparator input controls the bottom face
-            // This is determined by which direction has a comparator facing into the block with a signal
-            for (int bitIndex = 1; bitIndex < DIRECTIONS.length; bitIndex++) {
-                Direction redstoneDirection = DIRECTIONS[bitIndex];
-                BlockPos signalPos = worldPosition.relative(redstoneDirection);
-
-                // Only check if there's a comparator facing into this block
-                if (isComparatorFacingInto(signalPos, redstoneDirection)) {
-                    int signalStrength = level.getSignal(signalPos, redstoneDirection);
-
-                    if (signalStrength > 0) {
-                        // Check if the bit corresponding to this redstone input direction is set
-                        return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
-                    }
-                }
-            }
-            return false;
-        }
-
-        // For horizontal directions, check the corresponding bit
-        for (int bitIndex = 1; bitIndex < DIRECTIONS.length; bitIndex++) {
-            if (DIRECTIONS[bitIndex] == direction) {
-                return (redstoneDisableMask & (1 << (bitIndex - 1))) != 0;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Checks if there is a comparator at the given position that is facing into this block.
-     *
-     * @param comparatorPos     The position to check for a comparator
-     * @param directionFromTube The direction from the tube to the comparator position
-     * @return true if there's a comparator facing into this block, false otherwise
-     */
-    private boolean isComparatorFacingInto(BlockPos comparatorPos, Direction directionFromTube) {
-        if (level == null) return false;
-
-        BlockState blockState = level.getBlockState(comparatorPos);
-
-        // Check if it's a comparator block
-        if (!blockState.is(net.minecraft.world.level.block.Blocks.COMPARATOR)) {
-            return false;
-        }
-
-        // Get the facing direction of the comparator
-        Direction comparatorFacing = blockState.getValue(net.minecraft.world.level.block.ComparatorBlock.FACING);
-
-        // The comparator should be facing the opposite direction of directionFromTube
-        // (i.e., facing into the tube)
-        return comparatorFacing == directionFromTube;
+    // Update the Neighboring State (redstone signals, and attached containers
+    public void neighborChanged(Level level, BlockPos pos) {
+        inputs.neighborChanged(level, pos);
     }
 
     @Nullable
@@ -356,182 +589,6 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         return HopperBlockEntity.getContainerAt(level, pos);
     }
 
-    private static boolean transferItemFromTo(Container source, Container destination, Direction direction) {
-        // Get the block entity to access filter
-        if (source instanceof WorldlyContainer worldlySource) {
-            int[] slots = worldlySource.getSlotsForFace(direction.getOpposite());
-            for (int slot : slots) {
-                if (tryTakeAndTransfer(source, destination, slot, direction)) {
-                    return true;
-                }
-            }
-        } else {
-            int containerSize = source.getContainerSize();
-            for (int i = 0; i < containerSize; ++i) {
-                if (tryTakeAndTransfer(source, destination, i, direction)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private boolean transferItemFromToWithFilter(Container source, Container destination, Direction direction) {
-        if (source instanceof WorldlyContainer worldlySource) {
-            int[] slots = worldlySource.getSlotsForFace(direction.getOpposite());
-            for (int slot : slots) {
-                ItemStack sourceStack = source.getItem(slot);
-                if (!sourceStack.isEmpty() && passesFilter(sourceStack, direction)) {
-                    if (tryTakeAndTransfer(source, destination, slot, direction)) {
-                        return true;
-                    }
-                }
-            }
-        } else {
-            int containerSize = source.getContainerSize();
-            for (int i = 0; i < containerSize; ++i) {
-                ItemStack sourceStack = source.getItem(i);
-                if (!sourceStack.isEmpty() && passesFilter(sourceStack, direction)) {
-                    if (tryTakeAndTransfer(source, destination, i, direction)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    private static boolean tryTakeAndTransfer(
-            Container source,
-            Container destination,
-            int sourceSlot,
-            Direction direction
-    ) {
-        ItemStack sourceStack = source.getItem(sourceSlot);
-        if (sourceStack.isEmpty()) {
-            return false;
-        }
-
-        // Check if we can extract from source
-//        if (source instanceof WorldlyContainer worldlySource && !worldlySource.canTakeItemThroughFace(
-//                sourceSlot,
-//                sourceStack,
-//                direction.getOpposite()
-//        )) {
-//            return false;
-//        }
-
-        ItemStack extractedStack = sourceStack.copy();
-        extractedStack.setCount(1); // Extract one item at a time
-
-        // Try to insert into destination
-        ItemStack remainingStack = addItem(destination, extractedStack, direction);
-        if (remainingStack.isEmpty()) {
-            // Successfully transferred, remove from source
-            sourceStack.shrink(1);
-            source.setChanged();
-            destination.setChanged();
-            return true;
-        }
-
-        return false;
-    }
-
-    private static ItemStack addItem(Container container, ItemStack stack, Direction direction) {
-        if (container instanceof WorldlyContainer worldlyContainer) {
-            int[] slots = worldlyContainer.getSlotsForFace(direction);
-            return addItem(worldlyContainer, stack, slots);
-        } else {
-            return addItem(container, stack);
-        }
-    }
-
-    private static ItemStack addItem(Container container, ItemStack stack, int[] slots) {
-        for (int slot : slots) {
-            stack = tryInsertInSlot(container, stack, slot);
-            if (stack.isEmpty()) {
-                break;
-            }
-        }
-        return stack;
-    }
-
-    private static ItemStack addItem(Container container, ItemStack stack) {
-        int containerSize = container.getContainerSize();
-        for (int i = 0; i < containerSize && !stack.isEmpty(); ++i) {
-            stack = tryInsertInSlot(container, stack, i);
-        }
-        return stack;
-    }
-
-    private static ItemStack tryInsertInSlot(Container container, ItemStack stackToInsert, int slot) {
-        ItemStack slotStack = container.getItem(slot);
-        if (canPlaceItemInContainer(container, stackToInsert, slot)) {
-            if (slotStack.isEmpty()) {
-                container.setItem(slot, stackToInsert.copy());
-                stackToInsert.setCount(0);
-            } else if (canMergeItems(slotStack, stackToInsert)) {
-                int maxStackSize = Math.min(stackToInsert.getMaxStackSize(), slotStack.getMaxStackSize());
-                int canAdd = Math.min(stackToInsert.getCount(), maxStackSize - slotStack.getCount());
-                if (canAdd > 0) {
-                    slotStack.grow(canAdd);
-                    stackToInsert.shrink(canAdd);
-                    container.setItem(slot, slotStack);
-                }
-            }
-        }
-        return stackToInsert;
-    }
-
-    private static boolean canPlaceItemInContainer(Container container, ItemStack stack, int slot) {
-        if (container instanceof WorldlyContainer worldlyContainer) {
-            return worldlyContainer.canPlaceItemThroughFace(slot, stack, Direction.UP);
-        }
-        return container.canPlaceItem(slot, stack);
-    }
-
-    private static boolean canMergeItems(ItemStack stack1, ItemStack stack2) {
-        return ItemStack.isSameItemSameComponents(stack1, stack2);
-    }
-
-    /**
-     * Emits a redstone signal for one tick based on which direction an item was transferred from.
-     * The signal strength corresponds to the bit position of the source direction.
-     *
-     * @param sourceDirection The direction the item came from
-     * @param directionIndex  The index of the direction in the DIRECTIONS array
-     */
-    private void emitRedstoneSignalForTransfer(Direction sourceDirection, int directionIndex) {
-        if (level == null) return;
-
-        // Calculate signal strength based on direction
-        int signalStrength;
-        if (sourceDirection == Direction.DOWN) {
-            // For DOWN direction, use bit 0 (value 1)
-            signalStrength = 15; // Full signal strength for DOWN
-        } else {
-            // For horizontal directions, use the bit corresponding to their position
-            // NORTH = bit 0 (1), EAST = bit 1 (2), SOUTH = bit 2 (4), WEST = bit 3 (8)
-            signalStrength = 1 << (directionIndex - 1);
-        }
-
-        redstoneOutputSignal = signalStrength;
-        redstoneOutputTicks = 1; // Emit for one tick
-
-        // Update neighboring blocks to notify them of the signal change
-        level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-    }
-
-    /**
-     * Gets the current redstone signal strength being emitted by this block.
-     * This is used by the block to provide redstone output.
-     *
-     * @return The redstone signal strength (0-15)
-     */
-    public int getRedstoneSignal() {
-        return redstoneOutputSignal;
-    }
-
     /**
      * Gets the redstone signal strength for a specific direction.
      * Used by the block to provide directional redstone output.
@@ -540,7 +597,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
      * @return The redstone signal strength for that direction (0-15)
      */
     public int getRedstoneSignal(Direction direction) {
-        return redstoneOutputSignal;
+        return this.inputs.redstoneOutputSignal();
     }
 
     // MenuProvider implementation
@@ -565,25 +622,20 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
      * Gets the filter items for a specific direction.
      */
     public ItemStack[] getFilterItems(Direction direction) {
-        ItemStack[] filters = filterItems.get(direction);
-        if (filters == null) {
-            filters = new ItemStack[4];
-            for (int i = 0; i < 4; i++) {
-                filters[i] = ItemStack.EMPTY;
-            }
-            filterItems.put(direction, filters);
-        }
-        return filters;
+        SuctionInput input = inputs.forDirection(direction);
+        if (input == null) return SuctionInput.createEmptyFilter();
+        return input.filter;
     }
 
     /**
      * Sets the filter items for a specific direction from a container.
      */
     public void setFilterItems(Direction direction, Container container) {
-        ItemStack[] filters = filterItems.computeIfAbsent(direction, k -> new ItemStack[4]);
+        SuctionInput input = inputs.forDirection(direction);
+        if (input == null) return;
 
-        for (int i = 0; i < Math.min(4, container.getContainerSize()); i++) {
-            filters[i] = container.getItem(i).copy();
+        for (int i = 0; i < Math.min(input.filter.length, container.getContainerSize()); i++) {
+            input.filter[i] = container.getItem(i).copy();
         }
         setChanged();
     }
@@ -591,31 +643,9 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
     @Override
     protected void saveAdditional(ValueOutput valueOutput) {
         super.saveAdditional(valueOutput);
-        ItemStack[] filters;
-        String listKey;
-        ValueOutput.TypedOutputList<ItemStackWithSlot> typedOutputList;
-        // Save filter items using list-based approach similar to Hopper
-        for (Direction direction : DIRECTIONS) {
-            filters = filterItems.get(direction);
-            if (filters != null) {
-                listKey = direction.getName();
-                typedOutputList = valueOutput.list(
-                        listKey,
-                        ItemStackWithSlot.CODEC
-                );
 
-                for (int i = 0; i < filters.length; i++) {
-                    if (!filters[i].isEmpty()) {
-                        typedOutputList.add(new ItemStackWithSlot(i, filters[i]));
-                    }
-                }
-
-                // If no filters for this direction, discard the list
-                if (typedOutputList.isEmpty()) {
-                    valueOutput.discard(listKey);
-                }
-            }
-        }
+        // Save currently set filters
+        this.inputs.saveAdditional(valueOutput);
     }
 
     @Override
@@ -623,30 +653,9 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         super.loadAdditional(valueInput);
         ItemStack[] filters;
         String listKey;
-        // Load filter items using list-based approach similar to Hopper
-        for (Direction direction : DIRECTIONS) {
-            filters = new ItemStack[4];
-            for (int i = 0; i < 4; i++) {
-                filters[i] = ItemStack.EMPTY;
-            }
 
-            listKey = direction.getName();
-            for (ItemStackWithSlot itemStackWithSlot : valueInput.listOrEmpty(listKey, ItemStackWithSlot.CODEC)) {
-                if (itemStackWithSlot.slot() >= 0 && itemStackWithSlot.slot() < 4) {
-                    filters[itemStackWithSlot.slot()] = itemStackWithSlot.stack();
-                }
-            }
-
-            filterItems.put(direction, filters);
-        }
-    }
-
-    @Override
-    public void setLevel(Level level) {
-        super.setLevel(level);
-        // If we cleared a signal during loading, notify neighbors now that the world is ready
-        if (level != null && !level.isClientSide) {
-            //level.updateNeighborsAt(worldPosition, getBlockState().getBlock());
-        }
+        // Load the filter items from the ValueInput
+        this.inputs.loadAdditional(valueInput);
     }
 }
+
