@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.BeaconBeamBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class WunderreichSlabBlocks {
@@ -443,6 +445,13 @@ public class WunderreichSlabBlocks {
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
         WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
+        
+        if (Wunderreich.isDatagen()) {
+            if (SLAB_BLOCKS == null) {
+                SLAB_BLOCKS = new LinkedList<>();
+            }
+            SLAB_BLOCKS.add(new Block[]{block, baseBlock});
+        }
         return block;
     }
 
@@ -466,6 +475,12 @@ public class WunderreichSlabBlocks {
                 (bl, key) -> new StainedGlassSlabBlock(DyeColor.MAGENTA, bl, key),
                 register
         );
+    }
+
+    private static List<Block[]> SLAB_BLOCKS;
+
+    public static List<Block[]> getSlabBlocks() {
+        return SLAB_BLOCKS == null ? List.of() : SLAB_BLOCKS;
     }
 
     static void register() {

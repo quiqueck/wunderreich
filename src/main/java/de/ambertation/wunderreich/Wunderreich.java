@@ -40,6 +40,10 @@ public class Wunderreich implements ModInitializer {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 
+    public static boolean isDatagen() {
+        return System.getProperty("fabric-api.datagen") != null;
+    }
+
     @Override
     public void onInitialize() {
         Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);

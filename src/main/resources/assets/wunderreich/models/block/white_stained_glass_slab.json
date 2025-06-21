@@ -1,9 +1,0 @@
-{    
-        "parent": "minecraft:block/slab",
-        "textures": {
-            "particle": "block/white_stained_glass",        
-            "bottom": "minecraft:block/white_stained_glass",
-            "top": "minecraft:block/white_stained_glass",
-            "side": "wunderreich:block/white_stained_glass"
-        }    
-    }

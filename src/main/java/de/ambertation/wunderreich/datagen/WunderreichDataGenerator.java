@@ -12,6 +12,7 @@ public class WunderreichDataGenerator implements DataGeneratorEntrypoint {
         pack.addProvider(BlockTagProvider::new);
         pack.addProvider(ItemTagProvider::new);
         pack.addProvider(LootTableProvider::new);
+        pack.addProvider(BlockModelProvider::new);
     }
 
 }

@@ -1,8 +1,0 @@
-{
-        "parent": "minecraft:block/slab_top",
-        "textures": {
-            "bottom": "minecraft:block/green_stained_glass",
-            "top": "minecraft:block/green_stained_glass",
-            "side": "wunderreich:block/green_stained_glass"
-        }
-    }
