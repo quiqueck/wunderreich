@@ -7,12 +7,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.tags.ItemTags;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
@@ -25,8 +21,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 import com.google.common.math.DoubleMath;
-
-import java.util.function.Consumer;
 
 public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
     public SpreadableSnowyDirtSlab(Block baseBlock, ResourceKey<Block> key) {
@@ -190,17 +184,4 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         spreadingTick(this, blockState, level, blockPos, random);
     }
 
-    public static class GrassSlab extends SpreadableSnowyDirtSlab {
-        public GrassSlab(Block baseBlock, ResourceKey<Block> key) {
-            super(baseBlock, key);
-        }
-
-        @Override
-        public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
-            blockTags.accept(BlockTags.SLABS);
-            itemTags.accept(ItemTags.SLABS);
-
-            blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
-        }
-    }
 }

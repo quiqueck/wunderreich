@@ -17,7 +17,7 @@ public class WunderreichSlabBlocks {
     public static final Block GRASS_SLAB = registerSlab(
             "grass_slab",
             Blocks.GRASS_BLOCK,
-            SpreadableSnowyDirtSlab.GrassSlab::new,
+            GrassSlab::new,
             Configs.MAIN.addSlabs.get()
     );
     public static final Block DIRT_SLAB = registerSlab(

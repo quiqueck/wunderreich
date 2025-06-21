@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.loot.LootTableHelper;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.core.BlockPos;
@@ -102,5 +103,10 @@ public class DirtPathSlabBlock extends DirtSlabBlock {
             default:
                 return BOTTOM_AABB;
         }
+    }
+    
+    @Override
+    public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
+        provider.dropSlabWhenSilkTouch(this, WunderreichSlabBlocks.DIRT_SLAB);
     }
 }

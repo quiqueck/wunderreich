@@ -13,11 +13,13 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class LootTableHelper {
     public static class BlockLootProvider {
@@ -41,8 +43,12 @@ public class LootTableHelper {
             provider.add(block, provider.createSlabItemTable(block));
         }
 
-        public void dropSlabWhenSilkTouch(SlabBlock block) {
-            provider.add(block, createSlabItemTableWithSilkTouch(block));
+        public void dropSlabWhenSilkTouch(@NotNull Block block) {
+            dropSlabWhenSilkTouch(block, null);
+        }
+
+        public void dropSlabWhenSilkTouch(@NotNull Block block, @Nullable Block orElseBlock) {
+            provider.add(block, createSlabItemTableWithSilkTouch(block, orElseBlock));
         }
 
         public void dropSilkTouchOrElse(
@@ -57,32 +63,48 @@ public class LootTableHelper {
             );
         }
 
-        private LootTable.Builder createSlabItemTableWithSilkTouch(Block block) {
+        private LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>>
+        createSlabItemTable(Block block) {
+            return provider
+                    .applyExplosionDecay(
+                            block,
+                            LootItem.lootTableItem(block)
+                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)).when(
+                                            LootItemBlockStatePropertyCondition
+                                                    .hasBlockStateProperties(block)
+                                                    .setProperties(
+                                                            StatePropertiesPredicate.Builder
+                                                                    .properties()
+                                                                    .hasProperty(
+                                                                            SlabBlock.TYPE,
+                                                                            SlabType.DOUBLE
+                                                                    )
+                                                    )
+                                    ))
+                    );
+        }
+
+
+        private LootTable.Builder createSlabItemTableWithSilkTouch(
+                @NotNull Block block,
+                @Nullable Block orElseBlock
+        ) {
+            if (orElseBlock == null) {
+                return LootTable.lootTable()
+                                .withPool(
+                                        LootPool.lootPool()
+                                                .when(provider.hasSilkTouch())
+                                                .setRolls(ConstantValue.exactly(1.0F))
+                                                .add(createSlabItemTable(block))
+                                );
+            }
             return LootTable.lootTable()
                             .withPool(
                                     LootPool.lootPool()
-                                            .when(provider.hasSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
-                                            .add(
-                                                    provider.applyExplosionDecay(
-                                                            block,
-                                                            LootItem.lootTableItem(block)
-                                                                    .apply(
-                                                                            SetItemCountFunction
-                                                                                    .setCount(ConstantValue.exactly(2.0F))
-                                                                                    .when(
-                                                                                            LootItemBlockStatePropertyCondition
-                                                                                                    .hasBlockStateProperties(
-                                                                                                            block)
-                                                                                                    .setProperties(
-                                                                                                            StatePropertiesPredicate.Builder.properties()
-                                                                                                                                            .hasProperty(
-                                                                                                                                                    SlabBlock.TYPE,
-                                                                                                                                                    SlabType.DOUBLE
-                                                                                                                                            ))
-                                                                                    )
-                                                                    )
-                                                    )
+                                            .add(createSlabItemTable(block)
+                                                    .when(provider.hasSilkTouch())
+                                                    .otherwise(createSlabItemTable(orElseBlock))
                                             )
                             );
         }
@@ -99,22 +121,15 @@ public class LootTableHelper {
                                             .setRolls(ConstantValue.exactly(1.0F))
                                             .add(
                                                     provider.applyExplosionDecay(
-                                                            blockWithoutSilkTouch,
-                                                            LootItem.lootTableItem(blockWithoutSilkTouch)
-                                                                    .apply(SetItemCountFunction.setCount(ConstantValue.exactly(
-                                                                            count)))
-                                                    )
-                                            )
-                            )
-                            .withPool(
-                                    LootPool.lootPool()
-                                            .when(provider.hasSilkTouch())
-                                            .setRolls(ConstantValue.exactly(1.0F))
-                                            .add(
-                                                    provider.applyExplosionDecay(
-                                                            blockWithSilkTouch,
-                                                            LootItem.lootTableItem(blockWithSilkTouch)
-                                                    )
+                                                                    blockWithoutSilkTouch,
+                                                                    LootItem.lootTableItem(blockWithoutSilkTouch)
+                                                                            .apply(SetItemCountFunction.setCount(ConstantValue.exactly(
+                                                                                    count)))
+                                                            ).when(provider.hasSilkTouch())
+                                                            .otherwise(provider.applyExplosionDecay(
+                                                                    blockWithSilkTouch,
+                                                                    LootItem.lootTableItem(blockWithSilkTouch)
+                                                            ))
                                             )
                             );
         }
