@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.level.redstone.Orientation;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
@@ -45,6 +46,42 @@ import org.jetbrains.annotations.Nullable;
 
 public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTagSupplier {
     public static final MapCodec<SuctionTube> CODEC = simpleCodec(SuctionTube::new);
+
+    private static double part(int i) {
+        return i / 16.0D;
+    }
+
+    final VoxelShape SHAPE = Shapes.or(
+            Shapes.box(part(0), part(0), part(0), part(16), part(2), part(2)),
+            Shapes.box(part(0), part(0), part(14), part(16), part(2), part(16)),
+            Shapes.box(part(0), part(0), part(2), part(2), part(2), part(14)),
+            Shapes.box(part(14), part(0), part(2), part(16), part(2), part(14)),
+
+            Shapes.box(part(0), part(2), part(0), part(2), part(8), part(2)),
+            Shapes.box(part(14), part(2), part(0), part(16), part(8), part(2)),
+            Shapes.box(part(0), part(2), part(14), part(2), part(8), part(16)),
+            Shapes.box(part(14), part(2), part(14), part(16), part(8), part(16)),
+
+            Shapes.box(part(0), part(8), part(0), part(16), part(10), part(2)),
+            Shapes.box(part(0), part(8), part(14), part(16), part(10), part(16)),
+            Shapes.box(part(0), part(8), part(2), part(2), part(10), part(14)),
+            Shapes.box(part(14), part(8), part(2), part(16), part(10), part(14)),
+
+            Shapes.box(part(2), part(10), part(2), part(14), part(12), part(4)),
+            Shapes.box(part(2), part(10), part(12), part(14), part(12), part(14)),
+            Shapes.box(part(2), part(10), part(4), part(4), part(12), part(12)),
+            Shapes.box(part(12), part(10), part(4), part(14), part(12), part(12)),
+
+            Shapes.box(part(4), part(12), part(4), part(12), part(14), part(6)),
+            Shapes.box(part(4), part(12), part(10), part(12), part(14), part(12)),
+            Shapes.box(part(4), part(12), part(6), part(6), part(14), part(10)),
+            Shapes.box(part(10), part(12), part(6), part(12), part(14), part(10)),
+
+            Shapes.box(part(6), part(14), part(6), part(10), part(16), part(7)),
+            Shapes.box(part(6), part(14), part(9), part(10), part(16), part(10)),
+            Shapes.box(part(6), part(14), part(7), part(7), part(16), part(9)),
+            Shapes.box(part(9), part(14), part(7), part(10), part(16), part(9))
+    );
 
     public SuctionTube(Properties properties) {
         super(properties);
@@ -97,12 +134,38 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
             BlockPos blockPos,
             CollisionContext collisionContext
     ) {
-        return Shapes.box(0.0D, 0.0D, 0.0D, 1.0D, 0.99D, 1.0D);
+        return SHAPE;
+    }
+
+    @Override
+    protected @NotNull VoxelShape getShape(
+            BlockState blockState,
+            BlockGetter blockGetter,
+            BlockPos blockPos,
+            CollisionContext collisionContext
+    ) {
+        // Return the same shape as collision for visual boundaries
+        return SHAPE;
     }
 
     @Override
     protected boolean isCollisionShapeFullBlock(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
         return false;
+    }
+
+    @Override
+    protected boolean useShapeForLightOcclusion(BlockState blockState) {
+        return true;
+    }
+
+    @Override
+    protected float getShadeBrightness(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return 1.0F;
+    }
+
+    @Override
+    protected boolean propagatesSkylightDown(BlockState blockState) {
+        return true;
     }
 
     @Override
@@ -166,6 +229,14 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     }
 
     @Override
+    protected void onPlace(BlockState blockState, Level level, BlockPos blockPos, BlockState blockState2, boolean bl) {
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+        if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
+            suctionTube.neighborChanged(level, blockPos);
+        }
+    }
+
+    @Override
     protected void neighborChanged(
             BlockState blockState,
             Level level,
@@ -178,6 +249,11 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
             suctionTube.neighborChanged(level, blockPos);
         }
+    }
+
+    @Override
+    protected boolean isPathfindable(BlockState blockState, PathComputationType pathComputationType) {
+        return false;
     }
 
     @Override
