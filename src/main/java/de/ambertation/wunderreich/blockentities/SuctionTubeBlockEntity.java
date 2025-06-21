@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.blockentities;
 
 import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
+import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 
 import net.minecraft.core.BlockPos;
@@ -9,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
+import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -268,6 +270,17 @@ class SuctionInputs {
         }
 
         this.shuffleSourceContainerOrder();
+    }
+
+    public static void awardAdvancement(Level level, BlockPos pos) {
+        for (Player player : level.players()) {
+            if (player instanceof ServerPlayer sp && EntitySelector.NO_SPECTATORS.test(player) && EntitySelector.LIVING_ENTITY_STILL_ALIVE.test(
+                    player)) {
+                if (player.distanceToSqr(pos.getX(), pos.getY(), pos.getZ()) < (4 * 4)) {
+                    WunderreichAdvancements.TRANSPORTED_ITEM.trigger(sp);
+                }
+            }
+        }
     }
 
     public SuctionInput forDirection(Direction direction) {
@@ -567,7 +580,9 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         --blockEntity.transferCooldown;
         if (blockEntity.transferCooldown <= 0) {
             blockEntity.transferCooldown = TRANSFER_COOLDOWN;
-            blockEntity.inputs.tryTransferItem(level, pos, (SuctionTube) state.getBlock());
+            if (blockEntity.inputs.tryTransferItem(level, pos, (SuctionTube) state.getBlock())) {
+                SuctionInputs.awardAdvancement(level, pos);
+            }
         }
 
         // Handle redstone output timing

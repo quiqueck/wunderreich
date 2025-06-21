@@ -26,14 +26,17 @@ public class WunderreichAdvancements {
     public static final ResourceLocation USE_TROWEL_ID = Wunderreich.ID("use_trowel");
     public static final ResourceLocation OPEN_WUNDERKISTE_ID = Wunderreich.ID("open_wunderkiste");
     public static final ResourceLocation COLOR_WUNDERKISTE_ID = Wunderreich.ID("color_wunderkiste");
+    public static final ResourceLocation TRANSPORTED_ITEM_ID = Wunderreich.ID("transport_item");
 
     public static PlayerTrigger USE_TROWEL;
     public static PlayerTrigger OPEN_WUNDERKISTE;
     public static PlayerTrigger COLOR_WUNDERKISTE;
+    public static PlayerTrigger TRANSPORTED_ITEM;
 
     public static Criterion<PlayerTrigger.TriggerInstance> USE_TROWEL_CRITERION;
     public static Criterion<PlayerTrigger.TriggerInstance> OPEN_WUNDERKISTE_CRITERION;
     public static Criterion<PlayerTrigger.TriggerInstance> COLOR_WUNDERKISTE_CRITERION;
+    public static Criterion<PlayerTrigger.TriggerInstance> TRANSPORTED_ITEM_CRITERION;
 
     public static void register() {
         USE_TROWEL = register(USE_TROWEL_ID, new PlayerTrigger());
@@ -44,6 +47,9 @@ public class WunderreichAdvancements {
 
         COLOR_WUNDERKISTE = register(COLOR_WUNDERKISTE_ID, new PlayerTrigger());
         COLOR_WUNDERKISTE_CRITERION = COLOR_WUNDERKISTE.createCriterion(new PlayerTrigger.TriggerInstance(Optional.empty()));
+
+        TRANSPORTED_ITEM = register(TRANSPORTED_ITEM_ID, new PlayerTrigger());
+        TRANSPORTED_ITEM_CRITERION = TRANSPORTED_ITEM.createCriterion(new PlayerTrigger.TriggerInstance(Optional.empty()));
 
         Item rootItem = CreativeTabs.getBlockIcon().asItem();
         if (rootItem == Blocks.LAPIS_BLOCK.asItem()) rootItem = CreativeTabs.getItemIcon();
@@ -91,8 +97,10 @@ public class WunderreichAdvancements {
                     .create("used_trowel")
                     .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
                     .parent(root)
-                    .startCriteria("use_trowel", USE_TROWEL_ID.toString(), b -> {
-                    })
+                    .startCriteria(
+                            "use_trowel", USE_TROWEL_ID.toString(), b -> {
+                            }
+                    )
                     .register();
         }
 
@@ -105,8 +113,10 @@ public class WunderreichAdvancements {
                             b -> b.showToast().visible().announceToChat()
                     )
                     .parent(root)
-                    .startCriteria("open_wunderkiste", OPEN_WUNDERKISTE_ID.toString(), b -> {
-                    }).register();
+                    .startCriteria(
+                            "open_wunderkiste", OPEN_WUNDERKISTE_ID.toString(), b -> {
+                            }
+                    ).register();
 
             ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
@@ -115,8 +125,36 @@ public class WunderreichAdvancements {
                             b -> b.showToast().visible().announceToChat().goal()
                     )
                     .parent(opened_wunderkiste)
-                    .startCriteria("color_wunderkiste", COLOR_WUNDERKISTE_ID.toString(), b -> {
-                    }).register();
+                    .startCriteria(
+                            "color_wunderkiste", COLOR_WUNDERKISTE_ID.toString(), b -> {
+                            }
+                    ).register();
+        }
+
+        if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.SUCTION_TUBE)) {
+            assert WunderreichBlocks.SUCTION_TUBE != null;
+
+            ResourceLocation held_suction_tube = AdvancementsJsonBuilder
+                    .create("suction_tube")
+                    .startDisplay(
+                            WunderreichBlocks.SUCTION_TUBE.asItem(),
+                            b -> b.showToast().visible().announceToChat()
+                    )
+                    .parent(root)
+                    .inventoryChangedCriteria("has_suction_tube", WunderreichBlocks.SUCTION_TUBE.asItem())
+                    .register();
+
+            AdvancementsJsonBuilder
+                    .create("item_transported")
+                    .startDisplay(
+                            Blocks.HOPPER.asItem(),
+                            b -> b.showToast().visible().announceToChat().challenge()
+                    )
+                    .parent(held_suction_tube)
+                    .startCriteria(
+                            "transported_item", TRANSPORTED_ITEM_ID.toString(), b -> {
+                            }
+                    ).register();
         }
     }
 
