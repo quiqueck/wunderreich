@@ -29,13 +29,16 @@ public class WunderreichRecipes {
                         "###"
                 )
                 .material('#', Blocks.QUARTZ_BRICKS)
-                .material('N', Items.NETHERITE_INGOT)
+                .material('N', Blocks.DIAMOND_BLOCK)
                 .material('L', Blocks.LAPIS_BLOCK)
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.QUARTZ,
-                        Items.ANCIENT_DEBRIS,
-                        Items.LAPIS_LAZULI
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.QUARTZ,
+                                Items.DIAMOND,
+                                Items.DIAMOND_BLOCK,
+                                Items.LAPIS_LAZULI
+                        )
+                );
 
         RecipeJsonBuilder
                 .create("whisperer_blank")
@@ -48,11 +51,13 @@ public class WunderreichRecipes {
                 .material('G', Blocks.GLASS)
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 2))
                 .material('A', Items.AMETHYST_SHARD)
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.GLASS,
-                        Items.LAPIS_LAZULI,
-                        Items.AMETHYST_SHARD
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.GLASS,
+                                Items.LAPIS_LAZULI,
+                                Items.AMETHYST_SHARD
+                        )
+                );
 
         RecipeJsonBuilder
                 .create("whisper_imprinter")
@@ -66,12 +71,14 @@ public class WunderreichRecipes {
                 .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 1))
                 .material('A', new ItemStack(Blocks.AMETHYST_BLOCK, 1))
                 .material('D', new ItemStack(Blocks.COBBLED_DEEPSLATE, 1))
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.COPPER_INGOT,
-                        Items.LAPIS_LAZULI,
-                        Blocks.AMETHYST_BLOCK.asItem(),
-                        Blocks.COBBLED_DEEPSLATE.asItem()
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.COPPER_INGOT,
+                                Items.LAPIS_LAZULI,
+                                Blocks.AMETHYST_BLOCK.asItem(),
+                                Blocks.COBBLED_DEEPSLATE.asItem()
+                        )
+                );
 
         RecipeJsonBuilder
                 .create("builders_trowel")
@@ -83,9 +90,11 @@ public class WunderreichRecipes {
                 )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.IRON_INGOT, 1))
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.IRON_INGOT
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.IRON_INGOT
+                        )
+                );
 
         RecipeJsonBuilder
                 .create("diamond_builders_trowel")
@@ -97,28 +106,33 @@ public class WunderreichRecipes {
                 )
                 .material('#', new ItemStack(Items.STICK, 1))
                 .material('*', new ItemStack(Items.DIAMOND, 1))
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.DIAMOND
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.DIAMOND
+                        )
+                );
 
         RecipeJsonBuilder
                 .create("suction_tube")
                 .result(WunderreichBlocks.SUCTION_TUBE)
                 .pattern(
-                        "IPI",
-                        "IHI",
+                        "LPL",
+                        "LHL",
                         "IRI"
                 )
+                .material('L', Items.LAPIS_LAZULI)
                 .material('I', Items.IRON_INGOT)
-                .material('P', Items.STICKY_PISTON)
+                .material('P', Items.PISTON)
                 .material('H', Blocks.HOPPER)
                 .material('R', Items.REDSTONE)
-                .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
-                        Items.IRON_INGOT,
-                        Items.STICKY_PISTON,
-                        Blocks.HOPPER.asItem(),
-                        Items.REDSTONE
-                ));
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.LAPIS_LAZULI,
+                                Items.PISTON,
+                                Blocks.HOPPER.asItem(),
+                                Items.REDSTONE
+                        )
+                );
     }
 
     public static void createSlabRecipe(String name, Block baseBlock, Block block) {

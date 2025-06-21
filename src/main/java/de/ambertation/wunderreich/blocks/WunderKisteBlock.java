@@ -34,7 +34,6 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ChestMenu;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
@@ -568,8 +567,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
         provider.dropSilkTouchOrElse(
                 this,
-                Items.NETHERITE_SCRAP,
-                4
+                Blocks.DIAMOND_BLOCK,
+                1
         );
     }
 
