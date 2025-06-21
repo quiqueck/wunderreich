@@ -74,7 +74,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      * @return
      */
     public int encodeInputInfo(boolean isLocked, int signalStrength) {
-        return 16 | (isLocked ? 32 : 0) | (signalStrength & 0xF);
+        return 0x10 | (isLocked ? 0x20 : 0) | (signalStrength & 0xF);
     }
 
     public int decodeSignalStrength(int count) {
@@ -118,7 +118,9 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                     stackWithState = state.getCloneItemStack(level, checkPos, false);
                 }
                 stackWithState.setCount(encodeInputInfo(isLocked, signalStrength));
-                containerConnections.put(input.inDirection, stackWithState);
+                if (!stackWithState.isEmpty()) {
+                    containerConnections.put(input.inDirection, stackWithState);
+                }
             }
 
             // Send container connection data to client
