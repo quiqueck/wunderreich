@@ -35,7 +35,7 @@ public class BuildersTrowel extends Item {
     }
 
     public BuildersTrowel(ToolMaterial toolMaterial, ResourceKey<Item> key) {
-        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, -2.5f, -0.5f).setId(key));
+        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, 1.0F, -5.0F).setId(key));
         seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
     }
 
