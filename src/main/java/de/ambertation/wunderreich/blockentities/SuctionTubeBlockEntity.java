@@ -8,20 +8,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.Container;
-import net.minecraft.world.ItemStackWithSlot;
-import net.minecraft.world.MenuProvider;
-import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.ComparatorBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.ComparatorBlockEntity;
-import net.minecraft.world.level.block.entity.HopperBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
@@ -581,12 +580,24 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     @Nullable
-    public static Container getContainerAt(Level level, BlockPos pos) {
-        BlockEntity blockEntity = level.getBlockEntity(pos);
-        if (blockEntity instanceof Container container) {
-            return container;
+    public static Container getContainerAt(Level level, BlockPos blockPos) {
+        final BlockState blockState = level.getBlockState(blockPos);
+        final Block block = blockState.getBlock();
+        if (block instanceof WorldlyContainerHolder worldlyBlock) {
+            return worldlyBlock.getContainer(blockState, level, blockPos);
+        } else {
+            if (blockState.hasBlockEntity()) {
+                BlockEntity blockEntity = level.getBlockEntity(blockPos);
+                if (blockEntity instanceof Container container) {
+                    if (container instanceof ChestBlockEntity && block instanceof ChestBlock chestBlock) {
+                        container = ChestBlock.getContainer(chestBlock, blockState, level, blockPos, true);
+                    }
+                    return container;
+                }
+            }
+
+            return null;
         }
-        return HopperBlockEntity.getContainerAt(level, pos);
     }
 
     /**
