@@ -8,6 +8,7 @@ target/
 .vscode/
 .settings/org.eclipse.buildship.core.prefs
 bin/
+out/
 .classpath
 .project
 .DS_Store
