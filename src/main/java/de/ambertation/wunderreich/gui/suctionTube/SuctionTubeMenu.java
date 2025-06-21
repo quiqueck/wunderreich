@@ -67,13 +67,14 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      * Encodes the input information into the stack count.
      * count & 0x0F is the signal strength (0-15)
      * count & 0x20 is the lock state (0 = unlocked, 32 = locked)
+     * 0x10 is a fixed value to make sure count is always > 0
      *
      * @param isLocked
      * @param signalStrength
      * @return
      */
     public int encodeInputInfo(boolean isLocked, int signalStrength) {
-        return (isLocked ? 32 : 0) | signalStrength;
+        return 16 | (isLocked ? 32 : 0) | (signalStrength & 0xF);
     }
 
     public int decodeSignalStrength(int count) {
