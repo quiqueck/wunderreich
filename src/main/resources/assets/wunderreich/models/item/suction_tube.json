@@ -1,0 +1,6 @@
+{
+  "parent": "wunderreich:block/suction_tube",
+  "textures": {
+    "particle": "block/lapis_block"
+  }
+}

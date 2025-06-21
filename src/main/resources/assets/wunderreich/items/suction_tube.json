@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "wunderreich:block/suction_tube"
+    "model": "wunderreich:item/suction_tube"
   }
 }
