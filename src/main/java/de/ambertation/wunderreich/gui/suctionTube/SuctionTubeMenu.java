@@ -6,7 +6,6 @@ import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -17,6 +16,7 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     public static final int PLAYER_INV_START_X = 73;
     public static final int PLAYER_HOTBAR_Y = GUI_HEIGHT - SLOT_SIZE - 6;
     public static final int PLAYER_INV_START_Y = PLAYER_HOTBAR_Y - 3 * SLOT_SIZE - 4;
-    
+
     private static final int PLAYER_INVENTORY_START = 0;
     private static final int PLAYER_HOTBAR_START = 27;
     private static final int FILTER_SLOTS_START = 36;
@@ -62,6 +62,30 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     public SuctionTubeMenu(int containerId, Inventory playerInventory, BlockPos pos) {
         this(containerId, playerInventory, pos, ContainerLevelAccess.create(playerInventory.player.level(), pos));
     }
+
+    /**
+     * Encodes the input information into the stack count.
+     * count & 0x0F is the signal strength (0-15)
+     * count & 0x20 is the lock state (0 = unlocked, 32 = locked)
+     *
+     * @param isLocked
+     * @param signalStrength
+     * @return
+     */
+    public int encodeInputInfo(boolean isLocked, int signalStrength) {
+        return (isLocked ? 32 : 0) | signalStrength;
+    }
+
+    public int decodeSignalStrength(int count) {
+        // Decode the signal strength from the stack count
+        return count & 0x0F; // Last 4 bits represent signal strength (0-15)
+    }
+
+    public boolean isDirectionLocked(int count) {
+        // Check if the lock state is set in the stack count
+        return (count & 0x20) != 0; // 5th bit indicates lock state (0 = unlocked, 32 = locked)
+    }
+
 
     public SuctionTubeMenu(int containerId, Inventory playerInventory, BlockPos pos, ContainerLevelAccess access) {
         super(WunderreichMenuTypes.SUCTION_TUBE, containerId);
@@ -81,16 +105,19 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
         // Initialize container connection status
         if (!level.isClientSide && blockEntity != null) {
-            final var itemRegistry = level.registryAccess().lookupOrThrow(BuiltInRegistries.ITEM.key());
             // Server-side: check actual container connections
-            for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
-                BlockPos checkPos = pos.relative(direction);
-                boolean hasContainer = SuctionTubeBlockEntity.getContainerAt(level, checkPos) != null;
-                if (hasContainer) {
-                    // If a container is found, we can also get the representative item
+            for (SuctionTubeBlockEntity.SuctionInput input : blockEntity.getInputs().getInputs()) {
+                BlockPos checkPos = pos.relative(input.inDirection);
+                boolean isLocked = blockEntity.getInputs().isDirectionDisabledByRedstone(input);
+                int signalStrength = input.currentInputStrength();
+
+                ItemStack stackWithState = new ItemStack(Blocks.BARRIER);
+                if (input.hasContainer() || input.inputComperator() != null) {
                     BlockState state = level.getBlockState(checkPos);
-                    containerConnections.put(direction, state.getCloneItemStack(level, checkPos, false));
+                    stackWithState = state.getCloneItemStack(level, checkPos, false);
                 }
+                stackWithState.setCount(encodeInputInfo(isLocked, signalStrength));
+                containerConnections.put(input.inDirection, stackWithState);
             }
 
             // Send container connection data to client
@@ -104,7 +131,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
         // Initialize filter containers for each direction
         for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
             final boolean[] isInitializing = {true}; // Flag to prevent sync during initialization
-            
+
             Container filterContainer = new SimpleContainer(SLOTS_PER_DIRECTION) {
                 @Override
                 public void setChanged() {
@@ -123,7 +150,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                     filterContainer.setItem(i, filterItems[i]);
                 }
             }
-            
+
             isInitializing[0] = false; // Enable sync after loading is complete
 
             filterContainers.put(direction, filterContainer);
@@ -293,7 +320,28 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      */
     public boolean hasConnectedContainer(Direction direction) {
         // Use cached value synced from server
-        return containerConnections.getOrDefault(direction, null) != null;
+        final ItemStack stack = containerConnections.getOrDefault(direction, null);
+        return stack != null && !(stack.is(Blocks.COMPARATOR.asItem()) && !(stack.is(Blocks.BARRIER.asItem())));
+    }
+
+    public boolean hasConnectedItem(Direction direction) {
+        ItemStack stack = containerConnections.get(direction);
+        return stack != null && !(stack.is(Blocks.BARRIER.asItem()));
+    }
+
+    public boolean isLockedDirection(Direction direction) {
+        // Check if the direction is locked based on the stack count encoding
+        ItemStack stack = containerConnections.get(direction);
+        return stack != null && (stack.getCount() & 0x20) != 0; // Check if the lock bit is set
+    }
+
+    public int signalStrengthForDirection(Direction direction) {
+        // Decode the signal strength from the stack count encoding
+        ItemStack stack = containerConnections.get(direction);
+        if (stack != null) {
+            return decodeSignalStrength(stack.getCount()); // Last 4 bits represent signal strength (0-15)
+        }
+        return 0; // Default to 0 if no connection
     }
 
     /**

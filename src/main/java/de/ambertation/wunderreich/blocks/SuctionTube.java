@@ -101,6 +101,11 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     }
 
     @Override
+    protected boolean isCollisionShapeFullBlock(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {
+        return false;
+    }
+
+    @Override
     protected @NotNull InteractionResult useWithoutItem(
             BlockState state,
             Level level,

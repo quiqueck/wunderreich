@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.function.Supplier;
+
 /**
  * Client-side screen for the Suction Tube configuration GUI.
  * Displays filter slots for each input direction with clear labels.
@@ -79,7 +81,9 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
             int baseY = y + dirPositions[dirIndex][1]; // Add GUI offset
 
             Direction direction = SuctionTubeBlockEntity.DIRECTIONS[dirIndex];
-            boolean hasContainer = this.menu.hasConnectedContainer(direction);
+            final boolean hasConnectedItem = this.menu.hasConnectedItem(direction);
+            final boolean hasContainer = hasConnectedItem && this.menu.hasConnectedContainer(direction);
+            final boolean isLocked = this.menu.isLockedDirection(direction);
 
             // Draw direction label above the slots
             String label = DIRECTION_LABELS[dirIndex];
@@ -92,9 +96,8 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
             // Draw filter slot backgrounds for this direction
             for (int slotIndex = 0; slotIndex < SLOTS_PER_DIRECTION; slotIndex++) {
                 int slotX = baseX + (slotIndex * SuctionTubeMenu.SLOT_SIZE);
-
                 // Draw transparent red background for disconnected containers
-                if (!hasContainer) {
+                if (!hasContainer || isLocked) {
                     guiGraphics.fill(slotX, baseY, slotX + 16, baseY + 16, 0x20FF0000); // Semi-transparent red
                 }
 
@@ -113,21 +116,45 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
 //                );
             }
 
+            int iconX = x + dirPositions[dirIndex][2]; // Add GUI offset
+            Supplier<Boolean> renderLockOverlay = () -> {
+                if (isLocked) {
+                    guiGraphics.fill(
+                            iconX,
+                            baseY,
+                            iconX + 16,
+                            baseY + 16,
+                            0x50FF0000
+                    ); // Semi-transparent red
+                }
+                return isLocked;
+            };
             // Draw container icon if connected
-            if (hasContainer) {
+            if (hasConnectedItem) {
                 ItemStack representativeItem = this.menu.getConnectedContainerItem(direction);
                 if (representativeItem != null) {
                     // If no items found, show a generic chest icon or container block
                     if (representativeItem.isEmpty()) {
                         representativeItem = new ItemStack(net.minecraft.world.item.Items.CHEST);
                     }
-
                     // Draw the item icon next to the slots
-                    int iconX = x + dirPositions[dirIndex][2]; // Add GUI offset
+
+                    guiGraphics.renderItem(representativeItem, iconX, baseY);
+                    renderLockOverlay.get();
 
                     //guiGraphics.fill(iconX - 1, baseY - 1, iconX + 17, baseY + 17, 0x800000FF); // Semi-transparent blue
-                    guiGraphics.renderItem(representativeItem, iconX, baseY);
+                    final int signalStrength = this.menu.signalStrengthForDirection(direction);
+                    if (signalStrength > 0) {
+                        guiGraphics.renderItemDecorations(
+                                this.font,
+                                representativeItem.copyWithCount(signalStrength),
+                                iconX,
+                                baseY
+                        ); // Semi-transparent green
+                    }
                 }
+            } else if (isLocked) {
+                renderLockOverlay.get();
             }
         }
     }

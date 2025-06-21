@@ -39,13 +39,21 @@ public class SuctionTubeContainerUpdatePacket extends ClientBoundNetworkPayload<
         }
     }
 
-    protected SuctionTubeContainerUpdatePacket(Map<Direction, ItemStack> connections) {
+    protected SuctionTubeContainerUpdatePacket(
+            Map<Direction, ItemStack> connections
+    ) {
         super(HANDLER);
         this.connections = connections;
     }
 
-    public static void send(ServerPlayer serverPlayer, Map<Direction, ItemStack> connections) {
-        ClientBoundPacketHandler.sendToClient(serverPlayer, new SuctionTubeContainerUpdatePacket(connections));
+    public static void send(
+            ServerPlayer serverPlayer,
+            Map<Direction, ItemStack> connections
+    ) {
+        ClientBoundPacketHandler.sendToClient(
+                serverPlayer,
+                new SuctionTubeContainerUpdatePacket(connections)
+        );
     }
 
 
