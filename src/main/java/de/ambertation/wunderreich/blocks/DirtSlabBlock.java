@@ -17,6 +17,10 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import java.util.function.Consumer;
 
 public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDropLoot {
+    protected DirtSlabBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+    }
+
     public DirtSlabBlock(Block baseBlock, ResourceKey<Block> key) {
         super(BlockBehaviour.Properties.ofFullCopy(baseBlock).setId(key));
     }

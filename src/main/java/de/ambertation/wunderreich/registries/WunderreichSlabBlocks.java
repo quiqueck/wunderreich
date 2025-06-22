@@ -421,6 +421,14 @@ public class WunderreichSlabBlocks {
             Configs.MAIN.addSlabs.get()
     );
 
+
+    public static final Block AMETHYST_SLAB = registerSlab(
+            "amethyst_slab",
+            Blocks.AMETHYST_BLOCK,
+            AmethystSlabBlock::new,
+            Configs.MAIN.addSlabs.get()
+    );
+
     public static Block registerSlab(String name, Block baseBlock) {
         return registerSlab(name, baseBlock, true);
     }
@@ -445,7 +453,7 @@ public class WunderreichSlabBlocks {
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
         WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
-        
+
         if (Wunderreich.isDatagen()) {
             if (SLAB_BLOCKS == null) {
                 SLAB_BLOCKS = new LinkedList<>();

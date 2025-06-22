@@ -7,10 +7,16 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.function.Consumer;
 
 public class StairBlock extends AbstractStairBlock implements BlockTagSupplier {
+    protected StairBlock(BlockState blockState, BlockBehaviour.Properties properties) {
+        super(blockState, properties);
+    }
+
     public StairBlock(Block baseBlock, ResourceKey<Block> key) {
         super(baseBlock, key);
     }

@@ -213,6 +213,10 @@
       "required": false
     },
     {
+      "id": "wunderreich:amethyst_slab",
+      "required": false
+    },
+    {
       "id": "wunderreich:pink_concrete_stairs",
       "required": false
     },
@@ -338,6 +342,10 @@
     },
     {
       "id": "wunderreich:pink_terracotta_stairs",
+      "required": false
+    },
+    {
+      "id": "wunderreich:amethyst_stairs",
       "required": false
     },
     {
@@ -482,6 +490,26 @@
     },
     {
       "id": "wunderreich:oxidized_copper_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:exposed_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:weathered_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:oxidized_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:amethyst_wall",
       "required": false
     }
   ]

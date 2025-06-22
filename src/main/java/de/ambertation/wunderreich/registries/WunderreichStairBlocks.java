@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.AmethystStairBlock;
 import de.ambertation.wunderreich.blocks.StairBlock;
 import de.ambertation.wunderreich.blocks.WoolStairBlock;
 import de.ambertation.wunderreich.config.Configs;
@@ -305,6 +306,14 @@ public class WunderreichStairBlocks {
             "pink_wool_stairs",
             Blocks.PINK_WOOL,
             WoolStairBlock::new,
+            Configs.MAIN.addStairs.get()
+    );
+
+
+    public static final Block AMETHYST_STAIRS = registerStairs(
+            "amethyst_stairs",
+            Blocks.AMETHYST_BLOCK,
+            AmethystStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
 

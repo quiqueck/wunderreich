@@ -1,10 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.blocks.WallBlock;
-import de.ambertation.wunderreich.blocks.WeatheringCopperWall;
-import de.ambertation.wunderreich.blocks.WoodWallBlock;
-import de.ambertation.wunderreich.blocks.WoolWallBlock;
+import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.resources.ResourceKey;
@@ -336,6 +333,70 @@ public class WunderreichWallBlocks {
             "oxidized_copper_wall",
             Blocks.OXIDIZED_COPPER,
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block COPPER_GRATE_WALL = registerWall(
+            "copper_grate_wall",
+            Blocks.COPPER_GRATE,
+            (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block EXPOSED_COPPER_GRATE_WALL = registerWall(
+            "exposed_copper_grate_wall",
+            Blocks.EXPOSED_COPPER_GRATE,
+            (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.EXPOSED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block WEATHERED_COPPER_GRATE_WALL = registerWall(
+            "weathered_copper_grate_wall",
+            Blocks.WEATHERED_COPPER_GRATE,
+            (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.WEATHERED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block OXIDIZED_COPPER_GRATE_WALL = registerWall(
+            "oxidized_copper_grate_wall",
+            Blocks.OXIDIZED_COPPER_GRATE,
+            (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.OXIDIZED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block CHISELED_COPPER_GRATE_WALL = registerWall(
+            "chiseled_copper_grate_wall",
+            Blocks.CHISELED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block EXPOSED_CHISELED_COPPER_GRATE_WALL = registerWall(
+            "chiseled_exposed_copper_grate_wall",
+            Blocks.EXPOSED_CHISELED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.EXPOSED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block WEATHERED_CHISELED_COPPER_GRATE_WALL = registerWall(
+            "chiseled_weathered_copper_grate_wall",
+            Blocks.WEATHERED_CHISELED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.WEATHERED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block OXIDIZED_CHISELED_COPPER_GRATE_WALL = registerWall(
+            "chiseled_oxidized_copper_grate_wall",
+            Blocks.OXIDIZED_CHISELED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+
+    public static final Block AMETHYST_WALL = registerWall(
+            "amethyst_wall",
+            Blocks.AMETHYST_BLOCK,
+            AmethystWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
 
