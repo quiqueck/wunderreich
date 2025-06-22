@@ -1,0 +1,8 @@
+{
+  "parent": "wunderreich:template/layered_slab_snow",
+  "textures": {
+    "bottom": "minecraft:block/dirt",
+    "side": "minecraft:block/grass_block_snow",
+    "top": "minecraft:block/snow"
+  }
+}

@@ -73,11 +73,11 @@ public class WunderreichClient implements ClientModInitializer {
          *
          * ITEM COLOR PROVIDER (Minecraft 1.21.4+):
          * - Item colors are now defined in item model definitions using the new tint system
-         * - The grass_slab item model (in models/item/grass_slab.json) uses:
+         * - The grass_slab item model (in models/item/layered_slab.json) uses:
          *   - "type": "grass" for automatic grass color tinting
          * - This replaces the old ColorProviderRegistry.ITEM.register() approach
          *
-         * The block model (models/block/grass_slab.json) has tintindex: 0 on:
+         * The block model (models/block/layered_slab.json) has tintindex: 0 on:
          * - Top face: "top" texture (grass_block_top)
          * - Side overlays: "overlay" texture (grass_block_side_overlay)
          */

@@ -1,13 +1,64 @@
 {
   "variants": {
-    "type=bottom": {
-      "model": "wunderreich:block/grass_slab"
+    "snowy=false,type=bottom": [
+      {
+        "model": "wunderreich:block/grass_slab"
+      },
+      {
+        "model": "wunderreich:block/grass_slab",
+        "y": 90
+      },
+      {
+        "model": "wunderreich:block/grass_slab",
+        "y": 180
+      },
+      {
+        "model": "wunderreich:block/grass_slab",
+        "y": 270
+      }
+    ],
+    "snowy=false,type=double": [
+      {
+        "model": "minecraft:block/grass_block"
+      },
+      {
+        "model": "minecraft:block/grass_block",
+        "y": 90
+      },
+      {
+        "model": "minecraft:block/grass_block",
+        "y": 180
+      },
+      {
+        "model": "minecraft:block/grass_block",
+        "y": 270
+      }
+    ],
+    "snowy=false,type=top": [
+      {
+        "model": "wunderreich:block/grass_slab_top"
+      },
+      {
+        "model": "wunderreich:block/grass_slab_top",
+        "y": 90
+      },
+      {
+        "model": "wunderreich:block/grass_slab_top",
+        "y": 180
+      },
+      {
+        "model": "wunderreich:block/grass_slab_top",
+        "y": 270
+      }
+    ],
+    "snowy=true,type=bottom": {
+      "model": "wunderreich:block/grass_slab_snow"
     },
-    "type=double": {
-      "model": "minecraft:block/grass_block"
+    "snowy=true,type=double": {
+      "model": "minecraft:block/grass_block_snow"
     },
-    "type=top": {
-      "model": "wunderreich:block/grass_slab_top"
+    "snowy=true,type=top": {
+      "model": "wunderreich:block/grass_slab_snow_top"
     }
   }
 }
