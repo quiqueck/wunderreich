@@ -7,3 +7,5 @@ accessible method net/minecraft/world/entity/ai/village/poi/PoiTypes register (L
 
 accessible method net/minecraft/world/item/crafting/Ingredient <init> (Lnet/minecraft/core/HolderSet;)V
 accessible field net/minecraft/world/item/crafting/Ingredient values Lnet/minecraft/core/HolderSet;
+
+accessible field net/minecraft/client/data/models/BlockModelGenerators TEXTURED_MODELS Ljava/util/Map;

@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.StairBlock;
 import de.ambertation.wunderreich.blocks.WoolStairBlock;
 import de.ambertation.wunderreich.config.Configs;
@@ -8,6 +9,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class WunderreichStairBlocks {
@@ -312,8 +315,20 @@ public class WunderreichStairBlocks {
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
+        if (Wunderreich.isDatagen()) {
+            if (STAIR_BLOCKS == null) {
+                STAIR_BLOCKS = new LinkedList<>();
+            }
+            STAIR_BLOCKS.add(new Block[]{block, baseBlock});
+        }
         WunderreichRecipes.createStairsRecipe(name, baseBlock, block);
         return block;
+    }
+
+    private static List<Block[]> STAIR_BLOCKS;
+
+    public static List<Block[]> getStairBlocks() {
+        return STAIR_BLOCKS == null ? List.of() : STAIR_BLOCKS;
     }
 
     static void register() {
