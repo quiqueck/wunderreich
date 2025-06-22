@@ -5,7 +5,6 @@ import de.ambertation.wunderreich.datagen.BlockModelProvider;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
-import net.minecraft.client.data.models.model.TextureSlot;
 import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -25,39 +24,6 @@ public class StairBuilder {
                         .getTextureModels(stairBlock, TexturedModel.CUBE.get(materialBlock))
                         .getMapping()
         );
-    }
-
-    public static void createStairs(
-            BlockModelGenerators vanillaGenerator, Block stairBlock,
-            ResourceLocation topTextureLocation,
-            ResourceLocation sideTextureLocation,
-            ResourceLocation bottomTextureLocation
-    ) {
-        createStairs(
-                vanillaGenerator,
-                stairBlock, new TextureMapping()
-                        .put(TextureSlot.TOP, topTextureLocation)
-                        .put(TextureSlot.SIDE, sideTextureLocation)
-                        .put(TextureSlot.BOTTOM, bottomTextureLocation)
-        );
-    }
-
-
-    public static void createStairsWithModels(
-            BlockModelGenerators vanillaGenerator, Block stairBlock,
-            ResourceLocation stair,
-            ResourceLocation outer,
-            ResourceLocation inner
-    ) {
-        BlockModelProvider.acceptBlockState(
-                vanillaGenerator, BlockModelGenerators.createStairs(
-                        stairBlock,
-                        BlockModelGenerators.plainVariant(inner),
-                        BlockModelGenerators.plainVariant(stair),
-                        BlockModelGenerators.plainVariant(outer)
-                )
-        );
-        BlockModelProvider.delegateItemModel(vanillaGenerator, stairBlock, stair);
     }
 
     public static void createStairs(BlockModelGenerators vanillaGenerator, Block stairBlock, TextureMapping mapping) {

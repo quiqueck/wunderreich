@@ -10,7 +10,6 @@ import de.ambertation.wunderreich.registries.WunderreichWallBlocks;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
-import net.minecraft.client.data.models.model.ModelInstance;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
@@ -31,7 +30,6 @@ public class BlockModelProvider extends FabricModelProvider {
         return BlockModelGenerators.TEXTURED_MODELS.getOrDefault(block, defaultModel);
     }
 
-
     public static void createInventoryModel(
             BlockModelGenerators vanillaGenerator,
             Block wallBlock,
@@ -50,18 +48,6 @@ public class BlockModelProvider extends FabricModelProvider {
             BlockModelDefinitionGenerator blockStateGenerator
     ) {
         vanillaGenerator.blockStateOutput.accept(blockStateGenerator);
-    }
-
-    public static void acceptModelOutput(
-            BlockModelGenerators vanillaGenerator,
-            ResourceLocation id,
-            ModelInstance model
-    ) {
-        vanillaGenerator.modelOutput.accept(id, model);
-    }
-
-    public static void delegateItemModel(BlockModelGenerators vanillaGenerator, Block block) {
-        vanillaGenerator.registerSimpleItemModel(block, TextureMapping.getBlockTexture(block));
     }
 
     public static void delegateItemModel(

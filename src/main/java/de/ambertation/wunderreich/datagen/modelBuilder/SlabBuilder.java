@@ -4,7 +4,6 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.datagen.BlockModelProvider;
 
 import net.minecraft.client.color.item.GrassColorSource;
-import net.minecraft.client.color.item.ItemTintSource;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
@@ -66,8 +65,7 @@ public class SlabBuilder {
                         .put(TextureSlot.BOTTOM, res)
                         .put(TextureSlot.TOP, res)
                         .put(TextureSlot.PARTICLE, res),
-                Stream.of(ModelTemplates.SLAB_BOTTOM, ModelTemplates.SLAB_TOP),
-                null
+                Stream.of(ModelTemplates.SLAB_BOTTOM, ModelTemplates.SLAB_TOP)
         );
     }
 
@@ -86,8 +84,7 @@ public class SlabBuilder {
                         .put(TextureSlot.BOTTOM, res)
                         .put(TextureSlot.TOP, topRes.withSuffix("_top"))
                         .put(TextureSlot.PARTICLE, res),
-                Stream.of(PATH_SLAB_BOTTOM, PATH_SLAB_TOP),
-                null
+                Stream.of(PATH_SLAB_BOTTOM, PATH_SLAB_TOP)
         );
     }
 
@@ -96,8 +93,7 @@ public class SlabBuilder {
             Block slabBlock,
             Block baseBlock,
             TextureMapping mapping,
-            Stream<ModelTemplate> models,
-            ItemTintSource tintSource
+            Stream<ModelTemplate> models
     ) {
         final var fullBlockLocation = ModelLocationUtils.getModelLocation(baseBlock);
         final List<ResourceLocation> locations = models.map(template -> template.create(
@@ -115,11 +111,7 @@ public class SlabBuilder {
                         BlockModelGenerators.plainVariant(fullBlockLocation)
                 )
         );
-        if (tintSource != null) {
-            vanillaGenerator.registerSimpleTintedItemModel(slabBlock, locations.get(0), tintSource);
-        } else {
-            BlockModelProvider.delegateItemModel(vanillaGenerator, slabBlock, locations.get(0));
-        }
+        BlockModelProvider.delegateItemModel(vanillaGenerator, slabBlock, locations.get(0));
     }
 
     public static void createGrassSlab(
