@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WallBlock;
+import de.ambertation.wunderreich.blocks.WeatheringCopperWall;
 import de.ambertation.wunderreich.blocks.WoodWallBlock;
 import de.ambertation.wunderreich.blocks.WoolWallBlock;
 import de.ambertation.wunderreich.config.Configs;
@@ -9,6 +10,7 @@ import de.ambertation.wunderreich.config.Configs;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.WeatheringCopper;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -309,6 +311,35 @@ public class WunderreichWallBlocks {
     );
 
 
+    public static final Block COPPER_WALL = registerWall(
+            "copper_wall",
+            Blocks.COPPER_BLOCK,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block EXPOSED_COPPER_WALL = registerWall(
+            "exposed_copper_wall",
+            Blocks.EXPOSED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.EXPOSED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block WEATHERED_COPPER_WALL = registerWall(
+            "weathered_copper_wall",
+            Blocks.WEATHERED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.WEATHERED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+    public static final Block OXIDIZED_COPPER_WALL = registerWall(
+            "oxidized_copper_wall",
+            Blocks.OXIDIZED_COPPER,
+            (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
+            Configs.MAIN.addWalls.get()
+    );
+
+
     public static final Block ACACIA_WALL = registerWoodWall(
             "acacia_wall",
             Blocks.ACACIA_PLANKS,
@@ -375,7 +406,7 @@ public class WunderreichWallBlocks {
             Blocks.BAMBOO_FENCE,
             Configs.MAIN.addWalls.get()
     );
-    
+
     public static final Block PALE_OAK_WALL = registerWoodWall(
             "pale_oak_wall",
             Blocks.PALE_OAK_PLANKS,

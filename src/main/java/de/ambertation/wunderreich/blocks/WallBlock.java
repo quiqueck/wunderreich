@@ -7,10 +7,14 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 
 import java.util.function.Consumer;
 
 public class WallBlock extends AbstractWallBlock implements BlockTagSupplier {
+    protected WallBlock(BlockBehaviour.Properties properties) {
+        super(properties);
+    }
 
     public WallBlock(Block baseBlock, ResourceKey<Block> key) {
         super(baseBlock, key);
