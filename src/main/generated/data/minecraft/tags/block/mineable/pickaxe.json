@@ -509,6 +509,22 @@
       "required": false
     },
     {
+      "id": "wunderreich:chiseled_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:chiseled_exposed_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:chiseled_weathered_copper_grate_wall",
+      "required": false
+    },
+    {
+      "id": "wunderreich:chiseled_oxidized_copper_grate_wall",
+      "required": false
+    },
+    {
       "id": "wunderreich:amethyst_wall",
       "required": false
     }
