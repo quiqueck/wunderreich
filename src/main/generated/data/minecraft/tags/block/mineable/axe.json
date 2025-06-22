@@ -43,6 +43,10 @@
     {
       "id": "wunderreich:bamboo_wall",
       "required": false
+    },
+    {
+      "id": "wunderreich:pale_oak_wall",
+      "required": false
     }
   ]
 }

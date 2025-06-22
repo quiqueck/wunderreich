@@ -375,6 +375,13 @@ public class WunderreichWallBlocks {
             Blocks.BAMBOO_FENCE,
             Configs.MAIN.addWalls.get()
     );
+    
+    public static final Block PALE_OAK_WALL = registerWoodWall(
+            "pale_oak_wall",
+            Blocks.PALE_OAK_PLANKS,
+            Blocks.PALE_OAK_FENCE,
+            Configs.MAIN.addWalls.get()
+    );
 
     private static void addModel(Block block, Block baseBlock) {
         if (Wunderreich.isDatagen()) {
