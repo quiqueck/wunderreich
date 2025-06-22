@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WallBlock;
 import de.ambertation.wunderreich.blocks.WoodWallBlock;
 import de.ambertation.wunderreich.blocks.WoolWallBlock;
@@ -9,6 +10,8 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.function.BiFunction;
 
 public class WunderreichWallBlocks {
@@ -373,6 +376,15 @@ public class WunderreichWallBlocks {
             Configs.MAIN.addWalls.get()
     );
 
+    private static void addModel(Block block, Block baseBlock) {
+        if (Wunderreich.isDatagen()) {
+            if (WALL_BLOCKS == null) {
+                WALL_BLOCKS = new LinkedList<>();
+            }
+            WALL_BLOCKS.add(new Block[]{block, baseBlock});
+        }
+    }
+
 
     public static Block registerWall(
             String name,
@@ -381,6 +393,7 @@ public class WunderreichWallBlocks {
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
+        addModel(block, baseBlock);
         WunderreichRecipes.createWallRecipe(name, baseBlock, block);
         return block;
     }
@@ -392,8 +405,16 @@ public class WunderreichWallBlocks {
             boolean register
     ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, WoodWallBlock::new, register);
+        addModel(block, baseBlock);
         WunderreichRecipes.createWoodWallRecipe(name, baseBlock, fenceBlock, block);
         return block;
+    }
+
+
+    private static List<Block[]> WALL_BLOCKS;
+
+    public static List<Block[]> getWallBlocks() {
+        return WALL_BLOCKS == null ? List.of() : WALL_BLOCKS;
     }
 
     static void register() {

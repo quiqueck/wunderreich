@@ -2,13 +2,16 @@ package de.ambertation.wunderreich.datagen;
 
 import de.ambertation.wunderreich.datagen.modelBuilder.SlabBuilder;
 import de.ambertation.wunderreich.datagen.modelBuilder.StairBuilder;
+import de.ambertation.wunderreich.datagen.modelBuilder.WallBuilder;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import de.ambertation.wunderreich.registries.WunderreichStairBlocks;
+import de.ambertation.wunderreich.registries.WunderreichWallBlocks;
 
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerator;
 import net.minecraft.client.data.models.model.ModelInstance;
+import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -26,6 +29,20 @@ public class BlockModelProvider extends FabricModelProvider {
 
     public static TexturedModel getTextureModels(Block block, TexturedModel defaultModel) {
         return BlockModelGenerators.TEXTURED_MODELS.getOrDefault(block, defaultModel);
+    }
+
+
+    public static void createInventoryModel(
+            BlockModelGenerators vanillaGenerator,
+            Block wallBlock,
+            ModelTemplate inventoryModel,
+            TextureMapping mapping
+    ) {
+        delegateItemModel(
+                vanillaGenerator,
+                wallBlock,
+                inventoryModel.create(wallBlock, mapping, vanillaGenerator.modelOutput)
+        );
     }
 
     public static void acceptBlockState(
@@ -68,11 +85,19 @@ public class BlockModelProvider extends FabricModelProvider {
             }
         }
 
-        for (Block[] stairBlock : WunderreichStairBlocks.getStairBlocks()) {
+        for (Block[] slabBlock : WunderreichStairBlocks.getStairBlocks()) {
             StairBuilder.createStairs(
                     vanillaGenerator,
-                    stairBlock[1],
-                    stairBlock[0]
+                    slabBlock[1],
+                    slabBlock[0]
+            );
+        }
+
+        for (Block[] slabBlock : WunderreichWallBlocks.getWallBlocks()) {
+            WallBuilder.createWall(
+                    vanillaGenerator,
+                    slabBlock[1],
+                    slabBlock[0]
             );
         }
     }
