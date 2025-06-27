@@ -364,29 +364,29 @@ public class WunderreichWallBlocks {
             Configs.MAIN.addWalls.get()
     );
 
-    public static final Block CHISELED_COPPER_GRATE_WALL = registerWall(
-            "chiseled_copper_grate_wall",
+    public static final Block CHISELED_COPPER_WALL = registerWall(
+            "chiseled_copper_wall",
             Blocks.CHISELED_COPPER,
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
-    public static final Block EXPOSED_CHISELED_COPPER_GRATE_WALL = registerWall(
-            "chiseled_exposed_copper_grate_wall",
+    public static final Block EXPOSED_CHISELED_COPPER_WALL = registerWall(
+            "chiseled_exposed_copper_wall",
             Blocks.EXPOSED_CHISELED_COPPER,
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.EXPOSED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
-    public static final Block WEATHERED_CHISELED_COPPER_GRATE_WALL = registerWall(
-            "chiseled_weathered_copper_grate_wall",
+    public static final Block WEATHERED_CHISELED_COPPER_WALL = registerWall(
+            "chiseled_weathered_copper_wall",
             Blocks.WEATHERED_CHISELED_COPPER,
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.WEATHERED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
-    public static final Block OXIDIZED_CHISELED_COPPER_GRATE_WALL = registerWall(
-            "chiseled_oxidized_copper_grate_wall",
+    public static final Block OXIDIZED_CHISELED_COPPER_WALL = registerWall(
+            "chiseled_oxidized_copper_wall",
             Blocks.OXIDIZED_CHISELED_COPPER,
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
             Configs.MAIN.addWalls.get()

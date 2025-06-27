@@ -417,6 +417,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
 
         void neighborChanged(Level level, BlockPos blockPos) {
             this.comparator = null;
+            this.container = null;
             final BlockPos myPos = blockPos.relative(inDirection);
             BlockEntity blockEntity = level.getBlockEntity(myPos);
 

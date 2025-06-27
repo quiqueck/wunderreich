@@ -2,6 +2,7 @@ package de.ambertation.wunderreich.blockentities;
 
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -11,8 +12,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentSerialization;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.Container;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.ChestLidController;
@@ -26,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
-public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity, Nameable {
+public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity, Nameable, Container {
     private final ChestLidController chestLidController = new ChestLidController();
     private Component domainName;
 
@@ -192,4 +195,50 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
         return this.getCustomName() != null && this.getDomainName() != null && !this.getDomainName().isEmpty();
     }
 
+
+    @Override
+    public int getContainerSize() {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        return container != null ? container.getContainerSize() : 0;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        return container == null || container.isEmpty();
+    }
+
+    @Override
+    public @NotNull ItemStack getItem(int i) {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        return container != null ? container.getItem(i) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public @NotNull ItemStack removeItem(int i, int j) {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        return container != null ? container.removeItem(i, j) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public @NotNull ItemStack removeItemNoUpdate(int i) {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        return container != null ? container.removeItemNoUpdate(i) : ItemStack.EMPTY;
+    }
+
+    @Override
+    public void setItem(int i, ItemStack itemStack) {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        if (container != null) {
+            container.setItem(i, itemStack);
+        }
+    }
+
+    @Override
+    public void clearContent() {
+        final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);
+        if (container != null) {
+            container.clearContent();
+        }
+    }
 }
