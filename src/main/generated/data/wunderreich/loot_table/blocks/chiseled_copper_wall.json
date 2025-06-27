@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "wunderreich:chiseled_exposed_copper_grate_wall"
+          "name": "wunderreich:chiseled_copper_wall"
         }
       ],
       "rolls": 1.0
