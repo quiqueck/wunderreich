@@ -45,8 +45,8 @@ dependencies {
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-//    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
-//    modLocalRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    modLocalRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"

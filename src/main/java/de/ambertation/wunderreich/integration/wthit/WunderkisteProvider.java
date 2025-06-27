@@ -1,5 +1,5 @@
 package de.ambertation.wunderreich.integration.wthit;
-/*
+
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.items.WunderKisteItem;
@@ -9,7 +9,6 @@ import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.world.item.ItemStack;
@@ -26,8 +25,9 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
 
     private static Component readCustomName(CompoundTag compoundTag) {
         if (compoundTag == null) return null;
-        if (compoundTag.contains("customName", Tag.TAG_STRING)) {
-            return Component.literal(compoundTag.getString("customName")).setStyle(Style.EMPTY.withBold(true));
+        if (compoundTag.contains("customName")) {
+            return Component.literal(compoundTag.getString("customName").orElse(""))
+                            .setStyle(Style.EMPTY.withBold(true));
         }
         return null;
     }
@@ -90,4 +90,4 @@ public enum WunderkisteProvider implements IBlockComponentProvider {
     }
 
 }
-*/
+
