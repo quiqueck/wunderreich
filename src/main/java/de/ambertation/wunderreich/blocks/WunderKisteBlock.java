@@ -3,10 +3,12 @@ package de.ambertation.wunderreich.blocks;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
-import de.ambertation.wunderreich.interfaces.*;
+import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
+import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
+import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
+import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
-import de.ambertation.wunderreich.loot.LootTableHelper;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.LiveBlockManager;
@@ -68,7 +70,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
+public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>/*, CanDropLoot */ {
     public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(WunderKisteBlock::new);
     public static final EnumProperty<WunderKisteDomain> DOMAIN;
     public static final WunderKisteDomain DEFAULT_DOMAIN;
@@ -563,14 +565,14 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
         }
     }
 
-    @Override
-    public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
-        provider.dropSilkTouchOrElse(
-                this,
-                Blocks.DIAMOND_BLOCK,
-                1
-        );
-    }
+//    @Override
+//    public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
+//        provider.dropSilkTouchOrElse(
+//                this,
+//                Blocks.DIAMOND_BLOCK,
+//                1
+//        );
+//    }
 
     @Override
     protected @NotNull MapCodec<? extends AbstractChestBlock<WunderKisteBlockEntity>> codec() {
