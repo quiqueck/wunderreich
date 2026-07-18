@@ -62,6 +62,16 @@ public class VillagerMixin {
                 maxCount--;
             }
         } while (!found && maxCount > 0);
+
+        //If the retry budget was exhausted without ever rolling the whisperer's selected
+        //enchantment, the last loop iteration reset the villager's offers to an empty list
+        //(via setOffers). Leaving the villager with no offers soft-locks trading (it
+        //"refuses to trade" until its workstation is rebuilt). The local merchantOffers still
+        //holds the last generated, unfiltered trade set, so restore it to ensure the villager
+        //always ends up with usable trades.
+        if (!found) {
+            self.setOffers(merchantOffers);
+        }
     }
 
     @Inject(method = "updateTrades", at = @At(value = "HEAD"), cancellable = true)
