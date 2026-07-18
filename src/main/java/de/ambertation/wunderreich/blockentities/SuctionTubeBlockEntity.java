@@ -196,6 +196,13 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
      */
     public void openMenu(ServerPlayer player) {
         player.openMenu(this);
+        // The connection overlay data (which sides have containers, redstone lock/signal state) is
+        // not part of the synced slot contents, so it is sent via a custom packet. It must be sent
+        // AFTER openMenu has assigned player.containerMenu and dispatched the open-screen packet,
+        // otherwise the client drops it (see SuctionTubeMenu constructor note).
+        if (player.containerMenu instanceof SuctionTubeMenu suctionTubeMenu) {
+            suctionTubeMenu.sendConnectionsToClient(player);
+        }
     }
 
     /**
@@ -638,9 +645,11 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 // For DOWN direction, has no bit, so we use a fixed value of 5
                 signalStrength = DIRECTIONS.length;
             } else {
-                // For horizontal directions, use the bit corresponding to their position
-                // NORTH = bit 0 (1), EAST = bit 1 (2), SOUTH = bit 2 (3), WEST = bit 3 (4)
-                signalStrength = outputSource.redstoneBit();
+                // For horizontal directions, use the bit VALUE corresponding to their position, so
+                // the emitted signal is non-zero and distinct (matches the class javadoc):
+                // NORTH = 1 (bit 0), EAST = 2 (bit 1), SOUTH = 4 (bit 2), WEST = 8 (bit 3).
+                // Using the raw bit index would make NORTH emit strength 0, i.e. no signal at all.
+                signalStrength = 1 << outputSource.redstoneBit();
             }
 
             redstoneOutputSignal = (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, signalStrength));
