@@ -123,10 +123,11 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 }
             }
 
-            // Send container connection data to client
-            if (playerInventory.player instanceof ServerPlayer serverPlayer) {
-                SuctionTubeContainerUpdatePacket.send(serverPlayer, containerConnections);
-            }
+            // NOTE: the connection data must NOT be sent here. This constructor runs inside
+            // ServerPlayer#openMenu -> createMenu, i.e. BEFORE the ClientboundOpenScreenPacket is
+            // sent and before player.containerMenu is assigned. A packet sent now would arrive on
+            // the client before the SuctionTubeMenu exists and would be silently dropped. Sending is
+            // deferred to SuctionTubeBlockEntity#openMenu via sendConnectionsToClient(...).
         } else {
             // Client-side: leave containerConnections  empty, will be updated via network packet
         }
@@ -255,6 +256,19 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 }
             }
             blockEntity.setChanged();
+        }
+    }
+
+    /**
+     * Sends the (server-computed) container connection data to the viewing client.
+     * <p>
+     * Must be called <em>after</em> the menu has been opened (i.e. after
+     * {@code ServerPlayer#openMenu}) so that the client's {@code containerMenu} is already the
+     * {@link SuctionTubeMenu} when the packet arrives. See the note in the constructor.
+     */
+    public void sendConnectionsToClient(ServerPlayer serverPlayer) {
+        if (!containerConnections.isEmpty()) {
+            SuctionTubeContainerUpdatePacket.send(serverPlayer, containerConnections);
         }
     }
 
