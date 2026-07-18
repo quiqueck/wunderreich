@@ -96,10 +96,11 @@ public class SlabBuilder {
             Stream<ModelTemplate> models
     ) {
         final var fullBlockLocation = ModelLocationUtils.getModelLocation(baseBlock);
+        final var modelOutput = BlockModelProvider.modelOutputFor(vanillaGenerator, slabBlock);
         final List<Identifier> locations = models.map(template -> template.create(
                 slabBlock,
                 mapping,
-                vanillaGenerator.modelOutput
+                modelOutput
         )).toList();
 
         BlockModelProvider.acceptBlockState(
@@ -136,19 +137,20 @@ public class SlabBuilder {
                 .put(TextureSlot.LAYER0, TextureMapping.getBlockTexture(baseBlock, "_side_overlay"));
         final var fullBlockLocation = ModelLocationUtils.getModelLocation(baseBlock);
         final var snowBlockLocation = fullBlockLocation.withSuffix("_snow");
-        Identifier BOTTOM = GRASS_SLAB_BOTTOM.create(slabBlock, mapping, vanillaGenerator.modelOutput);
-        Identifier TOP = GRASS_SLAB_TOP.create(slabBlock, mapping, vanillaGenerator.modelOutput);
+        final var modelOutput = BlockModelProvider.modelOutputFor(vanillaGenerator, slabBlock);
+        Identifier BOTTOM = GRASS_SLAB_BOTTOM.create(slabBlock, mapping, modelOutput);
+        Identifier TOP = GRASS_SLAB_TOP.create(slabBlock, mapping, modelOutput);
         Identifier BOTTOM_SNOW = GRASS_SLAB_SNOW_BOTTOM.createWithSuffix(
                 slabBlock,
                 "_snow",
                 mappingSnow,
-                vanillaGenerator.modelOutput
+                modelOutput
         );
         Identifier TOP_SNOW = GRASS_SLAB_SNOW_TOP.createWithSuffix(
                 slabBlock,
                 "_snow",
                 mappingSnow,
-                vanillaGenerator.modelOutput
+                modelOutput
         );
 
         BlockModelProvider.acceptBlockState(

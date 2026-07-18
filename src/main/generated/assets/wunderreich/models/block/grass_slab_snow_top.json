@@ -1,5 +1,6 @@
 {
   "parent": "wunderreich:template/layered_slab_top_snow",
+  "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "minecraft:block/dirt",
     "side": "minecraft:block/grass_block_snow",

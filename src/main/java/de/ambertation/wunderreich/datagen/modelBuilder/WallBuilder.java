@@ -27,7 +27,7 @@ public class WallBuilder {
                 ModelTemplates.WALL_POST,
                 ModelTemplates.WALL_LOW_SIDE,
                 ModelTemplates.WALL_TALL_SIDE
-        ).map(template -> template.create(wallBlock, mapping, vanillaGenerator.modelOutput)).toList();
+        ).map(template -> template.create(wallBlock, mapping, BlockModelProvider.modelOutputFor(vanillaGenerator, wallBlock))).toList();
 
         BlockModelProvider.acceptBlockState(
                 vanillaGenerator, BlockModelGenerators.createWall(

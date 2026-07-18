@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/wall_inventory",
+  "render_type": "minecraft:translucent",
   "textures": {
     "wall": "minecraft:block/exposed_copper_grate"
   }

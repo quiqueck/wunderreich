@@ -33,7 +33,7 @@ public class StairBuilder {
                         ModelTemplates.STAIRS_STRAIGHT,
                         ModelTemplates.STAIRS_OUTER
                 )
-                .map(template -> template.create(stairBlock, mapping, vanillaGenerator.modelOutput)).toList();
+                .map(template -> template.create(stairBlock, mapping, BlockModelProvider.modelOutputFor(vanillaGenerator, stairBlock))).toList();
 
         BlockModelProvider.acceptBlockState(
                 vanillaGenerator, BlockModelGenerators.createStairs(
