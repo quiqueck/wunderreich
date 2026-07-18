@@ -22,6 +22,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class LootTableHelper {
+    public record Drop(ItemLike item, int count) {}
+
+    public static Drop drop(ItemLike item, int count) {
+        return new Drop(item, count);
+    }
+
     public static class BlockLootProvider {
         private final @NotNull BlockLootSubProvider provider;
 
@@ -53,14 +59,9 @@ public class LootTableHelper {
 
         public void dropSilkTouchOrElse(
                 Block block,
-                ItemLike blockWithoutSilkTouch,
-                int count
+                Drop... elseDrops
         ) {
-            provider.add(
-                    block, createSilkTouchOrElse(
-                            block, blockWithoutSilkTouch, count
-                    )
-            );
+            provider.add(block, createSilkTouchOrElse(block, elseDrops));
         }
 
         private LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>>
@@ -111,26 +112,31 @@ public class LootTableHelper {
 
         private LootTable.Builder createSilkTouchOrElse(
                 Block blockWithSilkTouch,
-                ItemLike blockWithoutSilkTouch,
-                int count
+                Drop[] elseDrops
         ) {
+            LootPool.Builder elsePool = LootPool.lootPool()
+                                                 .when(provider.doesNotHaveSilkTouch())
+                                                 .setRolls(ConstantValue.exactly(1.0F));
+            for (Drop drop : elseDrops) {
+                elsePool.add(
+                        provider.applyExplosionDecay(
+                                drop.item(),
+                                LootItem.lootTableItem(drop.item())
+                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
+                        )
+                );
+            }
+
             return LootTable.lootTable()
+                            .withPool(elsePool)
                             .withPool(
                                     LootPool.lootPool()
-                                            .when(provider.doesNotHaveSilkTouch())
+                                            .when(provider.hasSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
-                                            .add(
-                                                    provider.applyExplosionDecay(
-                                                                    blockWithoutSilkTouch,
-                                                                    LootItem.lootTableItem(blockWithoutSilkTouch)
-                                                                            .apply(SetItemCountFunction.setCount(ConstantValue.exactly(
-                                                                                    count)))
-                                                            ).when(provider.hasSilkTouch())
-                                                            .otherwise(provider.applyExplosionDecay(
-                                                                    blockWithSilkTouch,
-                                                                    LootItem.lootTableItem(blockWithSilkTouch)
-                                                            ))
-                                            )
+                                            .add(provider.applyExplosionDecay(
+                                                    blockWithSilkTouch,
+                                                    LootItem.lootTableItem(blockWithSilkTouch)
+                                            ))
                             );
         }
     }
