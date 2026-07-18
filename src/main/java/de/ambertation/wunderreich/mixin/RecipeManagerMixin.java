@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.mixin;
 
+import de.ambertation.wunderreich.recipes.ImprinterOverrides;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
@@ -8,15 +9,21 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeMap;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,6 +36,22 @@ public class RecipeManagerMixin {
     @Shadow
     @Final
     private HolderLookup.Provider registries;
+
+    @Unique
+    private ResourceManager wunder_resourceManager;
+
+    // Capture the ResourceManager for this reload so the imprinter override layer can be loaded from
+    // it (synchronously, before the recipes are built below), guaranteeing the overrides are applied
+    // regardless of reload-listener ordering.
+    @Inject(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;",
+            at = @At("HEAD"))
+    private void wunder_captureResourceManager(
+            ResourceManager resourceManager,
+            ProfilerFiller profiler,
+            CallbackInfoReturnable<RecipeMap> cir
+    ) {
+        this.wunder_resourceManager = resourceManager;
+    }
 
     @ModifyArg(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeMap;create(Ljava/lang/Iterable;)Lnet/minecraft/world/item/crafting/RecipeMap;"),
@@ -53,6 +76,11 @@ public class RecipeManagerMixin {
                 existingRecipeIds.add(holder.id().identifier());
             });
         }
+
+        // Load the datapack override layer before the imprinter recipes are generated, so the
+        // "disabled" flag can suppress recipes and overridden values are available to the recipes'
+        // lazy suppliers. Only the raw JSON is parsed here (no ItemStack materialization).
+        ImprinterOverrides.ensureLoaded(wunder_resourceManager);
 
         // Register ImprinterRecipe for level
         ImprinterRecipe.registerForLevel((RecipeManager) (Object) this, registries);

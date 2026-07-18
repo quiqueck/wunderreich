@@ -69,10 +69,15 @@ public class WhisperRule {
     protected WhisperRule(Holder<Enchantment> enchantment) {
         this.enchantment = enchantment;
         final java.util.function.Supplier<EnchantmentInfo> nfo = memoize(() -> new EnchantmentInfo(enchantment));
-        this.inputSupplier = () -> nfo.get().input();
-        this.outputSupplier = () -> TrainedVillagerWhisperer.createForEnchantment(enchantment);
-        this.iconSupplier = () -> nfo.get().type();
-        this.baseXPSupplier = () -> nfo.get().baseXP;
+        // Datapack override layer. Decoded lazily (it materializes ItemStacks) at the same phase as
+        // the default values below, so this stays safe during the async recipe reload.
+        final java.util.function.Supplier<de.ambertation.wunderreich.recipes.ImprinterOverride> ovr =
+                memoize(() -> de.ambertation.wunderreich.recipes.ImprinterOverrides.get(enchantment));
+        this.inputSupplier = () -> ovr.get().input().orElseGet(() -> nfo.get().input());
+        this.outputSupplier = () -> ovr.get().output()
+                                       .orElseGet(() -> TrainedVillagerWhisperer.createForEnchantment(enchantment));
+        this.iconSupplier = () -> ovr.get().icon().orElseGet(() -> nfo.get().type());
+        this.baseXPSupplier = () -> ovr.get().baseXP().orElseGet(() -> nfo.get().baseXP);
     }
 
     private static <T> java.util.function.Supplier<T> memoize(java.util.function.Supplier<T> delegate) {
