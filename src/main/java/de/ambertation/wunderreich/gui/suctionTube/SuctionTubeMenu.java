@@ -338,7 +338,9 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     public boolean hasConnectedContainer(Direction direction) {
         // Use cached value synced from server
         final ItemStack stack = containerConnections.getOrDefault(direction, null);
-        return stack != null && !(stack.is(Blocks.COMPARATOR.asItem()) && !(stack.is(Blocks.BARRIER.asItem())));
+        // A connection counts as a container unless it is a comparator (comparators drive redstone
+        // control, not item transfer). A stack is never both comparator and barrier at once.
+        return stack != null && !stack.is(Blocks.COMPARATOR.asItem());
     }
 
     public boolean hasConnectedItem(Direction direction) {
