@@ -12,6 +12,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -205,37 +206,88 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
     @Override
     public @NotNull ItemStack quickMoveStack(Player player, int slotIndex) {
-        ItemStack itemStack = ItemStack.EMPTY;
         Slot slot = this.slots.get(slotIndex);
 
-        if (slot.hasItem()) {
-            ItemStack slotStack = slot.getItem();
-            itemStack = slotStack.copy();
-
-            if (slotIndex >= FILTER_SLOTS_START && slotIndex < FILTER_SLOTS_START + FILTER_SLOTS_COUNT) {
-                // Moving from filter slot to player inventory
-                if (!this.moveItemStackTo(slotStack, PLAYER_INVENTORY_START, PLAYER_HOTBAR_START + 9, true)) {
-                    return ItemStack.EMPTY;
-                }
-            } else if (slotIndex >= PLAYER_INVENTORY_START && slotIndex < PLAYER_HOTBAR_START + 9) {
-                // Moving from player inventory to filter slots - not allowed for shift-click
-                return ItemStack.EMPTY;
+        if (slotIndex >= FILTER_SLOTS_START && slotIndex < FILTER_SLOTS_START + FILTER_SLOTS_COUNT) {
+            // Filter slots are ghost slots: nothing real is stored here, so a shift-click can
+            // never transfer a real item out of one. Only clear the displayed template,
+            // mirroring a normal click on a filled filter slot. In practice this path is
+            // unreachable: #clicked(...) below intercepts filter-slot indices before the
+            // vanilla dispatch that would call this method, but it is kept safe here too in
+            // case anything ever calls quickMoveStack directly.
+            if (slot.hasItem()) {
+                slot.set(ItemStack.EMPTY);
             }
-
-            if (slotStack.isEmpty()) {
-                slot.setByPlayer(ItemStack.EMPTY);
-            } else {
-                slot.setChanged();
-            }
-
-            if (slotStack.getCount() == itemStack.getCount()) {
-                return ItemStack.EMPTY;
-            }
-
-            slot.onTake(player, slotStack);
+            return ItemStack.EMPTY;
         }
 
-        return itemStack;
+        if (slotIndex >= PLAYER_INVENTORY_START && slotIndex < PLAYER_HOTBAR_START + 9) {
+            // Moving from player inventory to filter slots is not supported via shift-click.
+            return ItemStack.EMPTY;
+        }
+
+        return ItemStack.EMPTY;
+    }
+
+    /**
+     * Intercepts every click gesture aimed at a filter-slot index and handles it directly,
+     * instead of delegating to the vanilla {@code AbstractContainerMenu#doClick} dispatch.
+     * <p>
+     * This is necessary (not just a defensive nicety) because several vanilla dispatch
+     * branches cannot be neutralized purely via {@link Slot} overrides:
+     * <ul>
+     *   <li>{@code ClickType.SWAP} (pressing 1-9/F while hovering a slot) reads
+     *   {@code target.getItem()} and hands it straight to the player's hotbar, gated only by
+     *   {@code Slot#mayPickup} - there is no hook to intercept the hand-off itself.</li>
+     *   <li>Clicking a filled slot while holding a <em>different</em> item runs a "swap"
+     *   branch that puts the slot's old contents on the cursor unconditionally once
+     *   {@code Slot#mayPlace} allows entry - again with no interceptable hook.</li>
+     * </ul>
+     * Since both branches would otherwise hand the player a free copy of whatever template
+     * item was set (a real duplication bug), filter-slot clicks are fully handled here
+     * instead, where only {@link Slot#set} is ever used - the player's cursor and inventory
+     * stacks are read but never mutated.
+     */
+    @Override
+    public void clicked(int slotIndex, int buttonNum, ClickType containerInput, Player player) {
+        if (slotIndex >= FILTER_SLOTS_START && slotIndex < FILTER_SLOTS_START + FILTER_SLOTS_COUNT) {
+            handleFilterSlotClick(slotIndex, containerInput, player);
+            return;
+        }
+        super.clicked(slotIndex, buttonNum, containerInput, player);
+    }
+
+    /**
+     * Ghost-slot click handling for a single filter slot. Sets/overwrites/clears the
+     * displayed template item as appropriate, but never mutates the player's carried item or
+     * inventory contents - see {@link #clicked} for why this bypasses vanilla dispatch.
+     */
+    private void handleFilterSlotClick(int slotIndex, ClickType containerInput, Player player) {
+        Slot slot = this.slots.get(slotIndex);
+
+        if (containerInput == ClickType.PICKUP) {
+            ItemStack carried = this.getCarried();
+            if (!carried.isEmpty()) {
+                // Set (or overwrite) the template with a single copy of the held item's type.
+                // The cursor stack itself is left completely untouched.
+                ItemStack singleCopy = carried.copy();
+                singleCopy.setCount(1);
+                slot.set(singleCopy);
+            } else if (slot.hasItem()) {
+                // Clicking a filled filter slot with an empty cursor clears the template.
+                // Nothing is ever handed back, since nothing was ever really taken.
+                slot.set(ItemStack.EMPTY);
+            }
+        } else if (containerInput == ClickType.QUICK_MOVE || containerInput == ClickType.THROW) {
+            // Shift-click / drop gesture: just clear the template, never move a real item.
+            if (slot.hasItem()) {
+                slot.set(ItemStack.EMPTY);
+            }
+        }
+        // SWAP, CLONE, PICKUP_ALL, QUICK_CRAFT: intentionally left as no-ops for filter
+        // slots. None of these gestures map cleanly to "set/clear template", and (as
+        // documented on #clicked) their vanilla implementations cannot be trusted not to
+        // hand out or duplicate a real item for what is only ever a template.
     }
 
     @Override
@@ -375,7 +427,22 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     }
 
     /**
-     * Custom slot for filter items that only accepts single items and doesn't allow extraction.
+     * Custom slot for filter items. Filter slots are pure "ghost" slots: the displayed item
+     * is only a template used for the block entity's item-matching logic (see
+     * {@code SuctionTubeBlockEntity#getFilterItems}) and is never real, storable inventory.
+     * {@code getItem()} intentionally keeps the default behavior (returns the container's
+     * stored template) so rendering and filter matching keep working unchanged.
+     * <p>
+     * Actually setting/clearing the template is handled entirely by
+     * {@link SuctionTubeMenu#clicked}, which intercepts every click gesture aimed at a
+     * filter-slot index before it reaches the vanilla dispatch in the private, non-overridable
+     * {@code AbstractContainerMenu#doClick}. The overrides below are a defensive second line
+     * of protection, not the primary mechanism: {@link #mayPlace} / {@link #mayPickup} both
+     * report "no" so that if a vanilla dispatch path is ever reached for this slot regardless
+     * (e.g. a quick-craft drag skipping this slot, or a PICKUP_ALL double-click sweep
+     * triggered from an unrelated slot), it can neither insert nor remove a real item; the
+     * {@link #safeInsert} / {@link #remove} overrides make even a hypothetical direct call
+     * safe, touching only the displayed template and never the player's cursor or inventory.
      */
     private static class FilterSlot extends Slot {
         public FilterSlot(Container container, int slot, int x, int y) {
@@ -384,37 +451,39 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
 
         @Override
         public boolean mayPlace(ItemStack stack) {
-            return true; // Allow any item to be placed as a filter
+            return false; // Never a real placement target - see class javadoc.
+        }
+
+        @Override
+        public boolean mayPickup(Player player) {
+            return false; // Never a real pickup source - see class javadoc.
         }
 
         @Override
         public int getMaxStackSize() {
-            return 1; // Only allow single items in filter slots
+            return 1; // Only ever displays a single template item.
         }
 
         @Override
-        public @NotNull ItemStack safeTake(int amount, int decrement, Player player) {
-            // For filter slots, we want to clear the slot when taken
-            ItemStack current = this.getItem();
-            if (!current.isEmpty()) {
-                this.set(ItemStack.EMPTY);
-                return current.copy();
-            }
-            return ItemStack.EMPTY;
-        }
-
-        @Override
-        public @NotNull ItemStack safeInsert(ItemStack stack) {
-            // Set the filter to a single copy of the inserted item
-            if (!stack.isEmpty()) {
-                ItemStack singleCopy = stack.copy();
+        public @NotNull ItemStack safeInsert(ItemStack inputStack, int inputAmount) {
+            // Defensive fallback only (see class javadoc): set the template to a single copy
+            // of the item type without ever consuming from the input stack.
+            if (!inputStack.isEmpty()) {
+                ItemStack singleCopy = inputStack.copy();
                 singleCopy.setCount(1);
                 this.set(singleCopy);
-                return ItemStack.EMPTY; // Consume the item (ghost slot behavior)
             } else {
                 this.set(ItemStack.EMPTY);
-                return ItemStack.EMPTY;
             }
+            return inputStack;
+        }
+
+        @Override
+        public @NotNull ItemStack remove(int amount) {
+            // Defensive fallback only (see class javadoc): clear the template but never
+            // report a real item as having been removed.
+            this.set(ItemStack.EMPTY);
+            return ItemStack.EMPTY;
         }
     }
 }
