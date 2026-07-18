@@ -205,7 +205,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
 
     @Override
     protected int getSignal(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos, Direction direction) {
-        if (!WunderreichRules.Wunderkiste.redstonePowerWhenOpened()) return 0;
+        if (!WunderreichRules.Wunderkiste.redstonePowerWhenSucking()) return 0;
 
         BlockEntity blockEntity = blockGetter.getBlockEntity(blockPos);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
