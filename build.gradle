@@ -39,14 +39,16 @@ dependencies {
 
     compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
     compileOnly "me.shedaniel.cloth:basic-math:0.6.1" // me.shedaniel.math.Point/Rectangle used by the REI GUI API
-    compileOnly "dev.architectury:architectury-fabric:20.0.6" // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
-    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}" // run against the full jar (pulls basic-math transitively)
+    compileOnly "dev.architectury:architectury-fabric:20.0.6"
+    // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
+    localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    // run against the full jar (pulls basic-math transitively)
 
     compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
     compileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
-    localRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+    // localRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 
 //    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    localRuntime "dev.emi:emi-fabric:${emi_version}"
