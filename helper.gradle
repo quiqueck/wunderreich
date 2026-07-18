@@ -81,6 +81,12 @@ task changelog() {
 def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
+// Some mods use a different project slug on CurseForge than on Modrinth.
+def curseforgeSlugOverrides = [
+    "rei": "roughly-enough-items"
+]
+def toCurseforgeSlug = { dep -> curseforgeSlugOverrides.getOrDefault(dep, dep) }
+
 publishMods {
     dryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
     file = jar.archiveFile
@@ -116,10 +122,10 @@ publishMods {
         displayName = "${project.archives_base_name}-${project.mod_version} ${latestVersion}"
 
         requiredDependencies.each { dep ->
-            requires(dep)
+            requires(toCurseforgeSlug(dep))
         }
         optionalDependencies.each { dep ->
-            optional(dep)
+            optional(toCurseforgeSlug(dep))
         }
     }
 
