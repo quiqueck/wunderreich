@@ -19,7 +19,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
@@ -37,7 +36,8 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             Wunderreich.ID("wunderkiste"),
             0L, true, TicketType.TicketUse.LOADING_AND_SIMULATION
     );
-    public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
+    // Plain list codec: an empty set of live blocks is valid (nonEmptyList used to error on a fresh save).
+    public static final Codec<List<LiveBlock>> CODEC = LiveBlock.CODEC.listOf();
     private static final String POSITIONS_TAG = "positions";
     private final String type;
     private final Set<T> liveBlocks = ConcurrentHashMap.newKeySet(8);
@@ -46,7 +46,8 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     private boolean isLoaded = false;
     private Timer saveTimer;
 
-    private static final Map<Level, List<ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
+    // Per-level map of force-loaded chunks -> refcount, keyed by ChunkPos for O(1) lookup on the tick hot path.
+    private static final Map<Level, Map<ChunkPos, ChunkPosCounter>> FORCE_LOAD_CHUNKS = Maps.newConcurrentMap();
 
     public LiveBlockManager(String type) {
         this.type = type;
@@ -206,17 +207,17 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     }
 
     public static void addLoadedChunk(LiveBlock live, int radius) {
-        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.level, k -> new LinkedList<>());
+        Map<ChunkPos, ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.level, k -> new ConcurrentHashMap<>());
 
-        chunksWithRadius(live.chunkPos, radius).forEach(cPos -> {
-                    Optional<ChunkPosCounter> pos = chunks.stream().filter(c -> c.equals(cPos)).findAny();
-                    if (pos.isEmpty()) {
-                        chunks.add(new ChunkPosCounter(cPos));
+        chunksWithRadius(live.chunkPos, radius).forEach(cPos ->
+                chunks.compute(cPos, (k, existing) -> {
+                    if (existing == null) {
                         addTicket(live.level, cPos);
-                    } else {
-                        pos.get().inc();
+                        return new ChunkPosCounter(cPos);
                     }
-                }
+                    existing.inc();
+                    return existing;
+                })
         );
     }
 
@@ -232,18 +233,21 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     }
 
     public static void removeLoadedChunk(LiveBlock live, int radius) {
-        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(live.level, k -> new LinkedList<>());
+        Map<ChunkPos, ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.get(live.level);
+        if (chunks == null) return;
 
-        chunksWithRadius(live.chunkPos, radius).forEach(cPos -> {
-                    Optional<ChunkPosCounter> pos = chunks.stream().filter(c -> c.equals(cPos)).findAny();
-                    if (pos.isPresent()) {
-                        if (pos.get().dec() == 0) {
-                            chunks.remove(cPos);
-                            removeTicket(live.level, cPos);
-                        }
+        chunksWithRadius(live.chunkPos, radius).forEach(cPos ->
+                chunks.computeIfPresent(cPos, (k, counter) -> {
+                    if (counter.dec() == 0) {
+                        removeTicket(live.level, cPos);
+                        return null;
                     }
-                }
+                    return counter;
+                })
         );
+
+        // Drop the level entry once no chunks remain, so an otherwise-idle dimension can unload again.
+        if (chunks.isEmpty()) FORCE_LOAD_CHUNKS.remove(live.level);
     }
 
     private static void removeTicket(Level level, ChunkPos cPos) {
@@ -257,7 +261,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
     public void rebuildLoadedChunks() {
         for (var e : FORCE_LOAD_CHUNKS.entrySet()) {
-            for (var cPos : e.getValue()) {
+            for (var cPos : e.getValue().keySet()) {
                 removeTicket(e.getKey(), cPos);
             }
         }
@@ -270,17 +274,18 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     }
 
     public boolean shouldTick(ServerLevel level) {
-        return FORCE_LOAD_CHUNKS.containsKey(level);
+        Map<ChunkPos, ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.get(level);
+        return chunks != null && !chunks.isEmpty();
     }
 
     public boolean shouldTick(ServerLevel level, BlockPos pos) {
-        ChunkPos cPos = new ChunkPos(pos);
-        return shouldTick(level, cPos);
+        return shouldTick(level, new ChunkPos(pos));
     }
 
     public boolean shouldTick(ServerLevel level, ChunkPos cPos) {
-        List<ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.computeIfAbsent(level, k -> new LinkedList<>());
-        return chunks.contains(cPos);
+        // O(1) lookup on the tick hot path; never mutate the map on reads.
+        Map<ChunkPos, ChunkPosCounter> chunks = FORCE_LOAD_CHUNKS.get(level);
+        return chunks != null && chunks.containsKey(cPos);
     }
 
 
