@@ -360,7 +360,6 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
             if (destination instanceof WorldlyContainer worldlyContainer) {
                 int[] slots = worldlyContainer.getSlotsForFace(Direction.DOWN);
                 for (int slot : slots) {
-                    worldlyContainer.canPlaceItemThroughFace(slot, stackToMoveOneFrom.copyWithCount(1), Direction.DOWN);
                     if (tryMoveOneToSlot(destination, stackToMoveOneFrom, slot)) {
                         return true;
                     }
@@ -410,7 +409,9 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         private static boolean canPlaceItemInContainer(Container destination, ItemStack stackToInsert, int slot) {
             if (destination.canPlaceItem(slot, stackToInsert)) {
                 if (destination instanceof WorldlyContainer worldlyContainer) {
-                    return worldlyContainer.canPlaceItemThroughFace(slot, stackToInsert, Direction.UP);
+                    // The destination container sits ABOVE the tube, so items enter through its
+                    // BOTTOM face (DOWN) - not the UP face.
+                    return worldlyContainer.canPlaceItemThroughFace(slot, stackToInsert, Direction.DOWN);
                 } else {
                     return true;
                 }
@@ -565,7 +566,15 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         void tickRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
-            if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) return;
+            if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) {
+                // Rule is off: make sure no stale signal lingers if it gets toggled back on later.
+                if (redstoneOutputSignal != 0 || redstoneOutputTicks != 0) {
+                    redstoneOutputSignal = 0;
+                    redstoneOutputTicks = 0;
+                    level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+                }
+                return;
+            }
             if (redstoneOutputTicks > 0) {
                 redstoneOutputTicks--;
                 if (redstoneOutputTicks <= 0) {
@@ -638,6 +647,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 SuctionInput outputSource
         ) {
             if (level == null) return;
+            if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) return;
 
             // Calculate signal strength based on direction
             int signalStrength;
