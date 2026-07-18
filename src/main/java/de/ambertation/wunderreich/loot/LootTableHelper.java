@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
+import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
@@ -20,6 +21,7 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.List;
 
 public class LootTableHelper {
     public static class BlockLootProvider {
@@ -51,14 +53,23 @@ public class LootTableHelper {
             provider.add(block, createSlabItemTableWithSilkTouch(block, orElseBlock));
         }
 
+        public record ItemDrop(ItemLike item, int count) {}
+
         public void dropSilkTouchOrElse(
                 Block block,
                 ItemLike blockWithoutSilkTouch,
                 int count
         ) {
+            dropSilkTouchOrElse(block, new ItemDrop(blockWithoutSilkTouch, count));
+        }
+
+        public void dropSilkTouchOrElse(
+                Block block,
+                ItemDrop... drops
+        ) {
             provider.add(
                     block, createSilkTouchOrElse(
-                            block, blockWithoutSilkTouch, count
+                            block, List.of(drops)
                     )
             );
         }
@@ -111,25 +122,28 @@ public class LootTableHelper {
 
         private LootTable.Builder createSilkTouchOrElse(
                 Block blockWithSilkTouch,
-                ItemLike blockWithoutSilkTouch,
-                int count
+                List<ItemDrop> drops
         ) {
+            LootPoolEntryContainer.Builder<?> otherwise = null;
+            for (ItemDrop drop : drops) {
+                LootPoolEntryContainer.Builder<?> entry = provider.applyExplosionDecay(
+                        drop.item(),
+                        LootItem.lootTableItem(drop.item())
+                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
+                );
+                otherwise = otherwise == null ? entry : otherwise.append(entry);
+            }
+
             return LootTable.lootTable()
                             .withPool(
                                     LootPool.lootPool()
-                                            .when(provider.doesNotHaveSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
                                             .add(
                                                     provider.applyExplosionDecay(
-                                                                    blockWithoutSilkTouch,
-                                                                    LootItem.lootTableItem(blockWithoutSilkTouch)
-                                                                            .apply(SetItemCountFunction.setCount(ConstantValue.exactly(
-                                                                                    count)))
-                                                            ).when(provider.hasSilkTouch())
-                                                            .otherwise(provider.applyExplosionDecay(
                                                                     blockWithSilkTouch,
                                                                     LootItem.lootTableItem(blockWithSilkTouch)
-                                                            ))
+                                                            ).when(provider.hasSilkTouch())
+                                                            .otherwise(otherwise)
                                             )
                             );
         }
