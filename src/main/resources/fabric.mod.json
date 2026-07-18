@@ -1,71 +1,71 @@
 {
-    "schemaVersion": 1,
-    "id": "wunderreich",
-    "version": "26.0.0",
-    "name": "Wunderreich",
-    "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
-    "authors": [
-        "Quiqueck (Frank)"
+  "schemaVersion": 1,
+  "id": "wunderreich",
+  "version": "26.0.1",
+  "name": "Wunderreich",
+  "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
+  "authors": [
+    "Quiqueck (Frank)"
+  ],
+  "contact": {
+    "homepage": "https://wunderreich.ambertation.de",
+    "sources": "https://github.com/quiqueck/wunderreich"
+  },
+  "license": "MIT (CC BY-NC-SA 4.0 for Assets)",
+  "icon": "assets/wunderreich/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-datagen": [
+      "de.ambertation.wunderreich.datagen.WunderreichDataGenerator"
     ],
-    "contact": {
-        "homepage": "https://wunderreich.ambertation.de",
-        "sources": "https://github.com/quiqueck/wunderreich"
-    },
-    "license": "MIT (CC BY-NC-SA 4.0 for Assets)",
-    "icon": "assets/wunderreich/icon.png",
-    "environment": "*",
-    "entrypoints": {
-        "fabric-datagen": [
-            "de.ambertation.wunderreich.datagen.WunderreichDataGenerator"
-        ],
-        "main": [
-            "de.ambertation.wunderreich.Wunderreich"
-        ],
-        "client": [
-            {
-                "value": "de.ambertation.wunderreich.client.WunderreichClient"
-            }
-        ],
-        "rei_common": [
-            "de.ambertation.wunderreich.integration.rei.ServerPlugin"
-        ],
-        "rei_client": [
-            "de.ambertation.wunderreich.integration.rei.ClientPlugin"
-        ],
-        "modmenu": [
-            "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
-        ],
-        "emi_disabled": [
-            "de.ambertation.wunderreich.integration.emi.EMIPlugin"
-        ]
-    },
-    "accessWidener": "wunderreich.accesswidener",
-    "mixins": [
-        "wunderreich.mixins.client.json",
-        "wunderreich.mixins.common.json"
+    "main": [
+      "de.ambertation.wunderreich.Wunderreich"
     ],
-    "depends": {
-        "fabricloader": ">=0.19.0",
-        "fabric-api": ">=0.155.0",
-        "minecraft": [
-            "26.1",
-            "26.1.1",
-            "26.1.2"
-        ],
-        "java": ">=25",
-        "wunderlib": "26.0.x"
-    },
-    "breaks": {
-        "wunderlib": "<26.0.0"
-    },
-    "suggests": {
-        "modmenu": "11.0.x",
-        "rei": ">=26.1.0",
-        "emi": "1.1.x"
-    },
-    "custom": {
-        "wover": {
-            "updater_icon": "icon_updater.png"
-        }
+    "client": [
+      {
+        "value": "de.ambertation.wunderreich.client.WunderreichClient"
+      }
+    ],
+    "rei_common": [
+      "de.ambertation.wunderreich.integration.rei.ServerPlugin"
+    ],
+    "rei_client": [
+      "de.ambertation.wunderreich.integration.rei.ClientPlugin"
+    ],
+    "modmenu": [
+      "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
+    ],
+    "emi_disabled": [
+      "de.ambertation.wunderreich.integration.emi.EMIPlugin"
+    ]
+  },
+  "accessWidener": "wunderreich.accesswidener",
+  "mixins": [
+    "wunderreich.mixins.client.json",
+    "wunderreich.mixins.common.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "fabric-api": ">=0.155.0",
+    "minecraft": [
+      "26.1",
+      "26.1.1",
+      "26.1.2"
+    ],
+    "java": ">=25",
+    "wunderlib": "26.0.x"
+  },
+  "breaks": {
+    "wunderlib": "<26.0.0"
+  },
+  "suggests": {
+    "modmenu": "11.0.x",
+    "rei": ">=26.1.0",
+    "emi": "1.1.x"
+  },
+  "custom": {
+    "wover": {
+      "updater_icon": "icon_updater.png"
     }
+  }
 }
