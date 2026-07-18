@@ -1,27 +1,48 @@
 package de.ambertation.wunderreich.integration.rei;
-/*
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.crafting.RecipeHolder;
 
+import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
+
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
+import me.shedaniel.rei.api.common.display.DisplaySerializer;
 import me.shedaniel.rei.api.common.display.basic.BasicDisplay;
 import me.shedaniel.rei.api.common.entry.EntryIngredient;
 import me.shedaniel.rei.api.common.util.EntryIngredients;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ImprinterDisplay extends BasicDisplay {
+    public static final DisplaySerializer<ImprinterDisplay> SERIALIZER = DisplaySerializer.of(
+            RecordCodecBuilder.mapCodec(instance -> instance.group(
+                    EntryIngredient.codec().listOf().fieldOf("inputs").forGetter(ImprinterDisplay::getInputEntries),
+                    EntryIngredient.codec().listOf().fieldOf("outputs").forGetter(ImprinterDisplay::getOutputEntries)
+            ).apply(instance, ImprinterDisplay::new)),
+            StreamCodec.composite(
+                    EntryIngredient.streamCodec().apply(ByteBufCodecs.list()), ImprinterDisplay::getInputEntries,
+                    EntryIngredient.streamCodec().apply(ByteBufCodecs.list()), ImprinterDisplay::getOutputEntries,
+                    ImprinterDisplay::new
+            )
+    );
+
     public ImprinterDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs) {
         super(inputs, outputs);
     }
 
-    public static ImprinterDisplay of(RecipeHolder<?> recipe) {
+    public static ImprinterDisplay of(ImprinterRecipe recipe) {
         return new ImprinterDisplay(
-                EntryIngredients.ofIngredients(recipe.value().getIngredients()),
-                Collections.singletonList(EntryIngredients.of(recipe
-                        .value()
-                        .getResultItem(Minecraft.getInstance().level.registryAccess())))
+                List.of(
+                        // COST_A_SLOT: the imprint input (book / overridden cost)
+                        EntryIngredients.of(recipe.getInput()),
+                        // COST_B_SLOT: the blank whisperer that gets trained
+                        EntryIngredients.of(WhisperRule.blank())
+                ),
+                // result: the trained whisperer
+                List.of(EntryIngredients.of(recipe.getOutput()))
         );
     }
 
@@ -29,5 +50,9 @@ public class ImprinterDisplay extends BasicDisplay {
     public CategoryIdentifier<?> getCategoryIdentifier() {
         return ServerPlugin.IMPRINTER;
     }
+
+    @Override
+    public DisplaySerializer<? extends me.shedaniel.rei.api.common.display.Display> getSerializer() {
+        return SERIALIZER;
+    }
 }
-*/
