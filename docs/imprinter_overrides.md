@@ -29,6 +29,32 @@ Examples:
 
 Overrides are (re)applied automatically on world load and on `/reload`.
 
+## Setting up the data pack
+
+Override files live in a normal data pack. If you don't already have one, create:
+
+```
+<world>/datapacks/<your_pack>/
+  pack.mcmeta
+  data/minecraft/wunderreich/imprinter_overrides/thorns.json
+```
+
+`pack.mcmeta` (the data pack format for Minecraft 26.1 is `101`):
+
+```json
+{
+  "pack": {
+    "description": "My imprinter overrides",
+    "pack_format": 101,
+    "min_format": 101,
+    "max_format": 101
+  }
+}
+```
+
+After adding or editing files, run `/reload` (or re-enter the world). On success the log shows a
+line like `Loaded N imprinter override(s)`.
+
 ## JSON format
 
 Every field is optional. A field that is present replaces the auto-generated value; an absent field
