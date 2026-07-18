@@ -1,13 +1,12 @@
 buildscript {
     dependencies {
         classpath 'org.kohsuke:github-api:1.114'
-        classpath group: 'net.darkhax.curseforgegradle', name: 'CurseForgeGradle', version: '1.1.26'
     }
 
     repositories {
         gradlePluginPortal()
         maven {
-            url "https://plugins.gradle.org/m2/"
+            url = "https://plugins.gradle.org/m2/"
         }
     }
 }
@@ -82,143 +81,66 @@ task changelog() {
 def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
-modrinth {
-    println "Start Uploading to Modrinth ..."
-
+publishMods {
+    dryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
+    file = jar.archiveFile
     def changes = new File(projectDir, "CHANGES.md")
-    if (changes.exists()) {
-        changes = changes.getText('UTF-8')
-    } else {
-        changes = ""
+    changelog = changes.exists() ? changes.getText('UTF-8') : ""
+
+    type = STABLE
+    if (project.release_channel == "beta") {
+        type = BETA
+    } else if (project.release_channel == "alpha") {
+        type = ALPHA
     }
-    def modrinth_token = new File(projectDir, "../MODRINTH_TOKEN")
-    if (modrinth_token.exists()) {
-        modrinth_token = modrinth_token.text
-    } else {
-        modrinth_token = ""
-    }
+
+    modLoaders.add("fabric")
+
     def slurper = new groovy.json.JsonSlurper()
-    token = modrinth_token
-    //modrinth_id
-    projectId = findProperty('modrinth_id') ?: project.archives_base_name
-    versionNumber = project.mod_version
-    versionType = project.release_channel
-    uploadFile = jar
-    gameVersions = slurper.parseText(project.modrinth_versions)
-    loaders = ["fabric"]
-    changelog = changes
-    dependencies {
+    def versions = slurper.parseText(project.modrinth_versions)
+    def latestVersion = versions.isEmpty() ? "" : "[${versions.last()}]"
+
+    curseforge {
+        projectId = project.curseforge_id
+
+        def cfTokenFile = new File(projectDir, "../CURSEFORGE_TOKEN")
+        accessToken = cfTokenFile.exists() ? cfTokenFile.text.trim() : ""
+
+        versions.each { v ->
+            minecraftVersions.add(v)
+        }
+
+        client = true
+        server = true
+
+        displayName = "${project.archives_base_name}-${project.mod_version} ${latestVersion}"
+
         requiredDependencies.each { dep ->
-            print dep
-            required.project dep
+            requires(dep)
         }
-
         optionalDependencies.each { dep ->
-            optional.project dep
+            optional(dep)
         }
     }
-    debugMode = false
-}
 
+    modrinth {
+        projectId = project.modrinth_id
 
-task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge) {
-    def slurper = new groovy.json.JsonSlurper()
-    def projectID = project.archives_base_name
-    apiToken = new File(projectDir, "../CURSEFORGE_TOKEN")
-    if (apiToken.exists()) {
-        apiToken = apiToken.text
-    } else {
-        apiKey = ""
-    }
+        def mrTokenFile = new File(projectDir, "../MODRINTH_TOKEN")
+        accessToken = mrTokenFile.exists() ? mrTokenFile.text.trim() : ""
 
-    def numericId = findProperty('curseforge_id')
-    def mainFile = upload(numericId, jar.outputs)
-
-    def changes = new File(projectDir, "CHANGES.md")
-    if (changes.exists()) {
-        changes = changes.getText('UTF-8')
-    } else {
-        changes = ""
-    }
-    mainFile.changelogType = 'markdown'
-    mainFile.changelog = changes
-
-    mainFile.releaseType = project.release_channel
-
-    def versions = slurper.parseText(project.modrinth_versions);
-    def latestVersion = ''
-    for (v in versions) {
-        mainFile.addGameVersion v
-        latestVersion = "[$v]"
-    }
-
-    mainFile.addModLoader('Fabric')
-    mainFile.addJavaVersion('Java 25')
-    mainFile.displayName = "$projectID-$project.version $latestVersion"
-
-    requiredDependencies.each { dep ->
-        mainFile.addRequirement dep
-    }
-
-    optionalDependencies.each { dep ->
-        mainFile.addOptional dep
-    }
-
-    debugMode = true
-}
-
-
-curseforge {
-    def projectID = project.archives_base_name
-
-
-    def slurper = new groovy.json.JsonSlurper()
-    apiKey = new File(projectDir, "../CURSEFORGE_TOKEN")
-    if (apiKey.exists()) {
-        apiKey = apiKey.text
-    } else {
-        apiKey = ""
-    }
-    println "Start Uploading " + projectID + " to Curseforge ..."
-    def changes = new File(projectDir, "CHANGES.md")
-    if (changes.exists()) {
-        changes = changes.getText('UTF-8')
-    } else {
-        changes = ""
-    }
-
-    project {
-        id = findProperty('curseforge_id')
-        changelogType = 'markdown'
-        changelog = changes
-        releaseType = project.release_channel
-        def versions = slurper.parseText(project.modrinth_versions);
-        def latestVersion = ''
-        for (v in versions) {
-            addGameVersion v
-            latestVersion = "[$v]"
+        versions.each { v ->
+            minecraftVersions.add(v)
         }
-        addGameVersion 'Fabric'
-        addGameVersion 'Java 25'
-        relations {
-            requiredDependencies.each { dep ->
-                requiredDependency dep
-            }
 
-            optionalDependencies.each { dep ->
-                optionalDependency dep
-            }
+        displayName = "${project.archives_base_name}-${project.mod_version}"
+
+        requiredDependencies.each { dep ->
+            requires(dep)
         }
-        mainArtifact(jar) {
-            displayName = "$projectID-$project.version $latestVersion"
+        optionalDependencies.each { dep ->
+            optional(dep)
         }
-        afterEvaluate {
-            mainArtifact(jar.outputs)
-        }
-    }
-    options {
-        debug = false
-        forgeGradleIntegration = false
     }
 }
 

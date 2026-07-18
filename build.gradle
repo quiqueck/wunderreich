@@ -1,8 +1,7 @@
 plugins {
     id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
-    id "com.modrinth.minotaur" version "2.+"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_25
@@ -13,11 +12,11 @@ version = project.mod_version
 group = project.maven_group
 
 repositories {
-    maven { url "https://maven.shedaniel.me" }
-    maven { url "https://maven.bai.lol" }
-    maven { url 'https://maven.terraformersmc.com/releases' }
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://maven.ambertation.de/releases' }
+    maven { url = "https://maven.shedaniel.me" }
+    maven { url = "https://maven.bai.lol" }
+    maven { url = 'https://maven.terraformersmc.com/releases' }
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.ambertation.de/releases' }
     flatDir { dirs 'libs' }
 }
 
@@ -91,9 +90,10 @@ java {
     withSourcesJar()
 }
 
+def baseName = project.archives_base_name
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archives_base_name}" }
+        rename { "${it}_${baseName}" }
     }
 }
 
