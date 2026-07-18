@@ -27,11 +27,6 @@ public class ServerPlugin implements REICommonPlugin {
 
     @Override
     public void registerItemComparators(ItemComparatorRegistry registry) {
-        final EntryComparator<DataComponentMap> nbtHasher = EntryComparator.component(WHISPERER);
-
-        registry.register(
-                (context, stack) -> nbtHasher.hash(context, stack.getComponents()),
-                WunderreichItems.WHISPERER
-        );
+        registry.registerComponents(WunderreichItems.WHISPERER);
     }
 }

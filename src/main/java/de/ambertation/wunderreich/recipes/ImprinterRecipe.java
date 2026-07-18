@@ -30,6 +30,9 @@ import net.minecraft.world.level.Level;
 
 import com.google.gson.JsonElement;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.loader.api.FabricLoader;
+
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
@@ -99,31 +102,50 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
         return Wunderreich.ID(Type.ID.getPath() + "/" + eID.getNamespace() + "/" + eID.getPath());
     }
 
+    private static class ClientRecipeAccess {
+        @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
+        static RecipeManager getRecipeManager() {
+            var mc = net.minecraft.client.Minecraft.getInstance();
+            if (mc.getConnection() != null) {
+                var recipes = mc.getConnection().recipes();
+                if (recipes instanceof RecipeManager rm) {
+                    return rm;
+                }
+            }
+            return null;
+        }
+    }
+
     public static RecipeManager GLOBAL_RECIPE_MANAGER;
 
     public static Stream<ImprinterRecipe> getAllVariants() {
-        // In 1.21.6, use the recipe manager if available, otherwise fall back to static generation
-        if (GLOBAL_RECIPE_MANAGER != null) {
-            // In 1.21.6, we need to get all recipes and filter by type manually
+        RecipeManager manager = GLOBAL_RECIPE_MANAGER;
+        if (manager == null && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
             try {
-                return GLOBAL_RECIPE_MANAGER
+                manager = ClientRecipeAccess.getRecipeManager();
+            } catch (Throwable ignored) {
+            }
+        }
+
+        if (manager != null) {
+            try {
+                return manager
                         .getRecipes()
                         .stream()
                         .filter(recipeHolder -> recipeHolder != null && recipeHolder.value() != null)
                         .filter(recipeHolder -> recipeHolder.value().getType() == ImprinterRecipe.Type.INSTANCE)
                         .map(recipeHolder -> (ImprinterRecipe) recipeHolder.value())
-                        .filter(r -> r.enchantment != null && r.enchantment.is(EnchantmentTags.TRADEABLE));
+                        .filter(r -> r.enchantment != null);
             } catch (Exception e) {
-                // If recipe manager access fails, fall back to static registration
                 Wunderreich.LOGGER.warn("Failed to access recipe manager, falling back to static recipes", e);
             }
         }
 
-        // Fall back to static recipe generation when recipe manager is not available or fails
-        return ImprinterRecipe
-                .getRecipes()
+        // Fall back to the statically-built recipe list when the recipe manager is not available
+        // or fails (avoids the previously self-recursive getRecipes() call).
+        return RECIPES
                 .stream()
-                .filter(r -> r.enchantment != null && r.enchantment.is(EnchantmentTags.TRADEABLE));
+                .filter(r -> r.enchantment != null);
     }
 
     public static List<ImprinterRecipe> getRecipes() {

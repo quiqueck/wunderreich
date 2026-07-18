@@ -33,6 +33,10 @@ public class ImprinterDisplay extends BasicDisplay {
         super(inputs, outputs);
     }
 
+    public ImprinterDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs, java.util.Optional<net.minecraft.resources.ResourceLocation> location) {
+        super(inputs, outputs, location);
+    }
+
     public static ImprinterDisplay of(ImprinterRecipe recipe) {
         return new ImprinterDisplay(
                 List.of(
@@ -42,7 +46,8 @@ public class ImprinterDisplay extends BasicDisplay {
                         EntryIngredients.of(new ItemStack(WunderreichItems.BLANK_WHISPERER))
                 ),
                 // result: the trained whisperer
-                List.of(EntryIngredients.of(recipe.output))
+                List.of(EntryIngredients.of(recipe.output)),
+                java.util.Optional.of(recipe.id)
         );
     }
 
