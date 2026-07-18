@@ -47,6 +47,21 @@ public class VillagerMixin {
                 maxCount--;
             }
         } while (!found && maxCount > 0);
+
+        //If the retry budget was exhausted without ever rolling the whisperer's selected
+        //enchantment, the last action inside the loop reset the offers to an empty list. Leaving
+        //the villager with no offers soft-locks trading (it "refuses to trade" until its
+        //workstation is rebuilt). Fall back to a regular, unfiltered trade set so the villager
+        //always ends up with usable trades.
+        if (!found) {
+            merchantOffers = self.getOffers();
+            VillagerData villagerData = self.getVillagerData();
+            VillagerProfession profession = villagerData.profession().value();
+            ResourceKey<TradeSet> tradeSet = profession.getTrades(villagerData.level());
+            if (tradeSet != null) {
+                acc.wunderreich_addOffersFromTradeSet(serverLevel, merchantOffers, tradeSet);
+            }
+        }
     }
 
     @Inject(method = "updateTrades", at = @At(value = "HEAD"), cancellable = true)
