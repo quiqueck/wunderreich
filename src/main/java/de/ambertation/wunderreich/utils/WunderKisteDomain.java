@@ -20,7 +20,6 @@ import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
 
 import io.netty.buffer.ByteBuf;
 
@@ -60,7 +59,8 @@ public enum WunderKisteDomain implements StringRepresentable {
     public final int overlayColor;
     private final String name;
     public final boolean useMonochromeFallback;
-    private final Object texture;
+    private final String textureName;
+    private Object texture;
 
     WunderKisteDomain(int id, String name, Item triggerItem, int color, boolean useMonochromeFallback, String texture) {
         this.id = id;
@@ -70,22 +70,18 @@ public enum WunderKisteDomain implements StringRepresentable {
         this.color = color;
         this.textColor = TextColor.fromRgb(color);
         this.useMonochromeFallback = useMonochromeFallback;
+        this.textureName = texture;
 
         if (Configs.MAIN.multiTexturedWunderkiste.get()) {
             overlayColor = 0xFFFFFFFF;
         } else {
             overlayColor = color;
         }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            if (Configs.MAIN.multiTexturedWunderkiste.get()) {
-                this.texture = WunderreichClient.getWunderkisteColor(texture);
-            } else {
-                if (useMonochromeFallback) this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste_bw");
-                else this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste");
-            }
-        } else {
-            this.texture = null;
-        }
+        //The texture Material is resolved lazily in getMaterial() (client only). Building it
+        //here would reference net.minecraft.client.renderer.Sheets from this enum's constructor,
+        //which is class-loaded during block registration - loading Sheets that early breaks other
+        //mods that register banner patterns / sherds afterwards (see #18).
+        this.texture = null;
     }
 
     WunderKisteDomain(int id, String name, Item triggerItem, int color, boolean useMonochromeFallback) {
@@ -94,6 +90,15 @@ public enum WunderKisteDomain implements StringRepresentable {
 
     @Environment(EnvType.CLIENT)
     public Material getMaterial() {
+        if (texture == null) {
+            if (Configs.MAIN.multiTexturedWunderkiste.get()) {
+                this.texture = WunderreichClient.getWunderkisteColor(textureName);
+            } else if (useMonochromeFallback) {
+                this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste_bw");
+            } else {
+                this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste");
+            }
+        }
         return (Material) texture;
     }
 
