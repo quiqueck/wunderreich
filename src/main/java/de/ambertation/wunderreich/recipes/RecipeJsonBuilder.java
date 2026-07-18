@@ -7,7 +7,7 @@ import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -23,7 +23,7 @@ import java.util.*;
 public class RecipeJsonBuilder {
     private static final ThreadLocal<RecipeJsonBuilder> BUILDER = ThreadLocal.withInitial(RecipeJsonBuilder::new);
     final Map<Character, Ingredient> materials = new HashMap<>();
-    ResourceLocation ID;
+    Identifier ID;
     boolean canBuild;
     ItemLike resultItem;
     String[] pattern;
@@ -45,7 +45,7 @@ public class RecipeJsonBuilder {
         return false;
     }
 
-    private static ResourceLocation getKey(ItemLike item) {
+    private static Identifier getKey(ItemLike item) {
         if (item instanceof Block bl) {
             return BuiltInRegistries.BLOCK.getKey(bl);
         } else if (item instanceof Item itm) {
@@ -55,12 +55,12 @@ public class RecipeJsonBuilder {
     }
 
     public static RecipeJsonBuilder create(String name) {
-        ResourceLocation id = Wunderreich.ID(name);
+        Identifier id = Wunderreich.ID(name);
         RecipeJsonBuilder b = BUILDER.get().reset(id);
         return b;
     }
 
-    private RecipeJsonBuilder reset(ResourceLocation ID) {
+    private RecipeJsonBuilder reset(Identifier ID) {
         this.ID = ID;
         this.canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
         this.resultItem = null;
@@ -192,7 +192,7 @@ public class RecipeJsonBuilder {
 
             individualContainer = new JsonArray();
             for (Holder<Item> holder : holders) {
-                final ResourceLocation il = getKey(holder.value());
+                final Identifier il = getKey(holder.value());
                 if (il == null) {
                     Wunderreich.LOGGER.info("Ignoring Recipe for " + this.ID + " due to missing item.");
                     return null;
@@ -205,7 +205,7 @@ public class RecipeJsonBuilder {
         json.add("key", keyList);
 
         JsonObject result = new JsonObject();
-        final ResourceLocation resItem = getKey(resultItem);
+        final Identifier resItem = getKey(resultItem);
         if (resItem == null) {
             Wunderreich.LOGGER.info("Ignoring Recipe for " + this.ID + " due to missing result item.");
             return null;

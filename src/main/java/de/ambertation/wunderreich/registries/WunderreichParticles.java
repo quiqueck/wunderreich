@@ -10,8 +10,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry.PendingParticleFactory;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry;
+import net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry.PendingParticleProvider;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichParticles {
@@ -20,14 +20,14 @@ public class WunderreichParticles {
 
     private static SimpleParticleType register(
             String name,
-            PendingParticleFactory<net.minecraft.core.particles.SimpleParticleType> constructor
+            PendingParticleProvider<net.minecraft.core.particles.SimpleParticleType> constructor
     ) {
         SimpleParticleType particle = Registry.register(
                 BuiltInRegistries.PARTICLE_TYPE,
                 Wunderreich.ID(name),
                 new SimpleParticleType(false)
         );
-        ParticleFactoryRegistry.getInstance().register(particle, constructor);
+        ParticleProviderRegistry.getInstance().register(particle, constructor);
 
         return particle;
     }

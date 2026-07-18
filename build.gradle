@@ -1,14 +1,14 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
     id 'maven-publish'
     id "com.modrinth.minotaur" version "2.+"
     id "com.matthewprenger.cursegradle" version "1.4.0"
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
+java.sourceCompatibility = JavaVersion.VERSION_25
+java.targetCompatibility = JavaVersion.VERSION_25
 
-archivesBaseName = project.archives_base_name
+base.archivesName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
@@ -35,28 +35,27 @@ def local_wunderlib = findProject(':wunderlib') != null
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+//    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
 
-    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
-    modLocalRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+    compileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    localRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
 
-//    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-//    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
+//    localRuntime "dev.emi:emi-fabric:${emi_version}"
 
     println "Using local WunderLib: ${local_wunderlib}"
     if (local_wunderlib) {
         implementation project(path: ":wunderlib", configuration: 'dev')
         include project(path: ":wunderlib")
     } else {
-        modApi "de.ambertation:wunderlib:${project.wunderlib_version}"
+        api "de.ambertation:wunderlib:${project.wunderlib_version}"
         include "de.ambertation:wunderlib:${project.wunderlib_version}"
     }
 }
@@ -64,8 +63,8 @@ dependencies {
 //// Force Loom to remap the local project
 afterEvaluate {
     if (local_wunderlib) {
-        tasks.named("remapJar").configure {
-            dependsOn ":wunderlib:remapJar"
+        tasks.named("jar").configure {
+            dependsOn ":wunderlib:jar"
         }
     }
 }
@@ -80,7 +79,7 @@ processResources {
 
 tasks.withType(JavaCompile).configureEach {
     it.options.encoding = "UTF-8"
-    it.options.release = 21
+    it.options.release = 25
 }
 
 java {
@@ -92,7 +91,7 @@ java {
 
 jar {
     from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
+        rename { "${it}_${project.archives_base_name}" }
     }
 }
 

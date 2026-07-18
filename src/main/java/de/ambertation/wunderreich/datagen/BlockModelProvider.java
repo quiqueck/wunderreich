@@ -13,15 +13,15 @@ import net.minecraft.client.data.models.blockstates.BlockModelDefinitionGenerato
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 
 public class BlockModelProvider extends FabricModelProvider {
-    public BlockModelProvider(FabricDataOutput output) {
+    public BlockModelProvider(FabricPackOutput output) {
         super(output);
     }
 
@@ -53,7 +53,7 @@ public class BlockModelProvider extends FabricModelProvider {
     public static void delegateItemModel(
             BlockModelGenerators vanillaGenerator,
             Block block,
-            ResourceLocation resourceLocation
+            Identifier resourceLocation
     ) {
         vanillaGenerator.registerSimpleItemModel(block, resourceLocation);
     }

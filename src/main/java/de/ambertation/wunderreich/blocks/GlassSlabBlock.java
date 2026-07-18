@@ -37,7 +37,7 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
     @Override
     public boolean skipRendering(BlockState blockState, BlockState blockState2, Direction direction) {
         if (blockState2.is(this)) {
-            if (blockState.getValues().get(TYPE) == blockState2.getValue(TYPE)) {
+            if (blockState.getValue(TYPE) == blockState2.getValue(TYPE)) {
                 return true;
             }
         }

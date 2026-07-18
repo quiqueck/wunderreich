@@ -5,7 +5,9 @@ import net.minecraft.client.particle.FlyTowardsPositionParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,9 +21,10 @@ public class ImprintParticle extends FlyTowardsPositionParticle {
             double z,
             double deltaX,
             double deltaY,
-            double deltaZ
+            double deltaZ,
+            TextureAtlasSprite sprite
     ) {
-        super(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
+        super(clientLevel, x, y, z, deltaX, deltaY, deltaZ, sprite);
 
         float intensity = this.random.nextFloat() * 0.4F + 0.6F;
         this.rCol = intensity * 0.36F;
@@ -45,12 +48,10 @@ public class ImprintParticle extends FlyTowardsPositionParticle {
                 double z,
                 double deltaX,
                 double deltaY,
-                double deltaZ
+                double deltaZ,
+                RandomSource randomSource
         ) {
-            ImprintParticle portalParticle = new ImprintParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
-            portalParticle.pickSprite(this.sprite);
-            return portalParticle;
+            return new ImprintParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ, this.sprite.get(randomSource));
         }
     }
 }
-

@@ -52,7 +52,7 @@ public class AmethystSlabBlock extends DirtSlabBlock implements BlockTagSupplier
             BlockHitResult blockHitResult,
             Projectile projectile
     ) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(
                     null,
@@ -60,7 +60,7 @@ public class AmethystSlabBlock extends DirtSlabBlock implements BlockTagSupplier
                     SoundEvents.AMETHYST_BLOCK_CHIME,
                     SoundSource.BLOCKS,
                     1.0F,
-                    0.5F + level.random.nextFloat() * 1.2F
+                    0.5F + level.getRandom().nextFloat() * 1.2F
             );
         }
     }

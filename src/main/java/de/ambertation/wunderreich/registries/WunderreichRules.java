@@ -8,16 +8,16 @@ import de.ambertation.wunderreich.utils.WunderreichGameRules.BooleanRule;
 import de.ambertation.wunderreich.utils.WunderreichGameRules.IntRule;
 
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.level.GameRules.Category;
+import net.minecraft.world.level.gamerules.GameRuleCategory;
 import net.minecraft.world.level.storage.ServerLevelData;
 
 public class WunderreichRules {
     private static final BooleanRule NO_NAMETAGGED_DESPAWN =
-            new BooleanRule(Category.SPAWNING, Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
+            new BooleanRule(GameRuleCategory.SPAWNING, Configs.DEFAULT_RULES.doNotDespawnWithNameTag);
 
     public static void onLevelLoad(ServerLevel l, ServerLevelData serverLevelData) {
         Wunderreich.LOGGER.info("Loading ServerLevel: " + l);
-        WunderreichGameRules.setCurrentRules(serverLevelData.getGameRules());
+        WunderreichGameRules.setCurrentRules(l.getGameRules());
     }
 
     public static void register() {
@@ -31,26 +31,26 @@ public class WunderreichRules {
 
     public static class Whispers {
         private static final IntRule DURABILITY =
-                new IntRule(Category.MISC, Configs.DEFAULT_RULES.whisperDurability, 0, Integer.MAX_VALUE);
+                new IntRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.whisperDurability, 0, Integer.MAX_VALUE);
 
         private static final IntRule TRAINED_DURABILITY =
-                new IntRule(Category.MISC, Configs.DEFAULT_RULES.whisperTrainedDurability, 0, Integer.MAX_VALUE);
+                new IntRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.whisperTrainedDurability, 0, Integer.MAX_VALUE);
 
         private static final IntRule MIN_XP_MULT =
-                new IntRule(Category.DROPS, Configs.DEFAULT_RULES.whisperMinXPMultiplier, 0, Integer.MAX_VALUE);
+                new IntRule(GameRuleCategory.DROPS, Configs.DEFAULT_RULES.whisperMinXPMultiplier, 0, Integer.MAX_VALUE);
 
         private static final IntRule MAX_XP_MULT =
-                new IntRule(Category.DROPS, Configs.DEFAULT_RULES.whisperMaxXPMultiplier, 0, Integer.MAX_VALUE);
+                new IntRule(GameRuleCategory.DROPS, Configs.DEFAULT_RULES.whisperMaxXPMultiplier, 0, Integer.MAX_VALUE);
 
 
         private static final BooleanRule LIBRARIAN_SELECTION =
-                new BooleanRule(Category.MOBS, Configs.DEFAULT_RULES.allowLibrarianSelection);
+                new BooleanRule(GameRuleCategory.MOBS, Configs.DEFAULT_RULES.allowLibrarianSelection);
 
         private static final BooleanRule TRADES_CYCLING =
-                new BooleanRule(Category.MOBS, Configs.DEFAULT_RULES.allowTradesCycling);
+                new BooleanRule(GameRuleCategory.MOBS, Configs.DEFAULT_RULES.allowTradesCycling);
 
         private static final BooleanRule CYCLE_NEEDS_WHISPERER =
-                new BooleanRule(Category.MOBS, Configs.DEFAULT_RULES.cyclingNeedsWhisperer);
+                new BooleanRule(GameRuleCategory.MOBS, Configs.DEFAULT_RULES.cyclingNeedsWhisperer);
 
 
         public static int durability() {
@@ -91,35 +91,35 @@ public class WunderreichRules {
 
     public static class Wunderkiste {
         private static final BooleanRule REDSTONE_POWER =
-                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.wunderkisteRedstonePowerWhenOpened);
+                new BooleanRule(GameRuleCategory.UPDATES, Configs.DEFAULT_RULES.wunderkisteRedstonePowerWhenOpened);
 
         private static final BooleanRule ANALOG_REDSTONE =
-                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.wunderkisteAnalogRedstoneOutput);
+                new BooleanRule(GameRuleCategory.UPDATES, Configs.DEFAULT_RULES.wunderkisteAnalogRedstoneOutput);
 
         private static final BooleanRule SUCTION_TUBE_REDSTONE_POWER =
-                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.suctiontubeRedstonePower);
+                new BooleanRule(GameRuleCategory.UPDATES, Configs.DEFAULT_RULES.suctiontubeRedstonePower);
 
         private static final BooleanRule SUCTION_TUBE_ANALOG_REDSTONE =
-                new BooleanRule(Category.UPDATES, Configs.DEFAULT_RULES.suctiontubeAnalogRedstoneOutput);
+                new BooleanRule(GameRuleCategory.UPDATES, Configs.DEFAULT_RULES.suctiontubeAnalogRedstoneOutput);
 
         private static final BooleanRule SHOW_COLOR_WUNDERKISTE =
-                new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteShowColored);
+                new BooleanRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.wunderkisteShowColored);
 
         private static final BooleanRule ALLOW_WUNDERKISTE_DOMAINS =
-                new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowDomains);
+                new BooleanRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.wunderkisteAllowDomains);
 
         private static final BooleanRule ALLOW_WUNDERKISTE_NAMED_DOMAINS =
-                new BooleanRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteAllowNamedDomains);
+                new BooleanRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.wunderkisteAllowNamedDomains);
 
         private static final BooleanRule CAN_COLOR_WUNDERKISTE =
-                new BooleanRule(Category.PLAYER, Configs.DEFAULT_RULES.wunderkisteCanColor);
+                new BooleanRule(GameRuleCategory.PLAYER, Configs.DEFAULT_RULES.wunderkisteCanColor);
 
         private static final IntRule COLOR_COST_WUNDERKISTE =
-                new IntRule(Category.MISC, Configs.DEFAULT_RULES.wunderkisteChangeDomainCost, 0, 64);
+                new IntRule(GameRuleCategory.MISC, Configs.DEFAULT_RULES.wunderkisteChangeDomainCost, 0, 64);
 
         private static final IntRule CHUNK_LOADER_DIST_WUNDERKISTE =
                 new IntRule(
-                        Category.UPDATES,
+                        GameRuleCategory.UPDATES,
                         Configs.DEFAULT_RULES.wunderkisteChunkLoaderRadius,
                         0,
                         5,

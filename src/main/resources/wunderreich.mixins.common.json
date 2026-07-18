@@ -15,10 +15,7 @@
     "ShovelItemMixin",
     "SpreadingSnowyDirtBlockMixin",
     "VillagerMixin",
-    "despawn.GhastMixin",
-    "despawn.MonsterMixin",
-    "despawn.PhantomMixin",
-    "despawn.SlimeMixin",
+    "despawn.MobMixin",
     "liveblock.ServerLevelMixin"
   ],
   "client": [

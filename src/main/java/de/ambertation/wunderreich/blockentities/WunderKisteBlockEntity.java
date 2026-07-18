@@ -69,7 +69,7 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
                     SoundEvents.ENDER_CHEST_OPEN,
                     SoundSource.BLOCKS,
                     0.5F,
-                    level.random.nextFloat() * 0.1F + 0.9F
+                    level.getRandom().nextFloat() * 0.1F + 0.9F
             );
         }
 
@@ -83,7 +83,7 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
                     SoundEvents.ENDER_CHEST_CLOSE,
                     SoundSource.BLOCKS,
                     0.5F,
-                    level.random.nextFloat() * 0.1F + 0.9F
+                    level.getRandom().nextFloat() * 0.1F + 0.9F
             );
         }
 
@@ -99,7 +99,7 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             WunderKisteBlock.updateAllBoxes(blockState, level.getBlockEntity(blockPos), level.getServer(), true, false);
         }
 
-        protected boolean isOwnContainer(@NotNull Player player) {
+        public boolean isOwnContainer(@NotNull Player player) {
             return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
         }
     };
@@ -115,7 +115,13 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
     public void startOpen(Player player) {
         if (!this.remove && !player.isSpectator()) {
-            this.openersCounter.incrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
+            this.openersCounter.incrementOpeners(
+                    player,
+                    this.getLevel(),
+                    this.getBlockPos(),
+                    this.getBlockState(),
+                    player.getContainerInteractionRange()
+            );
         }
 
     }

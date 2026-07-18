@@ -103,7 +103,7 @@ modrinth {
     projectId = findProperty('modrinth_id') ?: project.archives_base_name
     versionNumber = project.mod_version
     versionType = project.release_channel
-    uploadFile = remapJar
+    uploadFile = jar
     gameVersions = slurper.parseText(project.modrinth_versions)
     loaders = ["fabric"]
     changelog = changes
@@ -132,7 +132,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     }
 
     def numericId = findProperty('curseforge_id')
-    def mainFile = upload(numericId, remapJar.outputs)
+    def mainFile = upload(numericId, jar.outputs)
 
     def changes = new File(projectDir, "CHANGES.md")
     if (changes.exists()) {
@@ -153,7 +153,7 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     }
 
     mainFile.addModLoader('Fabric')
-    mainFile.addJavaVersion('Java 21')
+    mainFile.addJavaVersion('Java 25')
     mainFile.displayName = "$projectID-$project.version $latestVersion"
 
     requiredDependencies.each { dep ->
@@ -199,7 +199,7 @@ curseforge {
             latestVersion = "[$v]"
         }
         addGameVersion 'Fabric'
-        addGameVersion 'Java 21'
+        addGameVersion 'Java 25'
         relations {
             requiredDependencies.each { dep ->
                 requiredDependency dep
@@ -209,11 +209,11 @@ curseforge {
                 optionalDependency dep
             }
         }
-        mainArtifact(remapJar) {
+        mainArtifact(jar) {
             displayName = "$projectID-$project.version $latestVersion"
         }
         afterEvaluate {
-            mainArtifact(remapJar.outputs)
+            mainArtifact(jar.outputs)
         }
     }
     options {
@@ -288,7 +288,7 @@ task nextVersion() {
 import org.kohsuke.github.GHReleaseBuilder
 import org.kohsuke.github.GitHub
 
-task github(dependsOn: [build, remapJar, sourcesJar]) {
+task github(dependsOn: [build, jar, sourcesJar]) {
     group = 'publishing'
     def slurper = new groovy.json.JsonSlurper()
     def apiKey = new File(projectDir, "../GITHUB_TOKEN")
@@ -332,11 +332,11 @@ publishing {
             def githubName = findProperty('github_base_name') ?: project.archives_base_name
             artifactId = project.archives_base_name
             // add all the jars that should be included when publishing to maven
-            artifact(remapJar) {
-                builtBy remapJar
+            artifact(jar) {
+                builtBy jar
             }
             artifact(sourcesJar) {
-                builtBy remapSourcesJar
+                builtBy sourcesJar
             }
 
             // Optional POM configuration

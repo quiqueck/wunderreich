@@ -4,7 +4,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.ai.village.poi.PoiManager;
 import net.minecraft.world.entity.ai.village.poi.PoiRecord;
@@ -43,7 +43,7 @@ public class PoiWrapper {
     }
 
     public static PoiWrapper register(
-            ResourceLocation location,
+            Identifier location,
             Set<BlockState> matchingStates,
             int maxTickets,
             int validRanges

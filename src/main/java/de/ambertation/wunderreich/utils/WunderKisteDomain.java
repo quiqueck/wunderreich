@@ -8,7 +8,7 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -93,8 +93,8 @@ public enum WunderKisteDomain implements StringRepresentable {
     }
 
     @Environment(EnvType.CLIENT)
-    public Material getMaterial() {
-        return (Material) texture;
+    public SpriteId getSprite() {
+        return (SpriteId) texture;
     }
 
     public String toString() {

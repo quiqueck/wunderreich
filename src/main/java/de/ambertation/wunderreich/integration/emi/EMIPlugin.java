@@ -6,7 +6,7 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.Logger;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.*;
 
 import dev.emi.emi.api.EmiRegistry;
@@ -21,7 +21,7 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public class EMIPlugin implements dev.emi.emi.api.EmiPlugin {
-    public static final ResourceLocation WIDGETS = Wunderreich.ID(
+    public static final Identifier WIDGETS = Wunderreich.ID(
             "textures/gui/widgets.png"
     );
     public static final EmiStack IMPRINTER_WORKSTATION = EmiStack.of(WunderreichBlocks.WHISPER_IMPRINTER);

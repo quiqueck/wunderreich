@@ -11,10 +11,10 @@ import de.ambertation.wunderlib.ui.vanilla.ConfigScreen;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,12 +24,12 @@ import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class MainScreen extends ConfigScreen {
-    static final ResourceLocation ICON = Wunderreich.ID("icon.png");
-    static final ResourceLocation ICON_LINE = Wunderreich.ID("hline.png");
+    static final Identifier ICON = Wunderreich.ID("icon.png");
+    static final Identifier ICON_LINE = Wunderreich.ID("hline.png");
     static final Rectangle ICON_LINE_UV = new Rectangle(0, 0, 94, 15);
-    static final ResourceLocation TEXT_LINE = Wunderreich.ID("text.png");
+    static final Identifier TEXT_LINE = Wunderreich.ID("text.png");
     static final Rectangle TEXT_LINE_UV = new Rectangle(0, 0, 376, 57);
-    static final ResourceLocation BOX = Wunderreich.ID("box.png");
+    static final Identifier BOX = Wunderreich.ID("box.png");
     static final Rectangle BOX_UV = new Rectangle(0, 0, 400, 440);
 
     public MainScreen(@Nullable Screen parent) {
@@ -56,7 +56,7 @@ public class MainScreen extends ConfigScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int i, int j, float f) {
+    public void renderBackgroundLayer(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
         guiGraphics.fill(0, 0, width, height, ColorHelper.SCREEN_BACKGROUND);
 
         RenderHelper.renderImage(

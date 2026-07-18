@@ -14,7 +14,7 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SnowLayerBlock;
-import net.minecraft.world.level.block.SpreadingSnowyDirtBlock;
+import net.minecraft.world.level.block.SpreadingSnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -99,7 +99,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
         if (bl instanceof DirtSlabBlock) {
             return canBeGrassNewSlab(blockState, levelReader, blockPos);
         } else {
-            return SpreadingSnowyDirtBlock.canBeGrass(blockState, levelReader, blockPos);
+            return SpreadingSnowyBlock.canStayAlive(blockState, levelReader, blockPos);
         }
     }
 
@@ -130,7 +130,7 @@ public class SpreadableSnowyDirtSlab extends SnowyDirtSlab {
                                 .setValue(WATERLOGGED, testState.getValue(WATERLOGGED))
                                 .setValue(TYPE, testState.getValue(TYPE))
                 );
-            } else if (me instanceof SpreadingSnowyDirtBlock) {
+            } else if (me instanceof SpreadingSnowyBlock) {
                 level.setBlockAndUpdate(
                         blockPos,
                         Blocks.DIRT.defaultBlockState()

@@ -105,7 +105,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
         }
 
         // Initialize container connection status
-        if (!level.isClientSide && blockEntity != null) {
+        if (!level.isClientSide() && blockEntity != null) {
             // Server-side: check actual container connections
             for (SuctionTubeBlockEntity.SuctionInput input : blockEntity.getInputs().getInputs()) {
                 BlockPos checkPos = pos.relative(input.inDirection);
@@ -247,7 +247,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
         super.removed(player);
 
         // Save filter data to block entity when menu is closed
-        if (blockEntity != null && !player.level().isClientSide) {
+        if (blockEntity != null && !player.level().isClientSide()) {
             for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
                 Container filterContainer = filterContainers.get(direction);
                 if (filterContainer != null) {

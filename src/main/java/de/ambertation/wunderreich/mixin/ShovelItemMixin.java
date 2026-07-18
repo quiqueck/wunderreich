@@ -45,12 +45,12 @@ public class ShovelItemMixin {
                         currentState
                 );
                 final Player player = useOnContext.getPlayer();
-                if (!level.isClientSide) {
+                if (!level.isClientSide()) {
                     level.setBlock(pos, newState, 11);
                     if (player != null) {
                         useOnContext
                                 .getItemInHand()
-                                .hurtAndBreak(1, player, LivingEntity.getSlotForHand(useOnContext.getHand()));
+                                .hurtAndBreak(1, player, useOnContext.getHand());
                     }
                 }
 

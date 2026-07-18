@@ -8,7 +8,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.blockstates.MultiVariantGenerator;
 import net.minecraft.client.data.models.blockstates.PropertyDispatch;
 import net.minecraft.client.data.models.model.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -80,9 +80,9 @@ public class SlabBuilder {
         createSlab(
                 vanillaGenerator,
                 slabBlock, baseBlock, new TextureMapping()
-                        .put(TextureSlot.SIDE, topRes.withSuffix("_side"))
+                        .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(baseBlock, "_side"))
                         .put(TextureSlot.BOTTOM, res)
-                        .put(TextureSlot.TOP, topRes.withSuffix("_top"))
+                        .put(TextureSlot.TOP, TextureMapping.getBlockTexture(baseBlock, "_top"))
                         .put(TextureSlot.PARTICLE, res),
                 Stream.of(PATH_SLAB_BOTTOM, PATH_SLAB_TOP)
         );
@@ -96,7 +96,7 @@ public class SlabBuilder {
             Stream<ModelTemplate> models
     ) {
         final var fullBlockLocation = ModelLocationUtils.getModelLocation(baseBlock);
-        final List<ResourceLocation> locations = models.map(template -> template.create(
+        final List<Identifier> locations = models.map(template -> template.create(
                 slabBlock,
                 mapping,
                 vanillaGenerator.modelOutput
@@ -130,21 +130,21 @@ public class SlabBuilder {
                 .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(Blocks.GRASS_BLOCK, "_snow"));
 
         TextureMapping mapping = new TextureMapping()
-                .put(TextureSlot.SIDE, topRes.withSuffix("_side"))
+                .put(TextureSlot.SIDE, TextureMapping.getBlockTexture(baseBlock, "_side"))
                 .put(TextureSlot.BOTTOM, res)
-                .put(TextureSlot.TOP, topRes.withSuffix("_top"))
-                .put(TextureSlot.LAYER0, topRes.withSuffix("_side_overlay"));
+                .put(TextureSlot.TOP, TextureMapping.getBlockTexture(baseBlock, "_top"))
+                .put(TextureSlot.LAYER0, TextureMapping.getBlockTexture(baseBlock, "_side_overlay"));
         final var fullBlockLocation = ModelLocationUtils.getModelLocation(baseBlock);
         final var snowBlockLocation = fullBlockLocation.withSuffix("_snow");
-        ResourceLocation BOTTOM = GRASS_SLAB_BOTTOM.create(slabBlock, mapping, vanillaGenerator.modelOutput);
-        ResourceLocation TOP = GRASS_SLAB_TOP.create(slabBlock, mapping, vanillaGenerator.modelOutput);
-        ResourceLocation BOTTOM_SNOW = GRASS_SLAB_SNOW_BOTTOM.createWithSuffix(
+        Identifier BOTTOM = GRASS_SLAB_BOTTOM.create(slabBlock, mapping, vanillaGenerator.modelOutput);
+        Identifier TOP = GRASS_SLAB_TOP.create(slabBlock, mapping, vanillaGenerator.modelOutput);
+        Identifier BOTTOM_SNOW = GRASS_SLAB_SNOW_BOTTOM.createWithSuffix(
                 slabBlock,
                 "_snow",
                 mappingSnow,
                 vanillaGenerator.modelOutput
         );
-        ResourceLocation TOP_SNOW = GRASS_SLAB_SNOW_TOP.createWithSuffix(
+        Identifier TOP_SNOW = GRASS_SLAB_SNOW_TOP.createWithSuffix(
                 slabBlock,
                 "_snow",
                 mappingSnow,

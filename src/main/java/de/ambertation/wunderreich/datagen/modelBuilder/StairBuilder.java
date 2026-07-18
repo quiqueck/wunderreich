@@ -6,7 +6,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
@@ -27,7 +27,7 @@ public class StairBuilder {
     }
 
     public static void createStairs(BlockModelGenerators vanillaGenerator, Block stairBlock, TextureMapping mapping) {
-        final List<ResourceLocation> locations = Stream
+        final List<Identifier> locations = Stream
                 .of(
                         ModelTemplates.STAIRS_INNER,
                         ModelTemplates.STAIRS_STRAIGHT,

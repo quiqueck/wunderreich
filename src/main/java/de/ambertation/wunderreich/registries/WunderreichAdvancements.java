@@ -6,10 +6,10 @@ import de.ambertation.wunderreich.config.Configs;
 
 import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.critereon.PlayerTrigger;
+import net.minecraft.advancements.criterion.PlayerTrigger;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Optional;
 
 public class WunderreichAdvancements {
-    public static final Map<ResourceLocation, JsonElement> ADVANCEMENTS = new HashMap<>();
+    public static final Map<Identifier, JsonElement> ADVANCEMENTS = new HashMap<>();
 
-    public static final ResourceLocation USE_TROWEL_ID = Wunderreich.ID("use_trowel");
-    public static final ResourceLocation OPEN_WUNDERKISTE_ID = Wunderreich.ID("open_wunderkiste");
-    public static final ResourceLocation COLOR_WUNDERKISTE_ID = Wunderreich.ID("color_wunderkiste");
-    public static final ResourceLocation TRANSPORTED_ITEM_ID = Wunderreich.ID("transport_item");
+    public static final Identifier USE_TROWEL_ID = Wunderreich.ID("use_trowel");
+    public static final Identifier OPEN_WUNDERKISTE_ID = Wunderreich.ID("open_wunderkiste");
+    public static final Identifier COLOR_WUNDERKISTE_ID = Wunderreich.ID("color_wunderkiste");
+    public static final Identifier TRANSPORTED_ITEM_ID = Wunderreich.ID("transport_item");
 
     public static PlayerTrigger USE_TROWEL;
     public static PlayerTrigger OPEN_WUNDERKISTE;
@@ -62,7 +62,7 @@ public class WunderreichAdvancements {
             rootItem = WunderreichItems.DIAMOND_BUILDERS_TROWEL;
 
 
-        ResourceLocation root = AdvancementsJsonBuilder
+        Identifier root = AdvancementsJsonBuilder
                 .create("root")
                 .startDisplay(
                         rootItem,
@@ -75,7 +75,7 @@ public class WunderreichAdvancements {
                 .inventoryChangedCriteria("has_imprinter", rootItem)
                 .register();
 
-        ResourceLocation whisper_blank = root;
+        Identifier whisper_blank = root;
         if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BLANK_WHISPERER)) {
             whisper_blank = AdvancementsJsonBuilder
                     .create(WunderreichItems.BLANK_WHISPERER, b -> b.showToast().visible().announceToChat())
@@ -84,7 +84,7 @@ public class WunderreichAdvancements {
                     .register();
         }
         if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.WHISPERER)) {
-            ResourceLocation whisperer = AdvancementsJsonBuilder
+            Identifier whisperer = AdvancementsJsonBuilder
                     .create(WunderreichItems.WHISPERER, b -> b.showToast().visible().announceToChat().goal())
                     .parent(whisper_blank)
                     .inventoryChangedCriteria("has_whisper", WunderreichItems.WHISPERER)
@@ -93,7 +93,7 @@ public class WunderreichAdvancements {
 
 
         if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.BUILDERS_TROWEL)) {
-            ResourceLocation builders_trowel = AdvancementsJsonBuilder
+            Identifier builders_trowel = AdvancementsJsonBuilder
                     .create("used_trowel")
                     .startDisplay(WunderreichItems.BUILDERS_TROWEL, b -> b.showToast().visible().announceToChat())
                     .parent(root)
@@ -106,7 +106,7 @@ public class WunderreichAdvancements {
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.WUNDER_KISTE)) {
             assert WunderreichBlocks.WUNDER_KISTE != null;
-            ResourceLocation opened_wunderkiste = AdvancementsJsonBuilder
+            Identifier opened_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_open")
                     .startDisplay(
                             WunderreichBlocks.WUNDER_KISTE.asItem(),
@@ -118,7 +118,7 @@ public class WunderreichAdvancements {
                             }
                     ).register();
 
-            ResourceLocation colored_wunderkiste = AdvancementsJsonBuilder
+            Identifier colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
                     .startDisplay(
                             Items.RED_DYE,
@@ -134,7 +134,7 @@ public class WunderreichAdvancements {
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichBlocks.SUCTION_TUBE)) {
             assert WunderreichBlocks.SUCTION_TUBE != null;
 
-            ResourceLocation held_suction_tube = AdvancementsJsonBuilder
+            Identifier held_suction_tube = AdvancementsJsonBuilder
                     .create("suction_tube")
                     .startDisplay(
                             WunderreichBlocks.SUCTION_TUBE.asItem(),
@@ -158,7 +158,7 @@ public class WunderreichAdvancements {
         }
     }
 
-    public static <T extends CriterionTrigger<?>> T register(ResourceLocation id, T trigger) {
+    public static <T extends CriterionTrigger<?>> T register(Identifier id, T trigger) {
         return Registry.register(BuiltInRegistries.TRIGGER_TYPES, id, trigger);
     }
 }

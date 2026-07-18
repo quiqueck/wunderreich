@@ -4,12 +4,12 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
 import static de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu.SLOTS_PER_DIRECTION;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
@@ -20,7 +20,7 @@ import java.util.function.Supplier;
  * Displays filter slots for each input direction with clear labels.
  */
 public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> {
-    private static final ResourceLocation TEXTURE = Wunderreich.ID("textures/gui/suction_tube.png");
+    private static final Identifier TEXTURE = Wunderreich.ID("textures/gui/suction_tube.png");
     private static final int TEXTURE_WIDTH = 306;
     private static final int TEXTURE_HEIGHT = 256;
     // Direction labels for display
@@ -29,9 +29,7 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
     };
 
     public SuctionTubeScreen(SuctionTubeMenu menu, Inventory playerInventory, Component title) {
-        super(menu, playerInventory, title);
-        this.imageWidth = SuctionTubeMenu.GUI_WIDTH;
-        this.imageHeight = SuctionTubeMenu.GUI_HEIGHT;
+        super(menu, playerInventory, title, SuctionTubeMenu.GUI_WIDTH, SuctionTubeMenu.GUI_HEIGHT);
     }
 
     @Override
@@ -43,15 +41,9 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        this.renderTooltip(guiGraphics, mouseX, mouseY);
-    }
-
-    @Override
-    protected void renderBg(GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-        // No need for RenderSystem.setShaderColor in 1.21.6 - GuiGraphics handles this
+    public void extractBackground(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractBackground(guiGraphics, mouseX, mouseY, partialTick);
+        // GuiGraphicsExtractor handles the shader color state
         int x = (this.width - this.imageWidth) / 2;
         int y = (this.height - this.imageHeight) / 2;
 
@@ -91,7 +83,7 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
             int labelX = baseX + (SuctionTubeMenu.FILTER_SLOTS_WIDTH - labelWidth) / 2; // Center label over 4 slots (72px wide)
             int labelY = baseY - 12;
 
-            guiGraphics.drawString(this.font, label, labelX, labelY, 0x404040, false);
+            guiGraphics.text(this.font, label, labelX, labelY, 0x404040, false);
 
             // Draw filter slot backgrounds for this direction
             for (int slotIndex = 0; slotIndex < SLOTS_PER_DIRECTION; slotIndex++) {
@@ -139,13 +131,13 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
                     }
                     // Draw the item icon next to the slots
 
-                    guiGraphics.renderItem(representativeItem, iconX, baseY);
+                    guiGraphics.item(representativeItem, iconX, baseY);
                     renderLockOverlay.get();
 
                     //guiGraphics.fill(iconX - 1, baseY - 1, iconX + 17, baseY + 17, 0x800000FF); // Semi-transparent blue
                     final int signalStrength = this.menu.signalStrengthForDirection(direction);
                     if (signalStrength > 0) {
-                        guiGraphics.renderItemDecorations(
+                        guiGraphics.itemDecorations(
                                 this.font,
                                 representativeItem.copyWithCount(signalStrength),
                                 iconX,
@@ -160,12 +152,12 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
     }
 
     @Override
-    protected void renderLabels(GuiGraphics guiGraphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
         // Draw title
-        guiGraphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
+        guiGraphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
 
         // Draw inventory label
-        guiGraphics.drawString(
+        guiGraphics.text(
                 this.font,
                 this.playerInventoryTitle,
                 this.inventoryLabelX,
@@ -177,12 +169,12 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
         // Draw filter instructions
         String instruction = "Place items to filter by direction";
         int instructionX = (this.imageWidth - this.font.width(instruction)) / 2;
-        guiGraphics.drawString(this.font, instruction, instructionX, 130, 0x666666, false);
+        guiGraphics.text(this.font, instruction, instructionX, 130, 0x666666, false);
     }
 
     @Override
-    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
-        super.renderTooltip(guiGraphics, x, y);
+    protected void extractTooltip(GuiGraphicsExtractor guiGraphics, int x, int y) {
+        super.extractTooltip(guiGraphics, x, y);
 
         // Show tooltips for filter slots using the same positioning logic as the slots
         int relativeX = x - this.leftPos;

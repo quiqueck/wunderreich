@@ -53,7 +53,7 @@ public enum LegacyEnchantmentCategories {
         if (e.canEnchant(new ItemStack(Items.IRON_LEGGINGS))) return ARMOR_LEGS;
         if (hasTag(d, ItemTags.FOOT_ARMOR_ENCHANTABLE)) return ARMOR_FEET;
         if (e.canEnchant(new ItemStack(Items.IRON_BOOTS))) return ARMOR_FEET;
-        if (hasTag(d, ItemTags.SWORD_ENCHANTABLE)) return WEAPON;
+        if (hasTag(d, ItemTags.MELEE_WEAPON_ENCHANTABLE)) return WEAPON;
         if (hasTag(d, ItemTags.WEAPON_ENCHANTABLE)) return WEAPON;
         if (hasTag(d, ItemTags.FIRE_ASPECT_ENCHANTABLE)) return WEAPON;
         if (hasTag(d, ItemTags.SHARP_WEAPON_ENCHANTABLE)) return WEAPON;

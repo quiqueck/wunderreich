@@ -21,7 +21,7 @@ public abstract class ServerLevelMixin {
 
     @Inject(method = "shouldTickBlocksAt", at = @At("HEAD"), cancellable = true)
     private void wunderreich_shouldTickBlocksAt(long l, CallbackInfoReturnable<Boolean> cir) {
-        if (WunderKisteServerExtension.WUNDERKISTEN.shouldTick((ServerLevel) (Object) this, new ChunkPos(l))) {
+        if (WunderKisteServerExtension.WUNDERKISTEN.shouldTick((ServerLevel) (Object) this, ChunkPos.unpack(l))) {
             cir.setReturnValue(true);
             cir.cancel();
         }

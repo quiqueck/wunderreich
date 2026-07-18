@@ -20,7 +20,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
@@ -71,10 +71,10 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
     public static final int COST_A_SLOT = 0;
     public static final int COST_B_SLOT = 1;
     private static final List<ImprinterRecipe> RECIPES = new LinkedList<>();
-    public final ResourceLocation id;
+    public final Identifier id;
 
     private ImprinterRecipe(
-            ResourceLocation id,
+            Identifier id,
             Holder<Enchantment> enchantment,
             ItemStack input,
             ItemStack output,
@@ -92,8 +92,8 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
     }
 
     @NotNull
-    private static ResourceLocation makeID(Holder<Enchantment> e) {
-        final var eID = e.unwrapKey().orElseThrow().location();
+    private static Identifier makeID(Holder<Enchantment> e) {
+        final var eID = e.unwrapKey().orElseThrow().identifier();
         if (eID.getNamespace().equals("minecraft"))
             return Wunderreich.ID(Type.ID.getPath() + "/" + eID.getPath());
         return Wunderreich.ID(Type.ID.getPath() + "/" + eID.getNamespace() + "/" + eID.getPath());
@@ -119,9 +119,9 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
             }
         }
 
-        // Fall back to static recipe generation when recipe manager is not available or fails
-        return ImprinterRecipe
-                .getRecipes()
+        // Fall back to the statically-built recipe list when the recipe manager is not available
+        // or fails (avoids the previously self-recursive getRecipes() call).
+        return RECIPES
                 .stream()
                 .filter(r -> r.enchantment != null && r.enchantment.is(EnchantmentTags.TRADEABLE));
     }
@@ -161,7 +161,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
                 try {
                     enchantments.listElements()
                                 .forEach(e -> {
-                                    ResourceLocation ID = makeID(e);
+                                    Identifier ID = makeID(e);
                                     if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
                                         enchants.add(e);
                                 });
@@ -169,33 +169,22 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
                     enchants.sort(Comparator.comparing(a -> WhisperRule.getFullname(a)
                                                                        .getString()));
 
-                    RegistryOps<JsonElement> registryOps = REGISTRY_PROVIDER_OR_NULL == null
-                            ? null
-                            : REGISTRY_PROVIDER_OR_NULL.createSerializationContext(JsonOps.INSTANCE);
-
-                    enchants.forEach(e -> {
-                        ImprinterRecipe r = new ImprinterRecipe(e);
-                        RECIPES.add(r);
-                        if (registryOps == null) {
-                            Wunderreich.LOGGER.error("Registry provider is null. Can not create Imprinter Recipes.");
-                            return;
-                        }
-                        var res = Serializer.CODEC_SERIALIZER.codec()
-                                                             .encodeStart(registryOps, r);
-                        if (res.isError()) {
-                            Wunderreich.LOGGER.error("Error creating Imprinter Recipe: " + res
-                                    .error()
-                                    .get() + " for " + r.id);
-                            return;
-                        }
-                        //Wunderreich.LOGGER.info("Created Imprinter Recipe: " + r + " for " + WhisperRule.getFullname(e));
-                        WunderreichRecipes.RECIPES.put(r.id, res.getOrThrow());
-                    });
+                    // Build the recipe objects. Their ItemStacks are materialized lazily, so this
+                    // is safe during the datapack reload's async prepare phase (item data
+                    // components are not bound yet). The recipes are injected into the vanilla
+                    // recipe map directly by RecipeManagerMixin (no JSON round-trip, which would
+                    // force premature ItemStack materialization via the codec).
+                    enchants.forEach(e -> RECIPES.add(new ImprinterRecipe(e)));
                 } catch (Exception e) {
                     Wunderreich.LOGGER.error("Error during imprinter recipe registration", e);
                 }
             }
         }
+    }
+
+    @ApiStatus.Internal
+    public static List<ImprinterRecipe> getRegisteredRecipes() {
+        return RECIPES;
     }
 
     // The getToastSymbol method is no longer part of the Recipe interface in 1.21.6
@@ -207,7 +196,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
     @Override
     public PlacementInfo placementInfo() {
         // Create placement info for the recipe ingredients
-        return PlacementInfo.create(java.util.List.of(Ingredient.of(input.getItem()), WhisperRule.BLANK_INGREDIENT));
+        return PlacementInfo.create(java.util.List.of(Ingredient.of(getInput().getItem()), WhisperRule.blankIngredient()));
     }
 
     @Override
@@ -224,22 +213,32 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
 
     public boolean canBuildFrom(@Nullable ImprinterRecipe.ImprinterInput inv) {
         if (inv == null || !inv.hasWhisperer()) return false;
-        return isRequiredItem(this.input, inv.ingredient);
+        return isRequiredItem(this.getInput(), inv.ingredient);
     }
 
     @Override
     public boolean matches(ImprinterRecipe.ImprinterInput inv, Level level) {
         if (inv.size() < 2) return false;
-        return isRequiredItem(this.input, inv.getItem(COST_A_SLOT)) && isRequiredItem(
-                BLANK,
+        return isRequiredItem(this.getInput(), inv.getItem(COST_A_SLOT)) && isRequiredItem(
+                blank(),
                 inv.getItem(COST_B_SLOT)
         ) ||
-                isRequiredItem(this.input, inv.getItem(COST_B_SLOT)) && isRequiredItem(BLANK, inv.getItem(COST_A_SLOT));
+                isRequiredItem(this.getInput(), inv.getItem(COST_B_SLOT)) && isRequiredItem(blank(), inv.getItem(COST_A_SLOT));
     }
 
     @Override
-    public ItemStack assemble(ImprinterRecipe.ImprinterInput recipeInput, HolderLookup.Provider provider) {
-        return this.output.copy();
+    public ItemStack assemble(ImprinterRecipe.ImprinterInput recipeInput) {
+        return this.getOutput().copy();
+    }
+
+    @Override
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public boolean showNotification() {
+        return true;
     }
 
     @Override
@@ -271,7 +270,7 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
     }
 
     public static class Type implements RecipeType<ImprinterRecipe> {
-        public static final ResourceLocation ID = Wunderreich.ID("imprinter");
+        public static final Identifier ID = Wunderreich.ID("imprinter");
         public static final RecipeType<ImprinterRecipe> INSTANCE = new Type();
 
         Type() {
@@ -283,50 +282,39 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
         }
     }
 
-    private static class Serializer implements RecipeSerializer<ImprinterRecipe> {
+    private static class Serializer {
         private static final MapCodec<ImprinterRecipe> CODEC_SERIALIZER = RecordCodecBuilder.mapCodec(instance -> instance
                 .group(
                         Codec.STRING.fieldOf("type").forGetter(r -> Type.ID.toString()),
-                        ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.id),
-                        ResourceLocation.CODEC
+                        Identifier.CODEC.fieldOf("id").forGetter(r -> r.id),
+                        Identifier.CODEC
                                 .fieldOf("enchantment")
-                                .forGetter(r -> r.enchantment.unwrapKey().orElseThrow().location()),
-                        ItemStack.CODEC.fieldOf("input").forGetter(r -> r.input),
-                        ItemStack.CODEC.fieldOf("output").forGetter(r -> r.output),
-                        Codec.INT.fieldOf("baseXP").forGetter(r -> r.baseXP),
-                        ItemStack.CODEC.optionalFieldOf("icon", ItemStack.EMPTY).forGetter(r -> r.icon)
+                                .forGetter(r -> r.enchantment.unwrapKey().orElseThrow().identifier()),
+                        ItemStack.CODEC.fieldOf("input").forGetter(r -> r.getInput()),
+                        ItemStack.CODEC.fieldOf("output").forGetter(r -> r.getOutput()),
+                        Codec.INT.fieldOf("baseXP").forGetter(r -> r.getBaseXP()),
+                        ItemStack.CODEC.optionalFieldOf("icon", ItemStack.EMPTY).forGetter(r -> r.getIcon())
                 )
                 .apply(instance, (t, a, b, d, e, f, g) -> null));
 
         public static final MapCodec<ImprinterRecipe> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-                ResourceLocation.CODEC.fieldOf("id").forGetter(r -> r.id),
+                Identifier.CODEC.fieldOf("id").forGetter(r -> r.id),
                 Enchantment.CODEC.fieldOf("enchantment").forGetter(r -> r.enchantment),
-                ItemStack.CODEC.fieldOf("input").forGetter(r -> r.input),
-                ItemStack.CODEC.fieldOf("output").forGetter(r -> r.output),
-                Codec.INT.fieldOf("baseXP").forGetter(r -> r.baseXP),
-                ItemStack.CODEC.optionalFieldOf("icon", ItemStack.EMPTY).forGetter(r -> r.icon)
+                ItemStack.CODEC.fieldOf("input").forGetter(r -> r.getInput()),
+                ItemStack.CODEC.fieldOf("output").forGetter(r -> r.getOutput()),
+                Codec.INT.fieldOf("baseXP").forGetter(r -> r.getBaseXP()),
+                ItemStack.CODEC.optionalFieldOf("icon", ItemStack.EMPTY).forGetter(r -> r.getIcon())
         ).apply(instance, ImprinterRecipe::new));
         public static final StreamCodec<RegistryFriendlyByteBuf, ImprinterRecipe> STREAM_CODEC = StreamCodec.of(
                 ImprinterRecipe.Serializer::toNetwork,
                 ImprinterRecipe.Serializer::fromNetwork
         );
 
-        public final static ResourceLocation ID = Type.ID;
-        public final static Serializer INSTANCE = new Serializer();
-
-        @Override
-        public @NotNull MapCodec<ImprinterRecipe> codec() {
-            return CODEC;
-        }
-
-
-        @Override
-        public StreamCodec<RegistryFriendlyByteBuf, ImprinterRecipe> streamCodec() {
-            return STREAM_CODEC;
-        }
+        public final static Identifier ID = Type.ID;
+        public final static RecipeSerializer<ImprinterRecipe> INSTANCE = new RecipeSerializer<>(CODEC, STREAM_CODEC);
 
         public static @NotNull ImprinterRecipe fromNetwork(RegistryFriendlyByteBuf packetBuffer) {
-            ResourceLocation id = packetBuffer.readResourceLocation();
+            Identifier id = packetBuffer.readIdentifier();
             Holder<Enchantment> e = Enchantment.STREAM_CODEC.decode(packetBuffer);
             ItemStack input = ItemStack.STREAM_CODEC.decode(packetBuffer);
             ItemStack output = ItemStack.STREAM_CODEC.decode(packetBuffer);
@@ -341,12 +329,12 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
 //            if (recipe.input.isEmpty()) Wunderreich.LOGGER.error("Recipe " + recipe.id + " has no input");
 //            if (recipe.output.isEmpty()) Wunderreich.LOGGER.error("Recipe " + recipe.id + " has no output");
 //            if (recipe.icon.isEmpty()) Wunderreich.LOGGER.error("Recipe " + recipe.id + " has no icon");
-            packetBuffer.writeResourceLocation(recipe.id);
+            packetBuffer.writeIdentifier(recipe.id);
             Enchantment.STREAM_CODEC.encode(packetBuffer, recipe.enchantment);
-            ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.input);
-            ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.output);
-            packetBuffer.writeVarInt(recipe.baseXP);
-            ItemStack.OPTIONAL_STREAM_CODEC.encode(packetBuffer, recipe.icon);
+            ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.getInput());
+            ItemStack.STREAM_CODEC.encode(packetBuffer, recipe.getOutput());
+            packetBuffer.writeVarInt(recipe.getBaseXP());
+            ItemStack.OPTIONAL_STREAM_CODEC.encode(packetBuffer, recipe.getIcon());
         }
     }
 }

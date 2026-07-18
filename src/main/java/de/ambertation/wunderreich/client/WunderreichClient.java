@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
-import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
@@ -11,16 +10,15 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
 import com.google.common.collect.Maps;
 
@@ -28,19 +26,19 @@ import java.util.Map;
 
 @Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
-    private static final Map<String, Material> WUNDERKISTE_MATERIALS = Maps.newHashMap();
-    public static Material WUNDER_KISTE_LOCATION = getWunderkisteColor("wunder_kiste");
-    public static Material WUNDER_KISTE_TOP_LOCATION = chestMaterial(
+    private static final Map<String, SpriteId> WUNDERKISTE_MATERIALS = Maps.newHashMap();
+    public static SpriteId WUNDER_KISTE_LOCATION = getWunderkisteColor("wunder_kiste");
+    public static SpriteId WUNDER_KISTE_TOP_LOCATION = chestMaterial(
             "wunder_kiste_top");
 
-    public static Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
+    public static SpriteId WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
             "wunder_kiste_bw_top");
 
-    private static Material chestMaterial(String string) {
-        return new Material(Sheets.CHEST_SHEET, Wunderreich.ID("entity/chest/" + string));
+    private static SpriteId chestMaterial(String string) {
+        return new SpriteId(Sheets.CHEST_SHEET, Wunderreich.ID("entity/chest/" + string));
     }
 
-    public static Material getWunderkisteColor(String name) {
+    public static SpriteId getWunderkisteColor(String name) {
         return WUNDERKISTE_MATERIALS.computeIfAbsent(name, WunderreichClient::chestMaterial);
     }
 
@@ -51,11 +49,9 @@ public class WunderreichClient implements ClientModInitializer {
 
         CreativeTabs.register();
 
+        // Note: block render layers are now driven by the block model JSON
+        // ("render_type") instead of the removed Fabric BlockRenderLayerMap.
         BuiltInRegistries.BLOCK.forEach(block -> {
-            if (block instanceof ChangeRenderLayer view) {
-                BlockRenderLayerMap.putBlocks(view.getRenderType(), block);
-            }
-
             if (block instanceof BlockEntityProvider view) {
                 BlockEntityRendererRegistry.register(
                         view.getBlockEntityType(),
@@ -83,13 +79,14 @@ public class WunderreichClient implements ClientModInitializer {
          */
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)) {
-            ColorProviderRegistry.BLOCK.register(
-                    (state, view, pos, tintIndex) -> {
-                        if (tintIndex == 0) return view != null && pos != null
+            // The old ColorProviderRegistry.BLOCK is gone. The tint is now collected
+            // into an IntList indexed by tintindex; index 0 carries the grass color.
+            BlockColorRegistry.register(
+                    (state, view, pos, out) -> {
+                        int color = view != null && pos != null
                                 ? BiomeColors.getAverageGrassColor(view, pos)
                                 : GrassColor.get(0.5D, 1.0D);
-
-                        return 0xffffffff;
+                        out.add(color);
                     }, WunderreichSlabBlocks.GRASS_SLAB
             );
         }

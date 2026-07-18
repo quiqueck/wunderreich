@@ -114,7 +114,7 @@ public class BuildersTrowel extends Item {
                 WunderreichAdvancements.USE_TROWEL.trigger(sp);
             }
             if (!p.getAbilities().instabuild) {
-                ctx.getItemInHand().hurtAndBreak(1, p, LivingEntity.getSlotForHand(ctx.getHand()));
+                ctx.getItemInHand().hurtAndBreak(1, p, ctx.getHand());
             }
         }
 

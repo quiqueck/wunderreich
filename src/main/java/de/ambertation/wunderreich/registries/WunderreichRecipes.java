@@ -4,8 +4,7 @@ import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class WunderreichRecipes {
-    public static final Map<ResourceLocation, JsonElement> RECIPES = new HashMap<>();
+    public static final Map<Identifier, JsonElement> RECIPES = new HashMap<>();
 
     public static void register() {
         RecipeJsonBuilder
@@ -49,7 +48,7 @@ public class WunderreichRecipes {
                         "GAG"
                 )
                 .material('G', Blocks.GLASS)
-                .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 2))
+                .material('B', Blocks.LAPIS_BLOCK)
                 .material('A', Items.AMETHYST_SHARD)
                 .registerAndCreateAdvancement(
                         AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
@@ -67,10 +66,10 @@ public class WunderreichRecipes {
                         "DCD",
                         "DDD"
                 )
-                .material('C', new ItemStack(Blocks.OXIDIZED_COPPER, 2))
-                .material('B', new ItemStack(Blocks.LAPIS_BLOCK, 1))
-                .material('A', new ItemStack(Blocks.AMETHYST_BLOCK, 1))
-                .material('D', new ItemStack(Blocks.COBBLED_DEEPSLATE, 1))
+                .material('C', Blocks.OXIDIZED_COPPER)
+                .material('B', Blocks.LAPIS_BLOCK)
+                .material('A', Blocks.AMETHYST_BLOCK)
+                .material('D', Blocks.COBBLED_DEEPSLATE)
                 .registerAndCreateAdvancement(
                         AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                                 Items.COPPER_INGOT,
@@ -88,8 +87,8 @@ public class WunderreichRecipes {
                         " * ",
                         " # "
                 )
-                .material('#', new ItemStack(Items.STICK, 1))
-                .material('*', new ItemStack(Items.IRON_INGOT, 1))
+                .material('#', Items.STICK)
+                .material('*', Items.IRON_INGOT)
                 .registerAndCreateAdvancement(
                         AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                                 Items.IRON_INGOT
@@ -104,8 +103,8 @@ public class WunderreichRecipes {
                         " * ",
                         " # "
                 )
-                .material('#', new ItemStack(Items.STICK, 1))
-                .material('*', new ItemStack(Items.DIAMOND, 1))
+                .material('#', Items.STICK)
+                .material('*', Items.DIAMOND)
                 .registerAndCreateAdvancement(
                         AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
                                 Items.DIAMOND
@@ -140,7 +139,7 @@ public class WunderreichRecipes {
                 .create(name)
                 .result(block)
                 .pattern("***")
-                .material('*', new ItemStack(baseBlock, 1))
+                .material('*', baseBlock)
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
 
@@ -157,7 +156,7 @@ public class WunderreichRecipes {
                 .create(name)
                 .result(block)
                 .pattern("*  ", "** ", "***")
-                .material('*', new ItemStack(baseBlock, 1))
+                .material('*', baseBlock)
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
 
@@ -174,7 +173,7 @@ public class WunderreichRecipes {
                 .create(name)
                 .result(block)
                 .pattern("***", "***")
-                .material('*', new ItemStack(baseBlock, 1))
+                .material('*', baseBlock)
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
 
@@ -192,8 +191,8 @@ public class WunderreichRecipes {
                 .create(name)
                 .result(block)
                 .pattern("* *", "|||")
-                .material('*', new ItemStack(baseBlock, 1))
-                .material('|', new ItemStack(fenceBlock, 1))
+                .material('*', baseBlock)
+                .material('|', fenceBlock)
                 .count(6)
                 .registerAndCreateAdvancement(AdvancementsJsonBuilder.AdvancementType.RECIPE_DECORATIONS);
 

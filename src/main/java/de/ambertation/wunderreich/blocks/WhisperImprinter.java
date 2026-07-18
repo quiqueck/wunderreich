@@ -62,7 +62,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
             Player player,
             BlockHitResult blockHitResult
     ) {
-        if (level.isClientSide) {
+        if (level.isClientSide()) {
             return InteractionResult.SUCCESS;
         }
 
@@ -101,7 +101,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
             @NotNull BlockHitResult blockHitResult,
             @NotNull Projectile projectile
     ) {
-        if (!level.isClientSide) {
+        if (!level.isClientSide()) {
             BlockPos blockPos = blockHitResult.getBlockPos();
             level.playSound(
                     null,
@@ -109,7 +109,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                     SoundEvents.AMETHYST_BLOCK_HIT,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f
+                    0.5f + level.getRandom().nextFloat() * 1.2f
             );
             level.playSound(
                     null,
@@ -117,7 +117,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
                     SoundEvents.AMETHYST_BLOCK_CHIME,
                     SoundSource.BLOCKS,
                     1.0f,
-                    0.5f + level.random.nextFloat() * 1.2f
+                    0.5f + level.getRandom().nextFloat() * 1.2f
             );
         }
     }

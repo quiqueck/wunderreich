@@ -287,7 +287,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             @NotNull BlockState blockState,
             @NotNull BlockEntityType<T> blockEntityType
     ) {
-        return level.isClientSide ? createTickerHelper(
+        return level.isClientSide() ? createTickerHelper(
                 blockEntityType,
                 WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
                 WunderKisteBlockEntity::lidAnimateTick
@@ -354,7 +354,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 if (level.getBlockState(blockPos2)
                          .isRedstoneConductor(level, blockPos2)) {
                     return InteractionResult.SUCCESS;
-                } else if (level.isClientSide) {
+                } else if (level.isClientSide()) {
                     return InteractionResult.SUCCESS;
                 } else {
                     WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) entity;
@@ -426,7 +426,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public int getAnalogOutputSignal(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos) {
+    public int getAnalogOutputSignal( BlockState blockState,  Level level,  BlockPos blockPos,  Direction direction) {
         if (WunderreichRules.Wunderkiste.analogRedstoneOutput()) {
             WunderKisteContainer wunderKisteContainer = getContainer(blockState, level.getBlockEntity(blockPos), level);
             if (wunderKisteContainer != null) {

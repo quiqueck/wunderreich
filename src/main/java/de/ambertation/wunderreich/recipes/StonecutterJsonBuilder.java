@@ -6,7 +6,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class StonecutterJsonBuilder {
     private static final ThreadLocal<StonecutterJsonBuilder> BUILDER = ThreadLocal.withInitial(StonecutterJsonBuilder::new);
-    private ResourceLocation ID;
+    private Identifier ID;
     private boolean canBuild;
     private ItemLike resultItem;
     private ItemLike ingredient;
@@ -41,7 +41,7 @@ public class StonecutterJsonBuilder {
         return false;
     }
 
-    private static ResourceLocation getKey(ItemLike item) {
+    private static Identifier getKey(ItemLike item) {
         if (item instanceof Block bl) {
             return BuiltInRegistries.BLOCK.getKey(bl);
         } else if (item instanceof Item itm) {
@@ -51,12 +51,12 @@ public class StonecutterJsonBuilder {
     }
 
     public static StonecutterJsonBuilder create(String name) {
-        ResourceLocation id = Wunderreich.ID(name + "_stonecutter");
+        Identifier id = Wunderreich.ID(name + "_stonecutter");
         StonecutterJsonBuilder b = BUILDER.get().reset(id);
         return b;
     }
 
-    private StonecutterJsonBuilder reset(ResourceLocation ID) {
+    private StonecutterJsonBuilder reset(Identifier ID) {
         this.ID = ID;
         canBuild = Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get();
         resultItem = null;
@@ -156,7 +156,7 @@ public class StonecutterJsonBuilder {
         json.addProperty("type", "minecraft:stonecutting");
 
 
-        final ResourceLocation ingredientLoc = getKey(ingredient);
+        final Identifier ingredientLoc = getKey(ingredient);
         if (ingredientLoc == null) {
             Wunderreich.LOGGER.info("Ignoring Stonecutter-Recipe for " + this.ID + " due to missing ingredient.");
             return null;
@@ -164,7 +164,7 @@ public class StonecutterJsonBuilder {
         json.addProperty("ingredient", ingredientLoc.toString());
 
 
-        final ResourceLocation resLoc = getKey(resultItem);
+        final Identifier resLoc = getKey(resultItem);
         if (resLoc == null) {
             Wunderreich.LOGGER.info("Ignoring Stonecutter-Recipe for " + this.ID + " due to missing result item.");
             return null;

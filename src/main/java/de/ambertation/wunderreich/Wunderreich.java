@@ -11,7 +11,7 @@ import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
@@ -36,8 +36,8 @@ public class Wunderreich implements ModInitializer {
         }
     };
 
-    public static ResourceLocation ID(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier ID(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static boolean isDatagen() {

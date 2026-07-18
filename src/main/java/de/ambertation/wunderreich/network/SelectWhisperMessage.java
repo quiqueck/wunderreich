@@ -8,7 +8,7 @@ import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -20,20 +20,20 @@ public class SelectWhisperMessage extends ServerBoundNetworkPayload<SelectWhispe
             Wunderreich.ID("select_whisper"),
             SelectWhisperMessage::new
     );
-    public final ResourceLocation ruleID;
+    public final Identifier ruleID;
 
     protected SelectWhisperMessage(FriendlyByteBuf buf) {
         super(HANDLER);
         final boolean isNull = buf.readBoolean();
-        this.ruleID = isNull ? null : ResourceLocation.STREAM_CODEC.decode(buf);
+        this.ruleID = isNull ? null : Identifier.STREAM_CODEC.decode(buf);
     }
 
-    protected SelectWhisperMessage(ResourceLocation ruleID) {
+    protected SelectWhisperMessage(Identifier ruleID) {
         super(HANDLER);
         this.ruleID = ruleID;
     }
 
-    public static void send(ResourceLocation ruleID) {
+    public static void send(Identifier ruleID) {
         ServerBoundPacketHandler.sendToServer(new SelectWhisperMessage(ruleID));
     }
 
@@ -51,7 +51,7 @@ public class SelectWhisperMessage extends ServerBoundNetworkPayload<SelectWhispe
         final boolean isNull = this.ruleID == null;
         buf.writeBoolean(isNull);
         if (!isNull) {
-            ResourceLocation.STREAM_CODEC.encode(buf, this.ruleID);
+            Identifier.STREAM_CODEC.encode(buf, this.ruleID);
         }
     }
 

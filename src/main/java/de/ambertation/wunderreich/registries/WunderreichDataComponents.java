@@ -7,7 +7,7 @@ import de.ambertation.wunderreich.data_components.WunderKisteData;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.function.UnaryOperator;
 import org.jetbrains.annotations.ApiStatus;
@@ -28,7 +28,7 @@ public class WunderreichDataComponents {
     );
 
     private static <T> DataComponentType<T> registerDataComponent(
-            ResourceLocation id,
+            Identifier id,
             UnaryOperator<DataComponentType.Builder<T>> builder
     ) {
         return Registry.register(

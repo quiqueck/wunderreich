@@ -7,7 +7,7 @@ import com.mojang.serialization.JsonOps;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
@@ -35,14 +35,14 @@ public class RecipeManagerMixin {
             index = 0)
     private Iterable<RecipeHolder<?>> wunder_addCustomRecipes(Iterable<RecipeHolder<?>> iterable) {
         List<RecipeHolder<?>> originalList;
-        Set<ResourceLocation> existingRecipeIds;
+        Set<Identifier> existingRecipeIds;
 
         if (iterable instanceof List<RecipeHolder<?>> iterableAsList) {
             originalList = iterableAsList;
             // Create a Set of existing recipe IDs for fast lookup (O(1) instead of O(n))
             existingRecipeIds = new HashSet<>();
             for (RecipeHolder<?> holder : originalList) {
-                existingRecipeIds.add(holder.id().location());
+                existingRecipeIds.add(holder.id().identifier());
             }
         } else {
             // If the iterable is not a List, convert it to a List and build the Set in parallel
@@ -50,12 +50,22 @@ public class RecipeManagerMixin {
             existingRecipeIds = new HashSet<>();
             iterable.forEach(holder -> {
                 originalList.add(holder);
-                existingRecipeIds.add(holder.id().location());
+                existingRecipeIds.add(holder.id().identifier());
             });
         }
 
         // Register ImprinterRecipe for level
         ImprinterRecipe.registerForLevel((RecipeManager) (Object) this, registries);
+
+        // Inject the generated imprinter recipes into the recipe map directly. Their ItemStacks
+        // are materialized lazily, so wrapping them in RecipeHolders here (during the reload's
+        // prepare phase, before item data components are bound) does not trigger materialization.
+        for (ImprinterRecipe imprinterRecipe : ImprinterRecipe.getRegisteredRecipes()) {
+            if (existingRecipeIds.contains(imprinterRecipe.id)) continue;
+            ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, imprinterRecipe.id);
+            originalList.add(new RecipeHolder<>(resourceKey, imprinterRecipe));
+            existingRecipeIds.add(imprinterRecipe.id);
+        }
 
         // Add custom recipes from WunderreichRecipes
         WunderreichRecipes.RECIPES

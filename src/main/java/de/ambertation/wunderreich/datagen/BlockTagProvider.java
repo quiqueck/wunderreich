@@ -8,14 +8,14 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
+import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
+import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagsProvider;
 
 import java.util.concurrent.CompletableFuture;
 
-public class BlockTagProvider extends FabricTagProvider<Block> {
+public class BlockTagProvider extends FabricTagsProvider<Block> {
     public BlockTagProvider(
-            FabricDataOutput output,
+            FabricPackOutput output,
             CompletableFuture<HolderLookup.Provider> registriesFuture
     ) {
         super(output, BuiltInRegistries.BLOCK.key(), registriesFuture);

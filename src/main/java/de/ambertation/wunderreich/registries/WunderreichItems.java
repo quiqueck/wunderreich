@@ -9,7 +9,7 @@ import de.ambertation.wunderreich.items.VillagerWhisperer;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
@@ -63,7 +63,7 @@ public class WunderreichItems {
         boolean enabled = Configs.ITEM_CONFIG.booleanOrDefault(name).get();
 
         if (enabled && register) {
-            final ResourceLocation id = Wunderreich.ID(name);
+            final Identifier id = Wunderreich.ID(name);
             final ResourceKey<Item> key = ResourceKey.create(BuiltInRegistries.ITEM.key(), id);
             Item item = itemSupply.apply(key);
 
@@ -79,7 +79,7 @@ public class WunderreichItems {
         return null;
     }
 
-    public static void processItem(ResourceLocation id, Item itm) {
+    public static void processItem(Identifier id, Item itm) {
 
     }
 

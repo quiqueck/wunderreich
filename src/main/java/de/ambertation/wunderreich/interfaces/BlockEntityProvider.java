@@ -11,5 +11,5 @@ public interface BlockEntityProvider<E extends BlockEntity> {
     BlockEntityType<E> getBlockEntityType();
 
     @Environment(EnvType.CLIENT)
-    BlockEntityRendererProvider<? super E> getBlockEntityRenderProvider();
+    BlockEntityRendererProvider<? super E, ?> getBlockEntityRenderProvider();
 }

@@ -75,12 +75,12 @@ public class FallingSlab extends DirtSlabBlock {
     @Override
     public void tick(@NotNull BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
-        SlabType belowType = (SlabType) below.getValues().get(TYPE);
+        SlabType belowType = (SlabType) below.getValue(TYPE);
 
         if ((FallingBlock.isFree(below) || (belowType != null && belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinY()) {
             BlockState state = serverLevel.getBlockState(blockPos);
 
-            SlabType type = (SlabType) state.getValues().get(TYPE);
+            SlabType type = (SlabType) state.getValue(TYPE);
             if (belowType == SlabType.BOTTOM && type == SlabType.BOTTOM) {
                 state = makeState(state, SlabType.TOP);
             } else if (type == SlabType.TOP) {

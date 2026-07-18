@@ -6,7 +6,7 @@ import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.model.ModelTemplates;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 import java.util.List;
@@ -23,7 +23,7 @@ public class WallBuilder {
     }
 
     public static void createWall(BlockModelGenerators vanillaGenerator, Block wallBlock, TextureMapping mapping) {
-        final List<ResourceLocation> locations = Stream.of(
+        final List<Identifier> locations = Stream.of(
                 ModelTemplates.WALL_POST,
                 ModelTemplates.WALL_LOW_SIDE,
                 ModelTemplates.WALL_TALL_SIDE

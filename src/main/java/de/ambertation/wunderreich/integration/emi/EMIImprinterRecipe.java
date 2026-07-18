@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
 
@@ -21,7 +21,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class EMIImprinterRecipe implements EmiRecipe {
 
-    private final ResourceLocation id;
+    private final Identifier id;
     private final List<EmiIngredient> input;
     private final List<EmiStack> output;
 
@@ -46,7 +46,7 @@ public class EMIImprinterRecipe implements EmiRecipe {
     }
 
     @Override
-    public @Nullable ResourceLocation getId() {
+    public @Nullable Identifier getId() {
         return id;
     }
 

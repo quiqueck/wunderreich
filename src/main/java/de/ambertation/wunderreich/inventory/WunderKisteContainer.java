@@ -28,6 +28,25 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
         this.domain = domain;
     }
 
+    @FunctionalInterface
+    public interface ChangeListener {
+        void containerChanged(WunderKisteContainer container);
+    }
+
+    private final java.util.List<ChangeListener> wunderreich_listeners = new java.util.ArrayList<>();
+
+    public void addListener(ChangeListener listener) {
+        this.wunderreich_listeners.add(listener);
+    }
+
+    @Override
+    public void setChanged() {
+        super.setChanged();
+        for (ChangeListener listener : this.wunderreich_listeners) {
+            listener.containerChanged(this);
+        }
+    }
+
     public void load(HolderLookup.Provider provider) {
         CompoundTag global = LevelData.getInstance().getWunderkisteInventory(domain);
         ListTag items;

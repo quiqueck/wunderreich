@@ -8,7 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -17,25 +17,40 @@ import net.minecraft.world.item.enchantment.Enchantments;
 
 
 public class WhisperRule {
-    public static final ItemStack BLANK = new ItemStack(WunderreichItems.BLANK_WHISPERER);
-    public static final Ingredient BLANK_INGREDIENT = Ingredient.of(WunderreichItems.BLANK_WHISPERER);
+    private static ItemStack BLANK;
+    private static Ingredient BLANK_INGREDIENT;
+
+    // Lazily built: constructing ItemStack/Ingredient at class-load happens before the item
+    // data-component registry is bound in 26.1 ("Components not bound yet").
+    public static ItemStack blank() {
+        if (BLANK == null) {
+            BLANK = new ItemStack(WunderreichItems.BLANK_WHISPERER);
+        }
+        return BLANK;
+    }
+
+    public static Ingredient blankIngredient() {
+        if (BLANK_INGREDIENT == null) {
+            BLANK_INGREDIENT = Ingredient.of(WunderreichItems.BLANK_WHISPERER);
+        }
+        return BLANK_INGREDIENT;
+    }
     public final Holder<Enchantment> enchantment;
-    public final ItemStack input;
-    public final ItemStack output;
-    public final ItemStack icon;
-    public final int baseXP;
 
-    private WhisperRule(Holder<Enchantment> enchantment, EnchantmentInfo nfo) {
-        this(enchantment, nfo.input, nfo.baseXP, nfo.type);
-    }
-
-    protected WhisperRule(Holder<Enchantment> enchantment, ItemStack input, int baseXP) {
-        this(enchantment, input, baseXP, new EnchantmentInfo(enchantment).type);
-    }
-
-    protected WhisperRule(Holder<Enchantment> enchantment, ItemStack input, int baseXP, ItemStack icon) {
-        this(enchantment, input, TrainedVillagerWhisperer.createForEnchantment(enchantment), baseXP, icon);
-    }
+    // Everything derived from the enchantment (input/output/icon stacks AND baseXP) is computed
+    // lazily. Constructing an ItemStack in 26.1 eagerly reads the item's bound data components,
+    // and EnchantmentInfo/LegacyEnchantmentCategories build sample ItemStacks to classify the
+    // enchantment. Imprinter recipes are generated during the datapack reload's async prepare
+    // phase, before components are bound, so all of this must be deferred until the values are
+    // actually read (at runtime, e.g. when the GUI opens or a recipe is synced to a client).
+    private final java.util.function.Supplier<ItemStack> inputSupplier;
+    private final java.util.function.Supplier<ItemStack> outputSupplier;
+    private final java.util.function.Supplier<ItemStack> iconSupplier;
+    private final java.util.function.IntSupplier baseXPSupplier;
+    private ItemStack input;
+    private ItemStack output;
+    private ItemStack icon;
+    private Integer baseXP;
 
     protected WhisperRule(
             Holder<Enchantment> enchantment,
@@ -45,14 +60,35 @@ public class WhisperRule {
             ItemStack icon
     ) {
         this.enchantment = enchantment;
-        this.baseXP = baseXP;
-        this.output = output;
-        this.input = input;
-        this.icon = icon;
+        this.inputSupplier = () -> input;
+        this.outputSupplier = () -> output;
+        this.iconSupplier = () -> icon;
+        this.baseXPSupplier = () -> baseXP;
     }
 
     protected WhisperRule(Holder<Enchantment> enchantment) {
-        this(enchantment, new EnchantmentInfo(enchantment));
+        this.enchantment = enchantment;
+        final java.util.function.Supplier<EnchantmentInfo> nfo = memoize(() -> new EnchantmentInfo(enchantment));
+        this.inputSupplier = () -> nfo.get().input();
+        this.outputSupplier = () -> TrainedVillagerWhisperer.createForEnchantment(enchantment);
+        this.iconSupplier = () -> nfo.get().type();
+        this.baseXPSupplier = () -> nfo.get().baseXP;
+    }
+
+    private static <T> java.util.function.Supplier<T> memoize(java.util.function.Supplier<T> delegate) {
+        return new java.util.function.Supplier<>() {
+            private T value;
+            private boolean computed;
+
+            @Override
+            public T get() {
+                if (!computed) {
+                    value = delegate.get();
+                    computed = true;
+                }
+                return value;
+            }
+        };
     }
 
     public static Component getFullname(Holder<Enchantment> e) {
@@ -61,7 +97,7 @@ public class WhisperRule {
 
     public static Component getFullname(Holder<Enchantment> eh, int lvl) {
         final Enchantment e = eh.value();
-        final ResourceLocation loc = eh.unwrapKey().orElseThrow().location();
+        final Identifier loc = eh.unwrapKey().orElseThrow().identifier();
         MutableComponent mutableComponent = Component.translatable("enchantment." + loc.getNamespace() + "." + loc.getPath());
         if (eh.is(Enchantments.BINDING_CURSE)) {
             mutableComponent.withStyle(ChatFormatting.RED);
@@ -94,7 +130,7 @@ public class WhisperRule {
     }
 
     public boolean satisfiedBy(ItemStack itemStack, ItemStack itemStack2) {
-        return isRequiredItem(itemStack, this.input)
+        return isRequiredItem(itemStack, this.getInput())
                 && itemStack.getCount() >= this.getInput().getCount()
                 && isRequiredItem(itemStack2, WunderreichItems.BLANK_WHISPERER)
                 && itemStack2.getCount() >= 1;
@@ -112,7 +148,7 @@ public class WhisperRule {
     }
 
     public boolean satisfiedBy(ImprinterRecipe.ImprinterInput recipeInput) {
-        return isRequiredItem(recipeInput.ingredient(), this.input)
+        return isRequiredItem(recipeInput.ingredient(), this.getInput())
                 && recipeInput.ingredient().getCount() >= this.getInput().getCount()
                 && isRequiredItem(recipeInput.whisperer(), WunderreichItems.BLANK_WHISPERER)
                 && recipeInput.whisperer().getCount() >= 1;
@@ -130,11 +166,27 @@ public class WhisperRule {
     }
 
     public ItemStack assemble() {
-        return this.output.copy();
+        return this.getOutput().copy();
     }
 
     public ItemStack getInput() {
+        if (input == null) input = inputSupplier.get();
         return input;
+    }
+
+    public ItemStack getOutput() {
+        if (output == null) output = outputSupplier.get();
+        return output;
+    }
+
+    public ItemStack getIcon() {
+        if (icon == null) icon = iconSupplier.get();
+        return icon;
+    }
+
+    public int getBaseXP() {
+        if (baseXP == null) baseXP = baseXPSupplier.getAsInt();
+        return baseXP;
     }
 
     public Component getNameComponent() {

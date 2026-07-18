@@ -3,7 +3,7 @@ package de.ambertation.wunderreich.network;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -18,7 +18,7 @@ public class PacketHandler<D extends NetworkPayload<D>> {
     public final StreamCodec<FriendlyByteBuf, D> STREAM_CODEC;
 
     protected PacketHandler(
-            ResourceLocation channel,
+            Identifier channel,
             @NotNull NetworkPayloadFactory<D> factory
     ) {
         this.CHANNEL = new CustomPacketPayload.Type<>(channel);
