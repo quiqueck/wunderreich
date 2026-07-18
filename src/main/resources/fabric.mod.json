@@ -26,10 +26,10 @@
                 "value": "de.ambertation.wunderreich.client.WunderreichClient"
             }
         ],
-        "rei_server_disabled": [
+        "rei_common": [
             "de.ambertation.wunderreich.integration.rei.ServerPlugin"
         ],
-        "rei_client_disabled": [
+        "rei_client": [
             "de.ambertation.wunderreich.integration.rei.ClientPlugin"
         ],
         "modmenu": [
@@ -60,7 +60,7 @@
     },
     "suggests": {
         "modmenu": "11.0.x",
-        "rei": "16.x",
+        "rei": ">=20.0.0",
         "emi": "1.1.x"
     },
     "custom": {

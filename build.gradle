@@ -14,6 +14,7 @@ group = project.maven_group
 
 repositories {
     maven { url "https://maven.shedaniel.me" }
+    maven { url "https://maven.architectury.dev" }
     maven { url "https://maven.bai.lol" }
     maven { url 'https://maven.terraformersmc.com/releases' }
     maven { url 'https://jitpack.io' }
@@ -39,8 +40,10 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
-//    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}"
+    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
+    compileOnly "me.shedaniel.cloth:basic-math:0.6.1" // me.shedaniel.math.Point/Rectangle used by the REI GUI API
+    modCompileOnly "dev.architectury:architectury-fabric:17.0.8" // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
+    modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}" // run against the full jar (pulls basic-math transitively)
 
     modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
     modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
