@@ -1,16 +1,9 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
-    id 'maven-publish'
-    id "com.modrinth.minotaur" version "2.+"
-    id "com.matthewprenger.cursegradle" version "1.4.0"
+    id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
-sourceCompatibility = JavaVersion.VERSION_21
-targetCompatibility = JavaVersion.VERSION_21
-
-archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+apply from: "common-fabric-project.gradle"
 
 repositories {
     maven { url "https://maven.shedaniel.me" }
@@ -32,14 +25,7 @@ loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
 }
 
-def local_wunderlib = findProject(':wunderlib') != null
-
 dependencies {
-    minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings loom.officialMojangMappings()
-    modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-
     modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
     compileOnly "me.shedaniel.cloth:basic-math:0.6.1" // me.shedaniel.math.Point/Rectangle used by the REI GUI API
     modCompileOnly "dev.architectury:architectury-fabric:17.0.8" // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
@@ -54,52 +40,11 @@ dependencies {
 //    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
 //    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
 
-    println "Using local WunderLib: ${local_wunderlib}"
-    if (local_wunderlib) {
-        implementation project(path: ":wunderlib", configuration: 'dev')
-        include project(path: ":wunderlib")
-    } else {
-        modApi "de.ambertation:wunderlib:${project.wunderlib_version}"
-        include "de.ambertation:wunderlib:${project.wunderlib_version}"
-    }
-}
-//
-//// Force Loom to remap the local project
-afterEvaluate {
-    if (local_wunderlib) {
-        tasks.named("remapJar").configure {
-            dependsOn ":wunderlib:remapJar"
-        }
-    }
+    gradle.modApiOrLocal(dependencies, ':wunderlib', "de.ambertation:wunderlib:${project.wunderlib_version}")
 }
 
-processResources {
-    inputs.property "version", project.version
-
-    filesMatching("fabric.mod.json") {
-        expand "version": project.version
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    it.options.encoding = "UTF-8"
-    it.options.release = 21
-}
-
-java {
-    // Loom will automatically attach sourcesJar to a RemapSourcesJar task and to the "build" task
-    // if it is present.
-    // If you remove this line, sources will not be generated.
-    withSourcesJar()
-}
-
-jar {
-    from("LICENSE") {
-        rename { "${it}_${project.archivesBaseName}" }
-    }
-}
-
-apply from: "helper.gradle"
+apply from: "common-helper.gradle"
+apply from: "common-publish-tag.gradle"
 
 allprojects {
     // Allow 400 errors.
