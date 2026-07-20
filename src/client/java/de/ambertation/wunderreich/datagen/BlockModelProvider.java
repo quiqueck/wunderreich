@@ -15,7 +15,6 @@ import net.minecraft.client.data.models.model.ModelInstance;
 import net.minecraft.client.data.models.model.ModelTemplate;
 import net.minecraft.client.data.models.model.TextureMapping;
 import net.minecraft.client.data.models.model.TexturedModel;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -57,9 +56,9 @@ public class BlockModelProvider extends FabricModelProvider {
 
     private static String renderTypeString(Block block) {
         if (block instanceof ChangeRenderLayer crl) {
-            ChunkSectionLayer layer = crl.getRenderType();
-            if (layer == ChunkSectionLayer.CUTOUT) return "minecraft:cutout";
-            if (layer == ChunkSectionLayer.TRANSLUCENT) return "minecraft:translucent";
+            ChangeRenderLayer.RenderLayer layer = crl.getRenderType();
+            if (layer == ChangeRenderLayer.RenderLayer.CUTOUT) return "minecraft:cutout";
+            if (layer == ChangeRenderLayer.RenderLayer.TRANSLUCENT) return "minecraft:translucent";
         }
         return null;
     }

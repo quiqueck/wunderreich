@@ -4,7 +4,6 @@ import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -29,8 +28,8 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
     }
 
     @Override
-    public ChunkSectionLayer getRenderType() {
-        return ChunkSectionLayer.TRANSLUCENT;
+    public ChangeRenderLayer.RenderLayer getRenderType() {
+        return ChangeRenderLayer.RenderLayer.TRANSLUCENT;
     }
 
     //see Mojang: HalfTransparentBlock

@@ -2,9 +2,7 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
-import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
-import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.interfaces.WunderKisteExtensionProvider;
@@ -18,7 +16,6 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.serialization.MapCodec;
-import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
@@ -61,9 +58,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-
 import com.google.common.collect.Maps;
 
 import java.util.List;
@@ -73,7 +67,7 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, BlockEntityProvider<WunderKisteBlockEntity>, CanDropLoot {
+public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, CanDropLoot {
     public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(WunderKisteBlock::new);
     public static final EnumProperty<WunderKisteDomain> DOMAIN;
     public static final WunderKisteDomain DEFAULT_DOMAIN;
@@ -515,17 +509,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
-    }
-
-    @Override
-    public BlockEntityType getBlockEntityType() {
-        return WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE;
-    }
-
-    @Override
-    @Environment(EnvType.CLIENT)
-    public BlockEntityRendererProvider getBlockEntityRenderProvider() {
-        return WunderkisteRenderer::new;
     }
 
     @Override

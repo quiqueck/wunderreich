@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.serialization.Codec;
@@ -47,7 +48,7 @@ public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<Wun
             int outlineColor
     ) {
         if (domain == null) domain = WunderKisteBlock.DEFAULT_DOMAIN;
-        SpriteId sprite = domain.getSprite();
+        SpriteId sprite = WunderKisteDomainClient.getSpriteFor(domain);
         submitNodeCollector.submitModel(
                 this.model,
                 this.openness,

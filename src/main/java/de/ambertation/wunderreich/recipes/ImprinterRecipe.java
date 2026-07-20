@@ -30,13 +30,11 @@ import net.minecraft.world.level.Level;
 
 import com.google.gson.JsonElement;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.FabricLoader;
-
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
@@ -102,27 +100,21 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
         return Wunderreich.ID(Type.ID.getPath() + "/" + eID.getNamespace() + "/" + eID.getPath());
     }
 
-    private static class ClientRecipeAccess {
-        @net.fabricmc.api.Environment(net.fabricmc.api.EnvType.CLIENT)
-        static RecipeManager getRecipeManager() {
-            var mc = net.minecraft.client.Minecraft.getInstance();
-            if (mc.getConnection() != null) {
-                var recipes = mc.getConnection().recipes();
-                if (recipes instanceof RecipeManager rm) {
-                    return rm;
-                }
-            }
-            return null;
-        }
-    }
-
     public static RecipeManager GLOBAL_RECIPE_MANAGER;
+
+    /**
+     * Set once from client-only code (e.g. {@code WunderreichClient}) so this common class never
+     * has to reference {@code Minecraft} directly. Used as a fallback for {@link #GLOBAL_RECIPE_MANAGER}
+     * when the UI is opened before a level's recipe manager has been registered.
+     */
+    @ApiStatus.Internal
+    public static Supplier<RecipeManager> CLIENT_RECIPE_MANAGER_SUPPLIER;
 
     public static Stream<ImprinterRecipe> getAllVariants() {
         RecipeManager manager = GLOBAL_RECIPE_MANAGER;
-        if (manager == null && FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
+        if (manager == null && CLIENT_RECIPE_MANAGER_SUPPLIER != null) {
             try {
-                manager = ClientRecipeAccess.getRecipeManager();
+                manager = CLIENT_RECIPE_MANAGER_SUPPLIER.get();
             } catch (Throwable ignored) {
             }
         }

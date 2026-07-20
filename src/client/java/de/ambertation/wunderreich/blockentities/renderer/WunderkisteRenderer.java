@@ -2,10 +2,10 @@ package de.ambertation.wunderreich.blockentities.renderer;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -66,8 +66,8 @@ public class WunderkisteRenderer
 
     private static SpriteId getTopSprite(WunderKisteDomain d) {
         return d.useMonochromeFallback
-                ? WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
-                : WunderreichClient.WUNDER_KISTE_TOP_LOCATION;
+                ? WunderKisteDomainClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
+                : WunderKisteDomainClient.WUNDER_KISTE_TOP_LOCATION;
     }
 
     @Override
@@ -138,7 +138,7 @@ public class WunderkisteRenderer
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 domain.overlayColor,
-                domain.getSprite(),
+                WunderKisteDomainClient.getSpriteFor(domain),
                 this.sprites,
                 0,
                 state.breakProgress

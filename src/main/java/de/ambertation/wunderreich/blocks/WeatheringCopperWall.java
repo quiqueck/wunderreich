@@ -4,7 +4,6 @@ import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -62,8 +61,8 @@ public class WeatheringCopperWall extends WallBlock implements WeatheringCopper 
         }
 
         @Override
-        public ChunkSectionLayer getRenderType() {
-            return ChunkSectionLayer.TRANSLUCENT;
+        public ChangeRenderLayer.RenderLayer getRenderType() {
+            return ChangeRenderLayer.RenderLayer.TRANSLUCENT;
         }
     }
 

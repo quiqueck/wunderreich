@@ -3,18 +3,11 @@ package de.ambertation.wunderreich.network;
 import de.ambertation.wunderlib.network.ClientBoundNetworkPayload;
 import de.ambertation.wunderlib.network.ClientBoundPacketHandler;
 import de.ambertation.wunderreich.Wunderreich;
-import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Direction;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -69,26 +62,6 @@ public class SuctionTubeContainerUpdatePacket extends ClientBoundNetworkPayload<
         for (var entry : this.connections.entrySet()) {
             buf.writeEnum(entry.getKey());
             ItemStack.STREAM_CODEC.encode(buf, entry.getValue());
-        }
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected void processOnClient(PacketSender responseSender) {
-
-    }
-
-    @Environment(EnvType.CLIENT)
-    @Override
-    protected void processOnGameThread(Minecraft client) {
-        if (client.player == null) {
-            Wunderreich.LOGGER.warn("Received SuctionTubeContainerUpdatePacket but player is null.");
-            return;
-        }
-
-        AbstractContainerMenu menu = client.player.containerMenu;
-        if (menu instanceof SuctionTubeMenu suctionTubeMenu) {
-            suctionTubeMenu.updateContainerConnections(connections);
         }
     }
 }

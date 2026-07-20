@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.utils;
 
-import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.config.LevelDataFile;
@@ -8,7 +7,6 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import com.mojang.serialization.Codec;
-import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -17,10 +15,6 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
 
 import io.netty.buffer.ByteBuf;
 
@@ -60,7 +54,8 @@ public enum WunderKisteDomain implements StringRepresentable {
     public final int overlayColor;
     private final String name;
     public final boolean useMonochromeFallback;
-    private final Object texture;
+    /** Raw texture key; only ever resolved to an actual sprite by client-only code (see {@code WunderKisteDomainClient.getSpriteFor}). */
+    public final String textureKey;
 
     WunderKisteDomain(int id, String name, Item triggerItem, int color, boolean useMonochromeFallback, String texture) {
         this.id = id;
@@ -70,31 +65,17 @@ public enum WunderKisteDomain implements StringRepresentable {
         this.color = color;
         this.textColor = TextColor.fromRgb(color);
         this.useMonochromeFallback = useMonochromeFallback;
+        this.textureKey = texture;
 
         if (Configs.MAIN.multiTexturedWunderkiste.get()) {
             overlayColor = 0xFFFFFFFF;
         } else {
             overlayColor = color;
         }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            if (Configs.MAIN.multiTexturedWunderkiste.get()) {
-                this.texture = WunderreichClient.getWunderkisteColor(texture);
-            } else {
-                if (useMonochromeFallback) this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste_bw");
-                else this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste");
-            }
-        } else {
-            this.texture = null;
-        }
     }
 
     WunderKisteDomain(int id, String name, Item triggerItem, int color, boolean useMonochromeFallback) {
         this(id, name, triggerItem, color, useMonochromeFallback, "wunder_kiste_" + name);
-    }
-
-    @Environment(EnvType.CLIENT)
-    public SpriteId getSprite() {
-        return (SpriteId) texture;
     }
 
     public String toString() {

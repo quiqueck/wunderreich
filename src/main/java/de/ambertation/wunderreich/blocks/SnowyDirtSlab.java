@@ -2,7 +2,6 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceKey;
@@ -17,9 +16,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
-
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 
 public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     public static final BooleanProperty SNOWY = SnowyBlock.SNOWY;
@@ -78,8 +74,7 @@ public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public ChunkSectionLayer getRenderType() {
-        return ChunkSectionLayer.CUTOUT;
+    public ChangeRenderLayer.RenderLayer getRenderType() {
+        return ChangeRenderLayer.RenderLayer.CUTOUT;
     }
 }

@@ -1,64 +1,48 @@
 package de.ambertation.wunderreich.client;
 
-import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
+import de.ambertation.wunderreich.network.SuctionTubeClientHandler;
+import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
-import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.resources.model.sprite.SpriteId;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-
-@Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
-    private static final Map<String, SpriteId> WUNDERKISTE_MATERIALS = Maps.newHashMap();
-    public static SpriteId WUNDER_KISTE_LOCATION = getWunderkisteColor("wunder_kiste");
-    public static SpriteId WUNDER_KISTE_TOP_LOCATION = chestMaterial(
-            "wunder_kiste_top");
-
-    public static SpriteId WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
-            "wunder_kiste_bw_top");
-
-    private static SpriteId chestMaterial(String string) {
-        return new SpriteId(Sheets.CHEST_SHEET, Wunderreich.ID("entity/chest/" + string));
-    }
-
-    public static SpriteId getWunderkisteColor(String name) {
-        return WUNDERKISTE_MATERIALS.computeIfAbsent(name, WunderreichClient::chestMaterial);
-    }
-
     @Override
     public void onInitializeClient() {
-        WunderreichParticles.register();
+        WunderreichParticleProviders.register();
         WunderreichScreens.registerScreens();
 
         CreativeTabs.register();
 
+        SuctionTubeContainerUpdatePacket.HANDLER.setClientHandler(new SuctionTubeClientHandler());
+
+        ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
+            var mc = Minecraft.getInstance();
+            if (mc.getConnection() != null) {
+                var recipes = mc.getConnection().recipes();
+                if (recipes instanceof RecipeManager rm) {
+                    return rm;
+                }
+            }
+            return null;
+        };
+
         // Note: block render layers are now driven by the block model JSON
         // ("render_type") instead of the removed Fabric BlockRenderLayerMap.
-        BuiltInRegistries.BLOCK.forEach(block -> {
-            if (block instanceof BlockEntityProvider view) {
-                BlockEntityRendererRegistry.register(
-                        view.getBlockEntityType(),
-                        view.getBlockEntityRenderProvider()
-                );
-            }
-        });
+        BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
 
         /*
          * Color Provider Registration for Grass Slab Block and Item
