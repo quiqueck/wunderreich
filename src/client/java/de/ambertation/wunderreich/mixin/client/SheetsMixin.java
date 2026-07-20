@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin.client;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
-import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
@@ -23,7 +23,7 @@ public abstract class SheetsMixin {
             CallbackInfoReturnable<Material> cir
     ) {
         if (blockEntity instanceof WunderKisteBlockEntity) {
-            cir.setReturnValue(WunderreichClient.WUNDER_KISTE_LOCATION);
+            cir.setReturnValue(WunderKisteDomainClient.WUNDER_KISTE_LOCATION);
             cir.cancel();
         }
     }

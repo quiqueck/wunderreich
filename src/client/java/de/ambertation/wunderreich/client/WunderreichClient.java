@@ -1,68 +1,71 @@
 package de.ambertation.wunderreich.client;
 
-import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
-import de.ambertation.wunderreich.interfaces.BlockEntityProvider;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
+import de.ambertation.wunderreich.network.SuctionTubeClientHandler;
+import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
-import de.ambertation.wunderreich.registries.WunderreichParticles;
+import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
 import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.Sheets;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
-import com.google.common.collect.Maps;
-
-import java.util.Map;
-
-@Environment(EnvType.CLIENT)
 public class WunderreichClient implements ClientModInitializer {
-    private static final Map<String, Material> WUNDERKISTE_MATERIALS = Maps.newHashMap();
-    public static Material WUNDER_KISTE_LOCATION = getWunderkisteColor("wunder_kiste");
-    public static Material WUNDER_KISTE_TOP_LOCATION = chestMaterial(
-            "wunder_kiste_top");
-
-    public static Material WUNDER_KISTE_MONOCHROME_TOP_LOCATION = chestMaterial(
-            "wunder_kiste_bw_top");
-
-    private static Material chestMaterial(String string) {
-        return new Material(Sheets.CHEST_SHEET, Wunderreich.ID("entity/chest/" + string));
-    }
-
-    public static Material getWunderkisteColor(String name) {
-        return WUNDERKISTE_MATERIALS.computeIfAbsent(name, WunderreichClient::chestMaterial);
+    /**
+     * {@code ChangeRenderLayer} lives in common code and can therefore only expose the plain
+     * {@code RenderLayer} enum; this is the (client-only) place that turns it back into the real
+     * {@link ChunkSectionLayer} the Fabric render layer map needs.
+     */
+    private static ChunkSectionLayer toChunkSectionLayer(ChangeRenderLayer.RenderLayer layer) {
+        return switch (layer) {
+            case CUTOUT -> ChunkSectionLayer.CUTOUT;
+            case TRANSLUCENT -> ChunkSectionLayer.TRANSLUCENT;
+        };
     }
 
     @Override
     public void onInitializeClient() {
-        WunderreichParticles.register();
+        WunderreichParticleProviders.register();
         WunderreichScreens.registerScreens();
 
         CreativeTabs.register();
 
+        SuctionTubeContainerUpdatePacket.HANDLER.setClientHandler(new SuctionTubeClientHandler());
+
+        ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
+            var mc = Minecraft.getInstance();
+            if (mc.getConnection() != null) {
+                var recipes = mc.getConnection().recipes();
+                if (recipes instanceof RecipeManager rm) {
+                    return rm;
+                }
+            }
+            return null;
+        };
+
+        // ChangeRenderLayer is common code (so datagen's BlockModelProvider can read it too), but the
+        // actual render-layer registration still has to happen here since this MC version's block
+        // models don't yet drive their render layer purely from "render_type" at runtime.
         BuiltInRegistries.BLOCK.forEach(block -> {
             if (block instanceof ChangeRenderLayer view) {
-                BlockRenderLayerMap.putBlocks(view.getRenderType(), block);
-            }
-
-            if (block instanceof BlockEntityProvider view) {
-                BlockEntityRendererRegistry.register(
-                        view.getBlockEntityType(),
-                        view.getBlockEntityRenderProvider()
-                );
+                BlockRenderLayerMap.putBlocks(toChunkSectionLayer(view.getRenderType()), block);
             }
         });
+
+        BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
 
         /*
          * Color Provider Registration for Grass Slab Block and Item

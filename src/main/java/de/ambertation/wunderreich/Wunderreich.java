@@ -62,6 +62,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichRecipes.register();
         WunderreichAdvancements.register();
         WunderreichRules.register();
+        WunderreichParticles.register();
         WunderreichMenuTypes.ensureStaticallyLoaded();
 
         ImprinterRecipe.register();

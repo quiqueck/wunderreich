@@ -23,6 +23,15 @@ fabricApi {
 
 loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
+
+    splitEnvironmentSourceSets()
+
+    mods {
+        wunderreich {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
 }
 
 dependencies {

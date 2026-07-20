@@ -7,7 +7,6 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -331,7 +330,7 @@ public class WhispererMenu
         if (force ||
                 selectedId == null && lastSentRule != null ||
                 selectedId != null && !selectedId.equals(lastSentRule)) {
-            if (player instanceof LocalPlayer) {
+            if (player.level().isClientSide()) {
                 SelectWhisperMessage.send(selectedRule);
             }
 //            Wunderreich.LOGGER.info("MENU Broadcast RULE: " + selectedRule + " | SERVER? " + (this.player instanceof ServerPlayer));

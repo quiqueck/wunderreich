@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -47,7 +48,7 @@ public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<Wun
             boolean bl
     ) {
         if (domain == null) domain = WunderKisteBlock.DEFAULT_DOMAIN;
-        VertexConsumer vertexConsumer = domain.getMaterial().buffer(multiBufferSource, RenderType::entitySolid);
+        VertexConsumer vertexConsumer = WunderKisteDomainClient.getMaterialFor(domain).buffer(multiBufferSource, RenderType::entitySolid);
         this.model.setupAnim(this.openness);
         this.model.renderToBuffer(poseStack, vertexConsumer, i, j, domain.overlayColor);
     }

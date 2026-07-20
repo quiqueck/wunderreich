@@ -1,10 +1,15 @@
 package de.ambertation.wunderreich.interfaces;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-
+/**
+ * Lets a common {@code Block} declare its render layer for {@code BlockModelProvider} (datagen) to
+ * write into the generated model's {@code render_type}, without the Block class needing to
+ * reference the client-only {@code ChunkSectionLayer} type.
+ */
 public interface ChangeRenderLayer {
-    @Environment(EnvType.CLIENT)
-    ChunkSectionLayer getRenderType();
+    enum RenderLayer {
+        CUTOUT,
+        TRANSLUCENT
+    }
+
+    RenderLayer getRenderType();
 }

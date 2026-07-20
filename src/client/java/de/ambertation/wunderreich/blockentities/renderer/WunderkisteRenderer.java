@@ -2,10 +2,10 @@ package de.ambertation.wunderreich.blockentities.renderer;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.client.WunderreichClient;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
+import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -65,8 +65,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
 
     private static Material getTopMaterial(WunderKisteDomain d) {
         return d.useMonochromeFallback
-                ? WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
-                : WunderreichClient.WUNDER_KISTE_TOP_LOCATION;
+                ? WunderKisteDomainClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
+                : WunderKisteDomainClient.WUNDER_KISTE_TOP_LOCATION;
     }
 
     @Override
@@ -105,7 +105,7 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
             openness = 1.0f - openness * openness * openness;
 
             final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
-            Material material = domain.getMaterial();
+            Material material = WunderKisteDomainClient.getMaterialFor(domain);
             VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
             this.render(
                     poseStack,

@@ -8,7 +8,6 @@ import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichParticles;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
@@ -179,8 +178,7 @@ public class WhisperImprinter extends Block implements BlockTagSupplier, ChangeR
     }
 
     @Override
-    @Environment(EnvType.CLIENT)
-    public ChunkSectionLayer getRenderType() {
-        return ChunkSectionLayer.CUTOUT;
+    public ChangeRenderLayer.RenderLayer getRenderType() {
+        return ChangeRenderLayer.RenderLayer.CUTOUT;
     }
 }
