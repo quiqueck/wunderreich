@@ -1,16 +1,12 @@
-buildscript {
-    dependencies {
-        classpath 'org.kohsuke:github-api:1.114'
-    }
-
-    repositories {
-        gradlePluginPortal()
-        maven {
-            url = "https://plugins.gradle.org/m2/"
-        }
-    }
-}
-def env = System.getenv()
+// Shared publishing helper: changelog generation, version bumping, and
+// publishing to Modrinth + CurseForge (via mod-publish-plugin).
+// Copy-paste this file identically into every library/mod repo's 26.1
+// checkout. Everything here is driven by that repo's own gradle.properties.
+// Not interchangeable with the 1.21.6 copy: this Loom version has no
+// separate remap step, so the published artifact is `jar`, not `remapJar`.
+//
+// Libraries additionally apply common-publish-maven.gradle (publishing to
+// our Ambertation maven repo). Mods do not - see the project's build.gradle.
 
 //from https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
 String generateChangelog() {
@@ -81,12 +77,6 @@ task changelog() {
 def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
-// Some mods use a different project slug on CurseForge than on Modrinth.
-def curseforgeSlugOverrides = [
-    "rei": "roughly-enough-items"
-]
-def toCurseforgeSlug = { dep -> curseforgeSlugOverrides.getOrDefault(dep, dep) }
-
 publishMods {
     dryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
     file = jar.archiveFile
@@ -116,21 +106,22 @@ publishMods {
             minecraftVersions.add(v)
         }
 
+        // CurseForge requires at least one of client/server to be set.
         client = true
         server = true
 
         displayName = "${project.archives_base_name}-${project.mod_version} ${latestVersion}"
 
         requiredDependencies.each { dep ->
-            requires(toCurseforgeSlug(dep))
+            requires(dep)
         }
         optionalDependencies.each { dep ->
-            optional(toCurseforgeSlug(dep))
+            optional(dep)
         }
     }
 
     modrinth {
-        projectId = project.modrinth_id
+        projectId = findProperty('modrinth_id') ?: project.archives_base_name
 
         def mrTokenFile = new File(projectDir, "../MODRINTH_TOKEN")
         accessToken = mrTokenFile.exists() ? mrTokenFile.text.trim() : ""
@@ -209,95 +200,6 @@ task nextVersion() {
             fabricJson.depends.java = rootFabricFileJson.depends.java
 
             fabricFile.text = groovy.json.JsonOutput.prettyPrint(groovy.json.JsonOutput.toJson(fabricJson))
-        }
-    }
-}
-
-import org.kohsuke.github.GHReleaseBuilder
-import org.kohsuke.github.GitHub
-
-task github(dependsOn: [build, jar, sourcesJar]) {
-    group = 'publishing'
-    def slurper = new groovy.json.JsonSlurper()
-    def apiKey = new File(projectDir, "../GITHUB_TOKEN")
-
-    onlyIf {
-        apiKey.exists()
-    }
-
-    doLast {
-        apiKey = apiKey.text
-        def changes = new File(projectDir, "CHANGES.md")
-        if (changes.exists()) {
-            changes = changes.getText('UTF-8')
-        } else {
-            changes = ""
-        }
-
-        def github = GitHub.connectUsingOAuth(apiKey as String)
-        def repository = github.getRepository("quiqueck/" + archivesBaseName)
-
-        def releaseBuilder = new GHReleaseBuilder(repository, version as String)
-        releaseBuilder.name("${archivesBaseName}-${version}")
-        releaseBuilder.body(changes)
-        releaseBuilder.commitish("1.20")
-
-        def ghRelease = releaseBuilder.create()
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-sources.jar"), "application/java-archive");
-        ghRelease.uploadAsset(file("${project.buildDir}/libs/${archivesBaseName}-${version}-javadoc.jar"), "application/java-archive");
-
-        subprojects.each { sub ->
-            ghRelease.uploadAsset(file("${sub.buildDir}/libs/${sub.archivesBaseName}-${version}.jar"), "application/java-archive");
-            ghRelease.uploadAsset(file("${sub.buildDir}/libs/${sub.archivesBaseName}-${version}-sources.jar"), "application/java-archive");
-        }
-    }
-}
-
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            def githubName = findProperty('github_base_name') ?: project.archives_base_name
-            artifactId = project.archives_base_name
-            // add all the jars that should be included when publishing to maven
-            artifact(jar) {
-                builtBy jar
-            }
-            artifact(sourcesJar) {
-                builtBy sourcesJar
-            }
-
-            // Optional POM configuration
-            pom {
-                name = project.archives_base_name
-                url = "https://github.com/quiqueck/${githubName}"
-
-                licenses {
-                    license {
-                        name = 'The MIT License'
-                        url = 'https://opensource.org/licenses/MIT'
-                    }
-                }
-
-                scm {
-                    connection = "scm:git:https://github.com/quiqueck/${githubName}.git"
-                    developerConnection = "scm:git:https://github.com/quiqueck/${githubName}.git"
-                    url = "https://github.com/quiqueck/${githubName}"
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            def slurper = new groovy.json.JsonSlurper();
-            def apiKey = slurper.parseText(new File(projectDir, "../AMBER_TOKEN").text)
-            println "\nPublishing ${project.archives_base_name} to Maven..."
-            name = "Ambertation"
-            url = "https://maven.ambertation.de/releases/"
-            credentials {
-                username = apiKey.username
-                password = apiKey.token
-            }
         }
     }
 }

@@ -1,0 +1,62 @@
+// Shared Fabric Loom project setup.
+// Copy-paste this file identically into every library/mod repo's 26.1
+// checkout. Not interchangeable with the 1.21.6 copy: different Java
+// version, different Loom API (net.fabricmc.fabric-loom, plain
+// configurations + loom.mods{} instead of mod*-prefixed ones, no separate
+// remap step - the mod jar is `jar`, not `remapJar`).
+// All values come from that repo's own gradle.properties - do not hardcode
+// anything repo-specific in here.
+
+java.sourceCompatibility = JavaVersion.VERSION_25
+java.targetCompatibility = JavaVersion.VERSION_25
+
+base.archivesName = project.archives_base_name
+version = project.mod_version
+group = project.maven_group
+
+repositories {
+    maven { url = "https://maven.fabricmc.net/" }
+    maven { url = 'https://jitpack.io' }
+}
+
+loom {
+    splitEnvironmentSourceSets()
+
+    mods {
+        "${project.archives_base_name}" {
+            sourceSet sourceSets.main
+            sourceSet sourceSets.client
+        }
+    }
+}
+
+dependencies {
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    it.options.encoding = "UTF-8"
+    it.options.release = 25
+}
+
+java {
+    // Loom will automatically attach sourcesJar to the "build" task if it is
+    // present. If you remove this line, sources will not be generated.
+    withSourcesJar()
+}
+
+jar {
+    from("LICENSE") {
+        rename { "${it}_${project.archives_base_name}" }
+    }
+}

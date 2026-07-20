@@ -1,0 +1,61 @@
+// Tags the current commit with the published version whenever this project
+// is published to Modrinth. Shared by both libraries and mods - copy-paste
+// into every repo (unlike common-publish-maven.gradle, which is library-only).
+//
+// If a tag with that name already exists (e.g. republishing the same
+// version after a fix), it is moved to the current commit and force-pushed.
+// Skipped entirely for dry runs, or if publishModrinth itself failed.
+
+def isDryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
+
+def gitOutput = { String cmd ->
+    def proc = cmd.execute()
+    def out = new StringBuilder()
+    def err = new StringBuilder()
+    proc.consumeProcessOutput(out, err)
+    proc.waitFor()
+    return out.toString().trim()
+}
+
+def gitRun = { String cmd ->
+    def proc = cmd.execute()
+    def out = new StringBuilder()
+    def err = new StringBuilder()
+    proc.consumeProcessOutput(out, err)
+    proc.waitFor()
+    if (proc.exitValue() != 0) {
+        throw new GradleException("'${cmd}' failed (exit ${proc.exitValue()}): ${err.toString().trim()}")
+    }
+    return out.toString().trim()
+}
+
+task tagRelease {
+    group = 'publishing'
+    doLast {
+        def tagName = project.version as String
+
+        def localTag = gitOutput("git tag -l ${tagName}")
+        def remoteTag = gitOutput("git ls-remote --tags origin refs/tags/${tagName}")
+
+        if (localTag || remoteTag) {
+            println "Tag '${tagName}' already exists - moving it to the current commit."
+            gitRun("git tag -f ${tagName}")
+            gitRun("git push origin ${tagName} --force")
+        } else {
+            println "Tagging release as '${tagName}'."
+            gitRun("git tag ${tagName}")
+            gitRun("git push origin ${tagName}")
+        }
+    }
+}
+
+afterEvaluate {
+    tasks.named('publishModrinth') {
+        finalizedBy tagRelease
+    }
+    tasks.named('tagRelease') {
+        onlyIf {
+            !isDryRun && tasks.named('publishModrinth').get().state.failure == null
+        }
+    }
+}
