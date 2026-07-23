@@ -69,6 +69,20 @@ public class SlabBuilder {
         );
     }
 
+    public static void createGlassSlab(BlockModelGenerators vanillaGenerator, Block slabBlock, Block baseBlock) {
+        var res = TextureMapping.getBlockTexture(baseBlock);
+        var side = Wunderreich.ID(res.getPath());
+        createSlab(
+                vanillaGenerator,
+                slabBlock, baseBlock, new TextureMapping()
+                        .put(TextureSlot.SIDE, side)
+                        .put(TextureSlot.BOTTOM, res)
+                        .put(TextureSlot.TOP, res)
+                        .put(TextureSlot.PARTICLE, res),
+                Stream.of(ModelTemplates.SLAB_BOTTOM, ModelTemplates.SLAB_TOP)
+        );
+    }
+
     public static void createPathSlab(
             BlockModelGenerators vanillaGenerator,
             Block slabBlock,

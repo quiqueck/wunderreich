@@ -2,7 +2,7 @@
   "parent": "minecraft:block/slab_top",
   "textures": {
     "bottom": "minecraft:block/glass",
-    "side": "minecraft:block/glass",
+    "side": "wunderreich:block/glass",
     "top": "minecraft:block/glass"
   }
 }

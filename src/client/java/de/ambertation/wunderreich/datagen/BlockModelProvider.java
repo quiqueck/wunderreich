@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.datagen;
 
+import de.ambertation.wunderreich.blocks.GlassSlabBlock;
 import de.ambertation.wunderreich.datagen.modelBuilder.SlabBuilder;
 import de.ambertation.wunderreich.datagen.modelBuilder.StairBuilder;
 import de.ambertation.wunderreich.datagen.modelBuilder.WallBuilder;
@@ -66,6 +67,8 @@ public class BlockModelProvider extends FabricModelProvider {
                 SlabBuilder.createPathSlab(vanillaGenerator, slabBlock[0], slabBlock[1], Blocks.DIRT);
             } else if (slabBlock[0] == WunderreichSlabBlocks.GRASS_SLAB) {
                 SlabBuilder.createGrassSlab(vanillaGenerator, slabBlock[0], slabBlock[1], Blocks.DIRT);
+            } else if (slabBlock[0] instanceof GlassSlabBlock) {
+                SlabBuilder.createGlassSlab(vanillaGenerator, slabBlock[0], slabBlock[1]);
             } else {
                 SlabBuilder.createSlab(vanillaGenerator, slabBlock[0], slabBlock[1]);
             }
