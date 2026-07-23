@@ -75,6 +75,13 @@ task changelog() {
 def requiredDependencies = evaluate(project.required_dependencies)
 def optionalDependencies = evaluate(project.optional_dependencies)
 
+// CurseForge doesn't always use the same project slug as Modrinth, e.g. REI's
+// Modrinth slug is "rei" but its CurseForge slug is "roughly-enough-items".
+// Map those exceptions here; anything not listed is assumed to match on both.
+def curseforgeSlugOverrides = [
+    "rei": "roughly-enough-items",
+]
+
 publishMods {
     dryRun = project.hasProperty("dryRun") ? (project.property("dryRun").toString().toLowerCase() in ["true", "", "1", "yes"]) : false
     file = remapJar.archiveFile
@@ -111,10 +118,10 @@ publishMods {
         displayName = "${project.archives_base_name}-${project.mod_version} ${latestVersion}"
 
         requiredDependencies.each { dep ->
-            requires(dep)
+            requires(curseforgeSlugOverrides.getOrDefault(dep, dep))
         }
         optionalDependencies.each { dep ->
-            optional(dep)
+            optional(curseforgeSlugOverrides.getOrDefault(dep, dep))
         }
     }
 
