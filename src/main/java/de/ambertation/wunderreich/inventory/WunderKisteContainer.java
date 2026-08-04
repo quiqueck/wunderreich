@@ -114,12 +114,20 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
 
     @Override
     public boolean canPlaceItemThroughFace(int i, ItemStack itemStack, @Nullable Direction direction) {
-        return direction != Direction.DOWN;
+        // Items may be inserted through every face, including DOWN. The suction tube sits below its
+        // destination and therefore pushes into the bottom face; blocking DOWN here made it impossible
+        // to feed a Wunderkiste from a suction tube. Vanilla hoppers never insert through DOWN anyway,
+        // so allowing it does not change their behaviour.
+        return true;
     }
 
     @Override
     public boolean canTakeItemThroughFace(int i, ItemStack itemStack, Direction direction) {
-        return direction == Direction.DOWN;
+        // Items may be extracted through every face. A hopper below still empties the Wunderkiste
+        // (it pulls through DOWN), and hoppers are the only vanilla block that extracts at all, so this
+        // is only relevant for our own machines: the suction tube pulls through the face pointing at
+        // it, which is never DOWN, and restricting that would make a Wunderkiste unusable as a source.
+        return true;
     }
 
 

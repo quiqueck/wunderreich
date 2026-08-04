@@ -51,6 +51,13 @@ public class WunderreichItems {
         return new Item.Properties();
     }
 
+    // Item.Properties defaults to the "item." description prefix. Block items need the "block."
+    // prefix so they share the single block.wunderreich.* name with the placed block.
+    @NotNull
+    public static Item.Properties makeBlockItemSettings() {
+        return makeItemSettings().useBlockDescriptionPrefix();
+    }
+
     public static Collection<Item> getAllItems() {
         return Configs.ITEM_CONFIG.getAllObjects();
     }

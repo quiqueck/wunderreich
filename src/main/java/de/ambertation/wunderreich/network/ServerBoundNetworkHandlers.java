@@ -1,11 +1,16 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderlib.network.ServerBoundPacketHandler;
-
+/**
+ * Each message registers itself with {@code NetworkRegistry} from its own {@code KEY}'s static initializer;
+ * this just forces those classes to load.
+ */
 public abstract class ServerBoundNetworkHandlers {
     public static void register() {
-        ServerBoundPacketHandler.register(AddRemoveWunderKisteMessage.HANDLER);
-        ServerBoundPacketHandler.register(CycleTradesMessage.HANDLER);
-        ServerBoundPacketHandler.register(SelectWhisperMessage.HANDLER);
+        ensureLoaded(AddRemoveWunderKisteMessage.KEY);
+        ensureLoaded(CycleTradesMessage.KEY);
+        ensureLoaded(SelectWhisperMessage.KEY);
+    }
+
+    private static void ensureLoaded(Object key) {
     }
 }

@@ -196,6 +196,21 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
     }
 
 
+    /**
+     * The default {@link BlockEntity#preRemoveSideEffects} drops the contents of every block entity
+     * that implements {@link Container}. Our {@link Container} implementation is only a view onto the
+     * shared {@link WunderKisteContainer} of the domain/network, so the default behaviour would drop
+     * (and, since {@code Containers.dropItemStack} splits the stacks in place, permanently empty) the
+     * inventory that is shared by every Wunderkiste of that network.
+     * <p>
+     * The network inventory must survive breaking a box - it exists even when no box of that network
+     * is placed in the world at all. So we deliberately do nothing here (same as vanilla's
+     * ShulkerBoxBlockEntity, which keeps its contents in the dropped item instead).
+     */
+    @Override
+    public void preRemoveSideEffects(BlockPos blockPos, BlockState blockState) {
+    }
+
     @Override
     public int getContainerSize() {
         final WunderKisteContainer container = WunderKisteBlock.getContainer(this.getBlockState(), this, this.level);

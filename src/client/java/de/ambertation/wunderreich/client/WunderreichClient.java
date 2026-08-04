@@ -1,9 +1,12 @@
 package de.ambertation.wunderreich.client;
 
+import de.ambertation.wunderlib.network.ClientNetworkRegistry;
+import de.ambertation.wunderlib.network.ExecutionPhase;
+import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
-import de.ambertation.wunderreich.network.SuctionTubeClientHandler;
 import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
@@ -15,6 +18,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
@@ -43,7 +47,21 @@ public class WunderreichClient implements ClientModInitializer {
 
         CreativeTabs.register();
 
-        SuctionTubeContainerUpdatePacket.HANDLER.setClientHandler(new SuctionTubeClientHandler());
+        ClientNetworkRegistry.addClientHandler(
+                SuctionTubeContainerUpdatePacket.KEY,
+                ExecutionPhase.GAME_THREAD,
+                (payload, ctx) -> {
+                    if (ctx.player() == null) {
+                        Wunderreich.LOGGER.warn("Received SuctionTubeContainerUpdatePacket but player is null.");
+                        return;
+                    }
+
+                    AbstractContainerMenu menu = ctx.player().containerMenu;
+                    if (menu instanceof SuctionTubeMenu suctionTubeMenu) {
+                        suctionTubeMenu.updateContainerConnections(payload.connections());
+                    }
+                }
+        );
 
         ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
             var mc = Minecraft.getInstance();

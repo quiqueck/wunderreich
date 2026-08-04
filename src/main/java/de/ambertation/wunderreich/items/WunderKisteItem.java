@@ -26,7 +26,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class WunderKisteItem extends BlockItem {
     public WunderKisteItem(Block block, ResourceKey<Item> key) {
-        super(block, WunderreichItems.makeItemSettings().setId(key));
+        super(block, WunderreichItems.makeBlockItemSettings().setId(key));
     }
 
     public static WunderKisteDomain getDomain(ItemStack itemStack) {

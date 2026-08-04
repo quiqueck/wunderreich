@@ -5,6 +5,12 @@
 //
 // Libraries additionally apply publish-maven.gradle (publishing to our
 // Ambertation maven repo). Mods do not - see the project's build.gradle.
+//
+// This includes WorldWeaver, which used to keep its own fork of this file
+// under the name helper.gradle. The only thing that fork actually needed was
+// a different set of projects for nextVersion to rewrite; that is now derived
+// from the project layout instead of hardcoded - see nextVersion below. Keep
+// it that way rather than reintroducing a per-repo variant.
 
 //from https://lowcarbrob.medium.com/android-pro-tip-generating-your-apps-changelog-from-git-inside-build-gradle-19a07533eec4
 String generateChangelog() {
@@ -189,14 +195,29 @@ task nextVersion() {
 
         def rootFabricFile = rootProject.file("src/main/resources/fabric.mod.json")
         def rootFabricFileJson = slurper.parseText(rootFabricFile.text)
+
+        // Rewrite the manifest of every project that belongs to THIS repository and
+        // ships one: the root, plus any real subproject of it (WorldWeaver's wover-*
+        // modules - for every other repo the root is the only match).
+        //
+        // Sibling repos pulled in via includeLocalLib (BCLib/WunderLib/WorldWeaver
+        // inside a mod's build) are ordinary Gradle projects and would otherwise be
+        // caught by this loop, rewriting another repo's fabric.mod.json. They are
+        // excluded by projectDir rather than by name, so a new sibling include never
+        // needs a change here. This file is only ever applied from a repo's own root
+        // build.gradle - the *-composit.gradle files that a sibling is included with
+        // do not apply it - so rootDir is always this repository's own folder.
+        def repoRoot = project.rootDir.canonicalFile
         allprojects.each { proj ->
-            if (proj.path != ':') {
+            def projDir = proj.projectDir.canonicalFile
+            def ownedByThisRepo = projDir == repoRoot || projDir.path.startsWith(repoRoot.path + File.separator)
+            def fabricFile = proj.file("src/main/resources/fabric.mod.json")
+            if (!ownedByThisRepo || !fabricFile.exists()) {
                 println "Ignoring ${proj}"
                 return
             }
             println "Updating Version in ${proj}"
 
-            def fabricFile = proj.file("src/main/resources/fabric.mod.json")
             def fabricJson = slurper.parseText(fabricFile.text)
             fabricJson.version = updatedVersion
             fabricJson.depends.minecraft = slurper.parseText(modrinth_versions)

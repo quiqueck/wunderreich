@@ -245,6 +245,56 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         this.inputs.loadAdditional(valueInput);
     }
 
+    public static boolean isItemTargetedByAdjacentSuctionTube(Level level, BlockPos hopperPos, ItemStack stack) {
+        if (stack.isEmpty()) return false;
+        for (Direction dir : Direction.values()) {
+            if (dir == Direction.DOWN) continue; // The tube would be below the hopper, but tube's destination is UP, so it doesn't pull from UP.
+            BlockPos tubePos = hopperPos.relative(dir);
+            BlockEntity be = level.getBlockEntity(tubePos);
+            if (be instanceof SuctionTubeBlockEntity tube) {
+                Direction inDir = dir.getOpposite();
+                SuctionInput input = tube.inputs.forDirection(inDir);
+                if (input != null && !tube.inputs.isDirectionDisabledByRedstone(input)) {
+                    if (input.passesFilter(stack)) {
+                        Container dest = getContainerAt(level, tubePos.above());
+                        if (dest != null) {
+                            if (dest instanceof WorldlyContainer worldlyContainer) {
+                                int[] slots = worldlyContainer.getSlotsForFace(Direction.DOWN);
+                                for (int slot : slots) {
+                                    if (SuctionInput.canPlaceItemInContainer(dest, stack, slot)) {
+                                        final ItemStack slotStack = dest.getItem(slot);
+                                        if (slotStack.isEmpty()) return true;
+                                        if (ItemStack.isSameItemSameComponents(slotStack, stack)) {
+                                            int maxStackSize = Math.min(stack.getMaxStackSize(), slotStack.getMaxStackSize());
+                                            if (slotStack.getCount() < maxStackSize) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            } else {
+                                int containerSize = dest.getContainerSize();
+                                for (int i = 0; i < containerSize; ++i) {
+                                    if (SuctionInput.canPlaceItemInContainer(dest, stack, i)) {
+                                        final ItemStack slotStack = dest.getItem(i);
+                                        if (slotStack.isEmpty()) return true;
+                                        if (ItemStack.isSameItemSameComponents(slotStack, stack)) {
+                                            int maxStackSize = Math.min(stack.getMaxStackSize(), slotStack.getMaxStackSize());
+                                            if (slotStack.getCount() < maxStackSize) {
+                                                return true;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public static class SuctionInput {
         public final Direction inDirection;
         public final ItemStack[] filter;
@@ -346,6 +396,10 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 return false;
             }
 
+            if (!canTakeItemFromContainer(destination, sourceStack, sourceSlotIndex)) {
+                return false;
+            }
+
             // Try to insert into destination
             if (tryMoveOne(destination, sourceStack)) {
                 this.container.setChanged();
@@ -406,7 +460,26 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
             return false;
         }
 
-        private static boolean canPlaceItemInContainer(Container destination, ItemStack stackToInsert, int slot) {
+        /**
+         * Mirrors vanilla's {@code HopperBlockEntity#canTakeItemFromContainer}. {@code getSlotsForFace}
+         * alone only says which slots are reachable from a face - the source container may still refuse
+         * to hand out a particular stack through it (a furnace, for example, only releases its fuel slot
+         * through DOWN when the stack is an empty or water bucket).
+         * <p>
+         * Items leave the source through the face that points at the tube, which is the opposite of the
+         * direction the tube looks in.
+         */
+        private boolean canTakeItemFromContainer(Container destination, ItemStack stackToTake, int slot) {
+            if (!this.container.canTakeItem(destination, slot, stackToTake)) {
+                return false;
+            }
+            if (this.container instanceof WorldlyContainer worldlySource) {
+                return worldlySource.canTakeItemThroughFace(slot, stackToTake, this.inDirection.getOpposite());
+            }
+            return true;
+        }
+
+        static boolean canPlaceItemInContainer(Container destination, ItemStack stackToInsert, int slot) {
             if (destination.canPlaceItem(slot, stackToInsert)) {
                 if (destination instanceof WorldlyContainer worldlyContainer) {
                     // The destination container sits ABOVE the tube, so items enter through its

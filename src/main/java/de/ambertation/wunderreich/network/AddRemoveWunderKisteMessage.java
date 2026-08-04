@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderlib.network.ServerBoundNetworkPayload;
-import de.ambertation.wunderlib.network.ServerBoundPacketHandler;
+import de.ambertation.wunderlib.network.NetworkRegistry;
+import de.ambertation.wunderlib.network.ServerBoundMessage;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.utils.LiveBlockManager.LiveBlock;
@@ -9,72 +9,29 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.state.BlockState;
 
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-
-public class AddRemoveWunderKisteMessage extends ServerBoundNetworkPayload<AddRemoveWunderKisteMessage> {
-    public static final ServerBoundPacketHandler<AddRemoveWunderKisteMessage> HANDLER = new ServerBoundPacketHandler<>(
+public record AddRemoveWunderKisteMessage(boolean didAdd, BlockPos pos) {
+    public static final ServerBoundMessage<AddRemoveWunderKisteMessage> KEY = NetworkRegistry.registerServerBound(
             Wunderreich.ID("wunder_kiste"),
-            AddRemoveWunderKisteMessage::new
+            StreamCodec.composite(
+                    ByteBufCodecs.BOOL, AddRemoveWunderKisteMessage::didAdd,
+                    BlockPos.STREAM_CODEC, AddRemoveWunderKisteMessage::pos,
+                    AddRemoveWunderKisteMessage::new
+            ),
+            (msg, ctx) -> {
+                final ServerLevel level = ctx.player().level();
+                if (msg.didAdd) addedBox(level, msg.pos);
+                else removedBox(level, msg.pos);
+            }
     );
-
-    public final boolean didAdd;
-    @NotNull
-    public final BlockPos pos;
-
-    @Nullable
-    private ServerLevel level;
-
-    public AddRemoveWunderKisteMessage(RegistryFriendlyByteBuf buf) {
-        super(HANDLER);
-        this.didAdd = buf.readBoolean();
-        this.pos = buf.readBlockPos();
-        this.level = null;
-    }
-
-    public AddRemoveWunderKisteMessage(boolean didAdd, BlockPos pos) {
-        super(HANDLER);
-        this.didAdd = didAdd;
-        this.pos = pos;
-        this.level = null;
-    }
-
-    @Override
-    protected void prepareOnClient() {
-
-    }
-
-    @Override
-    protected void write(RegistryFriendlyByteBuf buf) {
-        buf.writeBoolean(this.didAdd);
-        buf.writeBlockPos(this.pos);
-    }
-
-    @Override
-    protected void processOnServer(ServerPlayer player, PacketSender responseSender) {
-        this.level = player.level();
-    }
-
-    @Override
-    protected void processOnGameThread(MinecraftServer server, ServerPlayer player) {
-        if (this.didAdd) addedBox(this.level, this.pos);
-        else removedBox(this.level, this.pos);
-    }
-
 
     static {
         WunderKisteBlock.getLiveBlockManager().onChangeAt(WunderKisteBlock::updateNeighbours);
     }
-
 
     public static void addedBox(ServerLevel level, BlockPos pos) {
         final LiveBlock lb = new LiveBlock(pos, level);
@@ -93,10 +50,9 @@ public class AddRemoveWunderKisteMessage extends ServerBoundNetworkPayload<AddRe
         boolean result = WunderKisteBlock.getLiveBlockManager().remove(lb);
 
         Wunderreich.LOGGER.info("Removing WunderKiste at " + pos + " (wasManaged: " + wasManaged + ", didRemove:" + result + ")");
-
     }
 
     public static void send(boolean didAdd, BlockPos pos) {
-        ServerBoundPacketHandler.sendToServer(new AddRemoveWunderKisteMessage(didAdd, pos));
+        NetworkRegistry.sendToServer(KEY, new AddRemoveWunderKisteMessage(didAdd, pos));
     }
 }

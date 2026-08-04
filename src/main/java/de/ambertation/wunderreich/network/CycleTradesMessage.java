@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.network;
 
-import de.ambertation.wunderlib.network.ServerBoundNetworkPayload;
-import de.ambertation.wunderlib.network.ServerBoundPacketHandler;
+import de.ambertation.wunderlib.network.NetworkRegistry;
+import de.ambertation.wunderlib.network.ServerBoundMessage;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.IMerchantMenu;
@@ -12,9 +12,7 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -29,8 +27,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
-
-import net.fabricmc.fabric.api.networking.v1.PacketSender;
 
 import java.util.Objects;
 
@@ -61,19 +57,12 @@ record ClosestWhisperer(ItemStack stack, Player player, EquipmentSlot slot) {
     }
 }
 
-public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMessage> {
-    public static final ServerBoundPacketHandler<CycleTradesMessage> HANDLER = new ServerBoundPacketHandler<>(
+public record CycleTradesMessage() {
+    public static final ServerBoundMessage<CycleTradesMessage> KEY = NetworkRegistry.registerServerBound(
             Wunderreich.ID("cycle_trades"),
-            CycleTradesMessage::new
+            StreamCodec.unit(new CycleTradesMessage()),
+            (msg, ctx) -> cycleTrades(ctx.player())
     );
-
-    protected CycleTradesMessage(FriendlyByteBuf buf) {
-        super(HANDLER);
-    }
-
-    protected CycleTradesMessage() {
-        super(HANDLER);
-    }
 
     public static ClosestWhisperer holds(Player player, Item item) {
         if (player.getMainHandItem().is(item))
@@ -224,30 +213,6 @@ public class CycleTradesMessage extends ServerBoundNetworkPayload<CycleTradesMes
     }
 
     public static void send() {
-        ServerBoundPacketHandler.sendToServer(new CycleTradesMessage());
-    }
-
-
-    @Override
-    protected void prepareOnClient() {
-
-    }
-
-    @Override
-    protected void processOnServer(ServerPlayer player, PacketSender responseSender) {
-
-    }
-
-    @Override
-    protected void processOnGameThread(MinecraftServer server, ServerPlayer player) {
-        cycleTrades(player);
-    }
-
-    @Override
-    protected void write(RegistryFriendlyByteBuf buf) {
-
-    }
-
-    protected record Content() {
+        NetworkRegistry.sendToServer(KEY, new CycleTradesMessage());
     }
 }

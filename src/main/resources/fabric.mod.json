@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "wunderreich",
-    "version": "21.8.2",
+    "version": "21.800.0",
     "name": "Wunderreich",
     "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
     "authors": [
@@ -53,10 +53,10 @@
             "1.21.8"
         ],
         "java": ">=21",
-        "wunderlib": "21.8.x"
+        "wunderlib": "21.800.x"
     },
     "breaks": {
-        "wunderlib": "<21.8.0"
+        "wunderlib": "<21.800.0"
     },
     "suggests": {
         "modmenu": "11.0.x",

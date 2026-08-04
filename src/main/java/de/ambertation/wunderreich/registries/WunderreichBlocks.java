@@ -70,7 +70,7 @@ public class WunderreichBlocks {
                 name,
                 baseBlock,
                 creator,
-                (block, key) -> new BlockItem(block, WunderreichItems.makeItemSettings().setId(key))
+                (block, key) -> new BlockItem(block, WunderreichItems.makeBlockItemSettings().setId(key))
         );
     }
 
