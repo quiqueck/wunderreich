@@ -54,11 +54,8 @@ public enum WunderKisteDomain implements StringRepresentable {
     public final int overlayColor;
     private final String name;
     public final boolean useMonochromeFallback;
-    /**
-     * Raw texture key; only ever resolved to an actual {@code Material} by client-only code
-     * (see {@code WunderKisteDomainClient.getMaterialFor}).
-     */
-    public final String textureName;
+    /** Raw texture key; only ever resolved to an actual sprite by client-only code (see {@code WunderKisteDomainClient.getSpriteFor}). */
+    public final String textureKey;
 
     WunderKisteDomain(int id, String name, Item triggerItem, int color, boolean useMonochromeFallback, String texture) {
         this.id = id;
@@ -68,7 +65,7 @@ public enum WunderKisteDomain implements StringRepresentable {
         this.color = color;
         this.textColor = TextColor.fromRgb(color);
         this.useMonochromeFallback = useMonochromeFallback;
-        this.textureName = texture;
+        this.textureKey = texture;
 
         if (Configs.MAIN.multiTexturedWunderkiste.get()) {
             overlayColor = 0xFFFFFFFF;

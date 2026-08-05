@@ -6,7 +6,6 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
-import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
@@ -16,30 +15,14 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
-import net.minecraft.client.renderer.chunk.ChunkSectionLayer;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.BlockColorRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.BlockRenderLayerMap;
-import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 
 public class WunderreichClient implements ClientModInitializer {
-    /**
-     * {@code ChangeRenderLayer} lives in common code and can therefore only expose the plain
-     * {@code RenderLayer} enum; this is the (client-only) place that turns it back into the real
-     * {@link ChunkSectionLayer} the Fabric render layer map needs.
-     */
-    private static ChunkSectionLayer toChunkSectionLayer(ChangeRenderLayer.RenderLayer layer) {
-        return switch (layer) {
-            case CUTOUT -> ChunkSectionLayer.CUTOUT;
-            case TRANSLUCENT -> ChunkSectionLayer.TRANSLUCENT;
-        };
-    }
-
     @Override
     public void onInitializeClient() {
         WunderreichParticleProviders.register();
@@ -64,25 +47,17 @@ public class WunderreichClient implements ClientModInitializer {
         );
 
         ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
-            var mc = Minecraft.getInstance();
-            if (mc.getConnection() != null) {
-                var recipes = mc.getConnection().recipes();
-                if (recipes instanceof RecipeManager rm) {
-                    return rm;
-                }
-            }
-            return null;
+            // ClientPacketListener.recipes() returns a ClientRecipeContainer (recipe-book display
+            // data only), never an actual RecipeManager - "instanceof RecipeManager" here was
+            // always false. The real RecipeManager only exists where the logical server runs, so
+            // this only works in singleplayer/LAN (same JVM); GLOBAL_RECIPE_MANAGER (set directly
+            // from RecipeManagerMixin) is still the primary source and covers that case anyway.
+            var server = Minecraft.getInstance().getSingleplayerServer();
+            return server != null ? server.getRecipeManager() : null;
         };
 
-        // ChangeRenderLayer is common code (so datagen's BlockModelProvider can read it too), but the
-        // actual render-layer registration still has to happen here since this MC version's block
-        // models don't yet drive their render layer purely from "render_type" at runtime.
-        BuiltInRegistries.BLOCK.forEach(block -> {
-            if (block instanceof ChangeRenderLayer view) {
-                BlockRenderLayerMap.putBlocks(toChunkSectionLayer(view.getRenderType()), block);
-            }
-        });
-
+        // Note: block render layers are now driven by the block model JSON
+        // ("render_type") instead of the removed Fabric BlockRenderLayerMap.
         BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
 
         /*
@@ -104,13 +79,14 @@ public class WunderreichClient implements ClientModInitializer {
          */
 
         if (Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.GRASS_SLAB)) {
-            ColorProviderRegistry.BLOCK.register(
-                    (state, view, pos, tintIndex) -> {
-                        if (tintIndex == 0) return view != null && pos != null
+            // The old ColorProviderRegistry.BLOCK is gone. The tint is now collected
+            // into an IntList indexed by tintindex; index 0 carries the grass color.
+            BlockColorRegistry.register(
+                    (state, view, pos, out) -> {
+                        int color = view != null && pos != null
                                 ? BiomeColors.getAverageGrassColor(view, pos)
                                 : GrassColor.get(0.5D, 1.0D);
-
-                        return 0xffffffff;
+                        out.add(color);
                     }, WunderreichSlabBlocks.GRASS_SLAB
             );
         }

@@ -1,11 +1,11 @@
 package de.ambertation.wunderreich.integration.rei;
 
+import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
-import de.ambertation.wunderreich.registries.WunderreichItems;
 
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.ItemStack;
 
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import me.shedaniel.rei.api.common.category.CategoryIdentifier;
@@ -33,7 +33,7 @@ public class ImprinterDisplay extends BasicDisplay {
         super(inputs, outputs);
     }
 
-    public ImprinterDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs, java.util.Optional<net.minecraft.resources.ResourceLocation> location) {
+    public ImprinterDisplay(List<EntryIngredient> inputs, List<EntryIngredient> outputs, java.util.Optional<net.minecraft.resources.Identifier> location) {
         super(inputs, outputs, location);
     }
 
@@ -43,10 +43,10 @@ public class ImprinterDisplay extends BasicDisplay {
                         // COST_A_SLOT: the imprint input (book / overridden cost)
                         EntryIngredients.of(recipe.getInput()),
                         // COST_B_SLOT: the blank whisperer that gets trained
-                        EntryIngredients.of(new ItemStack(WunderreichItems.BLANK_WHISPERER))
+                        EntryIngredients.of(WhisperRule.blank())
                 ),
                 // result: the trained whisperer
-                List.of(EntryIngredients.of(recipe.output)),
+                List.of(EntryIngredients.of(recipe.getOutput())),
                 java.util.Optional.of(recipe.id)
         );
     }

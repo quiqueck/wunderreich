@@ -5,15 +5,18 @@ import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ClientBoundNetworkHandlers;
 import de.ambertation.wunderreich.network.ServerBoundNetworkHandlers;
+import de.ambertation.wunderreich.recipes.ImprinterOverrideReloadListener;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 import de.ambertation.wunderreich.registries.*;
 import de.ambertation.wunderreich.utils.Logger;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.PackType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
@@ -36,8 +39,8 @@ public class Wunderreich implements ModInitializer {
         }
     };
 
-    public static ResourceLocation ID(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier ID(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static boolean isDatagen() {
@@ -66,6 +69,8 @@ public class Wunderreich implements ModInitializer {
         WunderreichMenuTypes.ensureStaticallyLoaded();
 
         ImprinterRecipe.register();
+        ResourceManagerHelper.get(PackType.SERVER_DATA)
+                             .registerReloadListener(new ImprinterOverrideReloadListener());
         ServerBoundNetworkHandlers.register();
         ClientBoundNetworkHandlers.register();
 

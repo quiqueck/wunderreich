@@ -15,7 +15,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
@@ -34,7 +34,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     private static final int TICKET_RADIUS = 2;
     public static final TicketType TICKET = LiveBlockManager.registerTicketType(
             Wunderreich.ID("wunderkiste"),
-            0L, true, TicketType.TicketUse.LOADING_AND_SIMULATION
+            0L, TicketType.FLAG_PERSIST | TicketType.FLAG_LOADING | TicketType.FLAG_SIMULATION
     );
     // Plain list codec: an empty set of live blocks is valid (nonEmptyList used to error on a fresh save).
     public static final Codec<List<LiveBlock>> CODEC = LiveBlock.CODEC.listOf();
@@ -200,7 +200,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         Stream.Builder<ChunkPos> p = Stream.builder();
         for (int x = 1 - radius; x < radius; x++) {
             for (int z = 1 - radius; z < radius; z++) {
-                p.add(new ChunkPos(start.x + x, start.z + z));
+                p.add(new ChunkPos(start.x() + x, start.z() + z));
             }
         }
         return p.build();
@@ -226,8 +226,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
         if (level instanceof ServerLevel server) {
             Wunderreich.LOGGER.info("Keep Chunk " + cPos + " in " + level
-                    .dimension()
-                    .location() + " permanently loaded");
+                    .dimension().identifier() + " permanently loaded");
             server.getChunkSource().addTicketWithRadius(TICKET, cPos, TICKET_RADIUS);
         }
     }
@@ -253,8 +252,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     private static void removeTicket(Level level, ChunkPos cPos) {
         if (level instanceof ServerLevel server) {
             Wunderreich.LOGGER.info("Remove Chunk " + cPos + " in " + level
-                    .dimension()
-                    .location() + " from force loaded list");
+                    .dimension().identifier() + " from force loaded list");
             server.getChunkSource().removeTicketWithRadius(TICKET, cPos, TICKET_RADIUS);
         }
     }
@@ -279,7 +277,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     }
 
     public boolean shouldTick(ServerLevel level, BlockPos pos) {
-        return shouldTick(level, new ChunkPos(pos));
+        return shouldTick(level, ChunkPos.containing(pos));
     }
 
     public boolean shouldTick(ServerLevel level, ChunkPos cPos) {
@@ -294,11 +292,12 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         void emit(LiveBlock bl);
     }
 
-    private static class ChunkPosCounter extends ChunkPos {
+    private static class ChunkPosCounter {
+        public final ChunkPos pos;
         public final AtomicInteger count;
 
         private ChunkPosCounter(ChunkPos chunkPos) {
-            super(chunkPos.x, chunkPos.z);
+            this.pos = chunkPos;
             count = new AtomicInteger(1);
         }
 
@@ -312,7 +311,15 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
 
         @Override
         public boolean equals(Object object) {
-            return super.equals(object);
+            if (this == object) return true;
+            if (object instanceof ChunkPosCounter c) return pos.equals(c.pos);
+            if (object instanceof ChunkPos cp) return pos.equals(cp);
+            return false;
+        }
+
+        @Override
+        public int hashCode() {
+            return pos.hashCode();
         }
     }
 
@@ -339,7 +346,7 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
         private LiveBlock(BlockPos pos, ResourceKey<Level> key) {
             this.pos = pos;
             this.key = key;
-            this.chunkPos = new ChunkPos(pos);
+            this.chunkPos = ChunkPos.containing(pos);
         }
 
         void loadLevel(Map<ResourceKey<Level>, ServerLevel> levels) {
@@ -373,15 +380,14 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
     }
 
     private static TicketType registerTicketType(
-            ResourceLocation location,
+            Identifier location,
             long timeout,
-            boolean persistent,
-            TicketType.TicketUse ticketUse
+            int flags
     ) {
         return Registry.register(
                 BuiltInRegistries.TICKET_TYPE,
                 location,
-                new TicketType(timeout, persistent, ticketUse)
+                new TicketType(timeout, flags)
         );
     }
 }

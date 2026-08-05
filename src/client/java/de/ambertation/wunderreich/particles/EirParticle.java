@@ -5,7 +5,9 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.PortalParticle;
 import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.util.RandomSource;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -19,9 +21,10 @@ public class EirParticle extends PortalParticle {
             double z,
             double deltaX,
             double deltaY,
-            double deltaZ
+            double deltaZ,
+            TextureAtlasSprite sprite
     ) {
-        super(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
+        super(clientLevel, x, y, z, deltaX, deltaY, deltaZ, sprite);
         this.quadSize = 0.1F * (this.random.nextFloat() * 0.2F + 0.3F);
 
         float intensity = this.random.nextFloat() * 0.4F + 0.6F;
@@ -48,12 +51,10 @@ public class EirParticle extends PortalParticle {
                 double z,
                 double deltaX,
                 double deltaY,
-                double deltaZ
+                double deltaZ,
+                RandomSource randomSource
         ) {
-            EirParticle portalParticle = new EirParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ);
-            portalParticle.pickSprite(this.sprite);
-            return portalParticle;
+            return new EirParticle(clientLevel, x, y, z, deltaX, deltaY, deltaZ, this.sprite.get(randomSource));
         }
     }
 }
-

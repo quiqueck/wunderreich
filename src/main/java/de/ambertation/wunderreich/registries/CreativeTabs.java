@@ -17,7 +17,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
 
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -51,7 +51,7 @@ public class CreativeTabs {
     }
 
     static {
-        TAB_BLOCKS = FabricItemGroup
+        TAB_BLOCKS = FabricCreativeModeTab
                 .builder()
                 .title(Component.translatable("itemGroup.wunderreich.blocks"))
                 .icon(() -> new ItemStack(getBlockIcon()))
@@ -93,7 +93,7 @@ public class CreativeTabs {
                 })
                 .build();
 
-        TAB_ITEMS = FabricItemGroup
+        TAB_ITEMS = FabricCreativeModeTab
                 .builder()
                 .title(Component.translatable("itemGroup.wunderreich.items"))
                 .icon(() -> new ItemStack(getItemIcon()))

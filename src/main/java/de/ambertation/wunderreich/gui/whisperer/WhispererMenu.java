@@ -7,7 +7,7 @@ import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -111,7 +111,7 @@ public class WhispererMenu
             if (suggestedRule == null) {
                 suggestedRule = getEnchants().stream()
                                              .filter(rule -> rule.satisfiedBy(recipeInput))
-                                             .sorted((a, b) -> b.input.getCount() - a.input.getCount())
+                                             .sorted((a, b) -> b.getInput().getCount() - a.getInput().getCount())
                                              .findFirst()
                                              .orElse(null);
             }
@@ -173,16 +173,16 @@ public class WhispererMenu
         final ImprinterRecipe.ImprinterInput recipeInput = getImprinterInput();
 //        Wunderreich.LOGGER.info("MENU ONTAKE Input: " + selectedRule + ", " + recipeInput + " | SERVER? " + (this.player instanceof ServerPlayer));
         if (selectedRule != null) {
-            final int xp = selectedRule.baseXP;
+            final int xp = selectedRule.getBaseXP();
             if (selectedRule.canBuildFrom(recipeInput)) {
                 ItemStack stackA = this.inputSlots.getItem(INGREDIENT_SLOT_A);
                 ItemStack stackB = this.inputSlots.getItem(INGREDIENT_SLOT_B);
                 if (stackA.is(WunderreichItems.BLANK_WHISPERER)) {
-                    stackB.shrink(selectedRule.input.getCount());
+                    stackB.shrink(selectedRule.getInput().getCount());
                     this.inputSlots.setItem(INGREDIENT_SLOT_A, ItemStack.EMPTY);
                     this.inputSlots.setItem(INGREDIENT_SLOT_B, stackB);
                 } else {
-                    stackA.shrink(selectedRule.input.getCount());
+                    stackA.shrink(selectedRule.getInput().getCount());
                     this.inputSlots.setItem(INGREDIENT_SLOT_A, stackA);
                     this.inputSlots.setItem(INGREDIENT_SLOT_B, ItemStack.EMPTY);
                 }
@@ -204,7 +204,7 @@ public class WhispererMenu
                     SoundEvents.ENCHANTMENT_TABLE_USE,
                     SoundSource.BLOCKS,
                     1.0f,
-                    level.random.nextFloat() * 0.1f + 0.9f
+                    level.getRandom().nextFloat() * 0.1f + 0.9f
             );
         });
     }
@@ -218,8 +218,8 @@ public class WhispererMenu
     }
 
     private ImprinterRecipe setSelectedRule(ImprinterRecipe rule) {
-        final ResourceLocation selectedID = this.selectedRule != null ? this.selectedRule.id : null;
-        final ResourceLocation ruleID = rule != null ? rule.id : null;
+        final Identifier selectedID = this.selectedRule != null ? this.selectedRule.id : null;
+        final Identifier ruleID = rule != null ? rule.id : null;
         if (
                 (selectedID == null && ruleID != null) ||
                         (selectedID != null && !selectedID.equals(ruleID))
@@ -231,14 +231,14 @@ public class WhispererMenu
         return this.selectedRule;
     }
 
-    public ImprinterRecipe selectByID(ResourceLocation ruleID) {
+    public ImprinterRecipe selectByID(Identifier ruleID) {
         ImprinterRecipe newRule = getRuleByID(ruleID);
 //        Wunderreich.LOGGER.info("MENU Selecting by ID: " + ruleID + ", " + newRule);
 
         return setSelectedRule(newRule);
     }
 
-    public @Nullable ImprinterRecipe getRuleByID(@Nullable ResourceLocation ruleID) {
+    public @Nullable ImprinterRecipe getRuleByID(@Nullable Identifier ruleID) {
         if (ruleID == null) return null;
         return this
                 .getEnchants()
@@ -273,10 +273,10 @@ public class WhispererMenu
             if (didMove &&
                     this.inputSlots.getItem(INGREDIENT_SLOT_A).isEmpty() &&
                     this.inputSlots.getItem(INGREDIENT_SLOT_B).isEmpty()) {
-                if (inventoryHas(rule.getInput()) && inventoryHas(WhisperRule.BLANK)) {
+                if (inventoryHas(rule.getInput()) && inventoryHas(WhisperRule.blank())) {
                     this.updating = true;
                     this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_A, rule.getInput());
-                    this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_B, WhisperRule.BLANK);
+                    this.moveFromInventoryToPaymentSlot(INGREDIENT_SLOT_B, WhisperRule.blank());
                     this.updating = false;
                     createResult();
                 }
@@ -323,7 +323,7 @@ public class WhispererMenu
         return this.recipes;
     }
 
-    ResourceLocation lastSentRule = null;
+    Identifier lastSentRule = null;
 
     private void broadcastSelectedRule(boolean force) {
         final var selectedId = selectedRule != null ? selectedRule.id : null;

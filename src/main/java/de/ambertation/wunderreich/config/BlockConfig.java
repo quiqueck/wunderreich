@@ -4,7 +4,7 @@ import de.ambertation.wunderlib.configs.DynamicConfig;
 import de.ambertation.wunderreich.Wunderreich;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 
 public class BlockConfig extends DynamicConfig<Block> {
@@ -14,7 +14,7 @@ public class BlockConfig extends DynamicConfig<Block> {
 
     public boolean isEnabled(Block block) {
         if (block == null) return false;
-        ResourceLocation id = BuiltInRegistries.BLOCK.getKey(block);
+        Identifier id = BuiltInRegistries.BLOCK.getKey(block);
         return id != null;
     }
 }

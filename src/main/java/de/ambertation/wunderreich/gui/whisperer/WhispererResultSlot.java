@@ -68,7 +68,7 @@ public class WhispererResultSlot extends Slot {
             WhisperRule rules = this.slots.getActiveRule();
 
             if (rules != null)
-                createExperience(serverLevel, rules.baseXP);
+                createExperience(serverLevel, rules.getBaseXP());
         }
 
         this.removeCount = 0;

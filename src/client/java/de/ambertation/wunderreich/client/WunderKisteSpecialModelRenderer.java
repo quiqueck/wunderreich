@@ -6,51 +6,61 @@ import de.ambertation.wunderreich.utils.WunderKisteDomain;
 import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.client.model.ChestModel;
-import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.model.object.chest.ChestModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
-import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.world.item.ItemStack;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
-import java.util.Set;
+import java.util.function.Consumer;
 import org.jetbrains.annotations.Nullable;
 
 @Environment(EnvType.CLIENT)
 public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<WunderKisteDomain> {
+    private final SpriteGetter sprites;
     private final ChestModel model;
     private final float openness;
 
-    public WunderKisteSpecialModelRenderer(ChestModel chestModel, float openness) {
+    public WunderKisteSpecialModelRenderer(SpriteGetter sprites, ChestModel chestModel, float openness) {
+        this.sprites = sprites;
         this.model = chestModel;
         this.openness = openness;
     }
 
     @Override
-    public void render(
+    public void submit(
             @Nullable WunderKisteDomain domain,
-            ItemDisplayContext itemDisplayContext,
             PoseStack poseStack,
-            MultiBufferSource multiBufferSource,
-            int i,
-            int j,
-            boolean bl
+            SubmitNodeCollector submitNodeCollector,
+            int lightCoords,
+            int overlayCoords,
+            boolean hasFoil,
+            int outlineColor
     ) {
         if (domain == null) domain = WunderKisteBlock.DEFAULT_DOMAIN;
-        VertexConsumer vertexConsumer = WunderKisteDomainClient.getMaterialFor(domain).buffer(multiBufferSource, RenderType::entitySolid);
-        this.model.setupAnim(this.openness);
-        this.model.renderToBuffer(poseStack, vertexConsumer, i, j, domain.overlayColor);
+        SpriteId sprite = WunderKisteDomainClient.getSpriteFor(domain);
+        submitNodeCollector.submitModel(
+                this.model,
+                this.openness,
+                poseStack,
+                lightCoords,
+                overlayCoords,
+                domain.overlayColor,
+                sprite,
+                this.sprites,
+                outlineColor,
+                null
+        );
     }
 
     @Override
@@ -59,14 +69,14 @@ public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<Wun
     }
 
     @Override
-    public void getExtents(Set<Vector3f> set) {
+    public void getExtents(Consumer<Vector3fc> output) {
         PoseStack poseStack = new PoseStack();
         this.model.setupAnim(this.openness);
-        this.model.root().getExtentsForGui(poseStack, set);
+        this.model.root().getExtentsForGui(poseStack, output);
     }
 
     @Environment(EnvType.CLIENT)
-    public record Unbaked(float openness) implements SpecialModelRenderer.Unbaked {
+    public record Unbaked(float openness) implements SpecialModelRenderer.Unbaked<WunderKisteDomain> {
         public static final MapCodec<WunderKisteSpecialModelRenderer.Unbaked> MAP_CODEC = RecordCodecBuilder.mapCodec(
                 instance -> instance.group(
                                             Codec.FLOAT.optionalFieldOf("openness", 0.0F)
@@ -85,9 +95,9 @@ public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<Wun
         }
 
         @Override
-        public SpecialModelRenderer<?> bake(EntityModelSet entityModelSet) {
-            ChestModel chestModel = new ChestModel(entityModelSet.bakeLayer(ModelLayers.CHEST));
-            return new WunderKisteSpecialModelRenderer(chestModel, this.openness);
+        public SpecialModelRenderer<WunderKisteDomain> bake(SpecialModelRenderer.BakingContext context) {
+            ChestModel chestModel = new ChestModel(context.entityModelSet().bakeLayer(ModelLayers.CHEST));
+            return new WunderKisteSpecialModelRenderer(context.sprites(), chestModel, this.openness);
         }
     }
 }

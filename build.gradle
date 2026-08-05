@@ -1,17 +1,18 @@
 plugins {
-    id 'fabric-loom' version "${loom_version}"
+    id 'net.fabricmc.fabric-loom' version "${loom_version}"
+    id 'maven-publish'
     id "me.modmuss50.mod-publish-plugin" version "2.1.1"
 }
 
 apply from: "common-fabric-project.gradle"
 
 repositories {
-    maven { url "https://maven.shedaniel.me" }
-    maven { url "https://maven.architectury.dev" }
-    maven { url "https://maven.bai.lol" }
-    maven { url 'https://maven.terraformersmc.com/releases' }
-    maven { url 'https://jitpack.io' }
-    maven { url 'https://maven.ambertation.de/releases' }
+    maven { url = "https://maven.shedaniel.me" }
+    maven { url = "https://maven.blamejared.com" }
+    maven { url = "https://maven.bai.lol" }
+    maven { url = 'https://maven.terraformersmc.com/releases' }
+    maven { url = 'https://jitpack.io' }
+    maven { url = 'https://maven.ambertation.de/releases' }
     flatDir { dirs 'libs' }
 }
 
@@ -23,31 +24,27 @@ fabricApi {
 
 loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
-
-    splitEnvironmentSourceSets()
-
-    mods {
-        wunderreich {
-            sourceSet sourceSets.main
-            sourceSet sourceSets.client
-        }
-    }
 }
 
 dependencies {
-    modCompileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
+    compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
     compileOnly "me.shedaniel.cloth:basic-math:0.6.1" // me.shedaniel.math.Point/Rectangle used by the REI GUI API
-    modCompileOnly "dev.architectury:architectury-fabric:17.0.8" // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
-    modLocalRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}" // run against the full jar (pulls basic-math transitively)
+    compileOnly "dev.architectury:architectury-fabric:20.0.6"
+    // dev.architectury.fluid.FluidStack referenced by REI EntryStacks/EntryIngredients overloads
+    // localRuntime "me.shedaniel:RoughlyEnoughItems-fabric:${project.rei_version}"
+    // run against the full jar (pulls basic-math transitively)
 
-    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
-    modLocalRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    compileOnly "mezz.jei:jei-${project.minecraft_version}-fabric-api:${project.jei_version}" // compile against the API
+    localRuntime "mezz.jei:jei-${project.minecraft_version}-fabric:${project.jei_version}" // run against the full jar
 
-    modCompileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
-    modLocalRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
+    localRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
 
-//    modCompileOnly "dev.emi:emi-fabric:${emi_version}:api"
-//    modLocalRuntime "dev.emi:emi-fabric:${emi_version}"
+    compileOnly "mcp.mobius.waila:wthit-api:fabric-${project.wthit_version}" // compile against the API
+    // localRuntime "mcp.mobius.waila:wthit:fabric-${project.wthit_version}" // run against the full jar
+
+//    compileOnly "dev.emi:emi-fabric:${emi_version}:api"
+//    localRuntime "dev.emi:emi-fabric:${emi_version}"
 
     gradle.modApiOrLocal(dependencies, ':wunderlib', "de.ambertation:wunderlib:${project.wunderlib_version}")
 }

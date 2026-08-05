@@ -3,12 +3,13 @@ package de.ambertation.wunderreich.gui.whisperer;
 import de.ambertation.wunderreich.network.SelectWhisperMessage;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
@@ -22,11 +23,11 @@ import org.jetbrains.annotations.NotNull;
 @Environment(value = EnvType.CLIENT)
 public class WhispererScreen
         extends AbstractContainerScreen<WhispererMenu> {
-    private static final ResourceLocation VILLAGER_LOCATION = ResourceLocation.withDefaultNamespace(
+    private static final Identifier VILLAGER_LOCATION = Identifier.withDefaultNamespace(
             "textures/gui/container/villager.png");
-    private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier SCROLLER_SPRITE = Identifier.withDefaultNamespace(
             "container/villager/scroller");
-    private static final ResourceLocation SCROLLER_DISABLED_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier SCROLLER_DISABLED_SPRITE = Identifier.withDefaultNamespace(
             "container/villager/scroller_disabled");
 
     private static final int TEXTURE_WIDTH = 512;
@@ -54,8 +55,7 @@ public class WhispererScreen
     private boolean isDragging;
 
     public WhispererScreen(WhispererMenu merchantMenu, Inventory inventory, Component component) {
-        super(merchantMenu, inventory, component);
-        this.imageWidth = 276;
+        super(merchantMenu, inventory, component, 276, 166);
         this.inventoryLabelX = 107;
     }
 
@@ -87,8 +87,8 @@ public class WhispererScreen
     }
 
     @Override
-    protected void renderLabels(@NotNull GuiGraphics guiGraphics, int x, int y) {
-        guiGraphics.drawString(
+    protected void extractLabels(@NotNull GuiGraphicsExtractor guiGraphics, int x, int y) {
+        guiGraphics.text(
                 this.font,
                 this.title,
                 (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
@@ -97,7 +97,7 @@ public class WhispererScreen
                 false
         );
 
-        guiGraphics.drawString(
+        guiGraphics.text(
                 this.font,
                 this.playerInventoryTitle,
                 this.inventoryLabelX,
@@ -106,7 +106,7 @@ public class WhispererScreen
                 false
         );
         int component = this.font.width(ENCHANTS_LABEL);
-        guiGraphics.drawString(
+        guiGraphics.text(
                 this.font,
                 ENCHANTS_LABEL,
                 (TRADE_BUTTON_X - component / 2 + 48),
@@ -117,8 +117,9 @@ public class WhispererScreen
     }
 
     @Override
-    protected void renderBg(@NotNull GuiGraphics guiGraphics, float f, int i, int j) {
-        // No need for RenderSystem.setShaderColor in 1.21.6 - GuiGraphics handles this
+    public void extractBackground(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        super.extractBackground(guiGraphics, i, j, f);
+        // GuiGraphicsExtractor handles the shader color state
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
 
@@ -136,7 +137,7 @@ public class WhispererScreen
         );
     }
 
-    private void renderScroller(GuiGraphics guiGraphics, int x, int y, List<ImprinterRecipe> enchants) {
+    private void renderScroller(GuiGraphicsExtractor guiGraphics, int x, int y, List<ImprinterRecipe> enchants) {
         final int pageCount = enchants.size() - NUMBER_OF_OFFER_BUTTONS;
         if (pageCount > 0) {
             final int SCROLLER_MAX_Y = SCROLL_BAR_HEIGHT - SCROLLER_HEIGHT + 1; //113;
@@ -167,9 +168,8 @@ public class WhispererScreen
     }
 
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int i, int j, float f) {
-        this.renderBackground(guiGraphics, i, j, f);
-        super.render(guiGraphics, i, j, f);
+    public void extractContents(@NotNull GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
+        super.extractContents(guiGraphics, i, j, f);
         var enchants = this.menu.getEnchants();
         if (!enchants.isEmpty()) {
             final int paddingX = (this.width - this.imageWidth) / 2;
@@ -188,7 +188,7 @@ public class WhispererScreen
                 }
 
                 ItemStack costA = rule.getInput();
-                ItemStack result = rule.output;
+                ItemStack result = rule.getOutput();
 
                 guiGraphics.pose().pushMatrix();
                 guiGraphics.pose().translate(0.0F, 0.0F); // Remove z-coordinate for 2D
@@ -197,30 +197,30 @@ public class WhispererScreen
                 guiGraphics.pose().pushMatrix();
                 guiGraphics.pose().scale(0.5f, 0.5f);
 
-                guiGraphics.renderFakeItem(rule.icon, 2 * (left - 2), 2 * (decorateY + 7));
+                guiGraphics.fakeItem(rule.getIcon(), 2 * (left - 2), 2 * (decorateY + 7));
                 guiGraphics.pose().popMatrix();
 
                 this.renderAndDecorateCostA(guiGraphics, costA, left + 12, decorateY);
 
-                guiGraphics.renderFakeItem(
-                        WhisperRule.BLANK,
+                guiGraphics.fakeItem(
+                        WhisperRule.blank(),
                         paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
                         decorateY
                 );
-                guiGraphics.renderItemDecorations(
+                guiGraphics.itemDecorations(
                         this.font,
-                        WhisperRule.BLANK,
+                        WhisperRule.blank(),
                         paddingX + TRADE_BUTTON_X + SELL_ITEM_2_X,
                         decorateY
                 );
 
                 this.renderButtonArrows(guiGraphics, rule, paddingX, decorateY);
-                guiGraphics.renderFakeItem(
+                guiGraphics.fakeItem(
                         result,
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
                         decorateY
                 );
-                guiGraphics.renderItemDecorations(
+                guiGraphics.itemDecorations(
                         this.font,
                         result,
                         paddingX + TRADE_BUTTON_X + BUY_ITEM_X,
@@ -237,12 +237,11 @@ public class WhispererScreen
                 }
                 tradeOfferButton.visible = tradeOfferButton.index < this.menu.getEnchants().size();
             }
-            // RenderSystem.enableDepthTest() not needed in 1.21.6 - handled automatically
+            // Depth test handled automatically by the extract pipeline
         }
-        this.renderTooltip(guiGraphics, i, j);
     }
 
-    private void renderButtonArrows(GuiGraphics guiGraphics, WhisperRule rule, int x, int y) {
+    private void renderButtonArrows(GuiGraphicsExtractor guiGraphics, WhisperRule rule, int x, int y) {
         // No need for RenderSystem.enableBlend() in 1.21.6
         guiGraphics.blit(
                 RenderPipelines.GUI_TEXTURED,
@@ -258,9 +257,9 @@ public class WhispererScreen
         );
     }
 
-    private void renderAndDecorateCostA(GuiGraphics guiGraphics, ItemStack costA, int x, int y) {
-        guiGraphics.renderFakeItem(costA, x, y);
-        guiGraphics.renderItemDecorations(this.font, costA, x, y);
+    private void renderAndDecorateCostA(GuiGraphicsExtractor guiGraphics, ItemStack costA, int x, int y) {
+        guiGraphics.fakeItem(costA, x, y);
+        guiGraphics.itemDecorations(this.font, costA, x, y);
     }
 
     private boolean canScroll(int i) {
@@ -279,7 +278,8 @@ public class WhispererScreen
     }
 
     @Override
-    public boolean mouseDragged(double d, double e, int i, double f, double g) {
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double f, double g) {
+        final double e = mouseButtonEvent.y();
         int j = this.menu.getEnchants().size();
         if (this.isDragging) {
             int k = this.topPos + SCROLL_BAR_TOP_POS_Y;
@@ -290,11 +290,13 @@ public class WhispererScreen
             this.scrollOff = Mth.clamp((int) h, 0, m);
             return true;
         }
-        return super.mouseDragged(d, e, i, f, g);
+        return super.mouseDragged(mouseButtonEvent, f, g);
     }
 
     @Override
-    public boolean mouseClicked(double mx, double my, int i) {
+    public boolean mouseClicked(MouseButtonEvent mouseButtonEvent, boolean doubled) {
+        final double mx = mouseButtonEvent.x();
+        final double my = mouseButtonEvent.y();
         this.isDragging = false;
         final int paddingX = (this.width - this.imageWidth) / 2;
         final int paddingY = (this.height - this.imageHeight) / 2;
@@ -303,12 +305,12 @@ public class WhispererScreen
                 .size()) && mx > (paddingX + SCROLL_BAR_START_X) && mx < (paddingX + SCROLL_BAR_START_X + 6) && my > (paddingY + SCROLL_BAR_TOP_POS_Y) && my <= (paddingY + SCROLL_BAR_TOP_POS_Y + SCROLL_BAR_HEIGHT + 1)) {
             this.isDragging = true;
         }
-        return super.mouseClicked(mx, my, i);
+        return super.mouseClicked(mouseButtonEvent, doubled);
     }
 
     @Environment(value = EnvType.CLIENT)
     class WhispersButton
-            extends Button {
+            extends Button.Plain {
         final int index;
 
         public WhispersButton(int x, int y, int index, Button.OnPress onPress) {
@@ -321,7 +323,7 @@ public class WhispererScreen
             return this.index;
         }
 
-        public void renderToolTip(@NotNull GuiGraphics guiGraphics, int i, int j) {
+        public void renderToolTip( GuiGraphicsExtractor guiGraphics, int i, int j) {
             if (this.isHovered && WhispererScreen.this.menu
                     .getEnchants()
                     .size() > this.index + WhispererScreen.this.scrollOff) {
@@ -342,7 +344,7 @@ public class WhispererScreen
                 } else if (i > this.getX() + 65) {
                     ItemStack itemStack = WhispererScreen.this.menu
                             .getEnchants()
-                            .get(this.index + WhispererScreen.this.scrollOff).output;
+                            .get(this.index + WhispererScreen.this.scrollOff).getOutput();
                     guiGraphics.setTooltipForNextFrame(font, itemStack, i, j);
                 }
             }

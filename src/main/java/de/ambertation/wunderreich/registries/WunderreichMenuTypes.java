@@ -7,7 +7,7 @@ import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -32,7 +32,7 @@ public class WunderreichMenuTypes {
     );
 
     static <T extends AbstractContainerMenu> MenuType<T> registerSimple(
-            ResourceLocation id,
+            Identifier id,
             BiFunction<Integer, Inventory, T> factory
     ) {
         final MenuType.MenuSupplier<T> supplier = (syncId, inventory) -> factory.apply(syncId, inventory);
@@ -41,7 +41,7 @@ public class WunderreichMenuTypes {
     }
 
     @NotNull
-    private static <T extends AbstractContainerMenu> MenuType<T> registerType(ResourceLocation id, MenuType<T> type) {
+    private static <T extends AbstractContainerMenu> MenuType<T> registerType(Identifier id, MenuType<T> type) {
         return Registry.register(BuiltInRegistries.MENU, id, type);
     }
 

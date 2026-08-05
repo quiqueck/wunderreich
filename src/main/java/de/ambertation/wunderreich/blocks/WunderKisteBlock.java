@@ -284,7 +284,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
             @NotNull BlockState blockState,
             @NotNull BlockEntityType<T> blockEntityType
     ) {
-        return level.isClientSide ? createTickerHelper(
+        return level.isClientSide() ? createTickerHelper(
                 blockEntityType,
                 WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE,
                 WunderKisteBlockEntity::lidAnimateTick
@@ -351,7 +351,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 if (level.getBlockState(blockPos2)
                          .isRedstoneConductor(level, blockPos2)) {
                     return InteractionResult.SUCCESS;
-                } else if (level.isClientSide) {
+                } else if (level.isClientSide()) {
                     return InteractionResult.SUCCESS;
                 } else {
                     WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) entity;
@@ -423,7 +423,7 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     }
 
     @Override
-    public int getAnalogOutputSignal(@NotNull BlockState blockState, @NotNull Level level, @NotNull BlockPos blockPos) {
+    public int getAnalogOutputSignal( BlockState blockState,  Level level,  BlockPos blockPos,  Direction direction) {
         if (WunderreichRules.Wunderkiste.analogRedstoneOutput()) {
             WunderKisteContainer wunderKisteContainer = getContainer(blockState, level.getBlockEntity(blockPos), level);
             if (wunderKisteContainer != null) {
@@ -555,9 +555,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     public void buildLootTable(LootTableHelper.BlockLootProvider provider) {
         provider.dropSilkTouchOrElse(
                 this,
-                new LootTableHelper.BlockLootProvider.ItemDrop(Items.DIAMOND, 8),
-                new LootTableHelper.BlockLootProvider.ItemDrop(Blocks.QUARTZ_BRICKS, 5),
-                new LootTableHelper.BlockLootProvider.ItemDrop(Blocks.LAPIS_BLOCK, 3)
+                LootTableHelper.drop(Items.DIAMOND, 8),
+                LootTableHelper.drop(Blocks.QUARTZ_BRICKS, 5),
+                LootTableHelper.drop(Blocks.LAPIS_BLOCK, 3)
         );
     }
 

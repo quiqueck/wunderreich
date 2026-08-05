@@ -10,7 +10,7 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -81,7 +81,7 @@ public class WunderreichBlocks {
             BiFunction<Block, ResourceKey<Item>, BlockItem> itemCreator
     ) {
         if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
-            final ResourceLocation id = Wunderreich.ID(name);
+            final Identifier id = Wunderreich.ID(name);
             final ResourceKey<Block> key = ResourceKey.create(BuiltInRegistries.BLOCK.key(), id);
 
 
@@ -91,7 +91,7 @@ public class WunderreichBlocks {
 
 
             if (block.defaultBlockState().ignitedByLava() && FlammableBlockRegistry
-                    .getDefaultInstance().get(block).getBurnChance() == 0) {
+                    .getDefaultInstance().get(block).getBurnOdds() == 0) {
                 FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
             }
 
@@ -111,7 +111,7 @@ public class WunderreichBlocks {
         return null;
     }
 
-    public static void processBlock(ResourceLocation id, Block bl) {
+    public static void processBlock(Identifier id, Block bl) {
 
     }
 

@@ -6,7 +6,7 @@ import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
@@ -67,7 +67,7 @@ public class ClientPlugin implements REIClientPlugin {
             public Result handle(Context context) {
                 if (context.getMenu() instanceof WhispererMenu menu && context.getDisplay() instanceof ImprinterDisplay imprinterDisplay) {
                     if (context.isActuallyCrafting()) {
-                        ResourceLocation recipeId = imprinterDisplay.getDisplayLocation().orElse(null);
+                        Identifier recipeId = imprinterDisplay.getDisplayLocation().orElse(null);
                         ImprinterRecipe recipe = menu.getRuleByID(recipeId);
                         if (recipe != null) {
                             menu.tryMoveItems(recipe);

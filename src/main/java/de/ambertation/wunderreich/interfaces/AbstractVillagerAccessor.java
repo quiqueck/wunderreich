@@ -1,12 +1,14 @@
 package de.ambertation.wunderreich.interfaces;
 
-import net.minecraft.world.entity.npc.VillagerTrades;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.item.trading.MerchantOffers;
+import net.minecraft.world.item.trading.TradeSet;
 
 public interface AbstractVillagerAccessor {
-    void wunderreich_addOffersFromItemListings(
+    void wunderreich_addOffersFromTradeSet(
+            ServerLevel serverLevel,
             MerchantOffers merchantOffers,
-            VillagerTrades.ItemListing[] itemListings,
-            int i
+            ResourceKey<TradeSet> tradeSet
     );
 }

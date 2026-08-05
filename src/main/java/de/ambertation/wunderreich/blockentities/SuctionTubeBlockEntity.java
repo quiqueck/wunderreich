@@ -121,7 +121,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
     }
 
     public static void serverTick(Level level, BlockPos pos, BlockState state, SuctionTubeBlockEntity blockEntity) {
-        if (level.isClientSide) return;
+        if (level.isClientSide()) return;
         if (!blockEntity.didInitialize) {
             blockEntity.didInitialize = true;
             blockEntity.inputs.neighborChanged(level, pos);
@@ -759,7 +759,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
          * Redstone control allows selective disabling of specific source directions.
          */
         public boolean tryTransferItem(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
-            if (level == null || level.isClientSide) return false;
+            if (level == null || level.isClientSide()) return false;
             // Get container above (destination)
             Container destContainer = getContainerAt(level, worldPosition.above());
             if (destContainer == null) return false;

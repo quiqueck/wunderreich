@@ -11,14 +11,14 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SnowyDirtBlock;
+import net.minecraft.world.level.block.SnowyBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
 public class SnowyDirtSlab extends DirtSlabBlock implements ChangeRenderLayer {
-    public static final BooleanProperty SNOWY = SnowyDirtBlock.SNOWY;
+    public static final BooleanProperty SNOWY = SnowyBlock.SNOWY;
 
     public SnowyDirtSlab(Block baseBlock, ResourceKey<Block> key) {
         super(baseBlock, key);

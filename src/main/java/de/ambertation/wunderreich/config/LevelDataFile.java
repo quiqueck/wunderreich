@@ -3,7 +3,7 @@ package de.ambertation.wunderreich.config;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;

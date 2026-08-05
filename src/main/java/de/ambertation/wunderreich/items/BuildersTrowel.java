@@ -109,12 +109,12 @@ public class BuildersTrowel extends Item {
         BlockItem bi = (BlockItem) item.getItem();
 
         InteractionResult result = bi.place(bctx);
-        if (result == InteractionResult.CONSUME) {
+        if (result.consumesAction()) {
             if (p instanceof ServerPlayer sp) {
                 WunderreichAdvancements.USE_TROWEL.trigger(sp);
             }
             if (!p.getAbilities().instabuild) {
-                ctx.getItemInHand().hurtAndBreak(1, p, LivingEntity.getSlotForHand(ctx.getHand()));
+                ctx.getItemInHand().hurtAndBreak(1, p, ctx.getHand());
             }
         }
 

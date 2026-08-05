@@ -9,16 +9,22 @@ import de.ambertation.wunderreich.utils.WunderKisteDomainClient;
 import de.ambertation.wunderreich.utils.WunderKisteServerExtension;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
-import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.model.object.chest.ChestModel;
+import net.minecraft.client.renderer.MultiblockChestResources;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.blockentity.BrightnessCombiner;
 import net.minecraft.client.renderer.blockentity.ChestRenderer;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.blockentity.state.BlockEntityRenderState;
+import net.minecraft.client.renderer.feature.ModelFeatureRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractChestBlock;
@@ -26,59 +32,59 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.DoubleBlockCombiner;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.Vec3;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
+import it.unimi.dsi.fastutil.floats.Float2FloatFunction;
 import it.unimi.dsi.fastutil.ints.Int2IntFunction;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
+import org.jetbrains.annotations.Nullable;
 
 @Environment(value = EnvType.CLIENT)
-public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
+public class WunderkisteRenderer
+        implements BlockEntityRenderer<WunderKisteBlockEntity, WunderkisteRenderer.WunderKisteRenderState> {
 
-    private static final String BOTTOM = "bottom";
-    private static final String LID = "lid";
-    private static final String LOCK = "lock";
     private static final Vertex[] TOP_PLANE = {
             new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 13.0f / 16.0f),
             new Vertex(2.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 13.0f / 16.0f),
             new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 14.0f / 16.0f, 1.0f / 16.0f, 1.0f / 16.0f),
             new Vertex(14.0f / 16.0f, 10.001f / 16.0f, 2.0f / 16.0f, 13.0f / 16.0f, 1.0f / 16.0f)
     };
-    private final ModelPart lid;
-    private final ModelPart bottom;
-    private final ModelPart lock;
+
+    private final SpriteGetter sprites;
+    private final MultiblockChestResources<ChestModel> models;
 
     public WunderkisteRenderer(BlockEntityRendererProvider.Context context) {
-        super(context);
-
-        ModelPart modelPart = context.bakeLayer(ModelLayers.CHEST);
-        this.bottom = modelPart.getChild(BOTTOM);
-        this.lid = modelPart.getChild(LID);
-        this.lock = modelPart.getChild(LOCK);
+        this.sprites = context.sprites();
+        this.models = ChestRenderer.LAYERS.map(layer -> new ChestModel(context.bakeLayer(layer)));
     }
 
-
-    private static Material getTopMaterial(WunderKisteDomain d) {
+    private static SpriteId getTopSprite(WunderKisteDomain d) {
         return d.useMonochromeFallback
                 ? WunderKisteDomainClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
                 : WunderKisteDomainClient.WUNDER_KISTE_TOP_LOCATION;
     }
 
     @Override
-    public void render(
+    public WunderKisteRenderState createRenderState() {
+        return new WunderKisteRenderState();
+    }
+
+    @Override
+    public void extractRenderState(
             WunderKisteBlockEntity blockEntity,
-            float f,
-            PoseStack poseStack,
-            MultiBufferSource multiBufferSource,
-            int i,
-            int overlayCoords,
-            Vec3 vec3
+            WunderKisteRenderState state,
+            float partialTick,
+            Vec3 cameraPos,
+            @Nullable ModelFeatureRenderer.CrumblingOverlay crumbling
     ) {
+        BlockEntityRenderState.extractBase(blockEntity, state, crumbling);
+
         final Level level = blockEntity.getLevel();
         final boolean renderInWorld = level != null;
 
@@ -86,110 +92,107 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         if (blockState == null) blockState = WunderreichBlocks.WUNDER_KISTE.defaultBlockState();
         if (!renderInWorld) blockState = blockState.setValue(ChestBlock.FACING, Direction.SOUTH);
 
-        if ((blockState.getBlock() instanceof AbstractChestBlock abstractChestBlock)) {
-            final WunderKisteDomain domain = WunderreichRules.Wunderkiste.showColors()
-                    ? WunderKisteServerExtension.getDomain(blockState)
-                    : WunderKisteBlock.DEFAULT_DOMAIN;
+        state.facing = blockState.getValue(ChestBlock.FACING);
+        state.type = blockState.hasProperty(ChestBlock.TYPE)
+                ? blockState.getValue(ChestBlock.TYPE)
+                : ChestType.SINGLE;
+        state.domain = WunderreichRules.Wunderkiste.showColors()
+                ? WunderKisteServerExtension.getDomain(blockState)
+                : WunderKisteBlock.DEFAULT_DOMAIN;
 
-            poseStack.pushPose();
-            float g = blockState.getValue(ChestBlock.FACING).toYRot();
-            poseStack.translate(0.5, 0.5, 0.5);
-            poseStack.mulPose(Axis.YP.rotationDegrees(-g));
-            poseStack.translate(-0.5, -0.5, -0.5);
+        DoubleBlockCombiner.NeighborCombineResult<? extends ChestBlockEntity> combineResult;
+        if (renderInWorld && blockState.getBlock() instanceof AbstractChestBlock<?> abstractChestBlock) {
+            combineResult = abstractChestBlock.combine(blockState, level, blockEntity.getBlockPos(), true);
+        } else {
+            combineResult = DoubleBlockCombiner.Combiner::acceptNone;
+        }
 
-            DoubleBlockCombiner.NeighborCombineResult<ChestBlockEntity> neighborCombineResult = renderInWorld
-                    ? abstractChestBlock.combine(blockState, level, blockEntity.getBlockPos(), true)
-                    : DoubleBlockCombiner.Combiner::acceptNone;
-            float openness = neighborCombineResult.apply(ChestBlock.opennessCombiner(blockEntity)).get(f);
-            openness = 1.0f - openness;
-            openness = 1.0f - openness * openness * openness;
-
-            final int uv2 = ((Int2IntFunction) neighborCombineResult.apply(new BrightnessCombiner())).applyAsInt(i);
-            Material material = WunderKisteDomainClient.getMaterialFor(domain);
-            VertexConsumer vertexConsumer = material.buffer(multiBufferSource, RenderType::entityCutout);
-            this.render(
-                    poseStack,
-                    vertexConsumer,
-                    this.lid,
-                    this.lock,
-                    this.bottom,
-                    openness,
-                    uv2,
-                    overlayCoords,
-                    domain.overlayColor
-            );
-
-            if (openness > 0) {
-                material = getTopMaterial(domain);
-                vertexConsumer = material.buffer(multiBufferSource, RenderType::entitySolid);
-                this.renderAnimTop(
-                        poseStack,
-                        vertexConsumer,
-                        this.bottom,
-                        uv2,
-                        overlayCoords,
-                        domain.color
-                );
-            }
-            poseStack.popPose();
+        state.open = ((Float2FloatFunction) combineResult.apply(ChestBlock.opennessCombiner(blockEntity))).get(partialTick);
+        if (state.type != ChestType.SINGLE) {
+            state.lightCoords = ((Int2IntFunction) combineResult.apply(new BrightnessCombiner())).applyAsInt(state.lightCoords);
         }
     }
 
-    private void render(
+    @Override
+    public void submit(
+            WunderKisteRenderState state,
             PoseStack poseStack,
-            VertexConsumer vertexConsumer,
-            ModelPart lidPart,
-            ModelPart lockPart,
-            ModelPart bottomPart,
-            float f,
-            int uv2,
-            int overlayCoord,
-            int color
+            SubmitNodeCollector submitNodeCollector,
+            CameraRenderState camera
     ) {
-        lockPart.xRot = lidPart.xRot = -(f * 1.5707964f);
-
-        lidPart.render(poseStack, vertexConsumer, uv2, overlayCoord, color);
-        lockPart.render(poseStack, vertexConsumer, uv2, overlayCoord, color);
-        bottomPart.render(poseStack, vertexConsumer, uv2, overlayCoord, color);
-    }
-
-    private void renderAnimTop(
-            PoseStack poseStack,
-            VertexConsumer vertexConsumer,
-            ModelPart bottomPart,
-            int uv2,
-            int overlayCords,
-            int color
-    ) {
+        final WunderKisteDomain domain = state.domain == null ? WunderKisteBlock.DEFAULT_DOMAIN : state.domain;
 
         poseStack.pushPose();
-        bottomPart.translateAndRotate(poseStack);
-        final PoseStack.Pose last = poseStack.last();
-        final Matrix4f pose = last.pose();
-        final Matrix3f npose = last.normal();
+        poseStack.mulPose(ChestRenderer.modelTransformation(state.facing));
 
-        Vector3f normal = new Vector3f(0.0f, 1.0f, 0.0f); //==Axis.YP
-        normal.mul(npose);
+        float open = state.open;
+        open = 1.0f - open;
+        open = 1.0f - open * open * open;
 
-        for (Vertex v : TOP_PLANE) {
-            Vector4f vector4f = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f);
-            vector4f.mul(pose);
-            vertexConsumer.addVertex(
-                    vector4f.x(),
-                    vector4f.y(),
-                    vector4f.z(),
-                    color,
-                    v.u,
-                    v.v,
-                    overlayCords,
-                    uv2,
-                    normal.x(),
-                    normal.y(),
-                    normal.z()
-            );
+        // Colored chest body: per-domain sprite, tinted with the domain overlay color.
+        final ChestModel model = this.models.select(state.type);
+        submitNodeCollector.submitModel(
+                model,
+                open,
+                poseStack,
+                state.lightCoords,
+                OverlayTexture.NO_OVERLAY,
+                domain.overlayColor,
+                WunderKisteDomainClient.getSpriteFor(domain),
+                this.sprites,
+                0,
+                state.breakProgress
+        );
+
+        // Colored top plane overlay (only visible while the lid is opening).
+        if (open > 0) {
+            submitTopPlane(state, poseStack, submitNodeCollector, domain);
         }
 
         poseStack.popPose();
+    }
+
+    private void submitTopPlane(
+            WunderKisteRenderState state,
+            PoseStack poseStack,
+            SubmitNodeCollector submitNodeCollector,
+            WunderKisteDomain domain
+    ) {
+        final SpriteId topId = getTopSprite(domain);
+        final TextureAtlasSprite topSprite = this.sprites.get(topId);
+        final RenderType renderType = RenderTypes.entitySolid(topId.atlasLocation());
+        final int color = domain.color;
+        final int light = state.lightCoords;
+
+        submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, vertexConsumer) -> {
+            final Matrix4f matrix = pose.pose();
+            final Vector3f normal = pose.transformNormal(0.0f, 1.0f, 0.0f, new Vector3f());
+            for (Vertex v : TOP_PLANE) {
+                Vector4f p = new Vector4f(v.pos.x(), v.pos.y(), v.pos.z(), 1.0f).mul(matrix);
+                vertexConsumer.addVertex(
+                        p.x(),
+                        p.y(),
+                        p.z(),
+                        color,
+                        topSprite.getU(v.u),
+                        topSprite.getV(v.v),
+                        OverlayTexture.NO_OVERLAY,
+                        light,
+                        normal.x(),
+                        normal.y(),
+                        normal.z()
+                );
+            }
+        });
+    }
+
+    @Environment(value = EnvType.CLIENT)
+    public static class WunderKisteRenderState extends BlockEntityRenderState {
+        public ChestType type = ChestType.SINGLE;
+        public Direction facing = Direction.SOUTH;
+        public float open;
+        @Nullable
+        public WunderKisteDomain domain;
     }
 
     @Environment(value = EnvType.CLIENT)
@@ -199,13 +202,9 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
         public final float v;
 
         public Vertex(float f, float g, float h, float i, float j) {
-            this(new Vector3f(f, g, h), i, j);
-        }
-
-        public Vertex(Vector3f vector3f, float f, float g) {
-            this.pos = vector3f;
-            this.u = f;
-            this.v = g;
+            this.pos = new Vector3f(f, g, h);
+            this.u = i;
+            this.v = j;
         }
     }
 }

@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 
 import com.google.gson.JsonArray;
@@ -23,7 +23,7 @@ public class AdvancementsJsonBuilder {
     private static final ThreadLocal<AdvancementsJsonBuilder> BUILDER = ThreadLocal.withInitial(AdvancementsJsonBuilder::new);
     private final Map<String, Criteria> criteria = new HashMap<>();
     private final List<Reward> rewards = new ArrayList<>(0);
-    public ResourceLocation ID;
+    public Identifier ID;
     public AdvancementType type;
     private String parent;
     private Display display;
@@ -79,12 +79,12 @@ public class AdvancementsJsonBuilder {
         return create(item, type, null).awardRecipe(item).gotRecipeCriteria("has_the_recipe", item);
     }
 
-    private AdvancementsJsonBuilder reset(ResourceLocation id, AdvancementType type) {
+    private AdvancementsJsonBuilder reset(Identifier id, AdvancementType type) {
         if (type == AdvancementType.RECIPE_DECORATIONS) {
-            ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/decorations/" + id.getPath());
+            ID = Identifier.fromNamespaceAndPath(id.getNamespace(), "recipes/decorations/" + id.getPath());
             parent = "minecraft:recipes/root";
         } else if (type == AdvancementType.RECIPE_TOOL) {
-            ID = ResourceLocation.fromNamespaceAndPath(id.getNamespace(), "recipes/tools/" + id.getPath());
+            ID = Identifier.fromNamespaceAndPath(id.getNamespace(), "recipes/tools/" + id.getPath());
             parent = "minecraft:recipes/root";
         } else {
             ID = id;
@@ -100,7 +100,7 @@ public class AdvancementsJsonBuilder {
         return this;
     }
 
-    public AdvancementsJsonBuilder parent(ResourceLocation parent) {
+    public AdvancementsJsonBuilder parent(Identifier parent) {
         this.parent = parent.toString();
         return this;
     }
@@ -160,7 +160,7 @@ public class AdvancementsJsonBuilder {
         return this;
     }
 
-    public ResourceLocation register() {
+    public Identifier register() {
         if (!canBuild) return null;
 
         JsonElement res = build();

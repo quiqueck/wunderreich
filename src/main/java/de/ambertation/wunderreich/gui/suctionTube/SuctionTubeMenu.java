@@ -12,7 +12,7 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -106,7 +106,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
         }
 
         // Initialize container connection status
-        if (!level.isClientSide && blockEntity != null) {
+        if (!level.isClientSide() && blockEntity != null) {
             // Server-side: check actual container connections
             for (SuctionTubeBlockEntity.SuctionInput input : blockEntity.getInputs().getInputs()) {
                 BlockPos checkPos = pos.relative(input.inDirection);
@@ -236,7 +236,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      * This is necessary (not just a defensive nicety) because several vanilla dispatch
      * branches cannot be neutralized purely via {@link Slot} overrides:
      * <ul>
-     *   <li>{@code ClickType.SWAP} (pressing 1-9/F while hovering a slot) reads
+     *   <li>{@code ContainerInput.SWAP} (pressing 1-9/F while hovering a slot) reads
      *   {@code target.getItem()} and hands it straight to the player's hotbar, gated only by
      *   {@code Slot#mayPickup} - there is no hook to intercept the hand-off itself.</li>
      *   <li>Clicking a filled slot while holding a <em>different</em> item runs a "swap"
@@ -249,7 +249,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      * stacks are read but never mutated.
      */
     @Override
-    public void clicked(int slotIndex, int buttonNum, ClickType containerInput, Player player) {
+    public void clicked(int slotIndex, int buttonNum, ContainerInput containerInput, Player player) {
         if (slotIndex >= FILTER_SLOTS_START && slotIndex < FILTER_SLOTS_START + FILTER_SLOTS_COUNT) {
             handleFilterSlotClick(slotIndex, containerInput, player);
             return;
@@ -262,10 +262,10 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
      * displayed template item as appropriate, but never mutates the player's carried item or
      * inventory contents - see {@link #clicked} for why this bypasses vanilla dispatch.
      */
-    private void handleFilterSlotClick(int slotIndex, ClickType containerInput, Player player) {
+    private void handleFilterSlotClick(int slotIndex, ContainerInput containerInput, Player player) {
         Slot slot = this.slots.get(slotIndex);
 
-        if (containerInput == ClickType.PICKUP) {
+        if (containerInput == ContainerInput.PICKUP) {
             ItemStack carried = this.getCarried();
             if (!carried.isEmpty()) {
                 // Set (or overwrite) the template with a single copy of the held item's type.
@@ -278,7 +278,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 // Nothing is ever handed back, since nothing was ever really taken.
                 slot.set(ItemStack.EMPTY);
             }
-        } else if (containerInput == ClickType.QUICK_MOVE || containerInput == ClickType.THROW) {
+        } else if (containerInput == ContainerInput.QUICK_MOVE || containerInput == ContainerInput.THROW) {
             // Shift-click / drop gesture: just clear the template, never move a real item.
             if (slot.hasItem()) {
                 slot.set(ItemStack.EMPTY);
@@ -300,7 +300,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
         super.removed(player);
 
         // Save filter data to block entity when menu is closed
-        if (blockEntity != null && !player.level().isClientSide) {
+        if (blockEntity != null && !player.level().isClientSide()) {
             for (Direction direction : SuctionTubeBlockEntity.DIRECTIONS) {
                 Container filterContainer = filterContainers.get(direction);
                 if (filterContainer != null) {

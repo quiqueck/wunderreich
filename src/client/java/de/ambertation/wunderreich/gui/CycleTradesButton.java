@@ -7,7 +7,7 @@ import de.ambertation.wunderreich.network.CycleTradesMessage;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.gui.screens.inventory.MerchantScreen;
@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MerchantMenu;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -30,9 +30,9 @@ import java.util.List;
 import org.jetbrains.annotations.NotNull;
 
 public class CycleTradesButton extends Button {
-    private static final ResourceLocation PAGE_FORWARD_HIGHLIGHTED_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier PAGE_FORWARD_HIGHLIGHTED_SPRITE = Identifier.withDefaultNamespace(
             "widget/page_forward_highlighted");
-    private static final ResourceLocation PAGE_FORWARD_SPRITE = ResourceLocation.withDefaultNamespace(
+    private static final Identifier PAGE_FORWARD_SPRITE = Identifier.withDefaultNamespace(
             "widget/page_forward");
 
     private static final int HALF_WIDTH = 11;
@@ -79,10 +79,10 @@ public class CycleTradesButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    protected void extractContents(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTicks) {
         visible = canUse && screen.getMenu().showProgressBar() && screen.getMenu().getTraderXp() <= 0;
 
-        ResourceLocation arrowLocation = (this.isHovered()
+        Identifier arrowLocation = (this.isHovered()
                 ? PAGE_FORWARD_HIGHLIGHTED_SPRITE
                 : PAGE_FORWARD_SPRITE);
 

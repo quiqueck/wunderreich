@@ -114,7 +114,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
             BlockState state,
             BlockEntityType<T> blockEntityType
     ) {
-        return level.isClientSide
+        return level.isClientSide()
                 ? null
                 : createTickerHelper(
                         blockEntityType,
@@ -172,7 +172,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
             Player player,
             BlockHitResult hitResult
     ) {
-        if (!level.isClientSide && player instanceof ServerPlayer serverPlayer) {
+        if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
             BlockEntity blockEntity = level.getBlockEntity(pos);
             if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {
                 suctionTube.openMenu(serverPlayer);
@@ -194,7 +194,7 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
     }
 
     @Override
-    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos) {
+    protected int getAnalogOutputSignal(BlockState blockState, Level level, BlockPos blockPos, Direction direction) {
         if (!WunderreichRules.Wunderkiste.analogRedstoneOutputOnSuction()) return 0;
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
         if (blockEntity instanceof SuctionTubeBlockEntity suctionTube) {

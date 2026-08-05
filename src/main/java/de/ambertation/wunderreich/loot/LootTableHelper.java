@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -13,7 +13,6 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
 import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
@@ -21,9 +20,14 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.List;
 
 public class LootTableHelper {
+    public record Drop(ItemLike item, int count) {}
+
+    public static Drop drop(ItemLike item, int count) {
+        return new Drop(item, count);
+    }
+
     public static class BlockLootProvider {
         private final @NotNull BlockLootSubProvider provider;
 
@@ -53,25 +57,11 @@ public class LootTableHelper {
             provider.add(block, createSlabItemTableWithSilkTouch(block, orElseBlock));
         }
 
-        public record ItemDrop(ItemLike item, int count) {}
-
         public void dropSilkTouchOrElse(
                 Block block,
-                ItemLike blockWithoutSilkTouch,
-                int count
+                Drop... elseDrops
         ) {
-            dropSilkTouchOrElse(block, new ItemDrop(blockWithoutSilkTouch, count));
-        }
-
-        public void dropSilkTouchOrElse(
-                Block block,
-                ItemDrop... drops
-        ) {
-            provider.add(
-                    block, createSilkTouchOrElse(
-                            block, List.of(drops)
-                    )
-            );
+            provider.add(block, createSilkTouchOrElse(block, elseDrops));
         }
 
         private LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>>
@@ -122,29 +112,31 @@ public class LootTableHelper {
 
         private LootTable.Builder createSilkTouchOrElse(
                 Block blockWithSilkTouch,
-                List<ItemDrop> drops
+                Drop[] elseDrops
         ) {
-            LootPoolEntryContainer.Builder<?> otherwise = null;
-            for (ItemDrop drop : drops) {
-                LootPoolEntryContainer.Builder<?> entry = provider.applyExplosionDecay(
-                        drop.item(),
-                        LootItem.lootTableItem(drop.item())
-                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
+            LootPool.Builder elsePool = LootPool.lootPool()
+                                                 .when(provider.doesNotHaveSilkTouch())
+                                                 .setRolls(ConstantValue.exactly(1.0F));
+            for (Drop drop : elseDrops) {
+                elsePool.add(
+                        provider.applyExplosionDecay(
+                                drop.item(),
+                                LootItem.lootTableItem(drop.item())
+                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
+                        )
                 );
-                otherwise = otherwise == null ? entry : otherwise.append(entry);
             }
 
             return LootTable.lootTable()
+                            .withPool(elsePool)
                             .withPool(
                                     LootPool.lootPool()
+                                            .when(provider.hasSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
-                                            .add(
-                                                    provider.applyExplosionDecay(
-                                                                    blockWithSilkTouch,
-                                                                    LootItem.lootTableItem(blockWithSilkTouch)
-                                                            ).when(provider.hasSilkTouch())
-                                                            .otherwise(otherwise)
-                                            )
+                                            .add(provider.applyExplosionDecay(
+                                                    blockWithSilkTouch,
+                                                    LootItem.lootTableItem(blockWithSilkTouch)
+                                            ))
                             );
         }
     }

@@ -11,10 +11,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.Services;
 import net.minecraft.server.WorldStem;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.progress.ChunkProgressListener;
-import net.minecraft.server.level.progress.ChunkProgressListenerFactory;
+import net.minecraft.server.level.progress.LevelLoadListener;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.gamerules.GameRules;
 import net.minecraft.world.level.storage.LevelStorageSource.LevelStorageAccess;
 
 import org.spongepowered.asm.mixin.Final;
@@ -26,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.net.Proxy;
 import java.util.Map;
+import java.util.Optional;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin implements WunderKisteExtensionProvider {
@@ -46,10 +47,12 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
             LevelStorageAccess levelStorageAccess,
             PackRepository packRepository,
             WorldStem worldStem,
+            Optional<GameRules> gameRules,
             Proxy proxy,
             DataFixer dataFixer,
             Services services,
-            ChunkProgressListenerFactory chunkProgressListenerFactory,
+            LevelLoadListener levelLoadListener,
+            boolean bl,
             CallbackInfo ci
     ) {
         WunderKisteDomain.ID.loadNewLevel();
@@ -63,7 +66,7 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
     private Map<ResourceKey<Level>, ServerLevel> levels;
 
     @Inject(method = "createLevels", at = @At("TAIL"))
-    public void wunderreich_create(ChunkProgressListener chunkProgressListener, CallbackInfo ci) {
+    public void wunderreich_create(CallbackInfo ci) {
         wunderkiste.onLevelsCreated(levels);
     }
 
