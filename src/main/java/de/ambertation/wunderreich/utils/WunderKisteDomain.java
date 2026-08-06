@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.items.WunderKisteItem;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
 import com.mojang.serialization.Codec;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.network.chat.TextColor;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
@@ -25,22 +26,22 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 public enum WunderKisteDomain implements StringRepresentable {
-    WHITE(0, "white", Items.WHITE_DYE, 0xFFFFFFFF, false, "wunder_kiste"),
-    ORANGE(1, "orange", Items.ORANGE_DYE, 0xFFF9932B, true),
-    MAGENTA(2, "magenta", Items.MAGENTA_DYE, 0xFFD660D1, true),
-    LIGHT_BLUE(3, "light_blue", Items.LIGHT_BLUE_DYE, 0xFF5CB7E7, false),
-    YELLOW(4, "yellow", Items.YELLOW_DYE, 0xFFFED93F, true),
-    LIME(5, "lime", Items.LIME_DYE, 0xFF86CC26, true),
-    PINK(6, "pink", Items.PINK_DYE, 0xFFF4B2C9, true),
-    GRAY(7, "gray", Items.GRAY_DYE, 0xFF474F52, false),
-    LIGHT_GRAY(8, "light_gray", Items.LIGHT_GRAY_DYE, 0xFF9D9D97, false),
-    CYAN(9, "cyan", Items.CYAN_DYE, 0xFF169B9C, true),
-    PURPLE(10, "purple", Items.PURPLE_DYE, 0xFF9743CD, true),
-    BLUE(11, "blue", Items.BLUE_DYE, 0xFF2C2F90, false),
-    BROWN(12, "brown", Items.BROWN_DYE, 0xFF835432, true),
-    GREEN(13, "green", Items.GREEN_DYE, 0xFF658619, true),
-    RED(14, "red", Items.RED_DYE, 0xFFB8342C, true),
-    BLACK(15, "black", Items.BLACK_DYE, 0xFF252529, false);
+    WHITE(0, "white", Items.DYE.pick(DyeColor.WHITE), 0xFFFFFFFF, false, "wunder_kiste"),
+    ORANGE(1, "orange", Items.DYE.pick(DyeColor.ORANGE), 0xFFF9932B, true),
+    MAGENTA(2, "magenta", Items.DYE.pick(DyeColor.MAGENTA), 0xFFD660D1, true),
+    LIGHT_BLUE(3, "light_blue", Items.DYE.pick(DyeColor.LIGHT_BLUE), 0xFF5CB7E7, false),
+    YELLOW(4, "yellow", Items.DYE.pick(DyeColor.YELLOW), 0xFFFED93F, true),
+    LIME(5, "lime", Items.DYE.pick(DyeColor.LIME), 0xFF86CC26, true),
+    PINK(6, "pink", Items.DYE.pick(DyeColor.PINK), 0xFFF4B2C9, true),
+    GRAY(7, "gray", Items.DYE.pick(DyeColor.GRAY), 0xFF474F52, false),
+    LIGHT_GRAY(8, "light_gray", Items.DYE.pick(DyeColor.LIGHT_GRAY), 0xFF9D9D97, false),
+    CYAN(9, "cyan", Items.DYE.pick(DyeColor.CYAN), 0xFF169B9C, true),
+    PURPLE(10, "purple", Items.DYE.pick(DyeColor.PURPLE), 0xFF9743CD, true),
+    BLUE(11, "blue", Items.DYE.pick(DyeColor.BLUE), 0xFF2C2F90, false),
+    BROWN(12, "brown", Items.DYE.pick(DyeColor.BROWN), 0xFF835432, true),
+    GREEN(13, "green", Items.DYE.pick(DyeColor.GREEN), 0xFF658619, true),
+    RED(14, "red", Items.DYE.pick(DyeColor.RED), 0xFFB8342C, true),
+    BLACK(15, "black", Items.DYE.pick(DyeColor.BLACK), 0xFF252529, false);
 
     public static final IntFunction<WunderKisteDomain> BY_ID = ByIdMap.continuous(domain -> domain.id, WunderKisteDomain.values(), ByIdMap.OutOfBoundsStrategy.ZERO);
     public static final Codec<WunderKisteDomain> CODEC = StringRepresentable.fromEnum(WunderKisteDomain::values);

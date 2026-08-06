@@ -5,7 +5,6 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,7 +19,6 @@ public class GrassSlab extends SpreadableSnowyDirtSlab {
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.SLABS);
-        itemTags.accept(ItemTags.SLABS);
 
         blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
     }

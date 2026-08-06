@@ -4,9 +4,10 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 
-import net.minecraft.advancements.Criterion;
-import net.minecraft.advancements.CriterionTrigger;
-import net.minecraft.advancements.criterion.PlayerTrigger;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.advancements.triggers.Criterion;
+import net.minecraft.advancements.triggers.CriterionTrigger;
+import net.minecraft.advancements.triggers.PlayerTrigger;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -121,7 +122,7 @@ public class WunderreichAdvancements {
             Identifier colored_wunderkiste = AdvancementsJsonBuilder
                     .create("wunderkiste_color")
                     .startDisplay(
-                            Items.RED_DYE,
+                            Items.DYE.pick(DyeColor.RED),
                             b -> b.showToast().visible().announceToChat().goal()
                     )
                     .parent(opened_wunderkiste)

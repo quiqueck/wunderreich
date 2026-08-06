@@ -6,6 +6,7 @@ import de.ambertation.wunderreich.blocks.StairBlock;
 import de.ambertation.wunderreich.blocks.WoolStairBlock;
 import de.ambertation.wunderreich.config.Configs;
 
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -17,98 +18,98 @@ import java.util.function.BiFunction;
 public class WunderreichStairBlocks {
     public static final Block PINK_CONCRETE_STAIRS = registerStairs(
             "pink_concrete_stairs",
-            Blocks.PINK_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.PINK),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     // Stairs
     public static final Block WHITE_CONCRETE_STAIRS = registerStairs(
             "white_concrete_stairs",
-            Blocks.WHITE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.WHITE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_GRAY_CONCRETE_STAIRS = registerStairs(
             "light_gray_concrete_stairs",
-            Blocks.LIGHT_GRAY_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIGHT_GRAY),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GRAY_CONCRETE_STAIRS = registerStairs(
             "gray_concrete_stairs",
-            Blocks.GRAY_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.GRAY),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLACK_CONCRETE_STAIRS = registerStairs(
             "black_concrete_stairs",
-            Blocks.BLACK_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BLACK),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BROWN_CONCRETE_STAIRS = registerStairs(
             "brown_concrete_stairs",
-            Blocks.BROWN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BROWN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block RED_CONCRETE_STAIRS = registerStairs(
             "red_concrete_stairs",
-            Blocks.RED_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.RED),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block ORANGE_CONCRETE_STAIRS = registerStairs(
             "orange_concrete_stairs",
-            Blocks.ORANGE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.ORANGE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block YELLOW_CONCRETE_STAIRS = registerStairs(
             "yellow_concrete_stairs",
-            Blocks.YELLOW_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.YELLOW),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIME_CONCRETE_STAIRS = registerStairs(
             "lime_concrete_stairs",
-            Blocks.LIME_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIME),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GREEN_CONCRETE_STAIRS = registerStairs(
             "green_concrete_stairs",
-            Blocks.GREEN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.GREEN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block CYAN_CONCRETE_STAIRS = registerStairs(
             "cyan_concrete_stairs",
-            Blocks.CYAN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.CYAN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_BLUE_CONCRETE_STAIRS = registerStairs(
             "light_blue_concrete_stairs",
-            Blocks.LIGHT_BLUE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLUE_CONCRETE_STAIRS = registerStairs(
             "blue_concrete_stairs",
-            Blocks.BLUE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BLUE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block PURPLE_CONCRETE_STAIRS = registerStairs(
             "purple_concrete_stairs",
-            Blocks.PURPLE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.PURPLE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block MAGENTA_CONCRETE_STAIRS = registerStairs(
             "magenta_concrete_stairs",
-            Blocks.MAGENTA_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.MAGENTA),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
@@ -116,97 +117,97 @@ public class WunderreichStairBlocks {
 
     public static final Block WHITE_TERRACOTTA_STAIRS = registerStairs(
             "white_terracotta_stairs",
-            Blocks.WHITE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.WHITE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_GRAY_TERRACOTTA_STAIRS = registerStairs(
             "light_gray_terracotta_stairs",
-            Blocks.LIGHT_GRAY_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_GRAY),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GRAY_TERRACOTTA_STAIRS = registerStairs(
             "gray_terracotta_stairs",
-            Blocks.GRAY_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.GRAY),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLACK_TERRACOTTA_STAIRS = registerStairs(
             "black_terracotta_stairs",
-            Blocks.BLACK_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BLACK),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BROWN_TERRACOTTA_STAIRS = registerStairs(
             "brown_terracotta_stairs",
-            Blocks.BROWN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BROWN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block RED_TERRACOTTA_STAIRS = registerStairs(
             "red_terracotta_stairs",
-            Blocks.RED_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.RED),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block ORANGE_TERRACOTTA_STAIRS = registerStairs(
             "orange_terracotta_stairs",
-            Blocks.ORANGE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.ORANGE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block YELLOW_TERRACOTTA_STAIRS = registerStairs(
             "yellow_terracotta_stairs",
-            Blocks.YELLOW_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.YELLOW),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIME_TERRACOTTA_STAIRS = registerStairs(
             "lime_terracotta_stairs",
-            Blocks.LIME_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIME),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GREEN_TERRACOTTA_STAIRS = registerStairs(
             "green_terracotta_stairs",
-            Blocks.GREEN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.GREEN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block CYAN_TERRACOTTA_STAIRS = registerStairs(
             "cyan_terracotta_stairs",
-            Blocks.CYAN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.CYAN),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_BLUE_TERRACOTTA_STAIRS = registerStairs(
             "light_blue_terracotta_stairs",
-            Blocks.LIGHT_BLUE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_BLUE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLUE_TERRACOTTA_STAIRS = registerStairs(
             "blue_terracotta_stairs",
-            Blocks.BLUE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block PURPLE_TERRACOTTA_STAIRS = registerStairs(
             "purple_terracotta_stairs",
-            Blocks.PURPLE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block MAGENTA_TERRACOTTA_STAIRS = registerStairs(
             "magenta_terracotta_stairs",
-            Blocks.MAGENTA_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.MAGENTA),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block PINK_TERRACOTTA_STAIRS = registerStairs(
             "pink_terracotta_stairs",
-            Blocks.PINK_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.PINK),
             StairBlock::new,
             Configs.MAIN.addStairs.get()
     );
@@ -214,97 +215,97 @@ public class WunderreichStairBlocks {
 
     public static final Block WHITE_WOOL_STAIRS = registerStairs(
             "white_wool_stairs",
-            Blocks.WHITE_WOOL,
+            Blocks.WOOL.pick(DyeColor.WHITE),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_GRAY_WOOL_STAIRS = registerStairs(
             "light_gray_wool_stairs",
-            Blocks.LIGHT_GRAY_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIGHT_GRAY),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GRAY_WOOL_STAIRS = registerStairs(
             "gray_wool_stairs",
-            Blocks.GRAY_WOOL,
+            Blocks.WOOL.pick(DyeColor.GRAY),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLACK_WOOL_STAIRS = registerStairs(
             "black_wool_stairs",
-            Blocks.BLACK_WOOL,
+            Blocks.WOOL.pick(DyeColor.BLACK),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BROWN_WOOL_STAIRS = registerStairs(
             "brown_wool_stairs",
-            Blocks.BROWN_WOOL,
+            Blocks.WOOL.pick(DyeColor.BROWN),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block RED_WOOL_STAIRS = registerStairs(
             "red_wool_stairs",
-            Blocks.RED_WOOL,
+            Blocks.WOOL.pick(DyeColor.RED),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block ORANGE_WOOL_STAIRS = registerStairs(
             "orange_wool_stairs",
-            Blocks.ORANGE_WOOL,
+            Blocks.WOOL.pick(DyeColor.ORANGE),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block YELLOW_WOOL_STAIRS = registerStairs(
             "yellow_wool_stairs",
-            Blocks.YELLOW_WOOL,
+            Blocks.WOOL.pick(DyeColor.YELLOW),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIME_WOOL_STAIRS = registerStairs(
             "lime_wool_stairs",
-            Blocks.LIME_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIME),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block GREEN_WOOL_STAIRS = registerStairs(
             "green_wool_stairs",
-            Blocks.GREEN_WOOL,
+            Blocks.WOOL.pick(DyeColor.GREEN),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block CYAN_WOOL_STAIRS = registerStairs(
             "cyan_wool_stairs",
-            Blocks.CYAN_WOOL,
+            Blocks.WOOL.pick(DyeColor.CYAN),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block LIGHT_BLUE_WOOL_STAIRS = registerStairs(
             "light_blue_wool_stairs",
-            Blocks.LIGHT_BLUE_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIGHT_BLUE),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block BLUE_WOOL_STAIRS = registerStairs(
             "blue_wool_stairs",
-            Blocks.BLUE_WOOL,
+            Blocks.WOOL.pick(DyeColor.BLUE),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block PURPLE_WOOL_STAIRS = registerStairs(
             "purple_wool_stairs",
-            Blocks.PURPLE_WOOL,
+            Blocks.WOOL.pick(DyeColor.PURPLE),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block MAGENTA_WOOL_STAIRS = registerStairs(
             "magenta_wool_stairs",
-            Blocks.MAGENTA_WOOL,
+            Blocks.WOOL.pick(DyeColor.MAGENTA),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
     public static final Block PINK_WOOL_STAIRS = registerStairs(
             "pink_wool_stairs",
-            Blocks.PINK_WOOL,
+            Blocks.WOOL.pick(DyeColor.PINK),
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );

@@ -44,7 +44,6 @@ public class DirtSlabBlock extends SlabBlock implements BlockTagSupplier, CanDro
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.SLABS);
-        itemTags.accept(ItemTags.SLABS);
         blockTags.accept(BlockTags.MINEABLE_WITH_SHOVEL);
         blockTags.accept(BlockTags.DIRT);
         itemTags.accept(ItemTags.DIRT);

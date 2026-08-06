@@ -4,6 +4,7 @@ import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -16,97 +17,97 @@ import java.util.function.BiFunction;
 public class WunderreichWallBlocks {
     public static final Block WHITE_WOOL_WALL = registerWall(
             "white_wool_wall",
-            Blocks.WHITE_WOOL,
+            Blocks.WOOL.pick(DyeColor.WHITE),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_GRAY_WOOL_WALL = registerWall(
             "light_gray_wool_wall",
-            Blocks.LIGHT_GRAY_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIGHT_GRAY),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GRAY_WOOL_WALL = registerWall(
             "gray_wool_wall",
-            Blocks.GRAY_WOOL,
+            Blocks.WOOL.pick(DyeColor.GRAY),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLACK_WOOL_WALL = registerWall(
             "black_wool_wall",
-            Blocks.BLACK_WOOL,
+            Blocks.WOOL.pick(DyeColor.BLACK),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BROWN_WOOL_WALL = registerWall(
             "brown_wool_wall",
-            Blocks.BROWN_WOOL,
+            Blocks.WOOL.pick(DyeColor.BROWN),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block RED_WOOL_WALL = registerWall(
             "red_wool_wall",
-            Blocks.RED_WOOL,
+            Blocks.WOOL.pick(DyeColor.RED),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block ORANGE_WOOL_WALL = registerWall(
             "orange_wool_wall",
-            Blocks.ORANGE_WOOL,
+            Blocks.WOOL.pick(DyeColor.ORANGE),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block YELLOW_WOOL_WALL = registerWall(
             "yellow_wool_wall",
-            Blocks.YELLOW_WOOL,
+            Blocks.WOOL.pick(DyeColor.YELLOW),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIME_WOOL_WALL = registerWall(
             "lime_wool_wall",
-            Blocks.LIME_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIME),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GREEN_WOOL_WALL = registerWall(
             "green_wool_wall",
-            Blocks.GREEN_WOOL,
+            Blocks.WOOL.pick(DyeColor.GREEN),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block CYAN_WOOL_WALL = registerWall(
             "cyan_wool_wall",
-            Blocks.CYAN_WOOL,
+            Blocks.WOOL.pick(DyeColor.CYAN),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_BLUE_WOOL_WALL = registerWall(
             "light_blue_wool_wall",
-            Blocks.LIGHT_BLUE_WOOL,
+            Blocks.WOOL.pick(DyeColor.LIGHT_BLUE),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLUE_WOOL_WALL = registerWall(
             "blue_wool_wall",
-            Blocks.BLUE_WOOL,
+            Blocks.WOOL.pick(DyeColor.BLUE),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PURPLE_WOOL_WALL = registerWall(
             "purple_wool_wall",
-            Blocks.PURPLE_WOOL,
+            Blocks.WOOL.pick(DyeColor.PURPLE),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block MAGENTA_WOOL_WALL = registerWall(
             "magenta_wool_wall",
-            Blocks.MAGENTA_WOOL,
+            Blocks.WOOL.pick(DyeColor.MAGENTA),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PINK_WOOL_WALL = registerWall(
             "pink_wool_wall",
-            Blocks.PINK_WOOL,
+            Blocks.WOOL.pick(DyeColor.PINK),
             WoolWallBlock::new,
             Configs.MAIN.addWalls.get()
     );
@@ -114,97 +115,97 @@ public class WunderreichWallBlocks {
 
     public static final Block WHITE_CONCRETE_WALL = registerWall(
             "white_concrete_wall",
-            Blocks.WHITE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.WHITE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_GRAY_CONCRETE_WALL = registerWall(
             "light_gray_concrete_wall",
-            Blocks.LIGHT_GRAY_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIGHT_GRAY),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GRAY_CONCRETE_WALL = registerWall(
             "gray_concrete_wall",
-            Blocks.GRAY_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.GRAY),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLACK_CONCRETE_WALL = registerWall(
             "black_concrete_wall",
-            Blocks.BLACK_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BLACK),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BROWN_CONCRETE_WALL = registerWall(
             "brown_concrete_wall",
-            Blocks.BROWN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BROWN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block RED_CONCRETE_WALL = registerWall(
             "red_concrete_wall",
-            Blocks.RED_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.RED),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block ORANGE_CONCRETE_WALL = registerWall(
             "orange_concrete_wall",
-            Blocks.ORANGE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.ORANGE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block YELLOW_CONCRETE_WALL = registerWall(
             "yellow_concrete_wall",
-            Blocks.YELLOW_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.YELLOW),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIME_CONCRETE_WALL = registerWall(
             "lime_concrete_wall",
-            Blocks.LIME_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIME),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GREEN_CONCRETE_WALL = registerWall(
             "green_concrete_wall",
-            Blocks.GREEN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.GREEN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block CYAN_CONCRETE_WALL = registerWall(
             "cyan_concrete_wall",
-            Blocks.CYAN_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.CYAN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_BLUE_CONCRETE_WALL = registerWall(
             "light_blue_concrete_wall",
-            Blocks.LIGHT_BLUE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.LIGHT_BLUE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLUE_CONCRETE_WALL = registerWall(
             "blue_concrete_wall",
-            Blocks.BLUE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.BLUE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PURPLE_CONCRETE_WALL = registerWall(
             "purple_concrete_wall",
-            Blocks.PURPLE_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.PURPLE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block MAGENTA_CONCRETE_WALL = registerWall(
             "magenta_concrete_wall",
-            Blocks.MAGENTA_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.MAGENTA),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PINK_CONCRETE_WALL = registerWall(
             "pink_concrete_wall",
-            Blocks.PINK_CONCRETE,
+            Blocks.CONCRETE.pick(DyeColor.PINK),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
@@ -212,97 +213,97 @@ public class WunderreichWallBlocks {
 
     public static final Block WHITE_TERRACOTTA_WALL = registerWall(
             "white_terracotta_wall",
-            Blocks.WHITE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.WHITE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_GRAY_TERRACOTTA_WALL = registerWall(
             "light_gray_terracotta_wall",
-            Blocks.LIGHT_GRAY_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_GRAY),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GRAY_TERRACOTTA_WALL = registerWall(
             "gray_terracotta_wall",
-            Blocks.GRAY_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.GRAY),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLACK_TERRACOTTA_WALL = registerWall(
             "black_terracotta_wall",
-            Blocks.BLACK_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BLACK),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BROWN_TERRACOTTA_WALL = registerWall(
             "brown_terracotta_wall",
-            Blocks.BROWN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BROWN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block RED_TERRACOTTA_WALL = registerWall(
             "red_terracotta_wall",
-            Blocks.RED_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.RED),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block ORANGE_TERRACOTTA_WALL = registerWall(
             "orange_terracotta_wall",
-            Blocks.ORANGE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.ORANGE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block YELLOW_TERRACOTTA_WALL = registerWall(
             "yellow_terracotta_wall",
-            Blocks.YELLOW_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.YELLOW),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIME_TERRACOTTA_WALL = registerWall(
             "lime_terracotta_wall",
-            Blocks.LIME_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIME),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block GREEN_TERRACOTTA_WALL = registerWall(
             "green_terracotta_wall",
-            Blocks.GREEN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.GREEN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block CYAN_TERRACOTTA_WALL = registerWall(
             "cyan_terracotta_wall",
-            Blocks.CYAN_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.CYAN),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block LIGHT_BLUE_TERRACOTTA_WALL = registerWall(
             "light_blue_terracotta_wall",
-            Blocks.LIGHT_BLUE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.LIGHT_BLUE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block BLUE_TERRACOTTA_WALL = registerWall(
             "blue_terracotta_wall",
-            Blocks.BLUE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.BLUE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PURPLE_TERRACOTTA_WALL = registerWall(
             "purple_terracotta_wall",
-            Blocks.PURPLE_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.PURPLE),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block MAGENTA_TERRACOTTA_WALL = registerWall(
             "magenta_terracotta_wall",
-            Blocks.MAGENTA_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.MAGENTA),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
     public static final Block PINK_TERRACOTTA_WALL = registerWall(
             "pink_terracotta_wall",
-            Blocks.PINK_TERRACOTTA,
+            Blocks.DYED_TERRACOTTA.pick(DyeColor.PINK),
             WallBlock::new,
             Configs.MAIN.addWalls.get()
     );
@@ -310,84 +311,84 @@ public class WunderreichWallBlocks {
 
     public static final Block COPPER_WALL = registerWall(
             "copper_wall",
-            Blocks.COPPER_BLOCK,
+            Blocks.COPPER_BLOCK.weathering().unaffected(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block EXPOSED_COPPER_WALL = registerWall(
             "exposed_copper_wall",
-            Blocks.EXPOSED_COPPER,
+            Blocks.COPPER_BLOCK.weathering().exposed(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.EXPOSED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block WEATHERED_COPPER_WALL = registerWall(
             "weathered_copper_wall",
-            Blocks.WEATHERED_COPPER,
+            Blocks.COPPER_BLOCK.weathering().weathered(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.WEATHERED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block OXIDIZED_COPPER_WALL = registerWall(
             "oxidized_copper_wall",
-            Blocks.OXIDIZED_COPPER,
+            Blocks.COPPER_BLOCK.weathering().oxidized(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block COPPER_GRATE_WALL = registerWall(
             "copper_grate_wall",
-            Blocks.COPPER_GRATE,
+            Blocks.COPPER_GRATE.weathering().unaffected(),
             (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block EXPOSED_COPPER_GRATE_WALL = registerWall(
             "exposed_copper_grate_wall",
-            Blocks.EXPOSED_COPPER_GRATE,
+            Blocks.COPPER_GRATE.weathering().exposed(),
             (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.EXPOSED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block WEATHERED_COPPER_GRATE_WALL = registerWall(
             "weathered_copper_grate_wall",
-            Blocks.WEATHERED_COPPER_GRATE,
+            Blocks.COPPER_GRATE.weathering().weathered(),
             (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.WEATHERED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block OXIDIZED_COPPER_GRATE_WALL = registerWall(
             "oxidized_copper_grate_wall",
-            Blocks.OXIDIZED_COPPER_GRATE,
+            Blocks.COPPER_GRATE.weathering().oxidized(),
             (block, key) -> new WeatheringCopperWall.Transparent(WeatheringCopper.WeatherState.OXIDIZED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block CHISELED_COPPER_WALL = registerWall(
             "chiseled_copper_wall",
-            Blocks.CHISELED_COPPER,
+            Blocks.CHISELED_COPPER.weathering().unaffected(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.UNAFFECTED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block EXPOSED_CHISELED_COPPER_WALL = registerWall(
             "chiseled_exposed_copper_wall",
-            Blocks.EXPOSED_CHISELED_COPPER,
+            Blocks.CHISELED_COPPER.weathering().exposed(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.EXPOSED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block WEATHERED_CHISELED_COPPER_WALL = registerWall(
             "chiseled_weathered_copper_wall",
-            Blocks.WEATHERED_CHISELED_COPPER,
+            Blocks.CHISELED_COPPER.weathering().weathered(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.WEATHERED, block, key),
             Configs.MAIN.addWalls.get()
     );
 
     public static final Block OXIDIZED_CHISELED_COPPER_WALL = registerWall(
             "chiseled_oxidized_copper_wall",
-            Blocks.OXIDIZED_CHISELED_COPPER,
+            Blocks.CHISELED_COPPER.weathering().oxidized(),
             (block, key) -> new WeatheringCopperWall(WeatheringCopper.WeatherState.OXIDIZED, block, key),
             Configs.MAIN.addWalls.get()
     );

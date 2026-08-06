@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.gui.whisperer;
 
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.core.Holder;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -39,16 +40,16 @@ public class EnchantmentInfo {
             baseCount = 2 * mul;
             typeItem = Items.ARMOR_STAND;
         } else if (category == LegacyEnchantmentCategories.ARMOR_HEAD) {
-            blockItem = Blocks.COPPER_BLOCK.asItem();
+            blockItem = Blocks.COPPER_BLOCK.weathering().unaffected().asItem();
             baseCount = 1 * mul;
             typeItem = Items.LEATHER_HELMET;
         } else if (category == LegacyEnchantmentCategories.ARMOR_CHEST) {
-            blockItem = Blocks.OXIDIZED_COPPER.asItem();
+            blockItem = Blocks.COPPER_BLOCK.weathering().oxidized().asItem();
             baseCount = 1 * mul;
             typeItem = Items.LEATHER_CHESTPLATE;
             rarityMultiplicator = 2;
         } else if (category == LegacyEnchantmentCategories.ARMOR_LEGS) {
-            blockItem = Blocks.EXPOSED_COPPER.asItem();
+            blockItem = Blocks.COPPER_BLOCK.weathering().exposed().asItem();
             baseCount = 1 * mul;
             typeItem = Items.LEATHER_LEGGINGS;
             rarityMultiplicator = 2;
@@ -96,7 +97,7 @@ public class EnchantmentInfo {
             typeItem = Items.SMITHING_TABLE;
             rarityMultiplicator = 2;
         } else if (category == LegacyEnchantmentCategories.WEARABLE) {
-            blockItem = Blocks.PINK_WOOL.asItem();
+            blockItem = Blocks.WOOL.pick(DyeColor.PINK).asItem();
             baseCount = 4 * mul;
             typeItem = Items.CARVED_PUMPKIN;
         } else {

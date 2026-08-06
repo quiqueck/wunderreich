@@ -66,7 +66,7 @@ public class WunderreichRecipes {
                         "DCD",
                         "DDD"
                 )
-                .material('C', Blocks.OXIDIZED_COPPER)
+                .material('C', Blocks.COPPER_BLOCK.weathering().oxidized())
                 .material('B', Blocks.LAPIS_BLOCK)
                 .material('A', Blocks.AMETHYST_BLOCK)
                 .material('D', Blocks.COBBLED_DEEPSLATE)

@@ -4,7 +4,7 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
