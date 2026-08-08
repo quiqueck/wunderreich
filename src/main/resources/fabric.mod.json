@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "wunderreich",
-    "version": "26.101.0",
+    "version": "26.101.1",
     "name": "Wunderreich",
     "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
     "authors": [
@@ -59,7 +59,7 @@
         "wunderlib": "26.101.x"
     },
     "breaks": {
-        "wunderlib": "<26.101.0"
+        "wunderlib": "<26.101.1"
     },
     "suggests": {
         "modmenu": "11.0.x",
