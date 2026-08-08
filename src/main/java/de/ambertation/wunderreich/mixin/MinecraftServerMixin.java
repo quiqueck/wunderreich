@@ -42,12 +42,6 @@ public abstract class MinecraftServerMixin implements WunderKisteExtensionProvid
         wunderkiste.onCloseServer();
     }
 
-    /**
-     * 26.2 appended a {@link NotificationManager} to the {@link MinecraftServer} constructor. An
-     * {@code <init>} handler has to mirror the constructor descriptor exactly, so the parameter is
-     * repeated here even though we do not use it - without it the injector is rejected at
-     * mixin-apply time, which nothing catches at compile time.
-     */
     @Inject(method = "<init>", at = @At("TAIL"))
     public void wunderreich_init(
             Thread thread,

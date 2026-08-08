@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.blocks;
 import de.ambertation.wunderreich.interfaces.BlockTagSupplier;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
@@ -22,8 +21,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.function.Consumer;
 
 public class AmethystSlabBlock extends DirtSlabBlock implements BlockTagSupplier, CanDropLoot {
-    public static final MapCodec<AmethystSlabBlock> CODEC = simpleCodec(AmethystSlabBlock::new);
-
     protected AmethystSlabBlock(BlockBehaviour.Properties properties) {
         super(properties);
     }
@@ -38,11 +35,6 @@ public class AmethystSlabBlock extends DirtSlabBlock implements BlockTagSupplier
     @Override
     public void supplyTags(Consumer<TagKey<Block>> blockTags, Consumer<TagKey<Item>> itemTags) {
         blockTags.accept(BlockTags.MINEABLE_WITH_PICKAXE);
-    }
-
-    @Override
-    public MapCodec<? extends SlabBlock> codec() {
-        return CODEC;
     }
 
     @Override

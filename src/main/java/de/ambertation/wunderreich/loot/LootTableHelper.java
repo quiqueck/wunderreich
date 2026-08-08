@@ -4,8 +4,15 @@ import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.interfaces.CanDropLoot;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
+import net.minecraft.advancements.predicates.DataComponentMatchers;
+import net.minecraft.advancements.predicates.EnchantmentPredicate;
+import net.minecraft.advancements.predicates.ItemPredicate;
+import net.minecraft.advancements.predicates.MinMaxBounds;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
+import net.minecraft.core.component.predicates.DataComponentPredicates;
+import net.minecraft.core.component.predicates.EnchantmentsPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
@@ -13,11 +20,15 @@ import net.minecraft.world.level.block.state.properties.SlabType;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.entries.LootItem;
-import net.minecraft.world.level.storage.loot.entries.LootPoolSingletonContainer;
+import net.minecraft.world.level.storage.loot.entries.UniformContainerBase;
 import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.InvertedLootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
+import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 
+import java.util.List;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +48,44 @@ public class LootTableHelper {
             this.provider = provider;
         }
 
+        /**
+         * 26.3 turned the vanilla silk-touch loot condition into a {@code minecraft:predicate} registry
+         * entry ({@code minecraft:tool/can_silk_touch}), which {@code BlockLootSubProvider#hasSilkTouch()}
+         * resolves through the registry. Fabric's data generator builds the reloadable registries (incl.
+         * {@code minecraft:predicate}) EMPTY, so that lookup throws during datagen. Rebuild the exact same
+         * condition inline instead - see {@code LootPredicates#bootstrap}.
+         */
+        private LootItemCondition.Builder hasSilkTouch() {
+            return MatchTool.toolMatches(
+                    ItemPredicate.Builder
+                            .item()
+                            .withComponents(
+                                    DataComponentMatchers.Builder
+                                            .components()
+                                            .partial(
+                                                    DataComponentPredicates.ENCHANTMENTS,
+                                                    EnchantmentsPredicate.enchantments(List.of(
+                                                            new EnchantmentPredicate(
+                                                                    provider.enchantments.getOrThrow(Enchantments.SILK_TOUCH),
+                                                                    MinMaxBounds.Ints.atLeast(1)
+                                                            )
+                                                    ))
+                                            )
+                                            .build()
+                            )
+            );
+        }
+
+        private LootItemCondition.Builder doesNotHaveSilkTouch() {
+            return InvertedLootItemCondition.invert(hasSilkTouch());
+        }
+
         public void dropSelf(Block block) {
             provider.dropSelf(block);
+        }
+
+        public void dropOther(Block block, ItemLike replacement) {
+            provider.dropOther(block, replacement);
         }
 
         public void dropWhenSilkTouch(Block block) {
@@ -47,6 +94,18 @@ public class LootTableHelper {
 
         public void dropSlab(SlabBlock block) {
             provider.add(block, provider.createSlabItemTable(block));
+        }
+
+        public void dropSlabReplacement(SlabBlock block, ItemLike replacement) {
+            provider.add(
+                    block,
+                    LootTable.lootTable()
+                             .withPool(
+                                     LootPool.lootPool()
+                                             .setRolls(ConstantValue.exactly(1.0F))
+                                             .add(createSlabItemTable(block, replacement))
+                             )
+            );
         }
 
         public void dropSlabWhenSilkTouch(@NotNull Block block) {
@@ -64,23 +123,28 @@ public class LootTableHelper {
             provider.add(block, createSilkTouchOrElse(block, elseDrops));
         }
 
-        private LootPoolSingletonContainer.Builder<? extends LootPoolSingletonContainer.Builder<?>>
+        private UniformContainerBase.Builder<? extends UniformContainerBase.Builder<?>>
         createSlabItemTable(Block block) {
+            return createSlabItemTable(block, block);
+        }
+
+        private UniformContainerBase.Builder<? extends UniformContainerBase.Builder<?>>
+        createSlabItemTable(Block block, ItemLike dropItem) {
             return provider
                     .applyExplosionDecay(
                             block,
-                            LootItem.lootTableItem(block)
+                            LootItem.lootTableItem(dropItem)
                                     .apply(SetItemCountFunction.setCount(ConstantValue.exactly(2.0F)).when(
-                                            LootItemBlockStatePropertyCondition
-                                                    .hasBlockStateProperties(block)
-                                                    .setProperties(
-                                                            StatePropertiesPredicate.Builder
-                                                                    .properties()
-                                                                    .hasProperty(
-                                                                            SlabBlock.TYPE,
-                                                                            SlabType.DOUBLE
-                                                                    )
-                                                    )
+                                            MatchBlock.blockMatches(
+                                                    provider.blocks,
+                                                    block,
+                                                    StatePropertiesPredicate.Builder
+                                                            .properties()
+                                                            .hasProperty(
+                                                                    SlabBlock.TYPE,
+                                                                    SlabType.DOUBLE
+                                                            )
+                                            )
                                     ))
                     );
         }
@@ -94,7 +158,7 @@ public class LootTableHelper {
                 return LootTable.lootTable()
                                 .withPool(
                                         LootPool.lootPool()
-                                                .when(provider.hasSilkTouch())
+                                                .when(hasSilkTouch())
                                                 .setRolls(ConstantValue.exactly(1.0F))
                                                 .add(createSlabItemTable(block))
                                 );
@@ -104,7 +168,7 @@ public class LootTableHelper {
                                     LootPool.lootPool()
                                             .setRolls(ConstantValue.exactly(1.0F))
                                             .add(createSlabItemTable(block)
-                                                    .when(provider.hasSilkTouch())
+                                                    .when(hasSilkTouch())
                                                     .otherwise(createSlabItemTable(orElseBlock))
                                             )
                             );
@@ -115,7 +179,7 @@ public class LootTableHelper {
                 Drop[] elseDrops
         ) {
             LootPool.Builder elsePool = LootPool.lootPool()
-                                                 .when(provider.doesNotHaveSilkTouch())
+                                                 .when(doesNotHaveSilkTouch())
                                                  .setRolls(ConstantValue.exactly(1.0F));
             for (Drop drop : elseDrops) {
                 elsePool.add(
@@ -131,7 +195,7 @@ public class LootTableHelper {
                             .withPool(elsePool)
                             .withPool(
                                     LootPool.lootPool()
-                                            .when(provider.hasSilkTouch())
+                                            .when(hasSilkTouch())
                                             .setRolls(ConstantValue.exactly(1.0F))
                                             .add(provider.applyExplosionDecay(
                                                     blockWithSilkTouch,

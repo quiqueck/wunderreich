@@ -476,6 +476,13 @@ public class WunderreichWallBlocks {
             Configs.MAIN.addWalls.get()
     );
 
+    public static final Block POPLAR_WALL = registerWoodWall(
+            "poplar_wall",
+            Blocks.POPLAR_PLANKS,
+            Blocks.POPLAR_FENCE,
+            Configs.MAIN.addWalls.get()
+    );
+
     private static void addModel(Block block, Block baseBlock) {
         if (Wunderreich.isDatagen()) {
             if (WALL_BLOCKS == null) {

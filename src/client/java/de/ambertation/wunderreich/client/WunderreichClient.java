@@ -16,6 +16,7 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -47,13 +48,14 @@ public class WunderreichClient implements ClientModInitializer {
         );
 
         ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
-            // ClientPacketListener.recipes() returns a ClientRecipeContainer (recipe-book display
-            // data only), never an actual RecipeManager - "instanceof RecipeManager" here was
-            // always false. The real RecipeManager only exists where the logical server runs, so
-            // this only works in singleplayer/LAN (same JVM); GLOBAL_RECIPE_MANAGER (set directly
-            // from RecipeManagerMixin) is still the primary source and covers that case anyway.
-            var server = Minecraft.getInstance().getSingleplayerServer();
-            return server != null ? server.getRecipeManager() : null;
+            var mc = Minecraft.getInstance();
+            if (mc.getConnection() != null) {
+                var recipes = mc.getConnection().recipes();
+                if (recipes instanceof RecipeManager rm) {
+                    return rm;
+                }
+            }
+            return null;
         };
 
         // Note: block render layers are now driven by the block model JSON

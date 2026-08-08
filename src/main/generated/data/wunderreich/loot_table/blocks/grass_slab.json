@@ -8,61 +8,55 @@
           "children": [
             {
               "type": "minecraft:item",
-              "conditions": [
-                {
-                  "condition": "minecraft:match_tool",
-                  "predicate": {
-                    "predicates": {
-                      "minecraft:enchantments": [
-                        {
-                          "enchantments": "minecraft:silk_touch",
-                          "levels": {
-                            "min": 1
-                          }
+              "condition": {
+                "type": "minecraft:match_tool",
+                "predicate": {
+                  "predicates": {
+                    "minecraft:enchantments": [
+                      {
+                        "enchantments": "minecraft:silk_touch",
+                        "levels": {
+                          "min": 1
                         }
-                      ]
-                    }
+                      }
+                    ]
                   }
                 }
-              ],
-              "functions": [
+              },
+              "modifier": [
                 {
-                  "conditions": [
-                    {
-                      "block": "wunderreich:grass_slab",
-                      "condition": "minecraft:block_state_property",
-                      "properties": {
-                        "type": "double"
-                      }
+                  "type": "minecraft:set_count",
+                  "condition": {
+                    "type": "minecraft:match_block",
+                    "blocks": "wunderreich:grass_slab",
+                    "state": {
+                      "type": "double"
                     }
-                  ],
-                  "count": 2.0,
-                  "function": "minecraft:set_count"
+                  },
+                  "count": 2.0
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "name": "wunderreich:grass_slab"
             },
             {
               "type": "minecraft:item",
-              "functions": [
+              "modifier": [
                 {
-                  "conditions": [
-                    {
-                      "block": "wunderreich:dirt_slab",
-                      "condition": "minecraft:block_state_property",
-                      "properties": {
-                        "type": "double"
-                      }
+                  "type": "minecraft:set_count",
+                  "condition": {
+                    "type": "minecraft:match_block",
+                    "blocks": "wunderreich:dirt_slab",
+                    "state": {
+                      "type": "double"
                     }
-                  ],
-                  "count": 2.0,
-                  "function": "minecraft:set_count"
+                  },
+                  "count": 2.0
                 },
                 {
-                  "function": "minecraft:explosion_decay"
+                  "type": "minecraft:explosion_decay"
                 }
               ],
               "name": "wunderreich:dirt_slab"

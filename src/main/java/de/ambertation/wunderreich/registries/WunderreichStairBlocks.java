@@ -213,99 +213,99 @@ public class WunderreichStairBlocks {
     );
 
 
-    public static final Block WHITE_WOOL_STAIRS = registerStairs(
+    public static final Block WHITE_WOOL_STAIRS = registerWoolStairs(
             "white_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.WHITE),
+            DyeColor.WHITE,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block LIGHT_GRAY_WOOL_STAIRS = registerStairs(
+    public static final Block LIGHT_GRAY_WOOL_STAIRS = registerWoolStairs(
             "light_gray_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.LIGHT_GRAY),
+            DyeColor.LIGHT_GRAY,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block GRAY_WOOL_STAIRS = registerStairs(
+    public static final Block GRAY_WOOL_STAIRS = registerWoolStairs(
             "gray_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.GRAY),
+            DyeColor.GRAY,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block BLACK_WOOL_STAIRS = registerStairs(
+    public static final Block BLACK_WOOL_STAIRS = registerWoolStairs(
             "black_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.BLACK),
+            DyeColor.BLACK,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block BROWN_WOOL_STAIRS = registerStairs(
+    public static final Block BROWN_WOOL_STAIRS = registerWoolStairs(
             "brown_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.BROWN),
+            DyeColor.BROWN,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block RED_WOOL_STAIRS = registerStairs(
+    public static final Block RED_WOOL_STAIRS = registerWoolStairs(
             "red_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.RED),
+            DyeColor.RED,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block ORANGE_WOOL_STAIRS = registerStairs(
+    public static final Block ORANGE_WOOL_STAIRS = registerWoolStairs(
             "orange_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.ORANGE),
+            DyeColor.ORANGE,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block YELLOW_WOOL_STAIRS = registerStairs(
+    public static final Block YELLOW_WOOL_STAIRS = registerWoolStairs(
             "yellow_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.YELLOW),
+            DyeColor.YELLOW,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block LIME_WOOL_STAIRS = registerStairs(
+    public static final Block LIME_WOOL_STAIRS = registerWoolStairs(
             "lime_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.LIME),
+            DyeColor.LIME,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block GREEN_WOOL_STAIRS = registerStairs(
+    public static final Block GREEN_WOOL_STAIRS = registerWoolStairs(
             "green_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.GREEN),
+            DyeColor.GREEN,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block CYAN_WOOL_STAIRS = registerStairs(
+    public static final Block CYAN_WOOL_STAIRS = registerWoolStairs(
             "cyan_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.CYAN),
+            DyeColor.CYAN,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block LIGHT_BLUE_WOOL_STAIRS = registerStairs(
+    public static final Block LIGHT_BLUE_WOOL_STAIRS = registerWoolStairs(
             "light_blue_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.LIGHT_BLUE),
+            DyeColor.LIGHT_BLUE,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block BLUE_WOOL_STAIRS = registerStairs(
+    public static final Block BLUE_WOOL_STAIRS = registerWoolStairs(
             "blue_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.BLUE),
+            DyeColor.BLUE,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block PURPLE_WOOL_STAIRS = registerStairs(
+    public static final Block PURPLE_WOOL_STAIRS = registerWoolStairs(
             "purple_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.PURPLE),
+            DyeColor.PURPLE,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block MAGENTA_WOOL_STAIRS = registerStairs(
+    public static final Block MAGENTA_WOOL_STAIRS = registerWoolStairs(
             "magenta_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.MAGENTA),
+            DyeColor.MAGENTA,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
-    public static final Block PINK_WOOL_STAIRS = registerStairs(
+    public static final Block PINK_WOOL_STAIRS = registerWoolStairs(
             "pink_wool_stairs",
-            Blocks.WOOL.pick(DyeColor.PINK),
+            DyeColor.PINK,
             WoolStairBlock::new,
             Configs.MAIN.addStairs.get()
     );
@@ -324,6 +324,34 @@ public class WunderreichStairBlocks {
             BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
+        return registerStairs(name, baseBlock, creator, register, true);
+    }
+
+    // Vanilla now ships its own recipes for some sub types (e.g. wool stairs since 26.3) -
+    // addRecipe lets us keep the block (existing worlds may still reference it) without
+    // registering a redundant duplicate recipe.
+    public static Block registerStairs(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register,
+            boolean addRecipe
+    ) {
+        return registerStairs(name, baseBlock, creator, register, addRecipe, null);
+    }
+
+    // Blocks vanilla now provides its own version of (e.g. wool stairs since 26.3) are kept around,
+    // itemless-but-not-quite: they still exist and can still be given/held so existing worlds and
+    // inventories keep working, but they're hidden from the creative tab and, when broken, drop the
+    // vanilla replacement instead of themselves - see WunderreichBlocks#registerVanillaReplacement.
+    public static Block registerStairs(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register,
+            boolean addRecipe,
+            Block vanillaReplacement
+    ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
         if (Wunderreich.isDatagen()) {
             if (STAIR_BLOCKS == null) {
@@ -331,8 +359,29 @@ public class WunderreichStairBlocks {
             }
             STAIR_BLOCKS.add(new Block[]{block, baseBlock});
         }
-        WunderreichRecipes.createStairsRecipe(name, baseBlock, block);
+        if (addRecipe) {
+            WunderreichRecipes.createStairsRecipe(name, baseBlock, block);
+        }
+        if (vanillaReplacement != null) {
+            WunderreichBlocks.registerVanillaReplacement(block, vanillaReplacement);
+        }
         return block;
+    }
+
+    private static Block registerWoolStairs(
+            String name,
+            DyeColor color,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register
+    ) {
+        return registerStairs(
+                name,
+                Blocks.WOOL.pick(color),
+                creator,
+                register,
+                false,
+                Blocks.WOOL_STAIRS.pick(color)
+        );
     }
 
     private static List<Block[]> STAIR_BLOCKS;

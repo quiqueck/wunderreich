@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.blocks;
 
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
@@ -12,8 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class AmethystWallBlock extends WallBlock {
-    public static final MapCodec<AmethystWallBlock> CODEC = simpleCodec(AmethystWallBlock::new);
-
     protected AmethystWallBlock(Properties properties) {
         super(properties);
     }
@@ -23,11 +20,6 @@ public class AmethystWallBlock extends WallBlock {
             ResourceKey<Block> key
     ) {
         super(baseBlock, key);
-    }
-
-    @Override
-    public MapCodec<net.minecraft.world.level.block.WallBlock> codec() {
-        return (MapCodec<net.minecraft.world.level.block.WallBlock>) (Object) CODEC;
     }
 
     @Override

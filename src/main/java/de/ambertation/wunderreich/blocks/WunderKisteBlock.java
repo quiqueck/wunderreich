@@ -68,7 +68,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity> implements WorldlyContainerHolder, BlockTagSupplier, CanDropLoot {
-    public static final MapCodec<WunderKisteBlock> CODEC = simpleCodec(WunderKisteBlock::new);
     public static final EnumProperty<WunderKisteDomain> DOMAIN;
     public static final WunderKisteDomain DEFAULT_DOMAIN;
 
@@ -559,11 +558,6 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 LootTableHelper.drop(Blocks.QUARTZ_BRICKS, 5),
                 LootTableHelper.drop(Blocks.LAPIS_BLOCK, 3)
         );
-    }
-
-    @Override
-    protected @NotNull MapCodec<? extends AbstractChestBlock<WunderKisteBlockEntity>> codec() {
-        return CODEC;
     }
 }
 

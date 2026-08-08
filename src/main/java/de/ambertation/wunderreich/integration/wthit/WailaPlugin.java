@@ -1,4 +1,5 @@
 package de.ambertation.wunderreich.integration.wthit;
+/*
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
@@ -17,5 +18,4 @@ public class WailaPlugin implements IWailaPlugin {
         registrar.addIcon(WunderkisteProvider.INSTANCE, WunderKisteBlock.class);
     }
 }
-
-
+*/

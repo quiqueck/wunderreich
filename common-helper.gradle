@@ -1,6 +1,6 @@
 // Shared publishing helper: changelog generation, version bumping, and
 // publishing to Modrinth + CurseForge (via mod-publish-plugin).
-// Copy-paste this file identically into every library/mod repo's 26.2
+// Copy-paste this file identically into every library/mod repo's 26.3
 // checkout. Everything here is driven by that repo's own gradle.properties.
 // Not interchangeable with the 1.21.6 copy: this Loom version has no
 // separate remap step, so the published artifact is `jar`, not `remapJar`.
@@ -83,6 +83,25 @@ String generateChangelog() {
         }
 
     }
+
+    // Never let a run with nothing to say replace CHANGES.md. The file is
+    // generated but git-ignored, so an empty write destroys the released notes
+    // for good - and CHANGES.md is also the body of the release commit (see
+    // common-publish-tag.gradle). Guard on the absence of entries rather than on
+    // an empty commit range: a range of ordinary unprefixed commits (version
+    // bumps and the like) produces nothing either, and in the mods the
+    // Validation section below would otherwise write out a changelog made
+    // entirely of stale compat-test results. Both are normal outcomes, not
+    // errors. Returning null tells the task to leave the existing file alone.
+    if (features.isEmpty() && changes.isEmpty() && fixes.isEmpty()) {
+        def commitCount = gitLogCmd.isEmpty() ? 0 : gitLogCmd.readLines().size()
+        def reason = commitCount == 0
+                ? "no commits since $lastTag"
+                : "$commitCount commit(s) since $lastTag, none of them a changelog entry"
+        logger.lifecycle("Nothing to write ($reason) - CHANGES.md left as it is.")
+        return null
+    }
+
     def changelog = ""
     if (!features.isEmpty()) {
         changelog += "#### Features\n"
@@ -107,7 +126,13 @@ String generateChangelog() {
 task changelog() {
     group = 'publishing'
     doLast {
-        new File(projectDir, "CHANGES.md").text = generateChangelog()
+        def generated = generateChangelog()
+        // null is generateChangelog's "nothing to write"; the trim() covers any
+        // other way the body could come out blank. Neither ever reaches the file.
+        if (generated == null || generated.trim().isEmpty()) {
+            return
+        }
+        new File(projectDir, "CHANGES.md").text = generated
     }
 }
 
@@ -286,7 +311,20 @@ task nextVersion() {
 
             def fabricJson = slurper.parseText(fabricFile.text)
             fabricJson.version = updatedVersion
-            fabricJson.depends.minecraft = slurper.parseText(modrinth_versions)
+            // modrinth_versions lists only the versions we publish FOR; depends.minecraft
+            // additionally carries the equivalent ids the loader may report for the same game
+            // build (e.g. "26.3" and "26.3-alpha.6" next to "26.3-snapshot-6"). Assigning
+            // modrinth_versions over it would drop those alternatives and silently narrow the
+            // range the mod loads on, so merge: publish targets are added, hand-written
+            // alternatives are kept.
+            def publishedVersions = slurper.parseText(modrinth_versions)
+            def declaredVersions = fabricJson.depends.minecraft
+            if (declaredVersions == null) {
+                declaredVersions = []
+            } else if (!(declaredVersions instanceof List)) {
+                declaredVersions = [declaredVersions]
+            }
+            fabricJson.depends.minecraft = (declaredVersions + publishedVersions).unique()
             fabricJson.depends.fabricloader = rootFabricFileJson.depends.fabricloader
             fabricJson.depends['fabric-api'] = rootFabricFileJson.depends['fabric-api']
             fabricJson.depends.java = rootFabricFileJson.depends.java

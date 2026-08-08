@@ -9,3 +9,16 @@ accessible method net/minecraft/world/item/crafting/Ingredient <init> (Lnet/mine
 accessible field net/minecraft/world/item/crafting/Ingredient values Lnet/minecraft/core/HolderSet;
 
 accessible field net/minecraft/client/data/models/BlockModelGenerators TEXTURED_MODELS Ljava/util/Map;
+
+# 26.3: LootItemBlockStatePropertyCondition was replaced by MatchBlock, whose builders all need a
+# HolderGetter<Block>. BlockLootSubProvider has one, but only as a protected field.
+accessible field net/minecraft/data/loot/BlockLootSubProvider blocks Lnet/minecraft/core/HolderGetter;
+# 26.3: BlockLootSubProvider#hasSilkTouch() resolves a minecraft:predicate registry entry that Fabric's
+# data generator leaves empty, so LootTableHelper rebuilds the condition itself and needs the enchantments
+# lookup for it.
+accessible field net/minecraft/data/loot/BlockLootSubProvider enchantments Lnet/minecraft/core/HolderGetter;
+# 26.3: recipes moved into a datapack registry, so RecipeManager builds its RecipeMap in its
+# constructor. Rebuilding that map to add our generated recipes needs RecipeMap's constructor.
+# 26.3: Holder.Reference#bindValue is protected, widen access to allow constructing standalone recipe references
+accessible method net/minecraft/core/Holder$Reference bindValue (Ljava/lang/Object;)V
+

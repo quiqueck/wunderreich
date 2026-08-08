@@ -1,7 +1,5 @@
 package de.ambertation.wunderreich.blocks;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.sounds.SoundEvents;
@@ -13,14 +11,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 
 public class AmethystStairBlock extends StairBlock {
-    public static final MapCodec<AmethystStairBlock> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(
-                                        BlockState.CODEC.fieldOf("base_state")
-                                                        .forGetter(stairBlock -> stairBlock.baseState), propertiesCodec()
-                                )
-                                .apply(instance, AmethystStairBlock::new)
-    );
-
     protected AmethystStairBlock(BlockState blockState, Properties properties) {
         super(blockState, properties);
     }
@@ -30,11 +20,6 @@ public class AmethystStairBlock extends StairBlock {
             ResourceKey<Block> key
     ) {
         super(baseBlock, key);
-    }
-
-    @Override
-    public MapCodec<? extends net.minecraft.world.level.block.StairBlock> codec() {
-        return CODEC;
     }
 
     @Override

@@ -324,99 +324,99 @@ public class WunderreichSlabBlocks {
     );
 
 
-    public static final Block WHITE_WOOL_SLAB = registerSlab(
+    public static final Block WHITE_WOOL_SLAB = registerWoolSlab(
             "white_wool_slab",
-            Blocks.WOOL.pick(DyeColor.WHITE),
+            DyeColor.WHITE,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block LIGHT_GRAY_WOOL_SLAB = registerSlab(
+    public static final Block LIGHT_GRAY_WOOL_SLAB = registerWoolSlab(
             "light_gray_wool_slab",
-            Blocks.WOOL.pick(DyeColor.LIGHT_GRAY),
+            DyeColor.LIGHT_GRAY,
             ConcreteSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block GRAY_WOOL_SLAB = registerSlab(
+    public static final Block GRAY_WOOL_SLAB = registerWoolSlab(
             "gray_wool_slab",
-            Blocks.WOOL.pick(DyeColor.GRAY),
+            DyeColor.GRAY,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block BLACK_WOOL_SLAB = registerSlab(
+    public static final Block BLACK_WOOL_SLAB = registerWoolSlab(
             "black_wool_slab",
-            Blocks.WOOL.pick(DyeColor.BLACK),
+            DyeColor.BLACK,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block BROWN_WOOL_SLAB = registerSlab(
+    public static final Block BROWN_WOOL_SLAB = registerWoolSlab(
             "brown_wool_slab",
-            Blocks.WOOL.pick(DyeColor.BROWN),
+            DyeColor.BROWN,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block RED_WOOL_SLAB = registerSlab(
+    public static final Block RED_WOOL_SLAB = registerWoolSlab(
             "red_wool_slab",
-            Blocks.WOOL.pick(DyeColor.RED),
+            DyeColor.RED,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block ORANGE_WOOL_SLAB = registerSlab(
+    public static final Block ORANGE_WOOL_SLAB = registerWoolSlab(
             "orange_wool_slab",
-            Blocks.WOOL.pick(DyeColor.ORANGE),
+            DyeColor.ORANGE,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block YELLOW_WOOL_SLAB = registerSlab(
+    public static final Block YELLOW_WOOL_SLAB = registerWoolSlab(
             "yellow_wool_slab",
-            Blocks.WOOL.pick(DyeColor.YELLOW),
+            DyeColor.YELLOW,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block LIME_WOOL_SLAB = registerSlab(
+    public static final Block LIME_WOOL_SLAB = registerWoolSlab(
             "lime_wool_slab",
-            Blocks.WOOL.pick(DyeColor.LIME),
+            DyeColor.LIME,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block GREEN_WOOL_SLAB = registerSlab(
+    public static final Block GREEN_WOOL_SLAB = registerWoolSlab(
             "green_wool_slab",
-            Blocks.WOOL.pick(DyeColor.GREEN),
+            DyeColor.GREEN,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block CYAN_WOOL_SLAB = registerSlab(
+    public static final Block CYAN_WOOL_SLAB = registerWoolSlab(
             "cyan_wool_slab",
-            Blocks.WOOL.pick(DyeColor.CYAN),
+            DyeColor.CYAN,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block LIGHT_BLUE_WOOL_SLAB = registerSlab(
+    public static final Block LIGHT_BLUE_WOOL_SLAB = registerWoolSlab(
             "light_blue_wool_slab",
-            Blocks.WOOL.pick(DyeColor.LIGHT_BLUE),
+            DyeColor.LIGHT_BLUE,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block BLUE_WOOL_SLAB = registerSlab(
+    public static final Block BLUE_WOOL_SLAB = registerWoolSlab(
             "blue_wool_slab",
-            Blocks.WOOL.pick(DyeColor.BLUE),
+            DyeColor.BLUE,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block PURPLE_WOOL_SLAB = registerSlab(
+    public static final Block PURPLE_WOOL_SLAB = registerWoolSlab(
             "purple_wool_slab",
-            Blocks.WOOL.pick(DyeColor.PURPLE),
+            DyeColor.PURPLE,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block MAGENTA_WOOL_SLAB = registerSlab(
+    public static final Block MAGENTA_WOOL_SLAB = registerWoolSlab(
             "magenta_wool_slab",
-            Blocks.WOOL.pick(DyeColor.MAGENTA),
+            DyeColor.MAGENTA,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
-    public static final Block PINK_WOOL_SLAB = registerSlab(
+    public static final Block PINK_WOOL_SLAB = registerWoolSlab(
             "pink_wool_slab",
-            Blocks.WOOL.pick(DyeColor.PINK),
+            DyeColor.PINK,
             WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
@@ -451,8 +451,41 @@ public class WunderreichSlabBlocks {
             BiFunction<Block, ResourceKey<Block>, Block> creator,
             boolean register
     ) {
+        return registerSlab(name, baseBlock, creator, register, true);
+    }
+
+    // Vanilla now ships its own recipes for some sub types (e.g. wool slabs since 26.3) -
+    // addRecipe lets us keep the block (existing worlds may still reference it) without
+    // registering a redundant duplicate recipe.
+    public static Block registerSlab(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register,
+            boolean addRecipe
+    ) {
+        return registerSlab(name, baseBlock, creator, register, addRecipe, null);
+    }
+
+    // Blocks vanilla now provides its own version of (e.g. wool slabs since 26.3) are kept around,
+    // itemless-but-not-quite: they still exist and can still be given/held so existing worlds and
+    // inventories keep working, but they're hidden from the creative tab and, when broken, drop the
+    // vanilla replacement instead of themselves - see WunderreichBlocks#registerVanillaReplacement.
+    public static Block registerSlab(
+            String name,
+            Block baseBlock,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register,
+            boolean addRecipe,
+            Block vanillaReplacement
+    ) {
         Block block = WunderreichBlocks.registerBlock(name, baseBlock, creator, register);
-        WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
+        if (addRecipe) {
+            WunderreichRecipes.createSlabRecipe(name, baseBlock, block);
+        }
+        if (vanillaReplacement != null) {
+            WunderreichBlocks.registerVanillaReplacement(block, vanillaReplacement);
+        }
 
         if (Wunderreich.isDatagen()) {
             if (SLAB_BLOCKS == null) {
@@ -461,6 +494,22 @@ public class WunderreichSlabBlocks {
             SLAB_BLOCKS.add(new Block[]{block, baseBlock});
         }
         return block;
+    }
+
+    private static Block registerWoolSlab(
+            String name,
+            DyeColor color,
+            BiFunction<Block, ResourceKey<Block>, Block> creator,
+            boolean register
+    ) {
+        return registerSlab(
+                name,
+                Blocks.WOOL.pick(color),
+                creator,
+                register,
+                false,
+                Blocks.WOOL_SLAB.pick(color)
+        );
     }
 
     public static Block registerStainedGlass(

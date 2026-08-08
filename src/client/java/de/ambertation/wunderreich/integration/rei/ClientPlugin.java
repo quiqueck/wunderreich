@@ -1,4 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
+/*
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
@@ -80,5 +81,4 @@ public class ClientPlugin implements REIClientPlugin {
         });
     }
 }
-
-
+*/

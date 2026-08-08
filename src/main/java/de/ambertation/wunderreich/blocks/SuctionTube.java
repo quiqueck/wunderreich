@@ -41,8 +41,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTagSupplier {
-    public static final MapCodec<SuctionTube> CODEC = simpleCodec(SuctionTube::new);
-
     private static double part(int i) {
         return i / 16.0D;
     }
@@ -90,11 +88,6 @@ public class SuctionTube extends BaseEntityBlock implements CanDropLoot, BlockTa
                        .strength(3.0F, 4.8F)
                        .sound(SoundType.METAL)
                        .setId(key));
-    }
-
-    @Override
-    protected @NotNull MapCodec<? extends BaseEntityBlock> codec() {
-        return CODEC;
     }
 
     @Override

@@ -75,8 +75,23 @@ public class AdvancementsJsonBuilder {
         return b;
     }
 
+    /**
+     * Builds the "you got the ingredients, here is the recipe" advancement that accompanies a generated
+     * recipe. The caller adds the {@code has_*} inventory_changed criteria.
+     * <p>
+     * The companion {@code has_the_recipe} ({@code minecraft:recipe_unlocked}) criterion that vanilla's
+     * recipe advancements carry is deliberately NOT added on 26.3+. Recipes became a datapack registry,
+     * and that trigger now takes a {@code HolderSet<Recipe<?>>} - it can only name recipes that are real
+     * entries in {@code minecraft:recipe}. Wunderreich's recipes are generated at runtime and injected
+     * straight into the RecipeMap by {@code RecipeManagerMixin}, so they have no registry holder: the
+     * reference fails to resolve while the advancement is being parsed ("Failed to get element
+     * wunderreich:... from registry minecraft:recipe"), and even if it parsed, the trigger is fired with
+     * registry holders and could never match them. The criterion is therefore dead weight here - the
+     * {@code has_*} criteria are what actually award the recipe, so behaviour is unchanged.
+     * {@link #gotRecipeCriteria} itself is still correct and usable for recipes that ARE registry entries.
+     */
     public static AdvancementsJsonBuilder createRecipe(Item item, AdvancementType type) {
-        return create(item, type, null).awardRecipe(item).gotRecipeCriteria("has_the_recipe", item);
+        return create(item, type, null).awardRecipe(item);
     }
 
     private AdvancementsJsonBuilder reset(Identifier id, AdvancementType type) {

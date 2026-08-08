@@ -1,4 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
+/*
 
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
@@ -30,3 +31,4 @@ public class ServerPlugin implements REICommonPlugin {
         registry.registerComponents(WunderreichItems.WHISPERER);
     }
 }
+*/

@@ -1,97 +1,71 @@
 package de.ambertation.wunderreich.mixin;
 
-import de.ambertation.wunderreich.recipes.ImprinterOverrides;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichRecipes;
 
 import com.mojang.serialization.JsonOps;
+import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeManager;
-import net.minecraft.world.item.crafting.RecipeMap;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
-@Mixin(value = RecipeManager.class, priority = 200)
+/**
+ * 26.3 turned recipes into a datapack registry: {@code RecipeManager} is no longer a reload listener with
+ * a {@code prepare(ResourceManager, ProfilerFiller)} phase, it is simply built from
+ * {@code HolderLookup.Provider} in its constructor.
+ * <p>
+ * Instead of overwriting {@code RecipeManager.recipes} at constructor TAIL (which breaks Fabric API's
+ * serializer index decoration on {@code RecipeMap.create} and causes player disconnects with "Invalid player data"),
+ * we extend the {@code HolderLookup} passed into {@code RecipeMap.create}.
+ */
+@Mixin(value = RecipeManager.class, priority = 300)
 public class RecipeManagerMixin {
 
-    @Shadow
-    @Final
-    private HolderLookup.Provider registries;
-
-    @Unique
-    private ResourceManager wunder_resourceManager;
-
-    // Capture the ResourceManager for this reload so the imprinter override layer can be loaded from
-    // it (synchronously, before the recipes are built below), guaranteeing the overrides are applied
-    // regardless of reload-listener ordering.
-    @Inject(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;",
-            at = @At("HEAD"))
-    private void wunder_captureResourceManager(
-            ResourceManager resourceManager,
-            ProfilerFiller profiler,
-            CallbackInfoReturnable<RecipeMap> cir
+    @ModifyArg(
+            method = "<init>",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/item/crafting/RecipeMap;create(Lnet/minecraft/core/HolderLookup;)Lnet/minecraft/world/item/crafting/RecipeMap;"
+            )
+    )
+    private HolderLookup<Recipe<?>> wunder_addCustomRecipes(
+            HolderLookup<Recipe<?>> datapackRecipes,
+            @Local(argsOnly = true) HolderLookup.Provider registries
     ) {
-        this.wunder_resourceManager = resourceManager;
-    }
+        final Map<ResourceKey<Recipe<?>>, RecipeHolder<?>> extraRecipes = new LinkedHashMap<>();
+        final Set<Identifier> existingRecipeIds = new HashSet<>();
 
-    @ModifyArg(method = "prepare(Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)Lnet/minecraft/world/item/crafting/RecipeMap;",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/crafting/RecipeMap;create(Ljava/lang/Iterable;)Lnet/minecraft/world/item/crafting/RecipeMap;"),
-            index = 0)
-    private Iterable<RecipeHolder<?>> wunder_addCustomRecipes(Iterable<RecipeHolder<?>> iterable) {
-        List<RecipeHolder<?>> originalList;
-        Set<Identifier> existingRecipeIds;
-
-        if (iterable instanceof List<RecipeHolder<?>> iterableAsList) {
-            originalList = iterableAsList;
-            // Create a Set of existing recipe IDs for fast lookup (O(1) instead of O(n))
-            existingRecipeIds = new HashSet<>();
-            for (RecipeHolder<?> holder : originalList) {
-                existingRecipeIds.add(holder.id().identifier());
-            }
-        } else {
-            // If the iterable is not a List, convert it to a List and build the Set in parallel
-            originalList = new ArrayList<>();
-            existingRecipeIds = new HashSet<>();
-            iterable.forEach(holder -> {
-                originalList.add(holder);
-                existingRecipeIds.add(holder.id().identifier());
-            });
+        for (Holder.Reference<Recipe<?>> ref : datapackRecipes.listElements().toList()) {
+            existingRecipeIds.add(ref.key().identifier());
         }
-
-        // Load the datapack override layer before the imprinter recipes are generated, so the
-        // "disabled" flag can suppress recipes and overridden values are available to the recipes'
-        // lazy suppliers. Only the raw JSON is parsed here (no ItemStack materialization).
-        ImprinterOverrides.ensureLoaded(wunder_resourceManager);
 
         // Register ImprinterRecipe for level
         ImprinterRecipe.registerForLevel((RecipeManager) (Object) this, registries);
 
-        // Inject the generated imprinter recipes into the recipe map directly. Their ItemStacks
-        // are materialized lazily, so wrapping them in RecipeHolders here (during the reload's
-        // prepare phase, before item data components are bound) does not trigger materialization.
+        // Inject the generated imprinter recipes
         for (ImprinterRecipe imprinterRecipe : ImprinterRecipe.getRegisteredRecipes()) {
             if (existingRecipeIds.contains(imprinterRecipe.id)) continue;
             ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, imprinterRecipe.id);
-            originalList.add(new RecipeHolder<>(resourceKey, imprinterRecipe));
+            extraRecipes.put(resourceKey, new RecipeHolder<>(resourceKey, imprinterRecipe));
             existingRecipeIds.add(imprinterRecipe.id);
         }
 
@@ -102,20 +76,59 @@ public class RecipeManagerMixin {
                 .filter(entry -> !existingRecipeIds.contains(entry.getKey()))
                 .forEach(entry -> {
                     try {
-                        Recipe<?> recipe = Recipe.CODEC.parse(
+                        Recipe<?> recipe = Recipe.DIRECT_CODEC.parse(
                                 registries.createSerializationContext(JsonOps.INSTANCE),
                                 entry.getValue()
                         ).getOrThrow();
                         ResourceKey<Recipe<?>> resourceKey = ResourceKey.create(Registries.RECIPE, entry.getKey());
-                        RecipeHolder<?> recipeHolder = new RecipeHolder<>(resourceKey, recipe);
-                        originalList.add(recipeHolder);
+                        extraRecipes.put(resourceKey, new RecipeHolder<>(resourceKey, recipe));
+                        existingRecipeIds.add(entry.getKey());
                     } catch (Exception e) {
-                        // Handle parsing errors gracefully
                         System.err.println("Failed to parse custom recipe " + entry.getKey() + ": " + e.getMessage());
                     }
                 });
 
-        return originalList;
+        return wunder_extendLookup(datapackRecipes, extraRecipes);
     }
 
+    @Unique
+    private static HolderLookup<Recipe<?>> wunder_extendLookup(
+            HolderLookup<Recipe<?>> base,
+            Map<ResourceKey<Recipe<?>>, RecipeHolder<?>> extra
+    ) {
+        if (extra.isEmpty()) return base;
+
+        final Map<ResourceKey<Recipe<?>>, Holder.Reference<Recipe<?>>> added = new LinkedHashMap<>();
+        extra.forEach((key, holder) -> {
+            Holder.Reference<Recipe<?>> reference = Holder.Reference.createStandAlone(base, key);
+            reference.bindValue(holder.value());
+            added.put(key, reference);
+        });
+
+        return new HolderLookup<Recipe<?>>() {
+            @Override
+            public Stream<Holder.Reference<Recipe<?>>> listElements() {
+                return Stream.concat(
+                        base.listElements().filter(ref -> !added.containsKey(ref.key())),
+                        added.values().stream()
+                );
+            }
+
+            @Override
+            public Optional<Holder.Reference<Recipe<?>>> get(ResourceKey<Recipe<?>> key) {
+                Holder.Reference<Recipe<?>> ours = added.get(key);
+                return ours != null ? Optional.of(ours) : base.get(key);
+            }
+
+            @Override
+            public Stream<HolderSet.Named<Recipe<?>>> listTags() {
+                return base.listTags();
+            }
+
+            @Override
+            public Optional<HolderSet.Named<Recipe<?>>> get(TagKey<Recipe<?>> tag) {
+                return base.get(tag);
+            }
+        };
+    }
 }

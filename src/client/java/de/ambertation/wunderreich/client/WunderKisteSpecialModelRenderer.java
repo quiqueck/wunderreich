@@ -58,8 +58,7 @@ public class WunderKisteSpecialModelRenderer implements SpecialModelRenderer<Wun
                 domain.overlayColor,
                 sprite,
                 this.sprites,
-                outlineColor,
-                null
+                outlineColor
         );
     }
 

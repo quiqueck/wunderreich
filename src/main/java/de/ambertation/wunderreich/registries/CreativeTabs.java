@@ -60,6 +60,7 @@ public class CreativeTabs {
                     stacks.addAll(WunderreichBlocks.getAllBlocks()
                                                    .stream()
                                                    .filter(block -> block != WunderreichBlocks.WUNDER_KISTE)
+                                                   .filter(block -> !WunderreichBlocks.isSupersededByVanilla(block))
                                                    .map(ItemStack::new)
                                                    .toList()
                     );

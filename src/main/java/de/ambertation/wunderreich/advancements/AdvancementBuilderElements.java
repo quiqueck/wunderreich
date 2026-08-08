@@ -123,21 +123,35 @@ class Condition {
     }
 }
 
+/**
+ * 26.3 changed {@code RecipeUnlockedTrigger.TriggerInstance} from a single {@code "recipe"} id to a
+ * required {@code "recipes"} field holding a {@code HolderSet<Recipe<?>>}
+ * ({@code Recipe.LIST_CODEC.fieldOf("recipes")}). The holder-set codec accepts a bare id, a list of ids
+ * or a {@code "#tag"}; we always emit a list so the shape is unambiguous.
+ */
 class RecipeCondition extends Condition {
     private final String recipe;
 
     RecipeCondition(String recipe) {
-        super("recipe");
+        super("recipes");
         this.recipe = recipe;
     }
 
     void serialize(JsonObject obj) {
         super.serialize(obj);
 
-        obj.add("recipe", new JsonPrimitive(recipe));
+        JsonArray recipes = new JsonArray();
+        recipes.add(new JsonPrimitive(recipe));
+        obj.add("recipes", recipes);
     }
 }
 
+/**
+ * Unchanged for 26.3: {@code InventoryChangeTrigger.TriggerInstance} still declares
+ * {@code ItemPredicate.CODEC.listOf().optionalFieldOf("items", List.of())}, and {@code ItemPredicate}
+ * still declares {@code Item.CODEC(HolderSet).optionalFieldOf("items")} - so the nested
+ * {@code "items": [ { "items": [ ...ids... ] } ]} shape below is still correct.
+ */
 class ItemCondition extends Condition {
     private final List<String> items = new ArrayList<>(1);
 

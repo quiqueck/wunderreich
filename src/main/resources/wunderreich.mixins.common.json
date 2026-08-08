@@ -11,6 +11,7 @@
     "MinecraftServerMixin",
     "PlayerMixin",
     "RecipeManagerMixin",
+    "ReloadableServerResourcesMixin",
     "ServerAdvancementManagerMixin",
     "ServerLevelMixin",
     "ShovelItemMixin",

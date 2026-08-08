@@ -47,6 +47,10 @@
     {
       "id": "wunderreich:pale_oak_wall",
       "required": false
+    },
+    {
+      "id": "wunderreich:poplar_wall",
+      "required": false
     }
   ]
 }

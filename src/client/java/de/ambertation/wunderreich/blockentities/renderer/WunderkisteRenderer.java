@@ -131,6 +131,7 @@ public class WunderkisteRenderer
 
         // Colored chest body: per-domain sprite, tinted with the domain overlay color.
         final ChestModel model = this.models.select(state.type);
+        final SpriteId spriteId = WunderKisteDomainClient.getSpriteFor(domain);
         submitNodeCollector.submitModel(
                 model,
                 open,
@@ -138,11 +139,27 @@ public class WunderkisteRenderer
                 state.lightCoords,
                 OverlayTexture.NO_OVERLAY,
                 domain.overlayColor,
-                WunderKisteDomainClient.getSpriteFor(domain),
+                spriteId,
                 this.sprites,
-                0,
-                state.breakProgress
+                0
         );
+
+        // 26.3 split the block-breaking overlay out of submitModel into its own submitCrumblingOverlay
+        // call (see vanilla ChestRenderer#submit).
+        if (state.breakProgress != null) {
+            submitNodeCollector
+                    .order(1)
+                    .submitCrumblingOverlay(
+                            model,
+                            open,
+                            poseStack,
+                            spriteId.renderType(model.renderType()),
+                            state.lightCoords,
+                            OverlayTexture.NO_OVERLAY,
+                            -1,
+                            state.breakProgress
+                    );
+        }
 
         // Colored top plane overlay (only visible while the lid is opening).
         if (open > 0) {

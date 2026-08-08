@@ -1,5 +1,5 @@
 // Shared Fabric Loom project setup.
-// Copy-paste this file identically into every library/mod repo's 26.1
+// Copy-paste this file identically into every library/mod repo's 26.3
 // checkout. Not interchangeable with the 1.21.6 copy: different Java
 // version, different Loom API (net.fabricmc.fabric-loom, plain
 // configurations + loom.mods{} instead of mod*-prefixed ones, no separate

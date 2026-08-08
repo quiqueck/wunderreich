@@ -2,8 +2,6 @@ package de.ambertation.wunderreich.blocks;
 
 import de.ambertation.wunderreich.interfaces.ChangeRenderLayer;
 
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
@@ -19,19 +17,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class WeatheringCopperWall extends WallBlock implements WeatheringCopper {
     public static class Transparent extends WeatheringCopperWall implements ChangeRenderLayer {
-        public static final MapCodec<WeatheringCopperWall.Transparent> CODEC = RecordCodecBuilder.mapCodec(
-                instance -> instance.group(
-                                            WeatheringCopper.WeatherState.CODEC.fieldOf("weathering_state").forGetter(
-                                                    WeatheringCopper::getAge), propertiesCodec()
-                                    )
-                                    .apply(instance, WeatheringCopperWall.Transparent::new)
-        );
-
-        @Override
-        public MapCodec<net.minecraft.world.level.block.WallBlock> codec() {
-            return (MapCodec<net.minecraft.world.level.block.WallBlock>) (Object) CODEC;
-        }
-
         protected Transparent(WeatherState weatherState, Properties properties) {
             super(weatherState, properties);
         }
@@ -66,20 +51,8 @@ public class WeatheringCopperWall extends WallBlock implements WeatheringCopper 
         }
     }
 
-    public static final MapCodec<WeatheringCopperWall> CODEC = RecordCodecBuilder.mapCodec(
-            instance -> instance.group(
-                                        WeatheringCopper.WeatherState.CODEC.fieldOf("weathering_state").forGetter(
-                                                WeatheringCopper::getAge), propertiesCodec()
-                                )
-                                .apply(instance, WeatheringCopperWall::new)
-    );
     private final WeatheringCopper.WeatherState weatherState;
 
-
-    @Override
-    public MapCodec<net.minecraft.world.level.block.WallBlock> codec() {
-        return (MapCodec<net.minecraft.world.level.block.WallBlock>) (Object) CODEC;
-    }
 
     protected WeatheringCopperWall(WeatheringCopper.WeatherState weatherState, BlockBehaviour.Properties properties) {
         super(properties);

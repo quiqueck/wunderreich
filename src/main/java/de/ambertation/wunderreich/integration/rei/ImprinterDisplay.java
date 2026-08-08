@@ -1,4 +1,5 @@
 package de.ambertation.wunderreich.integration.rei;
+/*
 
 import de.ambertation.wunderreich.gui.whisperer.WhisperRule;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
@@ -61,3 +62,4 @@ public class ImprinterDisplay extends BasicDisplay {
         return SERIALIZER;
     }
 }
+*/

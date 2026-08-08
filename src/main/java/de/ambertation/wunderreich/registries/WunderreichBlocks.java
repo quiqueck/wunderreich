@@ -22,11 +22,32 @@ import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiFunction;
 
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(64);
+    // Blocks vanilla now ships its own version of (e.g. wool slabs/stairs since 26.3), mapped to
+    // that vanilla equivalent. Kept registered so existing worlds/inventories keep resolving them,
+    // but hidden from the creative tab and, when broken, drop the vanilla replacement instead of
+    // themselves - see CreativeTabs and CanDropLoot.
+    private static final Map<Block, Block> VANILLA_REPLACEMENTS = new HashMap<>();
+
+    static void registerVanillaReplacement(Block block, Block vanillaReplacement) {
+        if (block != null && vanillaReplacement != null) {
+            VANILLA_REPLACEMENTS.put(block, vanillaReplacement);
+        }
+    }
+
+    public static Block getVanillaReplacement(Block block) {
+        return VANILLA_REPLACEMENTS.get(block);
+    }
+
+    public static boolean isSupersededByVanilla(Block block) {
+        return VANILLA_REPLACEMENTS.containsKey(block);
+    }
     public static final Block WUNDER_KISTE = registerBlock(
             "wunder_kiste",
             null,
