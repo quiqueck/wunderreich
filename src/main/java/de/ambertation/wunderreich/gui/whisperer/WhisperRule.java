@@ -26,11 +26,11 @@ public class WhisperRule {
     public final int baseXP;
 
     private WhisperRule(Holder<Enchantment> enchantment, EnchantmentInfo nfo) {
-        this(enchantment, nfo.input, nfo.baseXP, nfo.type);
+        this(enchantment, nfo.input(), nfo.baseXP, nfo.type());
     }
 
     protected WhisperRule(Holder<Enchantment> enchantment, ItemStack input, int baseXP) {
-        this(enchantment, input, baseXP, new EnchantmentInfo(enchantment).type);
+        this(enchantment, input, baseXP, new EnchantmentInfo(enchantment).type());
     }
 
     protected WhisperRule(Holder<Enchantment> enchantment, ItemStack input, int baseXP, ItemStack icon) {
@@ -52,7 +52,24 @@ public class WhisperRule {
     }
 
     protected WhisperRule(Holder<Enchantment> enchantment) {
-        this(enchantment, new EnchantmentInfo(enchantment));
+        // Datapack override layer. 1.21.6 builds its rules eagerly (ItemStack creation is safe
+        // at this point on this branch), so the override is resolved inline here instead of through
+        // the lazy supplier indirection the 26.x branches need for their async recipe reload.
+        this(enchantment,
+                de.ambertation.wunderreich.recipes.ImprinterOverrides.get(enchantment),
+                new EnchantmentInfo(enchantment));
+    }
+
+    private WhisperRule(
+            Holder<Enchantment> enchantment,
+            de.ambertation.wunderreich.recipes.ImprinterOverride override,
+            EnchantmentInfo nfo
+    ) {
+        this(enchantment,
+                override.input().orElseGet(nfo::input),
+                override.output().orElseGet(() -> TrainedVillagerWhisperer.createForEnchantment(enchantment)),
+                override.baseXP().orElseGet(() -> nfo.baseXP),
+                override.icon().orElseGet(nfo::type));
     }
 
     public static Component getFullname(Holder<Enchantment> e) {
@@ -135,6 +152,10 @@ public class WhisperRule {
 
     public ItemStack getInput() {
         return input;
+    }
+
+    public ItemStack getOutput() {
+        return output;
     }
 
     public Component getNameComponent() {

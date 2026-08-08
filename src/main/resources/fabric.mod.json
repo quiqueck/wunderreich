@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "wunderreich",
-    "version": "21.800.0",
+    "version": "21.800.1",
     "name": "Wunderreich",
     "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
     "authors": [
@@ -32,6 +32,9 @@
         "rei_client": [
             "de.ambertation.wunderreich.integration.rei.ClientPlugin"
         ],
+        "jei_mod_plugin": [
+            "de.ambertation.wunderreich.integration.jei.JeiPlugin"
+        ],
         "modmenu": [
             "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
         ],
@@ -56,11 +59,12 @@
         "wunderlib": "21.800.x"
     },
     "breaks": {
-        "wunderlib": "<21.800.0"
+        "wunderlib": "<21.800.1"
     },
     "suggests": {
         "modmenu": "11.0.x",
         "rei": ">=20.0.0",
+        "jei": ">=24.0.0",
         "emi": "1.1.x"
     },
     "custom": {

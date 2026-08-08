@@ -163,6 +163,10 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
         // Store the recipe manager reference for later use in getAllVariants()
         GLOBAL_RECIPE_MANAGER = manager;
 
+        // Make the loaded datapack override layer available to the lazy WhisperRule suppliers
+        // (they decode overridden ItemStacks with this provider at runtime).
+        ImprinterOverrides.setRegistryProvider(provider);
+
         // Avoid re-registering with the same provider to prevent duplicate recipes
         if (provider == REGISTRY_PROVIDER_OR_NULL) return;
         REGISTRY_PROVIDER_OR_NULL = provider;
@@ -175,6 +179,11 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
                 try {
                     enchantments.listElements()
                                 .forEach(e -> {
+                                    // Datapack "enabled": false / "disabled": true suppresses this
+                                    // auto-generated imprinter entirely. Keyed by the enchantment id
+                                    // and read without materializing any ItemStack (safe here).
+                                    final ResourceLocation enchantmentId = e.unwrapKey().orElseThrow().location();
+                                    if (ImprinterOverrides.isDisabled(enchantmentId)) return;
                                     ResourceLocation ID = makeID(e);
                                     if (Configs.RECIPE_CONFIG.newBooleanFor(ID.getPath(), ID).get())
                                         enchants.add(e);
