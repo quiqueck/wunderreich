@@ -8,6 +8,7 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeInput;
+import net.minecraft.world.level.Level;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -26,12 +27,15 @@ public class WhisperContainer implements Container {
     }
 
     private final NonNullList<ItemStack> itemStacks;
+    @Nullable
+    private final Level level;
     private int lastSelectedRule;
     @Nullable
     private WhisperRule activeRule;
 
-    WhisperContainer() {
+    WhisperContainer(@Nullable Level level) {
         this.itemStacks = NonNullList.withSize(3, ItemStack.EMPTY);
+        this.level = level;
     }
 
     @Override
@@ -118,7 +122,7 @@ public class WhisperContainer implements Container {
         if (costA.isEmpty()) {
             this.setItem(WhispererMenu.RESULT_SLOT, ItemStack.EMPTY);
         } else {
-            var enchantments = ImprinterRecipe.getUISortedRecipes();
+            var enchantments = ImprinterRecipe.getUISortedRecipes(this.level);
             if (!enchantments.isEmpty()) {
                 WhisperRule rule = getIngredientsFor(costA, costB, this.lastSelectedRule);
                 if (rule == null) {
@@ -138,7 +142,7 @@ public class WhisperContainer implements Container {
 
     @Nullable
     public WhisperRule getIngredientsFor(ItemStack slotA, ItemStack slotB, int preferedIndex) {
-        var all = ImprinterRecipe.getUISortedRecipes();
+        var all = ImprinterRecipe.getUISortedRecipes(this.level);
         WhisperRule rule;
         if (preferedIndex > 0 && preferedIndex < all.size()) {
             rule = all.get(preferedIndex);

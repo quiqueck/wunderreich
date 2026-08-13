@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.ChronariumBlockEntity;
 import de.ambertation.wunderreich.blockentities.SuctionTubeBlockEntity;
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 
@@ -31,5 +32,10 @@ public class WunderreichBlockEntities {
     public static BlockEntityType<SuctionTubeBlockEntity> BLOCK_ENTITY_SUCTION_TUBE = registerBlockEntity(
             "suction_tube_block_entity",
             FabricBlockEntityTypeBuilder.create(SuctionTubeBlockEntity::new, WunderreichBlocks.SUCTION_TUBE)
+    );
+
+    public static BlockEntityType<ChronariumBlockEntity> BLOCK_ENTITY_CHRONARIUM = registerBlockEntity(
+            "chronarium_block_entity",
+            FabricBlockEntityTypeBuilder.create(ChronariumBlockEntity::new, WunderreichBlocks.CHRONARIUM)
     );
 }

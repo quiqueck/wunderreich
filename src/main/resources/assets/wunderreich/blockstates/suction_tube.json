@@ -1,7 +1,31 @@
 {
-  "variants": {
-    "": {
-      "model": "wunderreich:block/suction_tube"
+  "multipart": [
+    {
+      "apply": {"model": "wunderreich:block/suction_tube"}
+    },
+    {
+      "when": {"north": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_torch_lit"}
+    },
+    {
+      "when": {"east": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_torch_lit", "y": 90}
+    },
+    {
+      "when": {"south": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_torch_lit", "y": 180}
+    },
+    {
+      "when": {"west": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_torch_lit", "y": 270}
+    },
+    {
+      "when": {"up": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_ring_up_lit"}
+    },
+    {
+      "when": {"down": "true"},
+      "apply": {"model": "wunderreich:block/suction_tube_ring_down_lit"}
     }
-  }
+  ]
 }

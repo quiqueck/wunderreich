@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "wunderreich-testmod",
+  "version": "1.0.0",
+  "name": "Wunderreich (TestMod)",
+  "description": "Headless GameTest suite for Wunderreich. Never shipped.",
+  "authors": [
+    "Quiqueck"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "de.ambertation.wunderreich.testmod.gametest.ChronariumAgingGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.ChronariumHopperGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.ChronariumExperienceGameTest"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.0",
+    "minecraft": [
+      "26.2"
+    ],
+    "java": ">=25",
+    "fabric-api": ">=0.155.0",
+    "wunderreich": "*"
+  }
+}

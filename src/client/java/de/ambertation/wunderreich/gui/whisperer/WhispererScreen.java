@@ -93,7 +93,7 @@ public class WhispererScreen
                 this.title,
                 (49 + this.imageWidth / 2 - this.font.width(this.title) / 2),
                 6,
-                0x404040,
+                0xFF404040,
                 false
         );
 
@@ -102,7 +102,7 @@ public class WhispererScreen
                 this.playerInventoryTitle,
                 this.inventoryLabelX,
                 this.inventoryLabelY,
-                0x404040,
+                0xFF404040,
                 false
         );
         int component = this.font.width(ENCHANTS_LABEL);
@@ -111,7 +111,7 @@ public class WhispererScreen
                 ENCHANTS_LABEL,
                 (TRADE_BUTTON_X - component / 2 + 48),
                 6,
-                0x404040,
+                0xFF404040,
                 false
         );
     }

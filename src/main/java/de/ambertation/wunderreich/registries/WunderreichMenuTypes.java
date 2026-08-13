@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.gui.chronarium.ChronariumMenu;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 
@@ -29,6 +30,11 @@ public class WunderreichMenuTypes {
                 BlockPos pos = inventory.player.blockPosition();
                 return new SuctionTubeMenu(containerId, inventory, pos);
             }
+    );
+
+    public static final MenuType<ChronariumMenu> CHRONARIUM = registerSimple(
+            Wunderreich.ID("chronarium"),
+            ChronariumMenu::new
     );
 
     static <T extends AbstractContainerMenu> MenuType<T> registerSimple(

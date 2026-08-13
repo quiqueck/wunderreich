@@ -15,6 +15,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 public class WunderreichParticles {
     public static SimpleParticleType EIR_PARTICLES;
     public static SimpleParticleType IMPRINT_PARTICLES;
+    /**
+     * The purple mote swirling in a working {@code Chronarium}'s basin, spawned by
+     * {@code Chronarium#animateTick}. Rendered by {@code ChronariumVortexParticle}.
+     */
+    public static SimpleParticleType CHRONARIUM_VORTEX_PARTICLES;
 
     private static SimpleParticleType register(String name) {
         return Registry.register(
@@ -27,5 +32,6 @@ public class WunderreichParticles {
     public static void register() {
         EIR_PARTICLES = register("eir");
         IMPRINT_PARTICLES = register("imprint");
+        CHRONARIUM_VORTEX_PARTICLES = register("chronarium_vortex");
     }
 }

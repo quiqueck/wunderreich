@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.Chronarium;
 import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
@@ -42,6 +43,11 @@ public class WunderreichBlocks {
             "suction_tube",
             null,
             (baseBlock, key) -> new SuctionTube(key)
+    );
+    public static final Block CHRONARIUM = registerBlock(
+            "chronarium",
+            null,
+            (baseBlock, key) -> new Chronarium(key)
     );
 
 

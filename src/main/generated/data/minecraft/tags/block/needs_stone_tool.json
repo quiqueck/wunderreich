@@ -3,6 +3,10 @@
     {
       "id": "wunderreich:whisper_imprinter",
       "required": false
+    },
+    {
+      "id": "wunderreich:chronarium",
+      "required": false
     }
   ]
 }

@@ -1,0 +1,7 @@
+{
+  "parent": "wunderreich:block/chronarium",
+  "textures": {
+    "dial": "wunderreich:block/chronarium_dial_working",
+    "top": "wunderreich:block/chronarium_top_working"
+  }
+}

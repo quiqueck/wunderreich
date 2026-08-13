@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.integration.wthit;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.Chronarium;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 
 import mcp.mobius.waila.api.IRegistrar;
@@ -15,6 +16,8 @@ public class WailaPlugin implements IWailaPlugin {
         registrar.addComponent(WunderkisteProvider.INSTANCE, TooltipPosition.HEAD, WunderKisteBlock.class);
         registrar.addComponent(WunderkisteProvider.INSTANCE, TooltipPosition.BODY, WunderKisteBlock.class);
         registrar.addIcon(WunderkisteProvider.INSTANCE, WunderKisteBlock.class);
+
+        registrar.addComponent(ChronariumProvider.INSTANCE, TooltipPosition.BODY, Chronarium.class);
     }
 }
 
