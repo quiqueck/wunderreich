@@ -33,7 +33,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class SuctionTubeMenu extends AbstractContainerMenu {
     public static final int SLOTS_PER_DIRECTION = 4; // Each direction has 4 filter slots
-    // GUI Layout Constants
+    // GUI Layout Constants. These - GUI_WIDTH/HEIGHT, FILTER_CENTER_Y, the two SPACING constants -
+    // are not free to retune: the background texture's player-inventory slots are painted at fixed
+    // pixel positions (verified against the PNG directly), so PLAYER_INV_START_Y (derived from
+    // GUI_HEIGHT below) has to land exactly where that art already is. That is also why there is no
+    // room anywhere in this panel for a per-direction text label without it colliding with a
+    // neighbouring row - see SuctionTubeScreen#extractBackground, which relies on hover tooltips
+    // instead of on-screen labels for exactly this reason.
     public static final int GUI_WIDTH = 306;
     public static final int GUI_HEIGHT = 180;
     public static final int SLOT_SIZE = 18;
@@ -41,13 +47,21 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
     public static final int FILTER_SPACING_VERTICAL = 4;
     public static final int FILTER_SPACING_HORIZONTAL = 4;
 
+    /**
+     * Top of the output/UP connection icon: centered above the input cross. y4, not y0, only to
+     * clear the panel's own 1-2px painted border; NORTH's row starts at y28, so this has plenty of
+     * clearance below it too - confirmed against an actual in-game screenshot showing this icon
+     * floating with room to spare above it.
+     */
+    public static final int OUTPUT_ICON_Y = 4;
+
     // Player inventory positioning
     public static final int PLAYER_INV_START_X = 73;
     public static final int PLAYER_HOTBAR_Y = GUI_HEIGHT - SLOT_SIZE - 6;
     public static final int PLAYER_INV_START_Y = PLAYER_HOTBAR_Y - 3 * SLOT_SIZE - 4;
 
-    private static final int PLAYER_INVENTORY_START = 0;
-    private static final int PLAYER_HOTBAR_START = 27;
+    private static final int PLAYER_INVENTORY_START = 9;
+    private static final int PLAYER_HOTBAR_START = 0;
     private static final int FILTER_SLOTS_START = 36;
 
     // 5 directions × 4 slots each = 20 filter slots
@@ -122,6 +136,19 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 if (!stackWithState.isEmpty()) {
                     containerConnections.put(input.inDirection, stackWithState);
                 }
+            }
+
+            // Output side too, so the screen can show what the tube is pushing into - there is no
+            // lock or signal concept up here, so those bits are just always encoded as off.
+            BlockPos abovePos = pos.above();
+            ItemStack outputStack = new ItemStack(Blocks.BARRIER);
+            if (SuctionTubeBlockEntity.getContainerAt(level, abovePos) != null) {
+                BlockState aboveState = level.getBlockState(abovePos);
+                outputStack = aboveState.getCloneItemStack(level, abovePos, false);
+            }
+            outputStack.setCount(encodeInputInfo(false, 0));
+            if (!outputStack.isEmpty()) {
+                containerConnections.put(Direction.UP, outputStack);
             }
 
             // NOTE: the connection data must NOT be sent here. This constructor runs inside
@@ -221,7 +248,7 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
             return ItemStack.EMPTY;
         }
 
-        if (slotIndex >= PLAYER_INVENTORY_START && slotIndex < PLAYER_HOTBAR_START + 9) {
+        if (slotIndex >= PLAYER_HOTBAR_START && slotIndex < FILTER_SLOTS_START) {
             // Moving from player inventory to filter slots is not supported via shift-click.
             return ItemStack.EMPTY;
         }
@@ -308,6 +335,9 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
                 }
             }
             blockEntity.setChanged();
+            // One update for the whole batch: relights the torches and sends the new templates to
+            // every client drawing them on the block.
+            blockEntity.filtersChanged();
         }
     }
 
@@ -368,6 +398,16 @@ public class SuctionTubeMenu extends AbstractContainerMenu {
             };
             default -> new int[]{downX + iconW, downY, downX};
         };
+    }
+
+    /**
+     * Position of the output/UP connection icon. UP has no filter slots of its own - nothing to
+     * configure on the push side - so there is no row for it in {@link #getFilterPosition}.
+     * Centered at the top of the panel, above the input cross, so it reads as "this is where
+     * everything below ends up" rather than as a sixth direction alongside the intakes.
+     */
+    public static int[] getOutputIconPosition() {
+        return new int[]{(GUI_WIDTH - SLOT_SIZE) / 2, OUTPUT_ICON_Y};
     }
 
     /**

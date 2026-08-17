@@ -28,13 +28,14 @@ import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 
+import net.fabricmc.fabric.api.recipe.v1.sync.RecipeSynchronization;
+
 import com.google.gson.JsonElement;
 
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.jetbrains.annotations.ApiStatus;
@@ -100,36 +101,38 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
         return Wunderreich.ID(Type.ID.getPath() + "/" + eID.getNamespace() + "/" + eID.getPath());
     }
 
-    public static RecipeManager GLOBAL_RECIPE_MANAGER;
-
     /**
-     * Set once from client-only code (e.g. {@code WunderreichClient}) so this common class never
-     * has to reference {@code Minecraft} directly. Used as a fallback for {@link #GLOBAL_RECIPE_MANAGER}
-     * when the UI is opened before a level's recipe manager has been registered.
+     * Every imprinter recipe the given level knows about.
+     * <p>
+     * The list is read through Fabric's recipe sync (the serializer is opted in from
+     * {@link #register()}), so this works on <b>both</b> logical sides: {@code Level#recipeAccess()}
+     * is the server's {@code RecipeManager} on a {@link net.minecraft.server.level.ServerLevel} and a
+     * {@code ClientRecipeContainer} on a client, and both expose a synchronized view. On a client
+     * that view holds exactly the recipes the server sent for our serializer, which is why this
+     * returns the full list on a <i>dedicated</i> server as well - reaching for
+     * {@code Minecraft#getSingleplayerServer()} would silently yield nothing there.
+     *
+     * @param level the level to read from, usually {@code Minecraft.getInstance().level} on the
+     *              client and {@code player.level()} on the server. A {@code null} level, or one
+     *              whose sync has not arrived yet, falls back to the recipes this JVM generated in
+     *              {@link #registerForLevel} - which are only populated where the logical server
+     *              runs.
      */
-    @ApiStatus.Internal
-    public static Supplier<RecipeManager> CLIENT_RECIPE_MANAGER_SUPPLIER;
-
-    public static Stream<ImprinterRecipe> getAllVariants() {
-        RecipeManager manager = GLOBAL_RECIPE_MANAGER;
-        if (manager == null && CLIENT_RECIPE_MANAGER_SUPPLIER != null) {
+    public static Stream<ImprinterRecipe> getAllVariants(@Nullable Level level) {
+        if (level != null) {
             try {
-                manager = CLIENT_RECIPE_MANAGER_SUPPLIER.get();
-            } catch (Throwable ignored) {
-            }
-        }
-
-        if (manager != null) {
-            try {
-                return manager
-                        .getRecipes()
-                        .stream()
-                        .filter(recipeHolder -> recipeHolder != null && recipeHolder.value() != null)
-                        .filter(recipeHolder -> recipeHolder.value().getType() == ImprinterRecipe.Type.INSTANCE)
-                        .map(recipeHolder -> (ImprinterRecipe) recipeHolder.value())
-                        .filter(r -> r.enchantment != null);
-            } catch (Exception e) {
-                Wunderreich.LOGGER.warn("Failed to access recipe manager, falling back to static recipes", e);
+                final var synced = level.recipeAccess()
+                                        .getSynchronizedRecipes()
+                                        .getAllOfType(Type.INSTANCE);
+                if (!synced.isEmpty()) {
+                    return synced
+                            .stream()
+                            .filter(holder -> holder != null && holder.value() != null)
+                            .map(RecipeHolder::value)
+                            .filter(r -> r.enchantment != null);
+                }
+            } catch (Throwable t) {
+                Wunderreich.LOGGER.warn("Failed to enumerate imprinter recipes, falling back to static recipes", t);
             }
         }
 
@@ -138,12 +141,12 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
                 .filter(r -> r.enchantment != null);
     }
 
-    public static List<ImprinterRecipe> getRecipes() {
-        return getAllVariants().toList();
+    public static List<ImprinterRecipe> getRecipes(@Nullable Level level) {
+        return getAllVariants(level).toList();
     }
 
-    public static List<ImprinterRecipe> getUISortedRecipes() {
-        return getAllVariants()
+    public static List<ImprinterRecipe> getUISortedRecipes(@Nullable Level level) {
+        return getAllVariants(level)
                 .sorted(Comparator.comparing(a -> a.getCategory() + ":" + a.getName()))
                 .collect(Collectors.toList());
     }
@@ -152,15 +155,19 @@ public class ImprinterRecipe extends WhisperRule implements Recipe<ImprinterReci
     public static void register() {
         Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Serializer.ID, Serializer.INSTANCE);
         Registry.register(BuiltInRegistries.RECIPE_TYPE, Type.ID, Type.INSTANCE);
+
+        // Vanilla only ships recipe *book* display data to a joining player, so without this the
+        // client would know no imprinter recipes at all. Opting the serializer into Fabric's recipe
+        // sync is what makes them exist client side - and therefore what makes the imprinter GUI and
+        // the recipe viewers work against a dedicated server. This has to happen on both sides, so
+        // it lives in the common register() and not in a client initializer.
+        RecipeSynchronization.synchronizeRecipeSerializer(Serializer.INSTANCE);
     }
 
     private static HolderLookup.Provider REGISTRY_PROVIDER_OR_NULL = null;
 
     @ApiStatus.Internal
-    public static void registerForLevel(RecipeManager manager, HolderLookup.Provider provider) {
-        // Store the recipe manager reference for later use in getAllVariants()
-        GLOBAL_RECIPE_MANAGER = manager;
-
+    public static void registerForLevel(HolderLookup.Provider provider) {
         // Make the loaded datapack override layer available to the lazy WhisperRule suppliers
         // (they decode overridden ItemStacks with this provider at runtime).
         ImprinterOverrides.setRegistryProvider(provider);

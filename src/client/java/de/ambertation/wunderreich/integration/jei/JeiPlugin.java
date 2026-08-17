@@ -3,12 +3,14 @@ package de.ambertation.wunderreich.integration.jei;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.recipes.AgingRecipe;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichDataComponents;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichMenuTypes;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
@@ -52,18 +54,21 @@ public class JeiPlugin implements IModPlugin {
     @Override
     public void registerExtraIngredients(IExtraIngredientRegistration registration) {
         List<ItemStack> variants = new ArrayList<>();
-        TrainedVillagerWhisperer.addAllVariants(variants);
+        TrainedVillagerWhisperer.addAllVariants(variants, Minecraft.getInstance().level);
         registration.addExtraItemStacks(variants);
     }
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new ImprinterCategory(registration.getJeiHelpers().getGuiHelper()));
+        registration.addRecipeCategories(
+                new ImprinterCategory(registration.getJeiHelpers().getGuiHelper()),
+                new AgingCategory(registration.getJeiHelpers().getGuiHelper())
+        );
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        List<RecipeHolder<ImprinterRecipe>> recipes = ImprinterRecipe.getUISortedRecipes()
+        List<RecipeHolder<ImprinterRecipe>> recipes = ImprinterRecipe.getUISortedRecipes(Minecraft.getInstance().level)
                                                                        .stream()
                                                                        .map(recipe -> new RecipeHolder<>(
                                                                                ResourceKey.create(Registries.RECIPE, recipe.id),
@@ -71,11 +76,20 @@ public class JeiPlugin implements IModPlugin {
                                                                        ))
                                                                        .toList();
         registration.addRecipes(ImprinterCategory.TYPE, recipes);
+
+        // Aging recipes are hidden from the vanilla recipe book on purpose, so a viewer is the only
+        // place a player can ever discover them. The list comes from the synced recipes of the
+        // level we are connected to, which also works on a dedicated server.
+        registration.addRecipes(
+                AgingCategory.TYPE,
+                AgingRecipe.getUISortedRecipes(Minecraft.getInstance().level)
+        );
     }
 
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addCraftingStation(ImprinterCategory.TYPE, WunderreichBlocks.WHISPER_IMPRINTER);
+        registration.addCraftingStation(AgingCategory.TYPE, WunderreichBlocks.CHRONARIUM);
     }
 
     @Override

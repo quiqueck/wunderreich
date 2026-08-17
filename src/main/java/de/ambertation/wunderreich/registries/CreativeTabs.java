@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.blocks.*;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
 import de.ambertation.wunderreich.items.WunderKisteItem;
+import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SlabBlock;
@@ -22,6 +24,8 @@ import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class CreativeTabs {
     public static final CreativeModeTab TAB_BLOCKS;
@@ -36,7 +40,21 @@ public class CreativeTabs {
             Wunderreich.ID("block_tab")
     );
 
-    public static void register() {
+    /**
+     * Supplies the {@link Level} the tab contents are built for.
+     * <p>
+     * {@code ItemDisplayParameters} carries no level, but the tabs are (re)built lazily from
+     * {@code CreativeModeInventoryScreen}'s constructor - by then the client has a level, and with it
+     * the recipes the server synced to us. Without this the trained whisperers would only ever appear
+     * in single player, where {@link ImprinterRecipe}'s generated list happens to live in the same
+     * JVM. Injected from the client initializer so this common class needs no {@code Minecraft}
+     * reference; it stays {@code null} until then, and a null level is handled everywhere.
+     */
+    private static Supplier<@Nullable Level> LEVEL_SUPPLIER = () -> null;
+
+    public static void register(Supplier<@Nullable Level> levelSupplier) {
+        LEVEL_SUPPLIER = levelSupplier;
+
         Registry.register(
                 BuiltInRegistries.CREATIVE_MODE_TAB,
                 TAB_ITEMS_KEY,
@@ -106,7 +124,7 @@ public class CreativeTabs {
                                                   .toList()
                     );
 
-                    TrainedVillagerWhisperer.addAllVariants(stacks);
+                    TrainedVillagerWhisperer.addAllVariants(stacks, LEVEL_SUPPLIER.get());
 
                     stacks.sort(Comparator.comparing(stack -> {
                         String prefix = stack.getItem().getClass().getSimpleName();

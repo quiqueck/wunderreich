@@ -68,7 +68,9 @@ public class WhispererMenu
                 containerLevelAccess,
                 createInputSlotDefinitions()
         );
-        recipes = ImprinterRecipe.getUISortedRecipes();
+        // The menu exists on both sides; on the client this reads the recipes the server synced to
+        // us, which is what makes the imprinter usable on a dedicated server.
+        recipes = ImprinterRecipe.getUISortedRecipes(inventory.player.level());
     }
 
     protected static ItemCombinerMenuSlotDefinition createInputSlotDefinitions() {

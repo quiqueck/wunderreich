@@ -3,11 +3,12 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderlib.network.ClientNetworkRegistry;
 import de.ambertation.wunderlib.network.ExecutionPhase;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.renderer.ChronariumRenderer;
+import de.ambertation.wunderreich.blockentities.renderer.SuctionTubeRenderer;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
-import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
@@ -28,7 +29,10 @@ public class WunderreichClient implements ClientModInitializer {
         WunderreichParticleProviders.register();
         WunderreichScreens.registerScreens();
 
-        CreativeTabs.register();
+        // The tabs are built lazily when the creative screen opens; by then this level is the one
+        // holding the recipes the server synced to us, which is what puts the trained whisperers in
+        // the tab on a dedicated server as well as in single player.
+        CreativeTabs.register(() -> Minecraft.getInstance().level);
 
         ClientNetworkRegistry.addClientHandler(
                 SuctionTubeContainerUpdatePacket.KEY,
@@ -46,19 +50,14 @@ public class WunderreichClient implements ClientModInitializer {
                 }
         );
 
-        ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
-            // ClientPacketListener.recipes() returns a ClientRecipeContainer (recipe-book display
-            // data only), never an actual RecipeManager - "instanceof RecipeManager" here was
-            // always false. The real RecipeManager only exists where the logical server runs, so
-            // this only works in singleplayer/LAN (same JVM); GLOBAL_RECIPE_MANAGER (set directly
-            // from RecipeManagerMixin) is still the primary source and covers that case anyway.
-            var server = Minecraft.getInstance().getSingleplayerServer();
-            return server != null ? server.getRecipeManager() : null;
-        };
-
         // Note: block render layers are now driven by the block model JSON
         // ("render_type") instead of the removed Fabric BlockRenderLayerMap.
         BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
+        BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_CHRONARIUM, ChronariumRenderer::new);
+        BlockEntityRendererRegistry.register(
+                WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE,
+                SuctionTubeRenderer::new
+        );
 
         /*
          * Color Provider Registration for Grass Slab Block and Item

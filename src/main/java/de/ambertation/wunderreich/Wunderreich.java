@@ -5,6 +5,8 @@ import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ClientBoundNetworkHandlers;
 import de.ambertation.wunderreich.network.ServerBoundNetworkHandlers;
+import de.ambertation.wunderreich.recipes.AgingRecipe;
+import de.ambertation.wunderreich.recipes.AgingRecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.ImprinterOverrideReloadListener;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
@@ -69,6 +71,7 @@ public class Wunderreich implements ModInitializer {
         WunderreichMenuTypes.ensureStaticallyLoaded();
 
         ImprinterRecipe.register();
+        AgingRecipe.register();
         ResourceManagerHelper.get(PackType.SERVER_DATA)
                              .registerReloadListener(new ImprinterOverrideReloadListener());
         ServerBoundNetworkHandlers.register();
@@ -78,6 +81,7 @@ public class Wunderreich implements ModInitializer {
 
         RecipeJsonBuilder.invalidate();
         StonecutterJsonBuilder.invalidate();
+        AgingRecipeJsonBuilder.invalidate();
         AdvancementsJsonBuilder.invalidate();
     }
 }

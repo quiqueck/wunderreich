@@ -83,7 +83,7 @@ public class RecipeManagerMixin {
         ImprinterOverrides.ensureLoaded(wunder_resourceManager);
 
         // Register ImprinterRecipe for level
-        ImprinterRecipe.registerForLevel((RecipeManager) (Object) this, registries);
+        ImprinterRecipe.registerForLevel(registries);
 
         // Inject the generated imprinter recipes into the recipe map directly. Their ItemStacks
         // are materialized lazily, so wrapping them in RecipeHolders here (during the reload's

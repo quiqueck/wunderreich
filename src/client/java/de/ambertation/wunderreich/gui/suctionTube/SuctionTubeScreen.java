@@ -13,7 +13,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Client-side screen for the Suction Tube configuration GUI.
@@ -27,17 +27,14 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
     private static final String[] DIRECTION_LABELS = {
             "Bottom", "North", "East", "South", "West"
     };
+    // Single-letter stand-ins for DIRECTION_LABELS, overlaid on each intake's connection icon -
+    // there is no room anywhere in this panel for the full word (see the "no on-screen direction
+    // label" comment in extractBackground), but one character fits inside the icon itself.
+    private static final String[] DIRECTION_LETTERS = {"D", "N", "E", "S", "W"};
+    private static final int DARK_AREA_TEXT_COLOR = 0xFFFFFFFF;
 
     public SuctionTubeScreen(SuctionTubeMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title, SuctionTubeMenu.GUI_WIDTH, SuctionTubeMenu.GUI_HEIGHT);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        this.titleLabelX = (this.imageWidth - this.font.width(this.title)) / 2;
-        this.titleLabelY = 6;
-        this.inventoryLabelY = this.imageHeight - 94;
     }
 
     @Override
@@ -62,7 +59,7 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
 
         // Draw filter slots in cross pattern:
         //       NNNN
-        // WWWW  BBBB  EEEE 
+        // WWWW  BBBB  EEEE
         //       SSSS
 
         // Use Menu's position calculation methods for exact alignment
@@ -77,13 +74,11 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
             final boolean hasContainer = hasConnectedItem && this.menu.hasConnectedContainer(direction);
             final boolean isLocked = this.menu.isLockedDirection(direction);
 
-            // Draw direction label above the slots
-            String label = DIRECTION_LABELS[dirIndex];
-            int labelWidth = this.font.width(label);
-            int labelX = baseX + (SuctionTubeMenu.FILTER_SLOTS_WIDTH - labelWidth) / 2; // Center label over 4 slots (72px wide)
-            int labelY = baseY - 12;
-
-            guiGraphics.text(this.font, label, labelX, labelY, 0x404040, false);
+            // No on-screen direction label: there is nowhere in this panel a 12px label can go
+            // without colliding with a neighbouring row (verified by hand - every row here is only
+            // 4px apart, not the 12+ a label needs), and the texture's own painted background
+            // already has to stay exactly where it is - see SuctionTubeMenu's GUI_HEIGHT comment.
+            // The direction is named in a hover tooltip instead - see #extractTooltip.
 
             // Draw filter slot backgrounds for this direction
             for (int slotIndex = 0; slotIndex < SLOTS_PER_DIRECTION; slotIndex++) {
@@ -102,74 +97,86 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
 //                        TEXTURE_WIDTH, TEXTURE_HEIGHT
 //                );
 
-                // Draw outline rectangle around each slot                
+                // Draw outline rectangle around each slot
 //                guiGraphics.renderOutline(// Light gray outline
 //                        slotX - 1, baseY - 1, 18, 18, 0xFF8B8B8B
 //                );
             }
 
             int iconX = x + dirPositions[dirIndex][2]; // Add GUI offset
-            Supplier<Boolean> renderLockOverlay = () -> {
+            drawConnectionIcon(guiGraphics, direction, iconX, baseY, DIRECTION_LETTERS[dirIndex]);
+        }
+
+        // Output: centered at the top of the panel, above the cross - see
+        // SuctionTubeMenu.getOutputIconPosition(). No room for a text label of its own up there
+        // (that is what freed NORTH's label above); the tooltip on hover names it instead. No
+        // letter either - it is not one of the five intake directions, and its position alone
+        // (separate from the cross) already tells it apart from them.
+        int[] outputPos = SuctionTubeMenu.getOutputIconPosition();
+        int outputX = x + outputPos[0];
+        int outputY = y + outputPos[1];
+        drawConnectionIcon(guiGraphics, Direction.UP, outputX, outputY, null);
+    }
+
+    /**
+     * Draws a direction's connected-container icon: the block's own item icon, a red overlay if a
+     * comparator is holding that side locked, a signal-strength badge if it currently has one, and
+     * (for the five intakes, not the output) a single-letter direction badge in the corner - see
+     * {@link #DIRECTION_LETTERS}. Full direction names are hover tooltips instead - see
+     * {@link #extractTooltip}.
+     */
+    private void drawConnectionIcon(
+            GuiGraphicsExtractor guiGraphics, Direction direction, int iconX, int iconY, @Nullable String letter
+    ) {
+        final boolean hasConnectedItem = this.menu.hasConnectedItem(direction);
+        final boolean isLocked = this.menu.isLockedDirection(direction);
+
+        if (hasConnectedItem) {
+            ItemStack representativeItem = this.menu.getConnectedContainerItem(direction);
+            if (representativeItem != null) {
+                // If no items found, show a generic chest icon or container block
+                if (representativeItem.isEmpty()) {
+                    representativeItem = new ItemStack(net.minecraft.world.item.Items.CHEST);
+                }
+                guiGraphics.item(representativeItem, iconX, iconY);
                 if (isLocked) {
-                    guiGraphics.fill(
+                    guiGraphics.fill(iconX, iconY, iconX + 16, iconY + 16, 0x50FF0000); // Semi-transparent red
+                }
+
+                final int signalStrength = this.menu.signalStrengthForDirection(direction);
+                if (signalStrength > 0) {
+                    guiGraphics.itemDecorations(
+                            this.font,
+                            representativeItem.copyWithCount(signalStrength),
                             iconX,
-                            baseY,
-                            iconX + 16,
-                            baseY + 16,
-                            0x50FF0000
-                    ); // Semi-transparent red
+                            iconY
+                    ); // Semi-transparent green
                 }
-                return isLocked;
-            };
-            // Draw container icon if connected
-            if (hasConnectedItem) {
-                ItemStack representativeItem = this.menu.getConnectedContainerItem(direction);
-                if (representativeItem != null) {
-                    // If no items found, show a generic chest icon or container block
-                    if (representativeItem.isEmpty()) {
-                        representativeItem = new ItemStack(net.minecraft.world.item.Items.CHEST);
-                    }
-                    // Draw the item icon next to the slots
-
-                    guiGraphics.item(representativeItem, iconX, baseY);
-                    renderLockOverlay.get();
-
-                    //guiGraphics.fill(iconX - 1, baseY - 1, iconX + 17, baseY + 17, 0x800000FF); // Semi-transparent blue
-                    final int signalStrength = this.menu.signalStrengthForDirection(direction);
-                    if (signalStrength > 0) {
-                        guiGraphics.itemDecorations(
-                                this.font,
-                                representativeItem.copyWithCount(signalStrength),
-                                iconX,
-                                baseY
-                        ); // Semi-transparent green
-                    }
-                }
-            } else if (isLocked) {
-                renderLockOverlay.get();
             }
+        } else if (isLocked) {
+            guiGraphics.fill(iconX, iconY, iconX + 16, iconY + 16, 0x50FF0000); // Semi-transparent red
+        }
+
+        if (letter != null) {
+            // Top-left corner: the signal-strength badge above already claims the bottom-right.
+            // A small dark backing chip keeps the letter legible over a light-colored item icon.
+            guiGraphics.fill(iconX - 1, iconY - 1, iconX + 7, iconY + 8, 0x90000000);
+            guiGraphics.text(this.font, letter, iconX + 1, iconY, DARK_AREA_TEXT_COLOR, true);
         }
     }
 
     @Override
     protected void extractLabels(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY) {
-        // Draw title
-        guiGraphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY, 0x404040, false);
-
-        // Draw inventory label
-        guiGraphics.text(
-                this.font,
-                this.playerInventoryTitle,
-                this.inventoryLabelX,
-                this.inventoryLabelY,
-                0x404040,
-                false
-        );
-
-        // Draw filter instructions
-        String instruction = "Place items to filter by direction";
-        int instructionX = (this.imageWidth - this.font.width(instruction)) / 2;
-        guiGraphics.text(this.font, instruction, instructionX, 130, 0x666666, false);
+        // No title: it has nowhere to go that doesn't intersect the panel's top border (confirmed
+        // against an actual in-game screenshot), and there is no room to shrink anything else to
+        // make space for it - see SuctionTubeMenu's GUI_HEIGHT comment on this panel's fixed
+        // budget. The window's own title bar / the item's name already say what this is.
+        //
+        // No "Place items to filter by direction" instruction either: it was hardcoded to a fixed
+        // y that lands inside the inventory grid regardless of anything else on this screen.
+        //
+        // No "Inventory" label either - the grid's own position already makes it obvious what it
+        // is, same reasoning as dropping the other two.
     }
 
     @Override
@@ -195,8 +202,26 @@ public class SuctionTubeScreen extends AbstractContainerScreen<SuctionTubeMenu> 
                 String directionName = DIRECTION_LABELS[dirIndex];
                 Component tooltip = Component.literal("Filter for " + directionName + " side");
                 guiGraphics.setTooltipForNextFrame(this.font, tooltip, x, y);
-                break; // Only show one tooltip at a time
+                return; // Only show one tooltip at a time
             }
+
+            // The connection icon (the letter badge) has no room for a text label of its own
+            // either - see the D/N/E/S/W badges in drawConnectionIcon - so it is named here too.
+            int iconX = dirPositions[dirIndex][2];
+            if (relativeX >= iconX && relativeX <= iconX + 16 &&
+                    relativeY >= baseY && relativeY <= baseY + 16) {
+                Component tooltip = Component.literal(DIRECTION_LABELS[dirIndex] + " Input");
+                guiGraphics.setTooltipForNextFrame(this.font, tooltip, x, y);
+                return;
+            }
+        }
+
+        // Output icon: it has no text label of its own (no room for one above it - see
+        // SuctionTubeMenu.OUTPUT_ICON_Y), so this is the only place it is named.
+        int[] outputPos = SuctionTubeMenu.getOutputIconPosition();
+        if (relativeX >= outputPos[0] && relativeX <= outputPos[0] + 16 &&
+                relativeY >= outputPos[1] && relativeY <= outputPos[1] + 16) {
+            guiGraphics.setTooltipForNextFrame(this.font, Component.literal("Output"), x, y);
         }
     }
 }

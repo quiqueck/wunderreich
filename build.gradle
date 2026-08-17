@@ -26,7 +26,55 @@ loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
 }
 
+sourceSets {
+    // Test-only mod. Never shipped: it is its own fabric mod (see src/testmod/resources/fabric.mod.json)
+    // and is only ever put on the classpath by the `gametest` run below, so nothing here ends up in
+    // the release jar (`jar` only ever packs sourceSets.main + sourceSets.client). Mirrors the testmod
+    // source set BetterEnd/BetterNether and WorldWeaver use.
+    //
+    // Deliberately built against `main` only, not `client`: the GameTest run is a dedicated server, so
+    // anything a test could reach from `src/client` would not exist at runtime. Keeping it off the
+    // compile classpath turns that into a compile error instead of a boot crash.
+    testmod {
+        compileClasspath += sourceSets.main.compileClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
+loom {
+    runs {
+        // Headless Fabric GameTest run: boots a dedicated server, executes every @GameTest listed in
+        // src/testmod/resources/fabric.mod.json, writes a JUnit-style report.xml and exits non-zero if
+        // any test failed.
+        //
+        // Usage: `./gradlew :runGametest` - the leading colon is mandatory, an unqualified `runGametest`
+        // also matches the task of every included sibling project and silently runs the wrong one.
+        gametest {
+            server()
+            name "GameTest"
+            runDir "build/gametest"
+            vmArg "-Dfabric-api.gametest"
+            vmArg "-Dfabric-api.gametest.report-file=${file("build/gametest/report.xml")}"
+            source sourceSets.testmod
+            ideConfigGenerated true
+        }
+    }
+
+    // Loom 1.17 dropped the mod*-prefixed configurations, so source-set-to-mod mapping is explicit
+    // (see the note at the top of common-settings.gradle). This adds to - it does not replace - the
+    // `wunderreich` entry registered in common-fabric-project.gradle. The testmod has to be its own mod
+    // entry, or the loader would see two fabric.mod.json files on a single mod path.
+    mods {
+        register("${project.archives_base_name}-testmod") {
+            sourceSet sourceSets.testmod
+        }
+    }
+}
+
 dependencies {
+    // The testmod compiles and runs against the mod itself.
+    testmodImplementation sourceSets.main.output
+
     compileOnly "me.shedaniel:RoughlyEnoughItems-api-fabric:${project.rei_version}" // compile against the API
     compileOnly "me.shedaniel.cloth:basic-math:0.6.1" // me.shedaniel.math.Point/Rectangle used by the REI GUI API
     compileOnly "dev.architectury:architectury-fabric:20.0.6"

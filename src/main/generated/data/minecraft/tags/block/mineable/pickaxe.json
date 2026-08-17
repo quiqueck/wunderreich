@@ -13,6 +13,10 @@
       "required": false
     },
     {
+      "id": "wunderreich:chronarium",
+      "required": false
+    },
+    {
       "id": "wunderreich:white_concrete_slab",
       "required": false
     },
