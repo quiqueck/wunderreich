@@ -5,6 +5,10 @@
       "required": false
     },
     {
+      "id": "wunderreich:light_gray_wool_slab",
+      "required": false
+    },
+    {
       "id": "wunderreich:gray_wool_slab",
       "required": false
     },

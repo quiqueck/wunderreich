@@ -3,11 +3,14 @@ package de.ambertation.wunderreich.integration.rei;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.gui.whisperer.WhispererMenu;
 import de.ambertation.wunderreich.items.TrainedVillagerWhisperer;
+import de.ambertation.wunderreich.recipes.AgingRecipe;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeHolder;
 
 import me.shedaniel.rei.api.client.plugins.REIClientPlugin;
 import me.shedaniel.rei.api.client.registry.category.CategoryRegistry;
@@ -26,9 +29,12 @@ public class ClientPlugin implements REIClientPlugin {
     @Override
     public void registerCategories(CategoryRegistry registry) {
         registry.add(new ImprinterCategory());
+        registry.add(new AgingCategory());
 
         // The Whisper Imprinter block is the working station for this category.
         registry.addWorkstations(ServerPlugin.IMPRINTER, EntryIngredients.of(WunderreichBlocks.WHISPER_IMPRINTER));
+        // ... and the Chronarium for the aging category.
+        registry.addWorkstations(ServerPlugin.AGING, EntryIngredients.of(WunderreichBlocks.CHRONARIUM));
     }
 
     @Override
@@ -39,6 +45,17 @@ public class ClientPlugin implements REIClientPlugin {
                 registry.add(ImprinterDisplay.of(recipe));
             } catch (Exception e) {
                 Wunderreich.LOGGER.error("Failed to build REI display for recipe " + recipe.id, e);
+            }
+        }
+
+        // Aging recipes never show up in the vanilla recipe book, so this is the only place a
+        // player can find them. The list is read from the recipes the server synced to us, which
+        // is what makes this work on a dedicated server as well.
+        for (RecipeHolder<AgingRecipe> holder : AgingRecipe.getUISortedRecipes(Minecraft.getInstance().level)) {
+            try {
+                registry.add(AgingDisplay.of(holder));
+            } catch (Exception e) {
+                Wunderreich.LOGGER.error("Failed to build REI display for recipe " + holder.id(), e);
             }
         }
     }

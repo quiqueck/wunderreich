@@ -3,8 +3,11 @@ package de.ambertation.wunderreich;
 import de.ambertation.wunderlib.utils.Version;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.network.ClientBoundNetworkHandlers;
 import de.ambertation.wunderreich.network.ServerBoundNetworkHandlers;
+import de.ambertation.wunderreich.recipes.AgingRecipe;
+import de.ambertation.wunderreich.recipes.AgingRecipeJsonBuilder;
 import de.ambertation.wunderreich.recipes.ImprinterOverrideReloadListener;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.recipes.RecipeJsonBuilder;
@@ -16,6 +19,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -47,6 +51,8 @@ public class Wunderreich implements ModInitializer {
         return System.getProperty("fabric-api.datagen") != null;
     }
 
+    private static final int STALE_WUNDERKISTE_CHECK_TICKS = 200;
+
     @Override
     public void onInitialize() {
         Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
@@ -69,15 +75,25 @@ public class Wunderreich implements ModInitializer {
         WunderreichMenuTypes.ensureStaticallyLoaded();
 
         ImprinterRecipe.register();
+        AgingRecipe.register();
         ResourceManagerHelper.get(PackType.SERVER_DATA)
                              .registerReloadListener(new ImprinterOverrideReloadListener());
         ServerBoundNetworkHandlers.register();
         ClientBoundNetworkHandlers.register();
 
+        // Tracked Wunderkiste positions keep their chunks force-loaded; drop the ones that no longer
+        // hold a Wunderkiste.
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTickCount() % STALE_WUNDERKISTE_CHECK_TICKS == 0) {
+                AddRemoveWunderKisteMessage.pruneStaleBoxes(server);
+            }
+        });
+
         Configs.saveConfigs();
 
         RecipeJsonBuilder.invalidate();
         StonecutterJsonBuilder.invalidate();
+        AgingRecipeJsonBuilder.invalidate();
         AdvancementsJsonBuilder.invalidate();
     }
 }

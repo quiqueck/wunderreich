@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.blockentities;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -47,6 +48,17 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        // Kept for old worlds whose Wunderkisten were placed before the server tracked them itself:
+        // the client reports every box it loads, the server validates the request and adds boxes it
+        // does not know about yet.
+        if (level.isClientSide()) {
+            AddRemoveWunderKisteMessage.send(true, this.getBlockPos());
+        }
     }
 
     public static void lidAnimateTick(

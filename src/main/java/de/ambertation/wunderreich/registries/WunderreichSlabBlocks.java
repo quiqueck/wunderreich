@@ -333,7 +333,7 @@ public class WunderreichSlabBlocks {
     public static final Block LIGHT_GRAY_WOOL_SLAB = registerSlab(
             "light_gray_wool_slab",
             Blocks.LIGHT_GRAY_WOOL,
-            ConcreteSlabBlock::new,
+            WoolSlabBlock::new,
             Configs.MAIN.addSlabs.get()
     );
     public static final Block GRAY_WOOL_SLAB = registerSlab(

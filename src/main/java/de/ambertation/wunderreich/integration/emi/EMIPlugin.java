@@ -32,6 +32,14 @@ public class EMIPlugin implements dev.emi.emi.api.EmiPlugin {
             getSprite(0, 0)
     );
 
+    public static final EmiStack CHRONARIUM_WORKSTATION = EmiStack.of(WunderreichBlocks.CHRONARIUM);
+
+    public static final EmiRecipeCategory AGING_CATEGORY = new EmiRecipeCategory(
+            Wunderreich.ID("aging"),
+            CHRONARIUM_WORKSTATION,
+            getSprite(0, 0)
+    );
+
     public static EmiTexture getSprite(int u, int v) {
         return new EmiTexture(WIDGETS, u, v, 16, 16, 16, 16, 16, 16);
     }
@@ -93,6 +101,14 @@ public class EMIPlugin implements dev.emi.emi.api.EmiPlugin {
         emiRegistry.addWorkstation(IMPRINTER_CATEGORY, IMPRINTER_WORKSTATION);
 
         EMIImprinterRecipe.addAllRecipes(emiRegistry, manager);
+
+        // The Chronarium's aging recipes. Deliberately NOT read from `manager` - that is a
+        // server-side RecipeManager and is empty on a client connected to a dedicated server.
+        // See EMIAgingRecipe.addAllRecipes / AgingRecipe#getUISortedRecipes.
+        emiRegistry.addCategory(AGING_CATEGORY);
+        emiRegistry.addWorkstation(AGING_CATEGORY, CHRONARIUM_WORKSTATION);
+
+        EMIAgingRecipe.addAllRecipes(emiRegistry);
     }
 }
 */

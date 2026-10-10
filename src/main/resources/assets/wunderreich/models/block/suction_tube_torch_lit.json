@@ -1,0 +1,23 @@
+{
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "credit": "Made with Blockbench",
+  "textures": {
+    "torch": "wunderreich:block/suction_tube_torch_lit",
+    "particle": "wunderreich:block/suction_tube_side"
+  },
+  "elements": [
+    {
+      "name": "torch north lit",
+      "from": [6.9, 13, 1.9],
+      "to": [9.1, 14.6, 4.1],
+      "faces": {
+        "north": {"uv": [0, 2, 2, 3.5], "texture": "#torch"},
+        "east": {"uv": [0, 2, 2, 3.5], "texture": "#torch"},
+        "south": {"uv": [0, 2, 2, 3.5], "texture": "#torch"},
+        "west": {"uv": [0, 2, 2, 3.5], "texture": "#torch"},
+        "up": {"uv": [0, 0, 2, 2], "texture": "#torch"}
+      }
+    }
+  ]
+}

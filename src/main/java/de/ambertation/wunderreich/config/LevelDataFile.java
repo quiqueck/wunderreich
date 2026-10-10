@@ -10,6 +10,7 @@ import net.minecraft.nbt.NbtIo;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import org.jetbrains.annotations.NotNull;
 
 public class LevelDataFile {
@@ -85,6 +86,11 @@ public class LevelDataFile {
             final File tempFile = getDataFile("_temp");
             root.putString("modify_version", Wunderreich.VERSION.toString());
             try {
+                // The level's data/ folder belongs to vanilla's DimensionDataStorage, which only
+                // creates it once it has something of its own to save there. A world that never gets
+                // that far - a GameTest level, or a fresh world shut down early - reaches this point
+                // without one, and NbtIo.writeCompressed does not create missing parents.
+                Files.createDirectories(levelData.dataPath());
                 NbtIo.writeCompressed(root, tempFile.toPath());
                 final File dataFile = getDataFile("");
                 final File oldFile = getDataFile("_old");

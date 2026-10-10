@@ -3,6 +3,8 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderlib.network.ClientNetworkRegistry;
 import de.ambertation.wunderlib.network.ExecutionPhase;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.renderer.ChronariumRenderer;
+import de.ambertation.wunderreich.blockentities.renderer.SuctionTubeRenderer;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
@@ -84,6 +86,11 @@ public class WunderreichClient implements ClientModInitializer {
         });
 
         BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
+        BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_CHRONARIUM, ChronariumRenderer::new);
+        BlockEntityRendererRegistry.register(
+                WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE,
+                SuctionTubeRenderer::new
+        );
 
         /*
          * Color Provider Registration for Grass Slab Block and Item

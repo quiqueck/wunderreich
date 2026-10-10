@@ -93,6 +93,10 @@ public class RandomList<T> implements Iterable<RandomList.Entry<T>> {
         return get(idx);
     }
 
+    public int size() {
+        return list.size();
+    }
+
     public boolean isEmpty() {
         return list.isEmpty();
     }

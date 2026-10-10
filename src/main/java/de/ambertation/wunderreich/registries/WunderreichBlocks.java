@@ -1,6 +1,7 @@
 package de.ambertation.wunderreich.registries;
 
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blocks.Chronarium;
 import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
@@ -18,15 +19,31 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+import net.fabricmc.fabric.api.event.lifecycle.v1.CommonLifecycleEvents;
 import net.fabricmc.fabric.api.registry.FlammableBlockRegistry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Set;
 import java.util.function.BiFunction;
 
 public class WunderreichBlocks {
     private static final List<Block> BLOCKS = new ArrayList<>(64);
+    /**
+     * Blocks this class added to the {@link FlammableBlockRegistry}. Used to answer "is it already
+     * flammable?" before tags are loaded, when Fabric's registry can't be queried. Declared before the
+     * block fields below, which register while this class initializes.
+     */
+    private static final Set<Block> REGISTERED_AS_FLAMMABLE = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static volatile boolean tagsLoaded = false;
+
+    static {
+        CommonLifecycleEvents.TAGS_LOADED.register((registries, client) -> tagsLoaded = true);
+    }
+
     public static final Block WUNDER_KISTE = registerBlock(
             "wunder_kiste",
             null,
@@ -42,6 +59,11 @@ public class WunderreichBlocks {
             "suction_tube",
             null,
             (baseBlock, key) -> new SuctionTube(key)
+    );
+    public static final Block CHRONARIUM = registerBlock(
+            "chronarium",
+            null,
+            (baseBlock, key) -> new Chronarium(key)
     );
 
 
@@ -90,9 +112,9 @@ public class WunderreichBlocks {
             BLOCKS.add(block);
 
 
-            if (block.defaultBlockState().ignitedByLava() && FlammableBlockRegistry
-                    .getDefaultInstance().get(block).getBurnChance() == 0) {
+            if (block.defaultBlockState().ignitedByLava() && !isAlreadyFlammable(block)) {
                 FlammableBlockRegistry.getDefaultInstance().add(block, 5, 5);
+                REGISTERED_AS_FLAMMABLE.add(block);
             }
 
             Registry.register(BuiltInRegistries.BLOCK, id, block);
@@ -109,6 +131,16 @@ public class WunderreichBlocks {
             return block;
         }
         return null;
+    }
+
+    private static boolean isAlreadyFlammable(Block block) {
+        // Fabric's FlammableBlockRegistry#get resolves every tag-based entry another mod registered, which
+        // throws "Tags not bound" during mod initialization (blocks are registered long before tags load).
+        // Until then, tag membership is unknowable anyway, so only our own block-level entries count.
+        if (!tagsLoaded) {
+            return REGISTERED_AS_FLAMMABLE.contains(block);
+        }
+        return FlammableBlockRegistry.getDefaultInstance().get(block).getBurnChance() != 0;
     }
 
     public static void processBlock(ResourceLocation id, Block bl) {
