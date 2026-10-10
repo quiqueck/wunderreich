@@ -75,22 +75,24 @@ public class FallingSlab extends DirtSlabBlock {
     @Override
     public void tick(@NotNull BlockState blockState, ServerLevel serverLevel, BlockPos blockPos, RandomSource random) {
         final BlockState below = serverLevel.getBlockState(blockPos.below());
-        SlabType belowType = (SlabType) below.getValue(TYPE);
+        // Only slabs carry TYPE - for any other block (air, stone, ...) there is no slab type below.
+        // getValue would throw for those and crash the server on the scheduled tick.
+        SlabType belowType = below.getOptionalValue(TYPE).orElse(null);
 
         if ((FallingBlock.isFree(below) || (belowType != null && belowType == SlabType.BOTTOM)) && blockPos.getY() >= serverLevel.getMinY()) {
             BlockState state = serverLevel.getBlockState(blockPos);
 
-            SlabType type = (SlabType) state.getValue(TYPE);
+            SlabType type = state.getValue(TYPE);
             if (belowType == SlabType.BOTTOM && type == SlabType.BOTTOM) {
                 state = makeState(state, SlabType.TOP);
             } else if (type == SlabType.TOP) {
                 state = makeState(state, SlabType.BOTTOM);
             }
 
+            // FallingBlockEntity.fall already adds the entity to the level (like vanilla FallingBlock#tick)
             FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(serverLevel, blockPos, state);
 
             this.falling(fallingBlockEntity);
-            serverLevel.addFreshEntity(fallingBlockEntity);
         }
     }
 

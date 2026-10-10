@@ -60,7 +60,7 @@
         "wunderlib": "26.201.x"
     },
     "breaks": {
-        "wunderlib": "<26.201.0"
+        "wunderlib": "<26.201.1"
     },
     "suggests": {
         "modmenu": "11.0.x",

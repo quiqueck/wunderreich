@@ -13,9 +13,23 @@
     "fabric-gametest": [
       "de.ambertation.wunderreich.testmod.gametest.ChronariumAgingGameTest",
       "de.ambertation.wunderreich.testmod.gametest.ChronariumHopperGameTest",
-      "de.ambertation.wunderreich.testmod.gametest.ChronariumExperienceGameTest"
+      "de.ambertation.wunderreich.testmod.gametest.ChronariumExperienceGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.FallingSlabGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WunderKisteLootGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WunderKisteOpenGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WunderKisteNetworkGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.SuctionTubeRedstoneGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WunderKisteTrackingGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WoolSlabGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.CopperWallGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.BuildersTrowelGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.WunderKisteNamedOpenStateGameTest",
+      "de.ambertation.wunderreich.testmod.gametest.FlammabilityGameTest"
     ]
   },
+  "mixins": [
+    "wunderreich-testmod.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=0.19.0",
     "minecraft": [
