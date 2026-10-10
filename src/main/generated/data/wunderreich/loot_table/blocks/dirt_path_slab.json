@@ -33,7 +33,7 @@
                       "type": "double"
                     }
                   },
-                  "count": 2.0
+                  "count": 2
                 },
                 {
                   "type": "minecraft:explosion_decay"
@@ -53,7 +53,7 @@
                       "type": "double"
                     }
                   },
-                  "count": 2.0
+                  "count": 2
                 },
                 {
                   "type": "minecraft:explosion_decay"
@@ -64,7 +64,7 @@
           ]
         }
       ],
-      "rolls": 1.0
+      "rolls": 1
     }
   ]
 }

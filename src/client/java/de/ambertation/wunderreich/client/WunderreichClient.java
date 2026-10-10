@@ -3,11 +3,12 @@ package de.ambertation.wunderreich.client;
 import de.ambertation.wunderlib.network.ClientNetworkRegistry;
 import de.ambertation.wunderlib.network.ExecutionPhase;
 import de.ambertation.wunderreich.Wunderreich;
+import de.ambertation.wunderreich.blockentities.renderer.ChronariumRenderer;
+import de.ambertation.wunderreich.blockentities.renderer.SuctionTubeRenderer;
 import de.ambertation.wunderreich.blockentities.renderer.WunderkisteRenderer;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeMenu;
 import de.ambertation.wunderreich.network.SuctionTubeContainerUpdatePacket;
-import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.CreativeTabs;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichScreens;
@@ -16,7 +17,6 @@ import de.ambertation.wunderreich.registries.WunderreichSlabBlocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.GrassColor;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -29,7 +29,10 @@ public class WunderreichClient implements ClientModInitializer {
         WunderreichParticleProviders.register();
         WunderreichScreens.registerScreens();
 
-        CreativeTabs.register();
+        // The tabs are built lazily when the creative screen opens; by then this level is the one
+        // holding the recipes the server synced to us, which is what puts the trained whisperers in
+        // the tab on a dedicated server as well as in single player.
+        CreativeTabs.register(() -> Minecraft.getInstance().level);
 
         ClientNetworkRegistry.addClientHandler(
                 SuctionTubeContainerUpdatePacket.KEY,
@@ -47,20 +50,14 @@ public class WunderreichClient implements ClientModInitializer {
                 }
         );
 
-        ImprinterRecipe.CLIENT_RECIPE_MANAGER_SUPPLIER = () -> {
-            var mc = Minecraft.getInstance();
-            if (mc.getConnection() != null) {
-                var recipes = mc.getConnection().recipes();
-                if (recipes instanceof RecipeManager rm) {
-                    return rm;
-                }
-            }
-            return null;
-        };
-
         // Note: block render layers are now driven by the block model JSON
         // ("render_type") instead of the removed Fabric BlockRenderLayerMap.
         BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, WunderkisteRenderer::new);
+        BlockEntityRendererRegistry.register(WunderreichBlockEntities.BLOCK_ENTITY_CHRONARIUM, ChronariumRenderer::new);
+        BlockEntityRendererRegistry.register(
+                WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE,
+                SuctionTubeRenderer::new
+        );
 
         /*
          * Color Provider Registration for Grass Slab Block and Item

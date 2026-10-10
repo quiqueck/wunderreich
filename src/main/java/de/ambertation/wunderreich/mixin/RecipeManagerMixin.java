@@ -59,7 +59,7 @@ public class RecipeManagerMixin {
         }
 
         // Register ImprinterRecipe for level
-        ImprinterRecipe.registerForLevel((RecipeManager) (Object) this, registries);
+        ImprinterRecipe.registerForLevel(registries);
 
         // Inject the generated imprinter recipes
         for (ImprinterRecipe imprinterRecipe : ImprinterRecipe.getRegisteredRecipes()) {

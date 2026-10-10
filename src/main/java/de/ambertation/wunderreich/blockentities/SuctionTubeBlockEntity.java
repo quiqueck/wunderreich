@@ -8,7 +8,12 @@ import de.ambertation.wunderreich.registries.WunderreichRules;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.EntitySelector;
@@ -25,6 +30,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.entity.ComparatorBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
@@ -32,6 +38,7 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.Collection;
 import java.util.Random;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
@@ -93,17 +100,60 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Transfers one item at a time</li>
  *   <li>Randomizes source container checking order to prevent bias</li>
  *   <li>Respects WorldlyContainer face restrictions</li>
- *   <li>Output signal duration: 1 tick</li>
+ *   <li>Output signal duration: {@value #REDSTONE_PULSE_TICKS} game ticks (2 redstone ticks), long enough for
+ *       comparators (2 tick delay), repeaters, lamps and dust to see it</li>
  * </ul>
  */
 public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider {
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
+    /**
+     * How many game ticks the output pulse lasts after a transfer. A comparator re-reads its input
+     * two game ticks after it was notified, so a shorter pulse is gone before it is ever read.
+     */
+    static final int REDSTONE_PULSE_TICKS = 4;
     // Directions for the containers relative to the suction tube
     public static final Direction[] DIRECTIONS = SuctionInputs.DIRECTIONS;
+
+    /**
+     * Index into {@link #flashStartTick} for the output/UP nozzle - one slot past the five intake
+     * directions in {@link #DIRECTIONS}.
+     */
+    public static final int UP_FLASH_INDEX = DIRECTIONS.length;
 
     private int transferCooldown = 0;
     private final SuctionInputs inputs;
     private boolean didInitialize = false;
+
+    /**
+     * Client-side-only, never persisted: the {@link Level#getGameTime()} at which a nozzle last
+     * moved an item, one slot per {@link #DIRECTIONS} entry plus {@link #UP_FLASH_INDEX} for the
+     * output. Driven by {@link #triggerEvent}, which arrives via the lightweight
+     * {@link Level#blockEvent} path (see {@link SuctionInputs#tryTransferItem}) rather than a
+     * block-state change, so a tube pulling several times a second never forces a chunk remesh.
+     * {@link Long#MIN_VALUE} means "never flashed" so the very first frame does not read as a
+     * flash at tick 0.
+     */
+    private final long[] flashStartTick = new long[UP_FLASH_INDEX + 1];
+
+    {
+        java.util.Arrays.fill(flashStartTick, Long.MIN_VALUE);
+    }
+
+    @Override
+    public boolean triggerEvent(int id, int type) {
+        if (id < 0 || id >= flashStartTick.length) return super.triggerEvent(id, type);
+        if (level != null) flashStartTick[id] = level.getGameTime();
+        return true;
+    }
+
+    /**
+     * Game time at which the nozzle for {@code flashIndex} (a {@link #DIRECTIONS} index, or
+     * {@link #UP_FLASH_INDEX} for the output) last flashed, or {@link Long#MIN_VALUE} if never.
+     * For the renderer only - see {@link #flashStartTick}.
+     */
+    public long getFlashStartTick(int flashIndex) {
+        return flashStartTick[flashIndex];
+    }
 
     public SuctionTubeBlockEntity(BlockPos blockPos, BlockState blockState) {
         this(WunderreichBlockEntities.BLOCK_ENTITY_SUCTION_TUBE, blockPos, blockState);
@@ -124,8 +174,15 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         if (level.isClientSide()) return;
         if (!blockEntity.didInitialize) {
             blockEntity.didInitialize = true;
-            blockEntity.inputs.neighborChanged(level, pos);
+            // Via the block entity rather than straight to the inputs: this is the first tick after
+            // a chunk load, and it is where a tube placed before the torches existed - or one whose
+            // neighbours changed while its chunk was unloaded - gets its block state put right.
+            blockEntity.neighborChanged(level, pos);
         }
+
+        // Count down the previous output pulse *before* a new transfer can start one, so a pulse
+        // set in this tick is not shortened (or, with a 1-tick pulse, cleared) right away.
+        blockEntity.inputs.tickRedstoneOutput(level, pos, (SuctionTube) state.getBlock());
 
         // Handle transfer cooldown
         --blockEntity.transferCooldown;
@@ -135,9 +192,6 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 SuctionInputs.awardAdvancement(level, pos);
             }
         }
-
-        // Handle redstone output timing
-        blockEntity.inputs.tickRedstoneOutput(level, pos, (SuctionTube) state.getBlock());
     }
 
     public SuctionInputs getInputs() {
@@ -147,6 +201,91 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
     // Update the Neighboring State (redstone signals, and attached containers
     public void neighborChanged(Level level, BlockPos pos) {
         inputs.neighborChanged(level, pos);
+        refreshTorches(level, pos);
+    }
+
+    // ---------------------------------------------------------------- torches and client sync
+
+    /**
+     * Whether the intake for {@code direction} is fully set up: a container to pull from, and at
+     * least one filter item saying what to pull. This is what the redstone torch over that wall
+     * shows. The filter items themselves are drawn whether or not this is true - a filter set on a side
+     * with nothing to pull from is still worth showing back to the player who set it.
+     * <p>
+     * Deliberately <em>not</em> "is this side currently allowed to run": a side switched off by a
+     * comparator keeps its torch lit, because the torch describes the machine's configuration and
+     * the comparator is a moment-to-moment override of it. A torch that flickered with the redstone
+     * would be unreadable next to a clock.
+     */
+    public boolean isIntakeConfigured(Direction direction) {
+        final SuctionInput input = inputs.forDirection(direction);
+        if (input == null || !input.hasContainer()) return false;
+        for (ItemStack filter : input.filter) {
+            if (!filter.isEmpty()) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Writes the five intakes' configured-ness, plus the output's container-connectedness, into
+     * the block state, so the torch/ring models in the blockstate file light up.
+     * <p>
+     * {@link Block#UPDATE_CLIENTS} only: this runs from inside
+     * {@link SuctionTube#neighborChanged}, and asking for neighbour updates from there would set
+     * every tube in a row of tubes updating each other. Nothing about these flags is a redstone
+     * signal, so nothing needs to hear about the change except the client.
+     */
+    private void refreshTorches(Level level, BlockPos pos) {
+        if (level.isClientSide()) return;
+
+        BlockState state = level.getBlockState(pos);
+        if (!(state.getBlock() instanceof SuctionTube)) return;
+
+        BlockState updated = state;
+        for (Direction direction : DIRECTIONS) {
+            final BooleanProperty property = SuctionTube.activeProperty(direction);
+            if (property == null) continue;
+            updated = updated.setValue(property, isIntakeConfigured(direction));
+        }
+        // The output ring means something different from the intake indicators - not "is
+        // configured" (there is nothing to configure on the output side) but "would pushing here
+        // currently find a container at all". See SuctionTube.UP.
+        updated = updated.setValue(
+                SuctionTube.UP,
+                getContainerAt(level, pos.above()) != null
+        );
+        if (updated != state) {
+            level.setBlock(pos, updated, Block.UPDATE_CLIENTS);
+        }
+    }
+
+    /**
+     * Pushes the filter templates to every client that has this block loaded, so the renderer can
+     * draw them on the rim and under the base, and re-derives the torch flags.
+     * <p>
+     * Filters only change when a player closes the menu, so there is no rate limiting here the way
+     * there is on the Chronarium - this cannot fire more than once per interaction.
+     */
+    private void syncToClients() {
+        final Level level = this.level;
+        if (level == null || level.isClientSide()) return;
+
+        final BlockPos pos = this.worldPosition;
+        refreshTorches(level, pos);
+        final BlockState state = level.getBlockState(pos);
+        level.sendBlockUpdated(pos, state, state, Block.UPDATE_CLIENTS);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+        // Sends what saveAdditional writes, i.e. the five directions' filter templates. That is
+        // everything the renderer needs; the torches ride on the block state instead.
+        return this.saveCustomOnly(registries);
+    }
+
+    @Override
+    public @Nullable Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Nullable
@@ -225,6 +364,14 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
             input.filter[i] = container.getItem(i).copy();
         }
         setChanged();
+    }
+
+    /**
+     * Call once after a run of {@link #setFilterItems} - the menu writes all five directions in a
+     * loop - to push the new templates to the clients rendering them and relight the torches.
+     */
+    public void filtersChanged() {
+        syncToClients();
     }
 
     @Override
@@ -641,19 +788,33 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         void tickRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
             if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) {
                 // Rule is off: make sure no stale signal lingers if it gets toggled back on later.
-                if (redstoneOutputSignal != 0 || redstoneOutputTicks != 0) {
-                    redstoneOutputSignal = 0;
-                    redstoneOutputTicks = 0;
-                    level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
-                }
+                redstoneOutputTicks = 0;
+                setRedstoneOutput(level, worldPosition, suctionBlock, 0);
                 return;
             }
             if (redstoneOutputTicks > 0) {
                 redstoneOutputTicks--;
                 if (redstoneOutputTicks <= 0) {
-                    redstoneOutputSignal = 0;
-                    level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+                    setRedstoneOutput(level, worldPosition, suctionBlock, 0);
                 }
+            }
+        }
+
+        /**
+         * Changes the output signal and, if it changed, tells everything that could be reading it:
+         * comparators (analog output), and - because the tube is a signal source that powers every
+         * side directly - its neighbours and the neighbours of those (dust or a lamp behind a
+         * strongly powered block), the way vanilla buttons and levers do.
+         */
+        private void setRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock, int strength) {
+            final byte newSignal = (byte) Math.max(0, Math.min(Byte.MAX_VALUE, strength));
+            if (newSignal == redstoneOutputSignal) return;
+            redstoneOutputSignal = newSignal;
+
+            level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+            level.updateNeighborsAt(worldPosition, suctionBlock);
+            for (Direction direction : Direction.values()) {
+                level.updateNeighborsAt(worldPosition.relative(direction), suctionBlock);
             }
         }
 
@@ -710,7 +871,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         /**
-         * Emits a redstone signal for one tick based on which direction an item was transferred from.
+         * Emits a redstone pulse ({@link #REDSTONE_PULSE_TICKS} game ticks) based on which direction an item was transferred from.
          * The signal strength corresponds to the bit position of the source direction.
          */
         private void emitRedstoneSignalForTransfer(
@@ -735,11 +896,8 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 signalStrength = 1 << outputSource.redstoneBit();
             }
 
-            redstoneOutputSignal = (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, signalStrength));
-            redstoneOutputTicks = 1; // Emit for one tick
-
-            // Update neighboring blocks to notify them of the signal change
-            level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+            redstoneOutputTicks = REDSTONE_PULSE_TICKS;
+            setRedstoneOutput(level, worldPosition, suctionBlock, signalStrength);
         }
 
         /**
@@ -782,6 +940,12 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 if (input.tryTransferItemToDestination(destContainer)) {
                     // Emit redstone signal based on the direction the item came from
                     emitRedstoneSignalForTransfer(level, worldPosition, suctionBlock, input);
+                    // Blink the intake that just fed the tube, and the output that just received
+                    // it - see SuctionTubeBlockEntity#triggerEvent. A block-event, not a
+                    // block-state write: this can fire every TRANSFER_COOLDOWN ticks and must not
+                    // force a chunk remesh each time.
+                    level.blockEvent(worldPosition, suctionBlock, i, 0);
+                    level.blockEvent(worldPosition, suctionBlock, UP_FLASH_INDEX, 0);
                     shuffleSourceContainerOrder();
                     return true; // Successfully transferred an item
                 }

@@ -61,6 +61,8 @@ public class WunderreichAdvancements {
             rootItem = WunderreichItems.BUILDERS_TROWEL;
         else if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.DIAMOND_BUILDERS_TROWEL))
             rootItem = WunderreichItems.DIAMOND_BUILDERS_TROWEL;
+        else if (Configs.ITEM_CONFIG.isEnabled(WunderreichItems.WOODEN_BUILDERS_TROWEL))
+            rootItem = WunderreichItems.WOODEN_BUILDERS_TROWEL;
 
 
         Identifier root = AdvancementsJsonBuilder

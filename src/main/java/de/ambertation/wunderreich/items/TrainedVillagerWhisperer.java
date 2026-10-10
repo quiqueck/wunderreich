@@ -16,9 +16,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.level.Level;
 
 import java.util.List;
 import java.util.function.Consumer;
+import org.jetbrains.annotations.Nullable;
 
 public class TrainedVillagerWhisperer extends VillagerWhisperer {
     public TrainedVillagerWhisperer(ResourceKey<Item> key) {
@@ -42,8 +44,15 @@ public class TrainedVillagerWhisperer extends VillagerWhisperer {
         }
     }
 
-    public static void addAllVariants(List<ItemStack> itemList) {
-        ImprinterRecipe.getAllVariants()
+    /**
+     * One trained whisperer per imprinter recipe.
+     *
+     * @param level the level whose imprinter recipes to enumerate, see
+     *              {@link ImprinterRecipe#getAllVariants(Level)}. May be {@code null} before a world
+     *              is loaded, which limits the list to the recipes generated in this JVM.
+     */
+    public static void addAllVariants(List<ItemStack> itemList, @Nullable Level level) {
+        ImprinterRecipe.getAllVariants(level)
                        .filter(r -> r != null)
                        .forEach(r -> itemList.add(createForEnchantment(r.enchantment)));
     }

@@ -1,7 +1,7 @@
 {
     "schemaVersion": 1,
     "id": "wunderreich",
-    "version": "26.301.0",
+    "version": "26.301.1",
     "name": "Wunderreich",
     "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
     "authors": [
@@ -26,11 +26,14 @@
                 "value": "de.ambertation.wunderreich.client.WunderreichClient"
             }
         ],
-        "rei_common_disabled": [
+        "rei_common": [
             "de.ambertation.wunderreich.integration.rei.ServerPlugin"
         ],
-        "rei_client_disabled": [
+        "rei_client": [
             "de.ambertation.wunderreich.integration.rei.ClientPlugin"
+        ],
+        "jei_mod_plugin": [
+            "de.ambertation.wunderreich.integration.jei.JeiPlugin"
         ],
         "modmenu": [
             "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
@@ -41,25 +44,28 @@
     },
     "accessWidener": "wunderreich.accesswidener",
     "mixins": [
-        "wunderreich.mixins.client.json",
+        {
+            "config": "wunderreich.mixins.client.json",
+            "environment": "client"
+        },
         "wunderreich.mixins.common.json"
     ],
     "depends": {
         "fabricloader": ">=0.19.0",
         "fabric-api": ">=0.155.0",
         "minecraft": [
-            "26.3-alpha.6",
-            "26.3-snapshot-6"
+            "26.3"
         ],
         "java": ">=25",
         "wunderlib": "26.301.x"
     },
     "breaks": {
-        "wunderlib": "<26.301.0"
+        "wunderlib": "<26.301.1"
     },
     "suggests": {
         "modmenu": "11.0.x",
         "rei": ">=26.1.0",
+        "jei": ">=29.0.0",
         "emi": "1.1.x"
     },
     "custom": {

@@ -140,7 +140,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                     if (be instanceof WunderKisteBlockEntity) {
                         WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
                         WunderKisteDomain.ID d = WunderKisteServerExtension.getDomain(entity.getBlockState(), entity);
-                        hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.get(d));
+                        // A named network's ID is only registered once something asks for it, which can
+                        // happen inside this loop (right after a restart) - so it may not be in the map yet.
+                        hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.getOrDefault(d, false));
                     }
                 });
             }
@@ -462,10 +464,9 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     @Override
     public BlockEntity newBlockEntity(@NotNull BlockPos blockPos, @NotNull BlockState blockState) {
-        // This is no longer needed as we keep permanent Track of all placed Wunderkiste Blocks
-        // We keep this code around for old worlds, that added Wunderkisten before they were
-        // persistently managed
-        AddRemoveWunderKisteMessage.send(true, blockPos);
+        // The legacy "tell the server about this box" message for old worlds is sent by the block
+        // entity once it is attached to a client level (see WunderKisteBlockEntity#setLevel). Sending
+        // it from here also ran on the server (and for every temporary block entity instance).
         return new WunderKisteBlockEntity(blockPos, blockState);
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -103,6 +104,32 @@ public class WunderKisteContainer extends SimpleContainer implements WorldlyCont
         final WunderKisteBlockEntity chest = ((ActiveChestStorage) player).getActiveWunderKiste();
         //return chest != null && !chest.stillValid(player) ? false : super.stillValid(player);
         return (chest == null || chest.stillValid(player)) && super.stillValid(player);
+    }
+
+    /**
+     * 26.3's {@link net.minecraft.world.Container} hooks take a {@link ContainerUser}; the menu calls
+     * this one. Players are routed through {@link #startOpen(Player)}.
+     */
+    @Override
+    public void startOpen(ContainerUser containerUser) {
+        if (containerUser instanceof Player player) {
+            startOpen(player);
+        } else {
+            super.startOpen(containerUser);
+        }
+    }
+
+    /**
+     * 26.3's {@link net.minecraft.world.Container} hooks take a {@link ContainerUser}; the menu calls
+     * this one. Players are routed through {@link #stopOpen(Player)}.
+     */
+    @Override
+    public void stopOpen(ContainerUser containerUser) {
+        if (containerUser instanceof Player player) {
+            stopOpen(player);
+        } else {
+            super.stopOpen(containerUser);
+        }
     }
 
     public void startOpen(Player player) {

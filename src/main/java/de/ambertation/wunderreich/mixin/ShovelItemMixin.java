@@ -9,7 +9,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.component.BlockTransformer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.component.BlockTransformerMappings;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.item.component.BlockTransformers;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -21,11 +22,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 // 26.3 removed ShovelItem: turning dirt into a dirt path is now driven by the BLOCK_TRANSFORMER
 // data component, so we hook the shovel transformer instead of the (no longer existing) item class.
+// Block transformers are registry entries (BlockTransformers.SHOVEL is a ResourceKey), so the shovel
+// transformer is identified by looking up the registered instance.
 @Mixin(BlockTransformer.class)
 public class ShovelItemMixin {
     @Inject(method = "transformBlock", at = @At("HEAD"), cancellable = true)
     public void wunderreich_transformBlock(UseOnContext useOnContext, CallbackInfoReturnable<InteractionResult> cir) {
-        if ((Object) this != BlockTransformerMappings.SHOVEL) return;
+        if ((Object) this != useOnContext
+                .getLevel()
+                .registryAccess()
+                .lookupOrThrow(Registries.BLOCK_TRANSFORMER)
+                .getValue(BlockTransformers.SHOVEL)) return;
         if (useOnContext.getClickedFace() != Direction.DOWN) {
             if (!Configs.BLOCK_CONFIG.isEnabled(WunderreichSlabBlocks.DIRT_PATH_SLAB))
                 return;

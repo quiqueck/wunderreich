@@ -13,6 +13,10 @@
       "required": false
     },
     {
+      "id": "wunderreich:chronarium",
+      "required": false
+    },
+    {
       "id": "wunderreich:white_concrete_slab",
       "required": false
     },
@@ -206,10 +210,6 @@
     },
     {
       "id": "wunderreich:pink_stained_glass_slab",
-      "required": false
-    },
-    {
-      "id": "wunderreich:light_gray_wool_slab",
       "required": false
     },
     {

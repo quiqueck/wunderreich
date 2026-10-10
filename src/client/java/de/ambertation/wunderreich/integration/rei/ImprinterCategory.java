@@ -1,5 +1,4 @@
 package de.ambertation.wunderreich.integration.rei;
-/*
 
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
@@ -66,4 +65,3 @@ public class ImprinterCategory implements DisplayCategory<ImprinterDisplay> {
         return widgets;
     }
 }
-*/

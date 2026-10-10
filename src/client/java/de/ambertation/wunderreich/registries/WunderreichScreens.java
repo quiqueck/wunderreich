@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.registries;
 
+import de.ambertation.wunderreich.gui.chronarium.ChronariumScreen;
 import de.ambertation.wunderreich.gui.whisperer.WhispererScreen;
 import de.ambertation.wunderreich.gui.suctionTube.SuctionTubeScreen;
 
@@ -13,5 +14,6 @@ public final class WunderreichScreens {
     public static void registerScreens() {
         MenuScreens.register(WunderreichMenuTypes.WHISPERER, WhispererScreen::new);
         MenuScreens.register(WunderreichMenuTypes.SUCTION_TUBE, SuctionTubeScreen::new);
+        MenuScreens.register(WunderreichMenuTypes.CHRONARIUM, ChronariumScreen::new);
     }
 }
