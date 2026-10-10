@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.gui.modmenu;
 
-import de.ambertation.wunderlib.ui.ColorHelper;
+import de.ambertation.wunderlib.utils.ColorUtilARGB32;
 import de.ambertation.wunderlib.ui.layout.components.Image;
 import de.ambertation.wunderlib.ui.layout.components.LayoutComponent;
 import de.ambertation.wunderlib.ui.layout.components.VerticalStack;
@@ -57,7 +57,7 @@ public class MainScreen extends ConfigScreen {
 
     @Override
     public void renderBackgroundLayer(GuiGraphicsExtractor guiGraphics, int i, int j, float f) {
-        guiGraphics.fill(0, 0, width, height, ColorHelper.SCREEN_BACKGROUND);
+        guiGraphics.fill(0, 0, width, height, ColorUtilARGB32.SCREEN_BACKGROUND);
 
         RenderHelper.renderImage(
                 guiGraphics,

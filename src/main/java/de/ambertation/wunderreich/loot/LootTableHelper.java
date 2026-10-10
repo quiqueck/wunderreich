@@ -110,34 +110,38 @@ public class LootTableHelper {
                             );
         }
 
+        /**
+         * With silk touch the block drops itself, otherwise it drops <em>every</em> one of
+         * {@code elseDrops}. Each else-drop gets its own pool: entries inside one pool compete for the
+         * pool's single roll, so putting them all into one pool would hand out only one of them.
+         */
         private LootTable.Builder createSilkTouchOrElse(
                 Block blockWithSilkTouch,
                 Drop[] elseDrops
         ) {
-            LootPool.Builder elsePool = LootPool.lootPool()
-                                                 .when(provider.doesNotHaveSilkTouch())
-                                                 .setRolls(ConstantValue.exactly(1.0F));
+            LootTable.Builder table = LootTable.lootTable();
             for (Drop drop : elseDrops) {
-                elsePool.add(
-                        provider.applyExplosionDecay(
-                                drop.item(),
-                                LootItem.lootTableItem(drop.item())
-                                        .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
-                        )
+                table.withPool(
+                        LootPool.lootPool()
+                                .when(provider.doesNotHaveSilkTouch())
+                                .setRolls(ConstantValue.exactly(1.0F))
+                                .add(provider.applyExplosionDecay(
+                                        drop.item(),
+                                        LootItem.lootTableItem(drop.item())
+                                                .apply(SetItemCountFunction.setCount(ConstantValue.exactly(drop.count())))
+                                ))
                 );
             }
 
-            return LootTable.lootTable()
-                            .withPool(elsePool)
-                            .withPool(
-                                    LootPool.lootPool()
-                                            .when(provider.hasSilkTouch())
-                                            .setRolls(ConstantValue.exactly(1.0F))
-                                            .add(provider.applyExplosionDecay(
-                                                    blockWithSilkTouch,
-                                                    LootItem.lootTableItem(blockWithSilkTouch)
-                                            ))
-                            );
+            return table.withPool(
+                    LootPool.lootPool()
+                            .when(provider.hasSilkTouch())
+                            .setRolls(ConstantValue.exactly(1.0F))
+                            .add(provider.applyExplosionDecay(
+                                    blockWithSilkTouch,
+                                    LootItem.lootTableItem(blockWithSilkTouch)
+                            ))
+            );
         }
     }
 

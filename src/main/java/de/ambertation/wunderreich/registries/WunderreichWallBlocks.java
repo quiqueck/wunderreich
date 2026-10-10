@@ -9,6 +9,8 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.WeatheringCopper;
 
+import net.fabricmc.fabric.api.registry.OxidizableBlocksRegistry;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -517,6 +519,32 @@ public class WunderreichWallBlocks {
     }
 
     static void register() {
+        registerOxidationChain(COPPER_WALL, EXPOSED_COPPER_WALL, WEATHERED_COPPER_WALL, OXIDIZED_COPPER_WALL);
+        registerOxidationChain(
+                COPPER_GRATE_WALL,
+                EXPOSED_COPPER_GRATE_WALL,
+                WEATHERED_COPPER_GRATE_WALL,
+                OXIDIZED_COPPER_GRATE_WALL
+        );
+        registerOxidationChain(
+                CHISELED_COPPER_WALL,
+                EXPOSED_CHISELED_COPPER_WALL,
+                WEATHERED_CHISELED_COPPER_WALL,
+                OXIDIZED_CHISELED_COPPER_WALL
+        );
+    }
 
+    /**
+     * Adds each step of a copper wall family to the oxidation map vanilla's {@code WeatheringCopper}
+     * reads, so the walls age on random ticks and an axe scrapes them back one step - exactly like
+     * the vanilla copper blocks. Steps that are disabled in the config (not registered) break the chain
+     * at that point.
+     */
+    private static void registerOxidationChain(Block... chain) {
+        for (int i = 0; i + 1 < chain.length; i++) {
+            if (chain[i] != null && chain[i + 1] != null) {
+                OxidizableBlocksRegistry.registerNextStage(chain[i], chain[i + 1]);
+            }
+        }
     }
 }

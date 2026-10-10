@@ -50,7 +50,9 @@ public class WunderKisteServerExtension {
                 WunderreichRules.Wunderkiste.haveMultiple()
                         ? domainID
                         : WunderKisteBlock.DEFAULT_DOMAIN.domainID,
-                d -> this.loadOrCreate(provider, domainID)
+                // load the domain of the key, not of the requesting box: with networks disabled every
+                // box maps to the shared default inventory, whichever box asks first
+                d -> this.loadOrCreate(provider, d)
         );
     }
 

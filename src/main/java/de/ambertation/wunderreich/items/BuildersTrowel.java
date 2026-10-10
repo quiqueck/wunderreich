@@ -1,6 +1,5 @@
 package de.ambertation.wunderreich.items;
 
-import de.ambertation.wunderreich.noise.OpenSimplex2;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichTags;
@@ -9,6 +8,7 @@ import de.ambertation.wunderreich.utils.RandomList;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
@@ -21,8 +21,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import java.util.function.Supplier;
 
 public class BuildersTrowel extends Item {
-    private final long seed;
-
     public static Item.Properties trowel(
             Item.Properties inProps,
             ToolMaterial toolMaterial,
@@ -35,15 +33,18 @@ public class BuildersTrowel extends Item {
     }
 
     public BuildersTrowel(ToolMaterial toolMaterial, ResourceKey<Item> key) {
-        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, 1.0F, -5.0F).setId(key));
-        seed = (long) (Math.random() * (Long.MAX_VALUE / 2));
+        // The trowel is deliberately a poor weapon, but the attack speed modifier is added to the
+        // player's base of 4: -5 ended up at -1 (shown as "-1 Attack Speed", clamped to 0). -3.5 gives
+        // 0.5 attacks per second, slower than any vanilla tool.
+        super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, 1.0F, -3.5F).setId(key));
     }
 
     @Override
     public InteractionResult useOn(UseOnContext ctx) {
 
         final Player p = ctx.getPlayer();
-        if (!(p instanceof ServerPlayer)) return InteractionResult.FAIL;
+        // Placement is server authoritative: the client never predicts which block gets placed.
+        if (!(p instanceof ServerPlayer) || !(ctx.getLevel() instanceof ServerLevel level)) return InteractionResult.FAIL;
 
         BlockPlaceContext bctx = new BlockPlaceContext(ctx);
 
@@ -70,13 +71,11 @@ public class BuildersTrowel extends Item {
         final BlockPos cPos = ctx.getClickedPos().relative(ctx.getClickedFace(), 1);
         final Supplier<Float> noise;
         final Integer duration = this.components().get(DataComponents.MAX_DAMAGE);
-        if (duration != null && duration >= ToolMaterial.DIAMOND.durability() * 4)
-            noise = () -> (1 + OpenSimplex2.noise3_ImproveXZ(
-                    seed,
-                    cPos.getX() * 0.15,
-                    cPos.getY() * 0.2,
-                    cPos.getZ() * 0.15
-            )) / 2;
+        if (duration != null && duration >= ToolMaterial.DIAMOND.durability() * 4) {
+            // the pattern only depends on the world seed and the position, so it survives restarts
+            final TrowelPattern pattern = TrowelPattern.forWorldSeed(level.getSeed());
+            noise = () -> pattern.sample(cPos, list.size());
+        }
         else noise = RandomList::random;
 
         do {

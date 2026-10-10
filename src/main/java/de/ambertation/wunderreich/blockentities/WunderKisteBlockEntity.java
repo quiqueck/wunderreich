@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.blockentities;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.inventory.WunderKisteContainer;
+import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -14,6 +15,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.Nameable;
+import net.minecraft.world.entity.ContainerUser;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -47,6 +49,17 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        // Kept for old worlds whose Wunderkisten were placed before the server tracked them itself:
+        // the client reports every box it loads, the server validates the request and adds boxes it
+        // does not know about yet.
+        if (level.isClientSide()) {
+            AddRemoveWunderKisteMessage.send(true, this.getBlockPos());
+        }
     }
 
     public static void lidAnimateTick(
@@ -113,24 +126,43 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
         }
     }
 
-    public void startOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
+    /**
+     * 26.3's {@link Container} hooks take a {@link ContainerUser} instead of a {@link Player}.
+     */
+    @Override
+    public void startOpen(ContainerUser containerUser) {
+        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
             this.openersCounter.incrementOpeners(
-                    player,
+                    containerUser.getLivingEntity(),
                     this.getLevel(),
                     this.getBlockPos(),
                     this.getBlockState(),
-                    player.getContainerInteractionRange()
+                    containerUser.getContainerInteractionRange()
             );
         }
+    }
 
+    /**
+     * 26.3's {@link Container} hooks take a {@link ContainerUser} instead of a {@link Player}.
+     */
+    @Override
+    public void stopOpen(ContainerUser containerUser) {
+        if (!this.remove && !containerUser.getLivingEntity().isSpectator()) {
+            this.openersCounter.decrementOpeners(
+                    containerUser.getLivingEntity(),
+                    this.getLevel(),
+                    this.getBlockPos(),
+                    this.getBlockState()
+            );
+        }
+    }
+
+    public void startOpen(Player player) {
+        startOpen((ContainerUser) player);
     }
 
     public void stopOpen(Player player) {
-        if (!this.remove && !player.isSpectator()) {
-            this.openersCounter.decrementOpeners(player, this.getLevel(), this.getBlockPos(), this.getBlockState());
-        }
-
+        stopOpen((ContainerUser) player);
     }
 
     public boolean stillValid(Player player) {

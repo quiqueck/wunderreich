@@ -100,11 +100,17 @@ import org.jetbrains.annotations.Nullable;
  *   <li>Transfers one item at a time</li>
  *   <li>Randomizes source container checking order to prevent bias</li>
  *   <li>Respects WorldlyContainer face restrictions</li>
- *   <li>Output signal duration: 1 tick</li>
+ *   <li>Output signal duration: {@value #REDSTONE_PULSE_TICKS} game ticks (2 redstone ticks), long enough for
+ *       comparators (2 tick delay), repeaters, lamps and dust to see it</li>
  * </ul>
  */
 public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider {
     private static final int TRANSFER_COOLDOWN = 8; // Same as hopper
+    /**
+     * How many game ticks the output pulse lasts after a transfer. A comparator re-reads its input
+     * two game ticks after it was notified, so a shorter pulse is gone before it is ever read.
+     */
+    static final int REDSTONE_PULSE_TICKS = 4;
     // Directions for the containers relative to the suction tube
     public static final Direction[] DIRECTIONS = SuctionInputs.DIRECTIONS;
 
@@ -174,6 +180,10 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
             blockEntity.neighborChanged(level, pos);
         }
 
+        // Count down the previous output pulse *before* a new transfer can start one, so a pulse
+        // set in this tick is not shortened (or, with a 1-tick pulse, cleared) right away.
+        blockEntity.inputs.tickRedstoneOutput(level, pos, (SuctionTube) state.getBlock());
+
         // Handle transfer cooldown
         --blockEntity.transferCooldown;
         if (blockEntity.transferCooldown <= 0) {
@@ -182,9 +192,6 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 SuctionInputs.awardAdvancement(level, pos);
             }
         }
-
-        // Handle redstone output timing
-        blockEntity.inputs.tickRedstoneOutput(level, pos, (SuctionTube) state.getBlock());
     }
 
     public SuctionInputs getInputs() {
@@ -781,19 +788,33 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         void tickRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock) {
             if (!WunderreichRules.Wunderkiste.isSuctionRedstoneEnabled()) {
                 // Rule is off: make sure no stale signal lingers if it gets toggled back on later.
-                if (redstoneOutputSignal != 0 || redstoneOutputTicks != 0) {
-                    redstoneOutputSignal = 0;
-                    redstoneOutputTicks = 0;
-                    level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
-                }
+                redstoneOutputTicks = 0;
+                setRedstoneOutput(level, worldPosition, suctionBlock, 0);
                 return;
             }
             if (redstoneOutputTicks > 0) {
                 redstoneOutputTicks--;
                 if (redstoneOutputTicks <= 0) {
-                    redstoneOutputSignal = 0;
-                    level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+                    setRedstoneOutput(level, worldPosition, suctionBlock, 0);
                 }
+            }
+        }
+
+        /**
+         * Changes the output signal and, if it changed, tells everything that could be reading it:
+         * comparators (analog output), and - because the tube is a signal source that powers every
+         * side directly - its neighbours and the neighbours of those (dust or a lamp behind a
+         * strongly powered block), the way vanilla buttons and levers do.
+         */
+        private void setRedstoneOutput(Level level, BlockPos worldPosition, SuctionTube suctionBlock, int strength) {
+            final byte newSignal = (byte) Math.max(0, Math.min(Byte.MAX_VALUE, strength));
+            if (newSignal == redstoneOutputSignal) return;
+            redstoneOutputSignal = newSignal;
+
+            level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+            level.updateNeighborsAt(worldPosition, suctionBlock);
+            for (Direction direction : Direction.values()) {
+                level.updateNeighborsAt(worldPosition.relative(direction), suctionBlock);
             }
         }
 
@@ -850,7 +871,7 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
         }
 
         /**
-         * Emits a redstone signal for one tick based on which direction an item was transferred from.
+         * Emits a redstone pulse ({@link #REDSTONE_PULSE_TICKS} game ticks) based on which direction an item was transferred from.
          * The signal strength corresponds to the bit position of the source direction.
          */
         private void emitRedstoneSignalForTransfer(
@@ -875,11 +896,8 @@ public class SuctionTubeBlockEntity extends BlockEntity implements MenuProvider 
                 signalStrength = 1 << outputSource.redstoneBit();
             }
 
-            redstoneOutputSignal = (byte) Math.max(Byte.MIN_VALUE, Math.min(Byte.MAX_VALUE, signalStrength));
-            redstoneOutputTicks = 1; // Emit for one tick
-
-            // Update neighboring blocks to notify them of the signal change
-            level.updateNeighbourForOutputSignal(worldPosition, suctionBlock);
+            redstoneOutputTicks = REDSTONE_PULSE_TICKS;
+            setRedstoneOutput(level, worldPosition, suctionBlock, signalStrength);
         }
 
         /**

@@ -13,6 +13,10 @@ public class Logger {
     }
 
 
+    public void debug(String message) {
+        LOGGER.log(Level.DEBUG, message);
+    }
+
     public void info(String message) {
         LOGGER.log(Level.INFO, message);
     }

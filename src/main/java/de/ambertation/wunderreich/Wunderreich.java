@@ -3,6 +3,7 @@ package de.ambertation.wunderreich;
 import de.ambertation.wunderlib.utils.Version;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
 import de.ambertation.wunderreich.config.Configs;
+import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.network.ClientBoundNetworkHandlers;
 import de.ambertation.wunderreich.network.ServerBoundNetworkHandlers;
 import de.ambertation.wunderreich.recipes.AgingRecipe;
@@ -18,6 +19,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -49,6 +51,8 @@ public class Wunderreich implements ModInitializer {
         return System.getProperty("fabric-api.datagen") != null;
     }
 
+    private static final int STALE_WUNDERKISTE_CHECK_TICKS = 200;
+
     @Override
     public void onInitialize() {
         Optional<ModContainer> optional = FabricLoader.getInstance().getModContainer(Wunderreich.MOD_ID);
@@ -76,6 +80,14 @@ public class Wunderreich implements ModInitializer {
                              .registerReloadListener(new ImprinterOverrideReloadListener());
         ServerBoundNetworkHandlers.register();
         ClientBoundNetworkHandlers.register();
+
+        // Tracked Wunderkiste positions keep their chunks force-loaded; drop the ones that no longer
+        // hold a Wunderkiste.
+        ServerTickEvents.END_SERVER_TICK.register(server -> {
+            if (server.getTickCount() % STALE_WUNDERKISTE_CHECK_TICKS == 0) {
+                AddRemoveWunderKisteMessage.pruneStaleBoxes(server);
+            }
+        });
 
         Configs.saveConfigs();
 
