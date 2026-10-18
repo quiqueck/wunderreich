@@ -3,6 +3,7 @@ package de.ambertation.wunderreich.registries;
 import de.ambertation.wunderreich.Wunderreich;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.config.BlockConfig;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 
@@ -67,9 +68,13 @@ public class WunderreichBlocks {
             Function<Block, Block> creator,
             Function<Block, BlockItem> itemCreator
     ) {
-        if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
+        // the Wunderkiste can not be disabled (its block entity, item and menu need it), so it has no switch
+        final boolean required = BlockConfig.isRequired(name);
+        if (required) Configs.BLOCK_CONFIG.dropRequiredSwitch(name);
+        if (required || Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
             final Block block = creator.apply(baseBlock);
-            Configs.BLOCK_CONFIG.newBooleanFor(name, block);
+            if (required) Configs.BLOCK_CONFIG.addRequired(block);
+            else Configs.BLOCK_CONFIG.newBooleanFor(name, block);
             BLOCKS.add(block);
 
             ResourceLocation id = Wunderreich.ID(name);

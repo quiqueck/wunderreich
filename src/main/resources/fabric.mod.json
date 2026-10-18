@@ -1,70 +1,70 @@
 {
-  "schemaVersion": 1,
-  "id": "wunderreich",
-  "version": "${version}",
-  "name": "Wunderreich",
-  "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
-  "authors": [
-    "Quiqueck (Frank)"
-  ],
-  "contact": {
-    "homepage": "https://wunderreich.ambertation.de",
-    "sources": "https://github.com/quiqueck/wunderreich"
-  },
-  "license": "MIT (CC BY-NC-SA 4.0 for Assets)",
-  "icon": "assets/wunderreich/icon.png",
-  "environment": "*",
-  "entrypoints": {
-    "main": [
-      "de.ambertation.wunderreich.Wunderreich"
+    "schemaVersion": 1,
+    "id": "wunderreich",
+    "version": "6.0.5",
+    "name": "Wunderreich",
+    "description": "A Mod with Quality of live improvements and some new gameplay machanics.",
+    "authors": [
+        "Quiqueck (Frank)"
     ],
-    "client": [
-      {
-        "value": "de.ambertation.wunderreich.client.WunderreichClient"
-      }
-    ],
-    "rei_server": [
-      "de.ambertation.wunderreich.integration.rei.ServerPlugin"
-    ],
-    "rei_client": [
-      "de.ambertation.wunderreich.integration.rei.ClientPlugin"
-    ],
-    "modmenu": [
-      "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
-    ],
-    "emi": [
-      "de.ambertation.wunderreich.integration.emi.EMIPlugin"
-    ]
-  },
-  "accessWidener": "wunderreich.accesswidener",
-  "mixins": [
-    "wunderreich.mixins.client.json",
-    "wunderreich.mixins.common.json"
-  ],
-  "depends": {
-    "fabricloader": ">=0.14.21",
-    "fabric": ">=0.83.0",
-    "minecraft": [
-      "1.20",
-      "1.20.1"
-    ],
-    "java": ">=17",
-    "wunderlib": "1.1.x"
-  },
-  "breaks": {
-    "wunderlib": "<1.1.2"
-  },
-  "suggests": {
-    "modmenu": "7.0.x",
-    "rei": "12.x"
-  },
-  "custom": {
-    "bclib": {
-      "updater_icon": "icon_updater.png"
+    "contact": {
+        "homepage": "https://wunderreich.ambertation.de",
+        "sources": "https://github.com/quiqueck/wunderreich"
     },
-    "waila:plugins": {
-      "id": "wunderreich:global",
-      "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
+    "license": "MIT (CC BY-NC-SA 4.0 for Assets)",
+    "icon": "assets/wunderreich/icon.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "de.ambertation.wunderreich.Wunderreich"
+        ],
+        "client": [
+            {
+                "value": "de.ambertation.wunderreich.client.WunderreichClient"
+            }
+        ],
+        "rei_server": [
+            "de.ambertation.wunderreich.integration.rei.ServerPlugin"
+        ],
+        "rei_client": [
+            "de.ambertation.wunderreich.integration.rei.ClientPlugin"
+        ],
+        "modmenu": [
+            "de.ambertation.wunderreich.gui.modmenu.EntryPoint"
+        ],
+        "emi": [
+            "de.ambertation.wunderreich.integration.emi.EMIPlugin"
+        ]
+    },
+    "accessWidener": "wunderreich.accesswidener",
+    "mixins": [
+        "wunderreich.mixins.client.json",
+        "wunderreich.mixins.common.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14.21",
+        "fabric": ">=0.83.0",
+        "minecraft": [
+            "1.20",
+            "1.20.1"
+        ],
+        "java": ">=17",
+        "wunderlib": "1.1.x"
+    },
+    "breaks": {
+        "wunderlib": "<1.1.5"
+    },
+    "suggests": {
+        "modmenu": "7.0.x",
+        "rei": "12.x"
+    },
+    "custom": {
+        "bclib": {
+            "updater_icon": "icon_updater.png"
+        },
+        "waila:plugins": {
+            "id": "wunderreich:global",
+            "initializer": "de.ambertation.wunderreich.integration.wthit.WailaPlugin"
+        }
     }
-  }
 }

@@ -3,6 +3,7 @@ package de.ambertation.wunderreich;
 import de.ambertation.wunderlib.math.sdf.SDF;
 import de.ambertation.wunderlib.utils.Version;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.ServerBoundPacketHandler;
 import de.ambertation.wunderreich.recipes.ImprinterRecipe;
@@ -14,6 +15,7 @@ import de.ambertation.wunderreich.utils.Logger;
 import net.minecraft.resources.ResourceLocation;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
@@ -64,6 +66,9 @@ public class Wunderreich implements ModInitializer {
 
         ImprinterRecipe.register();
         ServerBoundPacketHandler.register();
+
+        // neighbours of Wunderkisten whose network changed are notified once per tick
+        ServerTickEvents.END_SERVER_TICK.register(WunderKisteBlock::flushPendingUpdates);
 
         Configs.saveConfigs();
 

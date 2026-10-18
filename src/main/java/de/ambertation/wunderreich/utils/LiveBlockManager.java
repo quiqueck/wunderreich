@@ -16,7 +16,6 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.RegistryLayer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.TicketType;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.Level;
 
@@ -33,7 +32,8 @@ public class LiveBlockManager<T extends LiveBlockManager.LiveBlock> {
             "wunderkiste",
             Comparator.comparingLong(ChunkPos::toLong)
     );
-    public static final Codec<List<LiveBlock>> CODEC = ExtraCodecs.nonEmptyList(LiveBlock.CODEC.listOf());
+    // Plain list codec: an empty set of live blocks is valid (nonEmptyList used to error on a fresh save).
+    public static final Codec<List<LiveBlock>> CODEC = LiveBlock.CODEC.listOf();
     private static final String POSITIONS_TAG = "positions";
     private final String type;
     private final Set<T> liveBlocks = ConcurrentHashMap.newKeySet(8);

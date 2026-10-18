@@ -3,7 +3,6 @@ package de.ambertation.wunderreich.blockentities;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.interfaces.ActiveChestStorage;
 import de.ambertation.wunderreich.registries.WunderreichBlockEntities;
-import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
 
 import net.minecraft.core.BlockPos;
@@ -21,11 +20,15 @@ import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.entity.LidBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 
 public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntity, Nameable {
+    private static final Set<WunderKisteBlockEntity> LID_CHANGED = Collections.newSetFromMap(new IdentityHashMap<>());
     private final ChestLidController chestLidController = new ChestLidController();
     private Component domainName;
 
@@ -47,6 +50,15 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
 
     public WunderKisteBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(WunderreichBlockEntities.BLOCK_ENTITY_WUNDER_KISTE, blockPos, blockState);
+    }
+
+    @Override
+    public void setLevel(Level level) {
+        super.setLevel(level);
+        if (!level.isClientSide()) {
+            // the network may have changed (or been closed) while this box was not loaded
+            WunderKisteBlock.queueNeighbourRefresh(level, this.getBlockPos());
+        }
     }
 
     public static void lidAnimateTick(
@@ -94,8 +106,10 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
                 int i,
                 int j
         ) {
-            assert WunderreichBlocks.WUNDER_KISTE != null;
-            level.blockEvent(WunderKisteBlockEntity.this.worldPosition, WunderreichBlocks.WUNDER_KISTE, 1, j);
+            // The lid state is sent once at the end of the tick (see flushLidUpdates): the server drops
+            // block events that are already queued in the same tick, so a box opened and closed several
+            // times in one tick (e.g. after a lag spike) could leave the lid open on the clients.
+            LID_CHANGED.add(WunderKisteBlockEntity.this);
             WunderKisteBlock.updateAllBoxes(blockState, level.getBlockEntity(blockPos), level.getServer(), true, false);
         }
 
@@ -103,6 +117,21 @@ public class WunderKisteBlockEntity extends BlockEntity implements LidBlockEntit
             return ((ActiveChestStorage) player).isActiveWunderKiste(WunderKisteBlockEntity.this);
         }
     };
+
+    /**
+     * Sends the final opener count of every box whose count changed during this tick to the clients.
+     * Called once at the end of every server tick.
+     */
+    public static void flushLidUpdates() {
+        if (LID_CHANGED.isEmpty()) return;
+        for (WunderKisteBlockEntity box : LID_CHANGED) {
+            if (!box.isRemoved() && box.level != null) {
+                final int openers = Math.max(0, box.openersCounter.getOpenerCount());
+                box.level.blockEvent(box.worldPosition, box.getBlockState().getBlock(), 1, openers);
+            }
+        }
+        LID_CHANGED.clear();
+    }
 
     public boolean triggerEvent(int i, int j) {
         if (i == 1) {

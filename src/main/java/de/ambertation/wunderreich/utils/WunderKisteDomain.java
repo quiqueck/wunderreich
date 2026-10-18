@@ -1,6 +1,6 @@
 package de.ambertation.wunderreich.utils;
 
-import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.client.WunderKisteMaterials;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.config.LevelData;
 import de.ambertation.wunderreich.config.LevelDataFile;
@@ -16,7 +16,6 @@ import net.minecraft.world.item.Items;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,6 +47,7 @@ public enum WunderKisteDomain implements StringRepresentable {
     public final int overlayColor;
     private final String name;
     public final boolean useMonochromeFallback;
+    private final String textureName;
     @Environment(EnvType.CLIENT)
     private Object texture;
 
@@ -64,14 +64,10 @@ public enum WunderKisteDomain implements StringRepresentable {
         } else {
             overlayColor = color;
         }
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
-            if (Configs.MAIN.multiTexturedWunderkiste.get()) {
-                this.texture = WunderreichClient.getWunderkisteColor(texture);
-            } else {
-                if (useMonochromeFallback) this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste_bw");
-                else this.texture = WunderreichClient.getWunderkisteColor("wunder_kiste");
-            }
-        }
+        //The texture Material is resolved lazily in getMaterial() (client, render time). Building it here would
+        //load net.minecraft.client.renderer.Sheets during block registration, before other mods registered their
+        //banner patterns / pottery sherds (quiqueck/wunderreich#18).
+        this.textureName = texture;
     }
 
     WunderKisteDomain(String name, Item triggerItem, int color, boolean useMonochromeFallback) {
@@ -80,6 +76,15 @@ public enum WunderKisteDomain implements StringRepresentable {
 
     @Environment(EnvType.CLIENT)
     public Material getMaterial() {
+        if (texture == null) {
+            if (Configs.MAIN.multiTexturedWunderkiste.get()) {
+                texture = WunderKisteMaterials.getWunderkisteColor(textureName);
+            } else if (useMonochromeFallback) {
+                texture = WunderKisteMaterials.getWunderkisteColor("wunder_kiste_bw");
+            } else {
+                texture = WunderKisteMaterials.getWunderkisteColor("wunder_kiste");
+            }
+        }
         return (Material) texture;
     }
 

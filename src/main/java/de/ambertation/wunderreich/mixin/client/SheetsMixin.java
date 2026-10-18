@@ -1,7 +1,7 @@
 package de.ambertation.wunderreich.mixin.client;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
-import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.client.WunderKisteMaterials;
 
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.resources.model.Material;
@@ -26,16 +26,16 @@ public abstract class SheetsMixin {
             CallbackInfoReturnable<Material> cir
     ) {
         if (blockEntity instanceof WunderKisteBlockEntity) {
-            cir.setReturnValue(WunderreichClient.WUNDER_KISTE_LOCATION);
+            cir.setReturnValue(WunderKisteMaterials.WUNDER_KISTE_LOCATION);
             cir.cancel();
         }
     }
 
     @Inject(method = "getAllMaterials", at = @At("TAIL"))
     private static void wunderreich_getAll(Consumer<Material> consumer, CallbackInfo ci) {
-        consumer.accept(WunderreichClient.WUNDER_KISTE_TOP_LOCATION);
-        consumer.accept(WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION);
-        WunderreichClient.getAllWunderkisteMaterials(consumer);
+        consumer.accept(WunderKisteMaterials.WUNDER_KISTE_TOP_LOCATION);
+        consumer.accept(WunderKisteMaterials.WUNDER_KISTE_MONOCHROME_TOP_LOCATION);
+        WunderKisteMaterials.getAllWunderkisteMaterials(consumer);
     }
 
 }

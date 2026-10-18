@@ -14,6 +14,9 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+
 import java.util.function.Consumer;
 
 public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, CanDropLoot, ChangeRenderLayer {
@@ -28,6 +31,7 @@ public class GlassSlabBlock extends DirtSlabBlock implements BlockTagSupplier, C
     }
 
     @Override
+    @Environment(EnvType.CLIENT)
     public RenderType getRenderType() {
         return RenderType.translucent();
     }

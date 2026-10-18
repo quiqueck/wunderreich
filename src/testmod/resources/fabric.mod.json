@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "wunderreich-testmod",
+  "version": "1.0.0",
+  "name": "Wunderreich (TestMod)",
+  "description": "Headless GameTest suite for Wunderreich. Never shipped.",
+  "authors": [
+    "Quiqueck"
+  ],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "de.ambertation.wunderreich.testmod.gametest.BlockRegistrationGameTest"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.14.21",
+    "fabric-api": "*",
+    "wunderreich": "*"
+  }
+}

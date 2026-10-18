@@ -2,7 +2,7 @@ package de.ambertation.wunderreich.blockentities.renderer;
 
 import de.ambertation.wunderreich.blockentities.WunderKisteBlockEntity;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
-import de.ambertation.wunderreich.client.WunderreichClient;
+import de.ambertation.wunderreich.client.WunderKisteMaterials;
 import de.ambertation.wunderreich.registries.WunderreichBlocks;
 import de.ambertation.wunderreich.registries.WunderreichRules;
 import de.ambertation.wunderreich.utils.WunderKisteDomain;
@@ -67,8 +67,8 @@ public class WunderkisteRenderer extends ChestRenderer<WunderKisteBlockEntity> {
 
     private static Material getTopMaterial(WunderKisteDomain d) {
         return d.useMonochromeFallback
-                ? WunderreichClient.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
-                : WunderreichClient.WUNDER_KISTE_TOP_LOCATION;
+                ? WunderKisteMaterials.WUNDER_KISTE_MONOCHROME_TOP_LOCATION
+                : WunderKisteMaterials.WUNDER_KISTE_TOP_LOCATION;
     }
 
     @Override
