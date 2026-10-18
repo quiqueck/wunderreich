@@ -28,7 +28,12 @@ import net.minecraft.world.level.storage.loot.predicates.MatchBlock;
 import net.minecraft.world.level.storage.loot.predicates.MatchTool;
 import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProviders;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,11 +46,28 @@ public class LootTableHelper {
 
     public static class BlockLootProvider {
         private final @NotNull BlockLootSubProvider provider;
+        private final Map<Block, Set<ItemLike>> references = new LinkedHashMap<>();
 
         public BlockLootProvider(
                 @NotNull BlockLootSubProvider provider
         ) {
             this.provider = provider;
+        }
+
+        /**
+         * Blocks and items (besides the block itself) that the loot table of {@code block} refers to. The data
+         * generator uses this to make each loot table conditional on all of them, since 26.3 refuses to load
+         * the whole datapack registry if a loot table refers to a block or item that was disabled in the config.
+         */
+        public Set<ItemLike> referencesOf(Block block) {
+            return references.getOrDefault(block, Collections.emptySet());
+        }
+
+        private void reference(Block block, ItemLike... others) {
+            final Set<ItemLike> refs = references.computeIfAbsent(block, b -> new LinkedHashSet<>());
+            for (ItemLike other : others) {
+                if (other != null && other != block) refs.add(other);
+            }
         }
 
         /**
@@ -85,6 +107,7 @@ public class LootTableHelper {
         }
 
         public void dropOther(Block block, ItemLike replacement) {
+            reference(block, replacement);
             provider.dropOther(block, replacement);
         }
 
@@ -97,6 +120,7 @@ public class LootTableHelper {
         }
 
         public void dropSlabReplacement(SlabBlock block, ItemLike replacement) {
+            reference(block, replacement);
             provider.add(
                     block,
                     LootTable.lootTable()
@@ -113,6 +137,7 @@ public class LootTableHelper {
         }
 
         public void dropSlabWhenSilkTouch(@NotNull Block block, @Nullable Block orElseBlock) {
+            reference(block, orElseBlock);
             provider.add(block, createSlabItemTableWithSilkTouch(block, orElseBlock));
         }
 
@@ -120,6 +145,7 @@ public class LootTableHelper {
                 Block block,
                 Drop... elseDrops
         ) {
+            for (Drop drop : elseDrops) reference(block, drop.item());
             provider.add(block, createSilkTouchOrElse(block, elseDrops));
         }
 
