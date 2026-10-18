@@ -2,6 +2,7 @@ package de.ambertation.wunderreich;
 
 import de.ambertation.wunderlib.utils.Version;
 import de.ambertation.wunderreich.advancements.AdvancementsJsonBuilder;
+import de.ambertation.wunderreich.blocks.WunderKisteBlock;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.network.AddRemoveWunderKisteMessage;
 import de.ambertation.wunderreich.network.ClientBoundNetworkHandlers;
@@ -84,6 +85,7 @@ public class Wunderreich implements ModInitializer {
         // Tracked Wunderkiste positions keep their chunks force-loaded; drop the ones that no longer
         // hold a Wunderkiste.
         ServerTickEvents.END_SERVER_TICK.register(server -> {
+            WunderKisteBlock.flushPendingUpdates(server);
             if (server.getTickCount() % STALE_WUNDERKISTE_CHECK_TICKS == 0) {
                 AddRemoveWunderKisteMessage.pruneStaleBoxes(server);
             }

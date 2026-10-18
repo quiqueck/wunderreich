@@ -7,6 +7,7 @@ import de.ambertation.wunderreich.recipes.StonecutterJsonBuilder;
 
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -101,6 +102,23 @@ public class WunderreichRecipes {
                                 Blocks.AMETHYST_BLOCK.asItem(),
                                 Items.COPPER_INGOT,
                                 Blocks.COBBLED_DEEPSLATE.asItem()
+                        )
+                );
+
+        RecipeJsonBuilder
+                .create("wooden_builders_trowel")
+                .result(WunderreichItems.WOODEN_BUILDERS_TROWEL)
+                .pattern(
+                        "***",
+                        " * ",
+                        " # "
+                )
+                .material('#', Items.STICK)
+                .material('*', ItemTags.WOODEN_TOOL_MATERIALS)
+                // like vanilla's wooden tools: unlocked by the first stick
+                .registerAndCreateAdvancement(
+                        AdvancementsJsonBuilder.AdvancementType.RECIPE_TOOL, List.of(
+                                Items.STICK
                         )
                 );
 

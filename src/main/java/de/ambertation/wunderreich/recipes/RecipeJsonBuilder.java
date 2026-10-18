@@ -8,6 +8,7 @@ import de.ambertation.wunderreich.registries.WunderreichRecipes;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -23,6 +24,7 @@ import java.util.*;
 public class RecipeJsonBuilder {
     private static final ThreadLocal<RecipeJsonBuilder> BUILDER = ThreadLocal.withInitial(RecipeJsonBuilder::new);
     final Map<Character, Ingredient> materials = new HashMap<>();
+    final Map<Character, TagKey<Item>> tagMaterials = new HashMap<>();
     Identifier ID;
     boolean canBuild;
     ItemLike resultItem;
@@ -66,6 +68,7 @@ public class RecipeJsonBuilder {
         this.resultItem = null;
         this.pattern = new String[0];
         this.materials.clear();
+        this.tagMaterials.clear();
         this.count = 1;
         return this;
     }
@@ -107,6 +110,16 @@ public class RecipeJsonBuilder {
                        .noneMatch(v -> !v);
 
         materials.put(c, ing);
+        return this;
+    }
+
+    /**
+     * A key that accepts every item in {@code tag}. Recipes are built before tags are bound, so the
+     * tag is written as {@code "#namespace:path"} and resolved when the recipe is loaded; an empty
+     * tag just makes the recipe uncraftable.
+     */
+    public RecipeJsonBuilder material(Character c, TagKey<Item> tag) {
+        tagMaterials.put(c, tag);
         return this;
     }
 
@@ -201,6 +214,9 @@ public class RecipeJsonBuilder {
                 individualContainer.add(il.toString());
             }
             keyList.add(mat.getKey() + "", individualContainer);
+        }
+        for (var tag : tagMaterials.entrySet()) {
+            keyList.addProperty(tag.getKey() + "", "#" + tag.getValue().location());
         }
         json.add("key", keyList);
 

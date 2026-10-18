@@ -282,6 +282,7 @@
   "item.wunderreich.diamond_builders_trowel": "Baumeister Kelle",
   "item.wunderreich.whisperer": "Geprägter Flüsterer",
   "item.wunderreich.whisperer_blank": "Flüsterer",
+  "item.wunderreich.wooden_builders_trowel": "Holzkelle",
   "itemGroup.wunderreich.blocks": "Wunderreich",
   "itemGroup.wunderreich.items": "Wunderreich",
   "key.wunderreich.transform": "Transformieren",
@@ -327,5 +328,8 @@
   "wunderreich.domain.red": "Rotes",
   "wunderreich.domain.white": "Weißes",
   "wunderreich.domain.yellow": "Gelbes",
+  "wunderreich.trowel.pattern.bands": "Setzt die Blöcke aus deiner Hotbar in Streifen",
+  "wunderreich.trowel.pattern.cells": "Setzt die Blöcke aus deiner Hotbar in Flecken",
+  "wunderreich.trowel.pattern.random": "Setzt einen zufälligen Block aus deiner Hotbar",
   "wunderreich.wunderkiste.domain.HoverText": "%s Netzwerk"
 }

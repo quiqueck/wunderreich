@@ -60,8 +60,12 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 import com.google.common.collect.Maps;
 
+import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import org.jetbrains.annotations.NotNull;
@@ -77,6 +81,8 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
     protected static final VoxelShape SHAPE;
     private static final Component CONTAINER_TITLE;
     private static final Map<WunderKisteDomain.ID, Boolean> hasAnyOpenInstance = Maps.newHashMap();
+    private static final Set<WunderKisteContainer> PENDING_NETWORKS = Collections.newSetFromMap(new IdentityHashMap<>());
+    private static final Set<LiveBlockManager.LiveBlock> STALE_BOXES = ConcurrentHashMap.newKeySet();
 
     static {
         FACING = HorizontalDirectionalBlock.FACING;
@@ -129,29 +135,92 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
     private static void updateAllBoxes(WunderKisteContainer container, boolean withOpenState, boolean withFillrate) {
         if (!WunderreichRules.Wunderkiste.isRedstoneEnabled()) return;
+        if (container == null) return;
 
+        //check if any box was opened
+        if (withOpenState) {
+            WunderKisteDomain.ID.forAll(d -> hasAnyOpenInstance.put(d, false));
 
-        if (container != null) {
-            //check if any box was opened
-            if (withOpenState) {
-                WunderKisteDomain.ID.forAll(d -> hasAnyOpenInstance.put(d, false));
-
-                getLiveBlockManager().forEach((liveBlock) -> {
-                    BlockEntity be = liveBlock.getLevel().getBlockEntity(liveBlock.pos);
-                    if (be instanceof WunderKisteBlockEntity) {
-                        WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
-                        WunderKisteDomain.ID d = WunderKisteServerExtension.getDomain(entity.getBlockState(), entity);
-                        // A named network's ID is only registered once something asks for it, which can
-                        // happen inside this loop (right after a restart) - so it may not be in the map yet.
-                        hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.getOrDefault(d, false));
-                    }
-                });
-            }
-
-            //send update message
-            getLiveBlockManager().emitChange();
+            getLiveBlockManager().forEach((liveBlock) -> {
+                final Level level = liveBlock.getLevel();
+                // Only boxes in loaded chunks: a box in an unloaded chunk can not be open, and asking an
+                // unloaded position for its block entity loads the chunk synchronously.
+                if (level == null || !level.isLoaded(liveBlock.pos)) return;
+                BlockEntity be = level.getBlockEntity(liveBlock.pos);
+                if (be instanceof WunderKisteBlockEntity) {
+                    WunderKisteBlockEntity entity = (WunderKisteBlockEntity) be;
+                    WunderKisteDomain.ID d = WunderKisteServerExtension.getDomain(entity.getBlockState(), entity);
+                    // A named network's ID is only registered once something asks for it, which can
+                    // happen inside this loop (right after a restart) - so it may not be in the map yet.
+                    hasAnyOpenInstance.put(d, entity.isOpen() || hasAnyOpenInstance.getOrDefault(d, false));
+                }
+            });
         }
 
+        // The neighbours (comparators, redstone) of the boxes are notified once at the end of the tick
+        // (see flushPendingUpdates): a hopper that moves an item changes the container twice, and many
+        // hoppers on one network change it many times per tick.
+        PENDING_NETWORKS.add(container);
+    }
+
+    /**
+     * Refreshes the neighbours of a box at the end of the tick once its chunk is loaded. Used when a box
+     * is (re)loaded, since its network may have changed or been closed while it was unloaded - possibly
+     * before a server restart, when nothing remembered the box as outdated.
+     */
+    public static void queueNeighbourRefresh(Level level, BlockPos pos) {
+        if (level instanceof ServerLevel) {
+            STALE_BOXES.add(new LiveBlockManager.LiveBlock(pos.immutable(), level));
+        }
+    }
+
+    /**
+     * Notifies the neighbours of every loaded box whose network changed (or was opened/closed) during
+     * this tick. Called once at the end of every server tick.
+     */
+    public static void flushPendingUpdates(MinecraftServer server) {
+        WunderKisteBlockEntity.flushLidUpdates();
+
+        // boxes that were skipped because their chunk was not loaded get their neighbours (comparators
+        // and the redstone powered while the network is open) updated as soon as the chunk is back
+        if (!STALE_BOXES.isEmpty()) {
+            final boolean redstone = WunderreichRules.Wunderkiste.isRedstoneEnabled();
+            STALE_BOXES.removeIf(lb -> {
+                final Level level = lb.getLevel();
+                if (!redstone || level == null || level.getServer() != server) return true;
+                if (!getLiveBlockManager().contains(lb)) return true;
+                if (!level.isLoaded(lb.pos)) return false;
+                final BlockState state = level.getBlockState(lb.pos);
+                if (state.getBlock() instanceof WunderKisteBlock box) {
+                    updateNeighbours(level, lb.pos, state, box);
+                }
+                return true;
+            });
+        }
+
+        if (PENDING_NETWORKS.isEmpty()) return;
+        final Set<WunderKisteContainer> networks = Collections.newSetFromMap(new IdentityHashMap<>());
+        networks.addAll(PENDING_NETWORKS);
+        PENDING_NETWORKS.clear();
+        if (!WunderreichRules.Wunderkiste.isRedstoneEnabled()) return;
+
+        getLiveBlockManager().forEach((liveBlock) -> {
+            final Level level = liveBlock.getLevel();
+            if (level == null || level.getServer() != server) return;
+            // Never load a chunk just to notify the neighbours of a box (that loaded and unloaded the
+            // chunks of all far away boxes on every item a hopper moved).
+            if (!level.isLoaded(liveBlock.pos)) {
+                STALE_BOXES.add(liveBlock);
+                return;
+            }
+            final BlockState state = level.getBlockState(liveBlock.pos);
+            if (!(state.getBlock() instanceof WunderKisteBlock box)) return;
+            // only the boxes of a network that changed
+            final WunderKisteContainer container = getContainer(state, level.getBlockEntity(liveBlock.pos), server);
+            if (container != null && networks.contains(container)) {
+                updateNeighbours(level, liveBlock.pos, state, box);
+            }
+        });
     }
 
     public static void updateNeighbours(LiveBlockManager.LiveBlock live) {
@@ -358,6 +427,12 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
                 } else {
                     WunderKisteBlockEntity wunderKisteBlockEntity = (WunderKisteBlockEntity) entity;
 
+                    // Close a menu that is still open first (a lagging server can get several clicks on a
+                    // box before the close): otherwise openMenu closes it after the new box was made active,
+                    // so the new box is closed instead and its opener count drifts below zero.
+                    if (player instanceof ServerPlayer sp && sp.containerMenu != sp.inventoryMenu) {
+                        sp.closeContainer();
+                    }
                     ((ActiveChestStorage) player).setActiveWunderKiste(wunderKisteBlockEntity);
                     final WunderKisteDomain domain = WunderKisteServerExtension.getDomain(blockState);
 
