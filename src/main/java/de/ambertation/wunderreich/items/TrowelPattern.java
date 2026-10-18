@@ -6,7 +6,10 @@ import de.ambertation.wunderreich.utils.RandomList;
 import net.minecraft.core.BlockPos;
 
 /**
- * The block pattern the diamond builder's trowel places. The noise seed is derived from the world
+ * The block pattern the iron builder's trowel places: bands along a noise field, so the block types
+ * always follow each other in hotbar order and bigger areas show stripes and rings, like the contour
+ * lines of a map (the diamond trowel's {@link CellularTrowelPattern} places loose patches instead).
+ * The noise seed is derived from the world
  * seed, so the same position in the same world always gets the same block from the same hotbar,
  * also after a server restart.
  * <p>

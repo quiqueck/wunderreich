@@ -5,6 +5,7 @@ import de.ambertation.wunderreich.blocks.Chronarium;
 import de.ambertation.wunderreich.blocks.SuctionTube;
 import de.ambertation.wunderreich.blocks.WhisperImprinter;
 import de.ambertation.wunderreich.blocks.WunderKisteBlock;
+import de.ambertation.wunderreich.config.BlockConfig;
 import de.ambertation.wunderreich.config.Configs;
 import de.ambertation.wunderreich.items.WunderKisteItem;
 
@@ -102,13 +103,17 @@ public class WunderreichBlocks {
             BiFunction<Block, ResourceKey<Block>, Block> creator,
             BiFunction<Block, ResourceKey<Item>, BlockItem> itemCreator
     ) {
-        if (Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
+        // the Wunderkiste can not be disabled (its block entity, item and menu need it), so it has no switch
+        final boolean required = BlockConfig.isRequired(name);
+        if (required) Configs.BLOCK_CONFIG.dropRequiredSwitch(name);
+        if (required || Configs.BLOCK_CONFIG.booleanOrDefault(name).get()) {
             final Identifier id = Wunderreich.ID(name);
             final ResourceKey<Block> key = ResourceKey.create(BuiltInRegistries.BLOCK.key(), id);
 
 
             final Block block = creator.apply(baseBlock, key);
-            Configs.BLOCK_CONFIG.newBooleanFor(name, block);
+            if (required) Configs.BLOCK_CONFIG.addRequired(block);
+            else Configs.BLOCK_CONFIG.newBooleanFor(name, block);
             BLOCKS.add(block);
 
 
