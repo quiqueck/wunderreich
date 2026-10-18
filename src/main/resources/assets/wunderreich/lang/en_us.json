@@ -282,6 +282,7 @@
   "item.wunderreich.diamond_builders_trowel": "Masterbuilders Trowel",
   "item.wunderreich.whisperer": "Imprinted Whisperer",
   "item.wunderreich.whisperer_blank": "Blank Whisperer",
+  "item.wunderreich.wooden_builders_trowel": "Wooden Builders Trowel",
   "itemGroup.wunderreich.blocks": "Wunderreich (Blocks)",
   "itemGroup.wunderreich.items": "Wunderreich (Items)",
   "key.wunderreich.transform": "Transform",
@@ -327,5 +328,8 @@
   "wunderreich.domain.red": "red",
   "wunderreich.domain.white": "white",
   "wunderreich.domain.yellow": "yellow",
+  "wunderreich.trowel.pattern.bands": "Places the blocks from your hotbar in stripes",
+  "wunderreich.trowel.pattern.cells": "Places the blocks from your hotbar in patches",
+  "wunderreich.trowel.pattern.random": "Places a random block from your hotbar",
   "wunderreich.wunderkiste.domain.HoverText": "Network: %s"
 }

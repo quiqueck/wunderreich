@@ -34,15 +34,21 @@ public class WunderreichItems {
             Configs.MAIN.addBlankWhispere.get()
     );
 
+    public static Item WOODEN_BUILDERS_TROWEL = registerItem(
+            "wooden_builders_trowel",
+            (key) -> new BuildersTrowel(ToolMaterial.WOOD, key, BuildersTrowel.Pattern.RANDOM),
+            Configs.MAIN.allowBuilderTools.get()
+    );
+
     public static Item BUILDERS_TROWEL = registerItem(
             "builders_trowel",
-            (key) -> new BuildersTrowel(ToolMaterial.IRON, key),
+            (key) -> new BuildersTrowel(ToolMaterial.IRON, key, BuildersTrowel.Pattern.BANDS),
             Configs.MAIN.allowBuilderTools.get()
     );
 
     public static Item DIAMOND_BUILDERS_TROWEL = registerItem(
             "diamond_builders_trowel",
-            (key) -> new BuildersTrowel(ToolMaterial.DIAMOND, key),
+            (key) -> new BuildersTrowel(ToolMaterial.DIAMOND, key, BuildersTrowel.Pattern.CELLS),
             Configs.MAIN.allowBuilderTools.get()
     );
 

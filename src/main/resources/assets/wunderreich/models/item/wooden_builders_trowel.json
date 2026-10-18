@@ -1,0 +1,6 @@
+{
+    "parent": "minecraft:item/handheld",
+    "textures": {
+      "layer0": "wunderreich:item/wooden_builders_trowel"
+    }
+  }
