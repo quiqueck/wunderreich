@@ -591,6 +591,13 @@ public class WunderKisteBlock extends AbstractChestBlock<WunderKisteBlockEntity>
 
 
     @Override
+    public @NotNull ItemStack getCloneItemStack(BlockGetter blockGetter, BlockPos blockPos, BlockState blockState) {
+        //pick block (and mods like Jade that show the picked stack as the block icon) must keep the domain
+        ItemStack stack = new ItemStack(this.asItem());
+        return WunderKisteItem.setDomain(stack, WunderKisteServerExtension.getDomain(blockState));
+    }
+
+    @Override
     public List<ItemStack> getDrops(@NotNull BlockState blockState, LootParams.Builder builder) {
         BlockEntity entity = builder.getOptionalParameter(LootContextParams.BLOCK_ENTITY);
         return super.getDrops(blockState, builder).stream().map(stack -> {
