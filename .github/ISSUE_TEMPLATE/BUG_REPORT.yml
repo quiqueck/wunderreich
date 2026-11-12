@@ -28,7 +28,7 @@ body:
     attributes:
       label: Wunderreich
       description: What version of Wunderreich are you running?
-      placeholder: 21.800.3
+      placeholder: 21.800.4
     validations:
       required: true
   - type: input
