@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "wunderreich:wooden_builders_trowel",
+      "required": false
+    },
+    {
+      "id": "wunderreich:builders_trowel",
+      "required": false
+    },
+    {
+      "id": "wunderreich:diamond_builders_trowel",
+      "required": false
+    }
+  ]
+}

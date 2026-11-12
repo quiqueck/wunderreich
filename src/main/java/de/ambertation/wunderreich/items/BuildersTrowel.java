@@ -1,5 +1,6 @@
 package de.ambertation.wunderreich.items;
 
+import de.ambertation.wunderreich.interfaces.ItemTagSupplier;
 import de.ambertation.wunderreich.registries.WunderreichAdvancements;
 import de.ambertation.wunderreich.registries.WunderreichItems;
 import de.ambertation.wunderreich.registries.WunderreichTags;
@@ -11,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,7 +27,7 @@ import java.util.Locale;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class BuildersTrowel extends Item {
+public class BuildersTrowel extends Item implements ItemTagSupplier {
     /** How a trowel chooses which hotbar block it places where. */
     public enum Pattern {
         /** A random block for every placement. */
@@ -59,6 +62,17 @@ public class BuildersTrowel extends Item {
         // 0.5 attacks per second, slower than any vanilla tool.
         super(trowel(WunderreichItems.makeItemSettings(), toolMaterial, 1.0F, -3.5F).setId(key));
         this.pattern = pattern;
+    }
+
+    /**
+     * Makes the trowels enchantable like vanilla shovels: the enchantable component only sets the
+     * enchanting table value, which enchantments apply is decided by these item tags.
+     */
+    @Override
+    public void supplyTags(Consumer<TagKey<Item>> itemTags) {
+        itemTags.accept(ItemTags.DURABILITY_ENCHANTABLE);
+        itemTags.accept(ItemTags.MINING_ENCHANTABLE);
+        itemTags.accept(ItemTags.MINING_LOOT_ENCHANTABLE);
     }
 
     public Pattern pattern() {

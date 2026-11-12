@@ -12,6 +12,7 @@ import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
@@ -64,6 +65,23 @@ public class BuildersTrowelGameTest {
             }
         }
         ChronariumTestSupport.failIfAny(helper, "builder's trowel attack speed", failures);
+        helper.succeed();
+    }
+
+    /** Regression: trowels were not enchantable ("cannot support") since they were in no enchantable tag. */
+    @GameTest
+    public void trowelsAreEnchantableLikeShovels(GameTestHelper helper) {
+        final List<String> failures = new ArrayList<>();
+        for (Item trowel : trowels()) {
+            if (trowel == null) continue;
+            final ItemStack stack = new ItemStack(trowel);
+            if (!stack.has(DataComponents.ENCHANTABLE)) failures.add(trowel + " has no enchantable component");
+            // efficiency / silk touch and fortune / unbreaking, mending and vanishing curse
+            if (!stack.is(ItemTags.MINING_ENCHANTABLE)) failures.add(trowel + " is not in enchantable/mining");
+            if (!stack.is(ItemTags.MINING_LOOT_ENCHANTABLE)) failures.add(trowel + " is not in enchantable/mining_loot");
+            if (!stack.is(ItemTags.DURABILITY_ENCHANTABLE)) failures.add(trowel + " is not in enchantable/durability");
+        }
+        ChronariumTestSupport.failIfAny(helper, "builder's trowel enchantability", failures);
         helper.succeed();
     }
 
