@@ -20,6 +20,13 @@ repositories {
 
 loom {
     accessWidenerPath = file("src/main/resources/wunderreich.accesswidener")
+    // Ship a mixin refmap like releases up to 6.0.4 did. Loom 1.18 would otherwise
+    // remap the mixin annotations in the class files only, which Sinytra Connector
+    // (Forge) can not fully remap (quiqueck/BCLib#249).
+    mixin {
+        useLegacyMixinAp = true
+        defaultRefmapName = "wunderreich-refmap.json"
+    }
 }
 
 sourceSets {
