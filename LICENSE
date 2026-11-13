@@ -20,6 +20,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-----------------------------
-The included Artwork (Audio, Video and Images) is licensed separately under CC BY-NC-SA 4.0
-See https://creativecommons.org/licenses/by-nc-sa/4.0/ for Details.
+___________________________
+ASSETS
+
+Notice dated 2026-10-30: The MIT License above applies solely to the source code of this
+repository. The Assets (textures, images, models, music, sounds, ...) are governed
+by LICENSE.ASSETS, which supersedes the earlier statement that the included
+artwork is licensed under CC BY-NC-SA 4.0.
